@@ -3,4 +3,4 @@ Allow: /
 Disallow: /backoffice/
 Disallow: /backoffice.html
 
-Sitemap: https://www.admira.app/sitemap.xml
+Sitemap: https://www.clearchannel.tv/sitemap.xml

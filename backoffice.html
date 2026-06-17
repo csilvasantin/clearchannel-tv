@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OmniPublicity — Backoffice</title>
-<meta name="description" content="Backoffice para dar de alta gemelos digitales (Xpaces + surfaces) en el mapa de OmniPublicity.">
+<title>Clear Channel — Backoffice</title>
+<meta name="description" content="Backoffice para dar de alta gemelos digitales (Xpaces + surfaces) en el mapa de Clear Channel.">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="locations.js?v=kioskos-20260608"></script>
@@ -173,9 +173,9 @@
 <!-- Login gate -->
 <div class="gate" id="gate">
   <div class="gbox">
-    <div class="glogo">OMNI<span class="dot">·</span>PUBLICITY</div>
+    <div class="glogo">CLEAR<span class="dot">·</span>CHANNEL</div>
     <h2 data-i18n="gate_title">Backoffice</h2>
-    <p class="gsub" data-i18n-html="gate_sub">Acceso restringido a cuentas <b>@admira.com</b>. Inicia sesión con Google para gestionar <b>OmniPublicity</b>.</p>
+    <p class="gsub" data-i18n-html="gate_sub">Acceso restringido a cuentas <b>@admira.com</b>. Inicia sesión con Google para gestionar <b>Clear Channel</b>.</p>
     <div id="g-signin" style="display:flex;justify-content:center;margin:8px 0 4px"></div>
     <div class="gerr" id="g-err"></div>
     <div class="gfoot" data-i18n-html="gate_foot">¿Vienes a mirar el mapa? <a href="index.html">Ir al mapa público →</a></div>
@@ -183,13 +183,13 @@
 </div>
 
 <header>
-  <span class="logo">OMNI<span class="dot">·</span>PUBLICITY <span class="sub" data-i18n="bo_sub">/ backoffice</span></span>
+  <span class="logo">CLEAR<span class="dot">·</span>CHANNEL <span class="sub" data-i18n="bo_sub">/ backoffice</span></span>
   <nav>
     <a href="target/" data-i18n="nav_target">Target Model</a>
     <a href="index.html" data-i18n="nav_public_map">Mapa público</a>
     <a href="about.html" data-i18n="nav_rtb">Concepto RTB</a>
     <a href="../xpace-os/">Xpace OS</a>
-    <a href="../01.-AdmiraXperience-Game/" target="_blank" rel="noopener">↗ Admira XP</a>
+    <a href="../01.-AdmiraXperience-Game/" target="_blank" rel="noopener">↗ Digital Twin</a>
     <div class="lang-switch" id="lang-switch" role="group" aria-label="Idioma / Language">
       <button type="button" class="lang-btn" data-lang="en">EN</button>
       <button type="button" class="lang-btn" data-lang="es">ES</button>
@@ -237,7 +237,7 @@
       <fieldset>
         <legend data-i18n="legend_identity">Identidad</legend>
         <div class="row"><label for="f-id">ID</label><input id="f-id" type="text" placeholder="ej: admira-malaga" autocomplete="off"></div>
-        <div class="row"><label for="f-name" data-i18n="label_name">Nombre</label><input id="f-name" type="text" placeholder="Admira Málaga"></div>
+        <div class="row"><label for="f-name" data-i18n="label_name">Nombre</label><input id="f-name" type="text" placeholder="Clear Channel Málaga"></div>
         <div class="row"><label for="f-kind" data-i18n="label_kind">Tipo</label><input id="f-kind" type="text" placeholder="Estanco · Retail físico"></div>
         <div class="row"><label for="f-addr" data-i18n="label_addr">Dirección</label><input id="f-addr" type="text" placeholder="Calle Larios 8 · Málaga"></div>
       </fieldset>
@@ -358,7 +358,7 @@ const I18N = {
   es: {
     bo_sub:'/ backoffice',
     gate_title:'Backoffice',
-    gate_sub:'Acceso restringido a cuentas <b>@admira.com</b>. Inicia sesión con Google para gestionar <b>OmniPublicity</b>.',
+    gate_sub:'Acceso restringido a cuentas <b>@admira.com</b>. Inicia sesión con Google para gestionar <b>Clear Channel</b>.',
     remember:'Recordar en este navegador', enter:'Entrar',
     gate_foot:'¿Vienes a mirar el mapa? <a href="index.html">Ir al mapa público →</a>',
     nav_target:'Target Model', nav_public_map:'Mapa público', nav_rtb:'Concepto RTB', logout:'Logout',
@@ -401,7 +401,7 @@ const I18N = {
   en: {
     bo_sub:'/ backoffice',
     gate_title:'Backoffice',
-    gate_sub:'Restricted to <b>@admira.com</b> accounts. Sign in with Google to manage <b>OmniPublicity</b>.',
+    gate_sub:'Restricted to <b>@admira.com</b> accounts. Sign in with Google to manage <b>Clear Channel</b>.',
     remember:'Remember on this browser', enter:'Sign in',
     gate_foot:'Here to see the map? <a href="index.html">Go to the public map →</a>',
     nav_target:'Target Model', nav_public_map:'Public map', nav_rtb:'RTB concept', logout:'Logout',
@@ -1221,7 +1221,7 @@ function openModal({title, value, allowEdit, confirmLabel, onConfirm, showCopy, 
     catch { showToast(t('cant_copy'), 'err'); }
   };
   $('mo-download').onclick = () => {
-    const content = `// OmniPublicity — catálogo de tiendas (gemelos digitales).\n// Generado por backoffice.html · ${new Date().toISOString()}\nwindow.OMNIP_LOCATIONS_DEFAULT = ${$('mo-text').value};\nwindow.OMNIP_STORE_KEY = 'omnip-locations';\nwindow.loadOmnipLocations = function() {\n  try {\n    const raw = localStorage.getItem(window.OMNIP_STORE_KEY);\n    if (raw) { const p = JSON.parse(raw); if (Array.isArray(p) && p.length) return p; }\n  } catch (e) {}\n  return window.OMNIP_LOCATIONS_DEFAULT;\n};\nwindow.saveOmnipLocations = function(arr) {\n  try { localStorage.setItem(window.OMNIP_STORE_KEY, JSON.stringify(arr)); return true; }\n  catch (e) { return false; }\n};\n`;
+    const content = `// Clear Channel — catálogo de tiendas (gemelos digitales).\n// Generado por backoffice.html · ${new Date().toISOString()}\nwindow.OMNIP_LOCATIONS_DEFAULT = ${$('mo-text').value};\nwindow.OMNIP_STORE_KEY = 'omnip-locations';\nwindow.loadOmnipLocations = function() {\n  try {\n    const raw = localStorage.getItem(window.OMNIP_STORE_KEY);\n    if (raw) { const p = JSON.parse(raw); if (Array.isArray(p) && p.length) return p; }\n  } catch (e) {}\n  return window.OMNIP_LOCATIONS_DEFAULT;\n};\nwindow.saveOmnipLocations = function(arr) {\n  try { localStorage.setItem(window.OMNIP_STORE_KEY, JSON.stringify(arr)); return true; }\n  catch (e) { return false; }\n};\n`;
     const blob = new Blob([content], {type:'text/javascript'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

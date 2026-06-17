@@ -6,29 +6,29 @@
 <link rel="preconnect" href="https://unpkg.com">
 <link rel="dns-prefetch" href="https://unpkg.com">
 <link rel="preconnect" href="https://csilvasantin.github.io">
-<title>OmniPublicity — Map of retail spaces | AdmiraNext</title>
+<title>Map of retail spaces | Clear Channel</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" href="/assets/favicon-180.png">
 <meta name="theme-color" content="#02080d">
 <meta name="description" content="Every gap in physical retail, auctioned by impression. Search a store, land on its profile and watch its surfaces bidding in real time.">
-<link rel="canonical" href="https://www.admira.app/">
+<link rel="canonical" href="https://www.clearchannel.tv/">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="OmniPublicity">
-<meta property="og:title" content="OmniPublicity — Programmatic advertising in the real world">
+<meta property="og:site_name" content="Clear Channel">
+<meta property="og:title" content="Clear Channel — Programmatic advertising in the real world">
 <meta property="og:description" content="Every gap in physical retail, auctioned by impression. Search a store, land on its profile and watch its surfaces bidding in real time.">
-<meta property="og:url" content="https://www.admira.app/">
-<meta property="og:image" content="https://www.admira.app/assets/og-cover.jpg">
+<meta property="og:url" content="https://www.clearchannel.tv/">
+<meta property="og:image" content="https://www.clearchannel.tv/assets/og-cover.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="en_GB">
 <meta property="og:locale:alternate" content="es_ES">
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="OmniPublicity — Programmatic advertising in the real world">
+<meta name="twitter:title" content="Clear Channel — Programmatic advertising in the real world">
 <meta name="twitter:description" content="Every gap in physical retail, auctioned by impression. Watch retail spaces bidding in real time.">
-<meta name="twitter:image" content="https://www.admira.app/assets/og-cover.jpg">
+<meta name="twitter:image" content="https://www.clearchannel.tv/assets/og-cover.jpg">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
 <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/tokens.css">
 <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/contact-panel.css">
@@ -588,7 +588,7 @@
 <body>
 
 <header>
-  <span class="logo"><span class="logo-home" id="logo-home" role="button" tabindex="0" data-i18n-title="logo_home_title" title="Volver al inicio">OMNI<span class="dot">·</span>PUBLICITY</span></span>
+  <span class="logo"><span class="logo-home" id="logo-home" role="button" tabindex="0" data-i18n-title="logo_home_title" title="Volver al inicio">CLEAR<span class="dot">·</span>CHANNEL</span></span>
   <div class="header-controls">
     <div class="search-wrap">
       <label class="search">
@@ -682,7 +682,7 @@
       <option value="desigual" data-i18n="circuit_desigual">Desigual Global</option>
       <option value="mango" data-i18n="circuit_mango">Mango Global</option>
       <option value="kioskos" data-i18n="circuit_kioskos">Kioskos de prensa</option>
-      <option value="all" data-i18n="circuit_all">Toda la red OmniPublicity</option>
+      <option value="all" data-i18n="circuit_all">Toda la red Clear Channel</option>
       <option value="estancos" data-i18n="circuit_estancos">Estancos</option>
       <option value="decathlon" data-i18n="circuit_decathlon">Decathlon España</option>
       <option value="palacio" data-i18n="circuit_palacio">El Palacio de Hierro · México</option>
@@ -717,7 +717,7 @@
         <div id="extad-live-rows"></div>
         <div style="display:flex;justify-content:space-between;color:#9effa0;border-top:1px dashed rgba(120,210,255,.25);margin-top:5px;padding-top:5px"><span>Total consumido hoy</span><b id="extad-live-total2">0,00 €</b></div>
       </div>
-      <!-- Editor de CPM por segmento (la pauta RTB se fija aquí, en admira.app) -->
+      <!-- Editor de CPM por segmento (la pauta RTB se fija aquí, en clearchannel.tv) -->
       <details id="segcpm-editor" style="margin-top:8px;border:1px solid rgba(255,216,102,.3);border-radius:10px;background:rgba(20,16,6,.4);padding:7px 10px">
         <summary style="cursor:pointer;color:#ffd866;font-size:11px;letter-spacing:.05em">✎ CPM por segmento (RTB) — fijar precios</summary>
         <div id="segcpm-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:5px 10px;margin-top:8px;font-size:12px"></div>
@@ -934,7 +934,7 @@
         <div class="buy-line"><span data-i18n="buy_target">Target</span><b id="buy-target">—</b></div>
         <div class="buy-total"><span data-i18n="buy_total">Total</span><b id="buy-total">—</b></div>
         <button class="buy-submit" id="buy-submit" type="button" data-i18n="buy_submit">Pagar y reservar</button>
-        <p class="buy-legal" data-i18n="buy_legal">La web valida la tarjeta y prepara la orden sin guardar el número completo. El cargo real queda listo para enlazar con la pasarela de pago de Admira.</p>
+        <p class="buy-legal" data-i18n="buy_legal">La web valida la tarjeta y prepara la orden sin guardar el número completo. El cargo real queda listo para enlazar con la la pasarela de pago.</p>
         <div class="buy-error" id="buy-error" hidden></div>
         <div class="buy-ok" id="buy-ok" hidden></div>
       </aside>
@@ -944,8 +944,8 @@
 
 <div class="splash" id="splash">
   <button class="splash-close" id="splash-close" type="button" data-i18n-aria="close" aria-label="Cerrar">×</button>
-  <div class="eyebrow" data-i18n="hero_eyebrow">OmniPublicity · Programática en el mundo real</div>
-  <h1 id="hero-h1">Retail Media<br><span class="grad">powered by Admira, Lenovo and Nvidia</span></h1>
+  <div class="eyebrow" data-i18n="hero_eyebrow">Clear Channel · Programática en el mundo real</div>
+  <h1 id="hero-h1">Retail Media<br><span class="grad">in the real world</span></h1>
 </div>
 
 <div class="map-ctrls" id="ctrls">
@@ -1152,7 +1152,7 @@ function loadCircuitTarget() {
 
 let circuitTarget = loadCircuitTarget();
 
-// ─── CREAR CAMPAÑA (admira.app inicia → pixeria.com genera multi-versión) ───
+// ─── CREAR CAMPAÑA (clearchannel.tv inicia → pixeria.com genera multi-versión) ───
 // El anunciante dice el producto; generamos UNA versión por cada combinación de
 // los criterios que el dueño del circuito haya activado (género×edad×franja×
 // emplazamiento). Aquí calculamos la matriz y hacemos el handoff a PixerIA, que
@@ -1236,7 +1236,7 @@ function openCampaignModal() {
         <div style="font-size:12.5px;color:#75aab9">${isEs?'Se generará UNA versión por cada combinación de los criterios del circuito (los que el dueño haya activado en Target):':'One version per combination of the circuit criteria (those the owner enabled in Target):'}</div>
         <div id="campaign-matrix" style="background:#02080d;border:1px solid rgba(120,243,255,.18);border-radius:9px;padding:12px"></div>
         <button id="campaign-go" style="padding:12px;border:0;border-radius:9px;background:linear-gradient(90deg,#78f3ff,#ffd866);color:#02141c;font-weight:800;font-size:15px;cursor:pointer">${isEs?'Generar en PixerIA →':'Generate in PixerIA →'}</button>
-        <div style="font-size:11px;color:#5e8595">${isEs?'PixerIA crea cada versión etiquetada por segmento y vuelve a admira.app para venderse a su público.':'PixerIA creates each segment-tagged version and returns to admira.app to be sold to its audience.'}</div>
+        <div style="font-size:11px;color:#5e8595">${isEs?'PixerIA crea cada versión etiquetada por segmento y vuelve a clearchannel.tv para venderse a su público.':'PixerIA creates each segment-tagged version and returns to clearchannel.tv to be sold to its audience.'}</div>
       </div>
     </div>`;
   document.body.appendChild(ov);
@@ -1337,7 +1337,7 @@ const I18N = {
     buy_duration_summary:'Duración', buy_passes:'Pases',
     buy_est_impr:'Impresiones estimadas', buy_base_cpm:'CPM base',
     buy_date_demand:'Demanda fecha', buy_scope:'Ámbito', buy_target:'Target', buy_total:'Total', buy_submit:'Pagar y reservar',
-    buy_legal:'La web valida la tarjeta y prepara la orden sin guardar el número completo. El cargo real queda listo para enlazar con la pasarela de pago de Admira.',
+    buy_legal:'La web valida la tarjeta y prepara la orden sin guardar el número completo. El cargo real queda listo para enlazar con la la pasarela de pago.',
     buy_points_line:'{points} puntos · {surfaces} surfaces', buy_days_line:'{days} días',
     buy_select_dates:'Selecciona fechas', buy_per_day:'{passes} / día',
     buy_moment_line:'{date} · {time}', buy_select_moment:'Selecciona fecha y hora',
@@ -1349,8 +1349,8 @@ const I18N = {
     err_campaign:'Pon un nombre de campaña.', err_card:'El número de tarjeta no es válido.',
     err_exp:'La fecha de caducidad no es válida.', err_cvc:'El CVC debe tener 3 o 4 dígitos.',
     order_ok:'Reserva <b>{orderId}</b> creada por <b>{price}</b> con tarjeta terminada en <b>{cardLast4}</b>.',
-    hero_eyebrow:'OmniPublicity · Programática en el mundo real',
-    hero_h1a:'Retail Media', hero_h1b:'powered by Admira, Lenovo and Nvidia',
+    hero_eyebrow:'Clear Channel · Programática en el mundo real',
+    hero_h1a:'Retail Media', hero_h1b:'in the real world',
     hero_p:'Cada hueco visible — pantalla LED, escaparate, vending, panel del mostrador, push de la PWA — es <span class="tag">inventario subastable</span> en tiempo real. Busca un Xpace y aterriza en su ficha de surfaces.',
     hero_arrow:'↑ buscar arriba o pinchar un punto del mapa',
     close:'Cerrar',
@@ -1451,7 +1451,7 @@ const I18N = {
     buy_duration_summary:'Duration', buy_passes:'Passes',
     buy_est_impr:'Estimated impressions', buy_base_cpm:'Base CPM',
     buy_date_demand:'Date demand', buy_scope:'Scope', buy_target:'Target', buy_total:'Total', buy_submit:'Pay and reserve',
-    buy_legal:'The website validates the card and prepares the order without storing the full number. The real charge is ready to be connected to Admira’s payment gateway.',
+    buy_legal:'The website validates the card and prepares the order without storing the full number. The real charge is ready to be connected to the payment gateway.',
     buy_points_line:'{points} points · {surfaces} surfaces', buy_days_line:'{days} days',
     buy_select_dates:'Select dates', buy_per_day:'{passes} / day',
     buy_moment_line:'{date} · {time}', buy_select_moment:'Select date and time',
@@ -1463,8 +1463,8 @@ const I18N = {
     err_campaign:'Add a campaign name.', err_card:'The card number is not valid.',
     err_exp:'The expiration date is not valid.', err_cvc:'The CVC must have 3 or 4 digits.',
     order_ok:'Reservation <b>{orderId}</b> created for <b>{price}</b> with card ending in <b>{cardLast4}</b>.',
-    hero_eyebrow:'OmniPublicity · Programmatic in the real world',
-    hero_h1a:'Retail Media', hero_h1b:'powered by Admira, Lenovo and Nvidia',
+    hero_eyebrow:'Clear Channel · Programmatic in the real world',
+    hero_h1a:'Retail Media', hero_h1b:'in the real world',
     hero_p:'Every visible spot — LED screen, shop window, vending, counter panel, PWA push — is <span class="tag">auctionable inventory</span> in real time. Search an Xpace and land on its surfaces.',
     hero_arrow:'↑ search above or click a point on the map',
     close:'Close',
@@ -3078,7 +3078,7 @@ const STYLE_RELIEVE = {
 
 // ─── Map ───────────────────────────────────────────────────────────
 // Vista inicial ("posición 0") — compartida por el arranque y por el reset
-// al pulsar el logo de OmniPublicity.
+// al pulsar el logo de Clear Channel.
 const HOME_VIEW = {center: [-28, 16], zoom: 2.15, pitch: 0, bearing: 0};
 const map = new maplibregl.Map({
   container: 'map', style: STYLE_TIERRA,
@@ -3874,7 +3874,7 @@ function findSurfaceByPixerScreen(screenId) {
 function spawnRealBid(loc, surf, item) {
   const cpm = parseFloat(String(surf.cpm).replace(/[^\d.]/g, '')) || 1;
   const winCents = Math.max(0.0008, (cpm * (0.6 + Math.random() * 0.45) / 1000));
-  const advRaw = String(item.title || 'creativo').replace(/^AdmiraNext\s*\/\/\s*/i, '').trim();
+  const advRaw = String(item.title || 'creativo').replace(/^Clear Channel\s*\/\/\s*/i, '').trim();
   const advertiser = advRaw.length > 28 ? advRaw.slice(0, 26) + '…' : (advRaw || 'creativo');
   const tsMs = Number(item.acked_at || item.ts) || Date.now();
   const ts = new Date(tsMs).toLocaleTimeString('es-ES', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -4229,7 +4229,7 @@ function animatePulse(ts) {
 }
 requestAnimationFrame(animatePulse);
 
-// ─── Logo OmniPublicity → volver al inicio ("posición 0") ─────────
+// ─── Logo Clear Channel → volver al inicio ("posición 0") ─────────
 function resetToHome() {
   // Cierra todo lo abierto
   panel.classList.remove('open');
@@ -4590,7 +4590,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
 // ── PUBLI EXTERIOR EN VIVO DEL GEMELO ───────────────────────────────────────
 // Lee del KV (pixer-eleven /day/range) los impactos REALES de publi exterior por
 // segmento que reporta el gemelo al cerrar/registrar el día, y los muestra con su
-// CPM (RTB). Misma tabla CPM que el gemelo (la pauta vive en admira.app).
+// CPM (RTB). Misma tabla CPM que el gemelo (la pauta vive en clearchannel.tv).
 (function(){
   const PIXER='https://pixer-eleven.csilvasantin.workers.dev';
   const SEG_CPM={ joven_m:9, joven_f:9, adulto_m:8, adulto_f:8.5, senior_m:5, senior_f:5, nino_m:3.5, nino_f:3.5 };

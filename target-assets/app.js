@@ -27,7 +27,7 @@ const copy = {
     "aria.simulationControls": "Campaign parameters",
     "aria.simulationResult": "Simulation result",
     "aria.tutorialNav": "Tutorial navigation",
-    publish: "Publish to Admira",
+    publish: "Publish to Clear Channel",
     tutorial: "Tutorial",
     openBackoffice: "Open backoffice",
     circuit: "Circuit",
@@ -43,7 +43,7 @@ const copy = {
     modelEyebrow: "Target model · v1",
     modelTitle: "Sellable audience by hour, profile, and surface",
     modelStatus: "Simulated model",
-    lastSync: "Admira sync 09:42",
+    lastSync: "Clear Channel sync 09:42",
     peopleDay: "People/day",
     peakHour: "Peak hour",
     impressions: "Impressions",
@@ -165,13 +165,13 @@ const copy = {
     toastCalibrated: "Visibility recalibrated on active surfaces",
     toastReserved: "Inventory reserved as proposal draft",
     toastRule: "Rule created as draft",
-    toastPublished: "Model published as Admira-ready payload",
+    toastPublished: "Model published as Clear Channel-ready payload",
     toastExported: "Model JSON copied to clipboard",
     toastMode: "{mode} mode active",
     tutorialFlow: "Flow",
     tutorialMetrics: "Metrics",
     tutorialPrivacy: "Privacy",
-    tutorialIntroEyebrow: "admira.app/tutorial",
+    tutorialIntroEyebrow: "clearchannel.tv/tutorial",
     tutorialTitle: "Configure Target Model and turn footfall into sellable inventory",
     tutorialIntro:
       "This tutorial guides daily operations: define people per hour, adjust segments, calibrate surfaces, and publish playback rules for segmented campaigns.",
@@ -205,7 +205,7 @@ const copy = {
     "aria.simulationControls": "Parametros de campana",
     "aria.simulationResult": "Resultado de simulacion",
     "aria.tutorialNav": "Navegacion tutorial",
-    publish: "Publicar en Admira",
+    publish: "Publicar en Clear Channel",
     tutorial: "Tutorial",
     openBackoffice: "Abrir backoffice",
     circuit: "Circuito",
@@ -221,7 +221,7 @@ const copy = {
     modelEyebrow: "Target model · v1",
     modelTitle: "Audiencia vendible por hora, perfil y superficie",
     modelStatus: "Modelo simulado",
-    lastSync: "Sync Admira 09:42",
+    lastSync: "Sync Clear Channel 09:42",
     peopleDay: "Personas/dia",
     peakHour: "Hora pico",
     impressions: "Impresiones",
@@ -343,13 +343,13 @@ const copy = {
     toastCalibrated: "Visibilidad recalibrada en surfaces activas",
     toastReserved: "Inventario reservado como borrador de propuesta",
     toastRule: "Regla creada en borrador",
-    toastPublished: "Modelo publicado como payload listo para Admira",
+    toastPublished: "Modelo publicado como payload listo para Clear Channel",
     toastExported: "JSON del modelo copiado al portapapeles",
     toastMode: "Modo {mode} activo",
     tutorialFlow: "Flujo",
     tutorialMetrics: "Metricas",
     tutorialPrivacy: "Privacidad",
-    tutorialIntroEyebrow: "admira.app/tutorial",
+    tutorialIntroEyebrow: "clearchannel.tv/tutorial",
     tutorialTitle: "Configura Target Model y convierte paso de personas en inventario vendible",
     tutorialIntro:
       "Este tutorial guia la operacion diaria: definir personas por hora, ajustar segmentos, calibrar surfaces y publicar reglas de reproduccion para campanas segmentadas.",
@@ -399,7 +399,7 @@ const stepContent = {
   en: {
     1: {
       title: "Select circuit and Xpacio",
-      body: "Start with the commercial circuit and the physical point. Target Model loads traffic baseline, available surfaces, and the latest state synced with Admira.",
+      body: "Start with the commercial circuit and the physical point. Target Model loads traffic baseline, available surfaces, and the latest state synced with Clear Channel.",
       checklist: ["Check exterior/interior.", "Review the date range.", "Choose simulated or observed mode."],
     },
     2: {
@@ -425,13 +425,13 @@ const stepContent = {
     6: {
       title: "Publish rules to XpaceOS",
       body: "Rules activate content by hour, zone, and segment. XpaceOS runs playback and returns observed data for auditing.",
-      checklist: ["Publish in Admira.", "Activate rules in XpaceOS.", "Compare estimated vs observed."],
+      checklist: ["Publish in Clear Channel.", "Activate rules in XpaceOS.", "Compare estimated vs observed."],
     },
   },
   es: {
     1: {
       title: "Selecciona circuito y Xpacio",
-      body: "Empieza por el circuito comercial y el punto fisico. Target Model carga el baseline de trafico, superficies disponibles y ultimo estado sincronizado con Admira.",
+      body: "Empieza por el circuito comercial y el punto fisico. Target Model carga el baseline de trafico, superficies disponibles y ultimo estado sincronizado con Clear Channel.",
       checklist: ["Comprueba exterior/interior.", "Revisa rango de fechas.", "Elige modo simulado u observado."],
     },
     2: {
@@ -457,7 +457,7 @@ const stepContent = {
     6: {
       title: "Publica reglas en XpaceOS",
       body: "Las reglas activan contenidos por hora, zona y segmento. XpaceOS ejecuta la reproduccion y devuelve observados para auditar.",
-      checklist: ["Publica en Admira.", "Activa reglas en XpaceOS.", "Compara estimado vs observado."],
+      checklist: ["Publica en Clear Channel.", "Activa reglas en XpaceOS.", "Compara estimado vs observado."],
     },
   },
 };
@@ -677,7 +677,7 @@ function renderTutorialStep(id = qs("#tutorialSteps li.is-active")?.dataset.step
 }
 
 function applyBackofficeLanguage() {
-  setAttr(".brand", "aria-label", "Admira home");
+  setAttr(".brand", "aria-label", "Clear Channel home");
   setAttr("#xpacioSearch", "aria-label", t("aria.search"));
   setAttr("[data-action='toggle-mode']", "aria-label", t("aria.mode"));
   setAttr("[data-action='export']", "aria-label", t("aria.export"));
@@ -822,7 +822,7 @@ function setCheckTile(inputSelector, label, description) {
 }
 
 function applyTutorialLanguage() {
-  setAttr(".brand", "aria-label", "Admira home");
+  setAttr(".brand", "aria-label", "Clear Channel home");
   setAttr(".tutorial-nav", "aria-label", t("aria.tutorialNav"));
   setText('.tutorial-nav a[href="#flujo"]', t("tutorialFlow"));
   setText('.tutorial-nav a[href="#metricas"]', t("tutorialMetrics"));
