@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OmniPublicity — Parrilla del día (Xpacio)</title>
+<meta name="description" content="Parrilla del día por pantalla del Xpacio: qué se emite a cada hora según target, qué está vendido y cuántos huecos quedan disponibles para la venta.">
+<meta name="robots" content="noindex">
+<script src="../locations.js"></script>
+<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/emission-calendar.css">
+<script defer src="https://csilvasantin.github.io/admira-design/emission-calendar.js"></script>
+<style>
+  :root{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--card2:#0d1c28;--line:rgba(120,243,255,.18)}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100%}
+  a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
+  button,select,input{font-family:inherit}
+  header{padding:13px 22px;background:linear-gradient(to bottom,rgba(2,8,13,.95),rgba(2,8,13,.6));border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:20;backdrop-filter:blur(8px)}
+  .logo{font-family:monospace;font-size:13px;letter-spacing:.16em;color:var(--accent);font-weight:bold;white-space:nowrap}
+  .logo .dot{color:var(--brand)}
+  .logo .sub{color:var(--mut);margin-left:10px;font-weight:normal;letter-spacing:.1em;font-size:11px}
+  header .sel{display:flex;align-items:center;gap:7px}
+  header label{font-size:11px;color:var(--mut);font-family:monospace;letter-spacing:.06em;text-transform:uppercase}
+  select,input[type=date]{background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px 10px;font-size:13px;outline:0}
+  select:focus,input:focus{border-color:var(--brand)}
+  .grow{flex:1}
+  .btn{background:transparent;border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px 14px;font-size:13px;cursor:pointer;transition:border-color .12s,background .12s;white-space:nowrap}
+  .btn:hover{border-color:var(--brand)}
+  .btn.primary{background:var(--brand);color:#001620;border-color:var(--brand);font-weight:700}
+  .btn.ghost{color:var(--mut)}
+  .btn.live{border-color:var(--good);color:var(--good)} .btn.live.on{background:rgba(136,255,170,.14)}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 22px 60px}
+  .foot{color:var(--mut);font-size:12px;margin-top:6px;text-align:center;font-family:monospace}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">OMNI<span class="dot">·</span>PUBLICITY <span class="sub">PARRILLA · XPACEOS</span></div>
+  <div class="sel"><label>Xpacio</label><select id="storeSel"></select></div>
+  <div class="sel"><label>Pantalla</label><select id="screenSel"></select></div>
+  <div class="sel"><label>Día</label><input type="date" id="dateInp"></div>
+  <div class="grow"></div>
+  <button class="btn live" id="autoBtn" title="Empuja a las pantallas físicas el contenido que toca según la hora">▶ Emitir auto</button>
+  <button class="btn primary" id="emitBtn">Emitir ahora</button>
+  <a class="btn ghost" href="../target/">Target Model</a>
+</header>
+
+<div class="wrap">
+  <div id="cal"></div>
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+const WORKER='https://pixer-eleven.csilvasantin.workers.dev';
+const $=(s)=>document.querySelector(s);
+const state={stores:[],store:null,screens:[],screen:null,date:'',cal:null,auto:false,autoTimer:null};
+function slug(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+function todayMadrid(){const p={};new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).forEach(x=>p[x.type]=x.value);return `${p.year}-${p.month}-${p.day}`;}
+function isScreen(sf){return ['pantalla','escaparate','vending','mostrador'].includes(sf.surface);}
+function screensOf(store){return store.surfaces.filter(isScreen).map(sf=>({id:slug(store.id)+'-'+slug(sf.name),name:sf.name,surface:sf.surface,pixerScreens:Array.isArray(sf.pixerScreens)?sf.pixerScreens:[]}));}
+
+async function api(path,opts){const r=await fetch(WORKER+path,opts);let d=null;try{d=await r.json();}catch{}if(!r.ok||(d&&d.error))throw new Error((d&&d.error)||('HTTP '+r.status));return d;}
+
+async function loadStores(){
+  let list=[];
+  try{if(window.loadOmnipLocationsAsync){const r=await window.loadOmnipLocationsAsync();list=Array.isArray(r)?r:(r&&r.locations)||[];}}catch{}
+  if(!list.length&&window.loadOmnipLocations){try{list=window.loadOmnipLocations();}catch{}}
+  if(!list.length)list=window.OMNIP_LOCATIONS_DEFAULT||[];
+  state.stores=list.filter(s=>Array.isArray(s.surfaces)&&s.surfaces.some(isScreen));
+  const sel=$('#storeSel');sel.innerHTML='';
+  state.stores.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;sel.appendChild(o);});
+}
+function selectStore(id){
+  state.store=state.stores.find(s=>s.id===id)||state.stores[0];
+  state.screens=screensOf(state.store);
+  const sel=$('#screenSel');sel.innerHTML='';
+  state.screens.forEach(sc=>{const o=document.createElement('option');o.value=sc.id;o.textContent=sc.name;sel.appendChild(o);});
+  selectScreen(state.screens[0]?.id);
+}
+async function ensureConfig(sc){
+  try{
+    const d=await api('/grid/config?screen='+encodeURIComponent(sc.id));
+    const needsSeed=!d.config.updatedAt||(sc.pixerScreens.length&&(!d.config.pixerScreens||!d.config.pixerScreens.length));
+    if(needsSeed){const k=localStorage.getItem('grid_key')||'';await api('/grid/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:k,screen:sc.id,name:sc.name,slotSeconds:10,pixerScreens:sc.pixerScreens})}).catch(()=>{});}
+  }catch{}
+}
+async function selectScreen(id){
+  state.screen=state.screens.find(s=>s.id===id)||state.screens[0];
+  if(!state.screen){$('#cal').innerHTML='<div style="color:var(--mut);text-align:center;padding:40px">Este Xpacio no tiene pantallas emisoras.</div>';return;}
+  await ensureConfig(state.screen);
+  const opts={workerBase:WORKER,role:'sell',screen:state.screen.id,date:state.date,screenName:state.screen.name,storeName:state.store.name,getKey:()=>localStorage.getItem('grid_key')||'',onData:updateFoot};
+  if(!state.cal)state.cal=EmissionCalendar.mount($('#cal'),opts); else state.cal.setContext({screen:state.screen.id,date:state.date,screenName:state.screen.name,storeName:state.store.name});
+}
+function updateFoot(d){$('#foot').textContent=`${state.store.name} · ${state.screen.name} · ${d.date} · ${d.config.pixerScreens&&d.config.pixerScreens.length?('→ '+d.config.pixerScreens.join(', ')):'sin pixerScreen'} · slot ${d.config.slotSeconds}s`;}
+
+function emitNow(){if(state.cal)state.cal.emit();}
+function toggleAuto(){state.auto=!state.auto;const b=$('#autoBtn');b.classList.toggle('on',state.auto);b.textContent=state.auto?'■ Emitir auto':'▶ Emitir auto';if(state.auto){emitNow();state.autoTimer=setInterval(emitNow,30000);}else clearInterval(state.autoTimer);}
+
+async function init(){
+  state.date=todayMadrid();$('#dateInp').value=state.date;
+  await loadStores();
+  const xt=state.stores.find(s=>s.id==='xtanco')||state.stores[0];
+  $('#storeSel').value=xt?.id||'';selectStore(xt?.id);
+  $('#storeSel').onchange=e=>selectStore(e.target.value);
+  $('#screenSel').onchange=e=>selectScreen(e.target.value);
+  $('#dateInp').onchange=e=>{state.date=e.target.value||todayMadrid();if(state.cal)state.cal.setContext({date:state.date});};
+  $('#emitBtn').onclick=emitNow;$('#autoBtn').onclick=toggleAuto;
+}
+window.addEventListener('DOMContentLoaded',()=>{ if(window.EmissionCalendar) init(); else window.addEventListener('load',init); });
+</script>
+</body>
+</html>

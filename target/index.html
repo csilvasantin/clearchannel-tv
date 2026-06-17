@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="XpaceOS Target Model backoffice: hourly traffic, audience segments, advertising inventory, and playback rules."
+    />
+    <title>XpaceOS Target Model</title>
+    <link rel="stylesheet" href="../target-assets/styles.css" />
+    <script defer src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="../target-assets/app.js"></script>
+  </head>
+  <body data-page="backoffice">
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="Admira home">
+          <span class="brand-mark">OMNI·PUBLICITY</span>
+          <strong>Target Model</strong>
+        </a>
+
+        <label class="search-bar">
+          <i data-lucide="search"></i>
+          <input
+            id="xpacioSearch"
+            type="search"
+            value="Xtanco Santa Rosa"
+            aria-label="Buscar Xpacio"
+          />
+        </label>
+
+        <div class="top-actions">
+          <div class="target-lang-switch" role="group" aria-label="Language">
+            <button class="target-lang-btn is-active" type="button" data-lang="en">EN</button>
+            <button class="target-lang-btn" type="button" data-lang="es">ES</button>
+          </div>
+          <button class="icon-button" type="button" data-action="toggle-mode" aria-label="Cambiar modo">
+            <i data-lucide="git-compare"></i>
+          </button>
+          <button class="icon-button" type="button" data-action="export" aria-label="Exportar modelo">
+            <i data-lucide="download"></i>
+          </button>
+          <button class="primary-action" type="button" data-action="publish">
+            <i data-lucide="send"></i>
+            Publicar en Admira
+          </button>
+          <a class="ghost-action" href="../tutorial/">
+            <i data-lucide="circle-help"></i>
+            Tutorial
+          </a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="left-rail" aria-label="Configuracion del Xpacio">
+          <section class="rail-section">
+            <p class="eyebrow">Circuito</p>
+            <select id="circuitSelect" aria-label="Circuito">
+              <option>Press kiosk circuit</option>
+              <option>Retail high street</option>
+              <option>Metro entrance network</option>
+              <option>Campus food court</option>
+            </select>
+          </section>
+
+          <section class="rail-section">
+            <p class="eyebrow">Xpacio activo</p>
+            <div class="xpacio-stack">
+              <button class="xpacio-pill is-active" type="button">
+                <span>Xtanco Santa Rosa</span>
+                <small>Madrid · exterior + interior</small>
+              </button>
+              <button class="xpacio-pill" type="button">
+                <span>Loterias Eixample</span>
+                <small>Barcelona · exterior</small>
+              </button>
+              <button class="xpacio-pill" type="button">
+                <span>BCN Market Hall</span>
+                <small>Barcelona · interior</small>
+              </button>
+            </div>
+          </section>
+
+          <section class="rail-section">
+            <p class="eyebrow">Rango</p>
+            <div class="date-grid">
+              <label>
+                Desde
+                <input id="dateFrom" type="date" value="2026-06-08" />
+              </label>
+              <label>
+                Hasta
+                <input id="dateTo" type="date" value="2026-06-14" />
+              </label>
+            </div>
+          </section>
+
+          <section class="rail-section">
+            <p class="eyebrow">Modo</p>
+            <div class="segmented-control" role="group" aria-label="Modo de datos">
+              <button class="is-selected" type="button" data-mode="simulado">Simulado</button>
+              <button type="button" data-mode="observado">Observado</button>
+              <button type="button" data-mode="comparativo">Comparativo</button>
+            </div>
+          </section>
+
+          <section class="rail-section live-box">
+            <p class="eyebrow">Bidding live</p>
+            <dl>
+              <div>
+                <dt>impr/min</dt>
+                <dd id="liveImpressions">0</dd>
+              </div>
+              <div>
+                <dt>stores</dt>
+                <dd>272</dd>
+              </div>
+              <div>
+                <dt>screens</dt>
+                <dd>5</dd>
+              </div>
+            </dl>
+          </section>
+        </aside>
+
+        <section class="dashboard" aria-label="Backoffice Target">
+          <div class="mode-strip">
+            <div>
+              <p class="eyebrow">Target model · v1</p>
+              <h1>Audiencia vendible por hora, perfil y superficie</h1>
+            </div>
+            <div class="status-cluster" aria-label="Estado del modelo">
+              <span class="status-dot"></span>
+              <span id="modelStatus">Modelo simulado</span>
+              <span id="lastSync">Sync Admira 09:42</span>
+            </div>
+          </div>
+
+          <section class="kpi-grid" aria-label="Indicadores principales">
+            <article class="kpi-tile">
+              <span>Personas/dia</span>
+              <strong id="kpiPeopleDay">0</strong>
+              <small id="kpiPeopleDelta">baseline</small>
+            </article>
+            <article class="kpi-tile">
+              <span>Hora pico</span>
+              <strong id="kpiPeakHour">0</strong>
+              <small>trafico total</small>
+            </article>
+            <article class="kpi-tile">
+              <span>Impresiones</span>
+              <strong id="kpiImpressions">0</strong>
+              <small>target activo</small>
+            </article>
+            <article class="kpi-tile">
+              <span>Audiencia util</span>
+              <strong id="kpiUsefulAudience">0%</strong>
+              <small>coincide con filtros</small>
+            </article>
+            <article class="kpi-tile">
+              <span>CPM recomendado</span>
+              <strong id="kpiCpm">0,00 €</strong>
+              <small>segun demanda</small>
+            </article>
+            <article class="kpi-tile">
+              <span>Revenue potencial</span>
+              <strong id="kpiRevenue">0 €</strong>
+              <small>campaña semanal</small>
+            </article>
+          </section>
+
+          <nav class="tabs" aria-label="Secciones Target">
+            <button class="is-active" type="button" data-tab="traffic">
+              <i data-lucide="activity"></i>
+              Trafico
+            </button>
+            <button type="button" data-tab="segments">
+              <i data-lucide="users-round"></i>
+              Segmentos
+            </button>
+            <button type="button" data-tab="inventory">
+              <i data-lucide="monitor-play"></i>
+              Inventario
+            </button>
+            <button type="button" data-tab="simulation">
+              <i data-lucide="calculator"></i>
+              Simulacion
+            </button>
+            <button type="button" data-tab="rules">
+              <i data-lucide="list-checks"></i>
+              Reglas
+            </button>
+          </nav>
+
+          <section class="tab-panel is-visible" data-panel="traffic">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Personas por hora</p>
+                <h2>Curva editable de paso exterior e interior</h2>
+              </div>
+              <div class="button-row">
+                <button class="tool-button" type="button" data-action="generate-curve">
+                  <i data-lucide="sparkles"></i>
+                  Generar curva
+                </button>
+                <button class="tool-button" type="button" data-action="copy-saturday">
+                  <i data-lucide="copy"></i>
+                  Plantilla sabado
+                </button>
+              </div>
+            </div>
+
+            <div class="traffic-layout">
+              <div class="chart-panel">
+                <div class="chart-header">
+                  <span>Distribucion diaria</span>
+                  <strong id="chartTotal">0 personas</strong>
+                </div>
+                <div id="trafficChart" class="bar-chart" aria-label="Grafico de trafico por hora"></div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Hora</th>
+                      <th>Exterior pers/h</th>
+                      <th>Interior pers/h</th>
+                      <th>Total</th>
+                      <th>Fuente</th>
+                      <th>Confianza</th>
+                    </tr>
+                  </thead>
+                  <tbody id="trafficRows"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="tab-panel" data-panel="segments">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Tipologia de audiencia</p>
+                <h2>Mix de segmentos agregado y probabilistico</h2>
+              </div>
+              <div class="confidence-meter" aria-label="Balance de segmentos">
+                <span id="segmentBalance">100%</span>
+                <small>balance</small>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Segmento</th>
+                    <th>% audiencia</th>
+                    <th>Personas/dia</th>
+                    <th>Fuente</th>
+                    <th>Confianza</th>
+                  </tr>
+                </thead>
+                <tbody id="segmentRows"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="tab-panel" data-panel="inventory">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Surfaces vendibles</p>
+                <h2>Inventario visible para programatica fisica</h2>
+              </div>
+              <button class="tool-button" type="button" data-action="calibrate">
+                <i data-lucide="crosshair"></i>
+                Calibrar visibilidad
+              </button>
+            </div>
+
+            <div class="inventory-grid" id="surfaceCards"></div>
+          </section>
+
+          <section class="tab-panel" data-panel="simulation">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Simulacion comercial</p>
+                <h2>Valor de campaña sobre el target activo</h2>
+              </div>
+              <button class="tool-button" type="button" data-action="reserve">
+                <i data-lucide="lock-keyhole"></i>
+                Reservar inventario
+              </button>
+            </div>
+
+            <div class="simulation-grid">
+              <section class="simulation-controls" aria-label="Parametros de campaña">
+                <label>
+                  CPM objetivo
+                  <input id="cpmInput" type="number" min="1" step="0.25" value="8.50" />
+                </label>
+                <label>
+                  Duracion dias
+                  <input id="daysInput" type="number" min="1" max="30" step="1" value="7" />
+                </label>
+                <label>
+                  Frecuencia max/h
+                  <input id="frequencyInput" type="number" min="1" max="20" step="1" value="6" />
+                </label>
+              </section>
+
+              <section class="proposal-panel" aria-label="Resultado de simulacion">
+                <div class="proposal-metric">
+                  <span>Audiencia alcanzable</span>
+                  <strong id="simReach">0</strong>
+                </div>
+                <div class="proposal-metric">
+                  <span>Impresiones servibles</span>
+                  <strong id="simImpressions">0</strong>
+                </div>
+                <div class="proposal-metric">
+                  <span>Valor campaña</span>
+                  <strong id="simValue">0 €</strong>
+                </div>
+                <div class="proposal-metric">
+                  <span>Cobertura target</span>
+                  <strong id="simCoverage">0%</strong>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section class="tab-panel" data-panel="rules">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Reproduccion segmentada</p>
+                <h2>Reglas que XpaceOS puede ejecutar</h2>
+              </div>
+              <button class="tool-button" type="button" data-action="add-rule">
+                <i data-lucide="plus"></i>
+                Añadir regla
+              </button>
+            </div>
+
+            <div class="rules-list" id="rulesList"></div>
+          </section>
+        </section>
+
+        <aside class="target-panel" aria-label="Campaign target">
+          <div class="target-header">
+            <div>
+              <p class="eyebrow">Buy by circuit</p>
+              <h2>Campaign target</h2>
+            </div>
+            <span id="targetCoverageBadge">0%</span>
+          </div>
+
+          <label class="field-block target-scope-block">
+            Circuit scope
+            <select id="targetScope">
+              <option value="global">Global</option>
+              <option value="national">National</option>
+              <option value="city">City</option>
+              <option value="local" selected>Local</option>
+            </select>
+          </label>
+
+          <label class="field-block target-circuit-block">
+            Circuito
+            <select id="targetCircuit">
+              <option>Press kiosk circuit</option>
+              <option>Retail high street</option>
+              <option>Metro entrance network</option>
+            </select>
+          </label>
+
+          <div class="target-toggle">
+            <button type="button" data-target-mode="whole">Whole circuit</button>
+            <button class="is-selected" type="button" data-target-mode="target">Target</button>
+          </div>
+
+          <section class="target-section">
+            <p class="eyebrow">Ad placement</p>
+            <label class="check-tile">
+              <input type="checkbox" name="placement" value="exterior" checked />
+              <span>Exterior</span>
+              <small>Escaparate, puerta y entrada</small>
+            </label>
+            <label class="check-tile">
+              <input type="checkbox" name="placement" value="interior" checked />
+              <span>Interior</span>
+              <small>Metahuman, pantalla y vending</small>
+            </label>
+          </section>
+
+          <section class="target-section">
+            <p class="eyebrow">Genero</p>
+            <div class="tile-grid two">
+              <label class="check-tile">
+                <input type="checkbox" name="gender" value="male" checked />
+                <span>Male</span>
+                <small>Audiencia masculina</small>
+              </label>
+              <label class="check-tile">
+                <input type="checkbox" name="gender" value="female" checked />
+                <span>Female</span>
+                <small>Audiencia femenina</small>
+              </label>
+            </div>
+          </section>
+
+          <section class="target-section">
+            <p class="eyebrow">Edad</p>
+            <div id="ageTiles" class="tile-stack"></div>
+          </section>
+
+          <section class="target-section">
+            <p class="eyebrow">Time slot</p>
+            <div class="tile-grid two" id="timeTiles"></div>
+          </section>
+
+          <section class="target-section">
+            <p class="eyebrow">Metadata</p>
+            <label class="field-block">
+              Capacidad economica
+              <select id="incomeSelect">
+                <option value="all">Todas</option>
+                <option value="medium">Media</option>
+                <option value="high">Alta</option>
+                <option value="premium">Premium</option>
+              </select>
+            </label>
+            <label class="field-block">
+              Tipo de telefono
+              <select id="phoneSelect">
+                <option value="all">Todos</option>
+                <option value="ios">iOS probable</option>
+                <option value="android">Android probable</option>
+                <option value="premium">Gama alta probable</option>
+              </select>
+            </label>
+          </section>
+        </aside>
+      </main>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </div>
+  </body>
+</html>

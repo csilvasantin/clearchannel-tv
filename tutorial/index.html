@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="XpaceOS Target Model tutorial for modeling traffic, audience, advertising inventory, and playback rules."
+    />
+    <link rel="canonical" href="https://admira.app/tutorial/" />
+    <title>Tutorial Target Model · XpaceOS</title>
+    <link rel="stylesheet" href="../target-assets/styles.css" />
+    <script defer src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="../target-assets/app.js"></script>
+  </head>
+  <body data-page="tutorial">
+    <div class="tutorial-shell">
+      <header class="topbar tutorial-topbar">
+        <a class="brand" href="../" aria-label="Admira home">
+          <span class="brand-mark">OMNI·PUBLICITY</span>
+          <strong>Tutorial</strong>
+        </a>
+        <div class="target-lang-switch" role="group" aria-label="Language">
+          <button class="target-lang-btn is-active" type="button" data-lang="en">EN</button>
+          <button class="target-lang-btn" type="button" data-lang="es">ES</button>
+        </div>
+        <nav class="tutorial-nav" aria-label="Navegacion tutorial">
+          <a href="#flujo">Flujo</a>
+          <a href="#metricas">Metricas</a>
+          <a href="#privacidad">Privacidad</a>
+          <a class="primary-action" href="../target/">
+            <i data-lucide="layout-dashboard"></i>
+            Abrir backoffice
+          </a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="tutorial-intro">
+          <div class="intro-copy">
+            <p class="eyebrow">admira.app/tutorial</p>
+            <h1>Configura Target Model y convierte paso de personas en inventario vendible</h1>
+            <p>
+              Este tutorial guia la operacion diaria: definir personas por hora, ajustar segmentos,
+              calibrar surfaces y publicar reglas de reproduccion para campañas segmentadas.
+            </p>
+          </div>
+          <figure class="product-figure">
+            <img src="../target-assets/target-preview.webp" width="1440" height="900" loading="lazy" decoding="async" alt="Vista del backoffice XpaceOS Target Model" />
+            <figcaption>Backoffice Target Model · vista operativa</figcaption>
+          </figure>
+        </section>
+
+        <section id="flujo" class="tutorial-section">
+          <div class="section-heading">
+            <p class="eyebrow">Flujo operativo</p>
+            <h2>Seis pasos para publicar un target</h2>
+          </div>
+          <div class="tutorial-grid">
+            <ol class="stepper" id="tutorialSteps">
+              <li class="is-active" data-step="1">
+                <button type="button">
+                  <span>01</span>
+                  Selecciona circuito y Xpacio
+                </button>
+              </li>
+              <li data-step="2">
+                <button type="button">
+                  <span>02</span>
+                  Modela personas por hora
+                </button>
+              </li>
+              <li data-step="3">
+                <button type="button">
+                  <span>03</span>
+                  Ajusta la tipologia
+                </button>
+              </li>
+              <li data-step="4">
+                <button type="button">
+                  <span>04</span>
+                  Calibra inventario visible
+                </button>
+              </li>
+              <li data-step="5">
+                <button type="button">
+                  <span>05</span>
+                  Simula la campaña
+                </button>
+              </li>
+              <li data-step="6">
+                <button type="button">
+                  <span>06</span>
+                  Publica reglas en XpaceOS
+                </button>
+              </li>
+            </ol>
+
+            <article class="tutorial-card" id="stepCard">
+              <p class="eyebrow" id="stepEyebrow">Paso 01</p>
+              <h3 id="stepTitle">Selecciona circuito y Xpacio</h3>
+              <p id="stepBody">
+                Empieza por el circuito comercial y el punto fisico. Target Model carga el baseline
+                de trafico, superficies disponibles y ultimo estado sincronizado con Admira.
+              </p>
+              <ul id="stepChecklist">
+                <li>Comprueba exterior/interior.</li>
+                <li>Revisa rango de fechas.</li>
+                <li>Elige modo simulado u observado.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="metricas" class="tutorial-section metric-band">
+          <div class="section-heading">
+            <p class="eyebrow">Metricas clave</p>
+            <h2>Que mirar antes de vender una campaña</h2>
+          </div>
+          <div class="metric-explainer">
+            <article>
+              <span>01</span>
+              <h3>Personas/hora</h3>
+              <p>Es el volumen base del gemelo digital. Cada hora puede tener fuente manual, estimada u observada.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Audiencia util</h3>
+              <p>Porcentaje del trafico que coincide con placement, edad, genero, franja y metadata seleccionada.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Impresiones</h3>
+              <p>Personas alcanzables multiplicadas por visibilidad, dwell time y frecuencia maxima por surface.</p>
+            </article>
+            <article>
+              <span>04</span>
+              <h3>Revenue</h3>
+              <p>Valor comercial calculado con CPM, dias de campaña y cobertura del target activo.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="privacidad" class="tutorial-section privacy-section">
+          <div>
+            <p class="eyebrow">Privacidad por diseño</p>
+            <h2>Trabaja siempre con datos agregados</h2>
+          </div>
+          <p>
+            Target Model debe guardar conteos, porcentajes y estimaciones. No debe crear fichas
+            personales ni usar datos sensibles para identificar individuos. Si se conectan camaras,
+            sensores o señales de dispositivo, la salida operativa debe ser agregada y auditable.
+          </p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

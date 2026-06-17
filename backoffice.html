@@ -1,0 +1,1325 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OmniPublicity — Backoffice</title>
+<meta name="description" content="Backoffice para dar de alta gemelos digitales (Xpaces + surfaces) en el mapa de OmniPublicity.">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="locations.js?v=kioskos-20260608"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>
+<style>
+  :root{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--warn:#ff8866;--danger:#ff4f5e;--card:#0a1620;--card2:#0d1c28;--line:rgba(120,243,255,.18)}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;height:100%}
+  a{color:var(--brand);text-decoration:none}
+  a:hover{text-decoration:underline}
+  button{font-family:inherit}
+
+  header{padding:14px 22px;background:linear-gradient(to bottom,rgba(2,8,13,.92),rgba(2,8,13,.6));border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;flex-wrap:wrap;position:sticky;top:0;z-index:10;backdrop-filter:blur(8px)}
+  .logo{font-family:monospace;font-size:13px;letter-spacing:.16em;color:var(--accent);font-weight:bold;white-space:nowrap}
+  .logo .dot{color:var(--brand)}
+  .logo .sub{color:var(--mut);margin-left:10px;font-weight:normal;letter-spacing:.1em}
+  .logo .ver{font-weight:normal;font-size:10px;letter-spacing:.08em;color:var(--mut);margin-left:10px}
+  nav{margin-left:auto;display:flex;gap:14px;font-size:12px;font-family:monospace;letter-spacing:.06em;text-transform:uppercase}
+  nav a{color:var(--mut)}
+  nav a:hover{color:var(--ink)}
+  nav .badge{font-size:10px;color:var(--accent);border:1px solid rgba(255,216,102,.4);padding:1px 6px;border-radius:3px;letter-spacing:.1em}
+  nav .logout{background:transparent;border:1px solid var(--line);border-radius:6px;color:var(--mut);font-family:monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;cursor:pointer;transition:border-color .12s,color .12s}
+  nav .logout:hover{border-color:var(--danger);color:var(--danger)}
+  .lang-switch{display:inline-flex;gap:2px;background:rgba(10,22,32,.6);border:1px solid var(--line);border-radius:8px;padding:2px}
+  .lang-switch .lang-btn{font-family:monospace;font-size:11px;letter-spacing:.06em;font-weight:700;color:var(--mut);background:transparent;border:0;border-radius:6px;padding:4px 8px;cursor:pointer;transition:background .15s,color .15s}
+  .lang-switch .lang-btn:hover{color:var(--ink)}
+  .lang-switch .lang-btn.active{background:rgba(120,243,255,.14);color:var(--brand);box-shadow:inset 0 0 0 1px rgba(120,243,255,.4)}
+
+  /* Login gate */
+  .gate{position:fixed;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(120,243,255,.12),transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(255,216,102,.08),transparent 55%),var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+  .gate.hidden{display:none}
+  .gate .gbox{max-width:420px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:32px 28px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .gate .glogo{font-family:monospace;font-size:13px;letter-spacing:.16em;color:var(--accent);font-weight:bold;text-align:center;margin-bottom:6px}
+  .gate .glogo .dot{color:var(--brand)}
+  .gate h2{margin:0 0 6px;font-size:24px;text-align:center;letter-spacing:-.01em}
+  .gate .gsub{color:var(--mut);font-size:13px;text-align:center;margin:0 0 22px;line-height:1.5}
+  .gate .gsub b{color:var(--brand);font-family:monospace}
+  .gate input[type=password]{width:100%;background:rgba(2,8,13,.85);border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:var(--ink);font-family:monospace;font-size:14px;outline:0;letter-spacing:.04em;transition:border-color .15s,box-shadow .15s}
+  .gate input[type=password]:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(120,243,255,.15)}
+  .gate input[type=password].err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,79,94,.18);animation:shake .35s}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+  .gate .grow{display:flex;align-items:center;gap:8px;margin:14px 0 18px;color:var(--mut);font-size:12px;font-family:monospace;letter-spacing:.04em;cursor:pointer;user-select:none}
+  .gate .grow input[type=checkbox]{width:14px;height:14px;accent-color:var(--brand);cursor:pointer}
+  .gate button.gsubmit{width:100%;background:var(--brand);color:#001620;border:0;border-radius:8px;padding:12px;font-family:monospace;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .12s,transform .12s}
+  .gate button.gsubmit:hover{background:var(--accent)}
+  .gate button.gsubmit:active{transform:scale(.98)}
+  .gate .gerr{margin-top:14px;color:var(--warn);font-family:monospace;font-size:12px;text-align:center;min-height:14px;letter-spacing:.04em}
+  .gate .gfoot{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);color:var(--mut);font-size:11px;text-align:center}
+  .gate .gfoot a{color:var(--brand)}
+
+  .shell{display:grid;grid-template-columns:280px 1fr 380px;gap:0;height:calc(100vh - 65px);min-height:0}
+  @media(max-width:1100px){.shell{grid-template-columns:240px 1fr 320px}}
+  @media(max-width:880px){.shell{grid-template-columns:1fr;height:auto}}
+
+  /* ── Lista lateral izquierda ── */
+  .bo-list{border-right:1px solid var(--line);background:rgba(10,22,32,.55);overflow-y:auto;display:flex;flex-direction:column}
+  .bo-list .lh{padding:18px 18px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .bo-list .lh h3{font-family:monospace;font-size:11px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase;margin:0}
+  .bo-list .lh .count{font-family:monospace;font-size:11px;color:var(--mut)}
+  .bo-list .new{margin:12px 18px;padding:10px;border:1px dashed var(--brand);border-radius:8px;background:transparent;color:var(--brand);font-family:monospace;font-size:12px;letter-spacing:.06em;cursor:pointer;transition:background .12s}
+  .bo-list .new:hover{background:rgba(120,243,255,.08)}
+  .bo-list ul{list-style:none;margin:0;padding:0 0 12px;flex:1;overflow-y:auto}
+  .bo-list li{padding:11px 18px;border-bottom:1px solid rgba(120,243,255,.06);cursor:pointer;display:flex;flex-direction:column;gap:3px;transition:background .12s,border-left-color .12s;border-left:3px solid transparent}
+  .bo-list li:hover{background:rgba(120,243,255,.05)}
+  .bo-list li.active{background:rgba(120,243,255,.10);border-left-color:var(--brand)}
+  .bo-list li .nm{font-weight:700;font-size:13px;color:var(--ink)}
+  .bo-list li .ad{font-size:11px;color:var(--mut)}
+  .bo-list li .sf{font-family:monospace;font-size:10px;color:var(--accent);letter-spacing:.05em;margin-top:2px}
+  .bo-list .tools{padding:14px 18px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px;background:rgba(10,22,32,.4)}
+  .bo-list .tools button{padding:8px 10px;background:transparent;border:1px solid var(--line);border-radius:6px;color:var(--mut);font-family:monospace;font-size:11px;letter-spacing:.06em;cursor:pointer;text-align:left;transition:border-color .12s,color .12s}
+  .bo-list .tools button:hover{border-color:var(--brand);color:var(--brand)}
+  .bo-list .tools button.danger:hover{border-color:var(--danger);color:var(--danger)}
+
+  /* ── Formulario centro ── */
+  .bo-form{padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+  .bo-form .empty{margin:auto;text-align:center;color:var(--mut);font-family:monospace;font-size:13px;line-height:1.7;max-width:420px}
+  .bo-form .empty .big{display:block;font-size:48px;margin-bottom:14px}
+  .bo-form .formhead{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-bottom:14px;flex-wrap:wrap}
+  .bo-form .formhead h2{margin:0;font-size:22px;letter-spacing:-.01em}
+  .bo-form .formhead h2 .sub{font-family:monospace;font-size:12px;color:var(--mut);font-weight:normal;letter-spacing:.06em;margin-left:8px;text-transform:uppercase}
+  .bo-form .formhead .actions{display:flex;gap:8px;flex-wrap:wrap}
+  .bo-form .formhead button{padding:8px 14px;font-family:monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;cursor:pointer;border:1px solid;background:transparent;transition:background .12s,color .12s}
+  .bo-form .formhead .save{border-color:var(--good);color:var(--good)}
+  .bo-form .formhead .save:hover{background:var(--good);color:#001620}
+  .bo-form .formhead .cancel{border-color:var(--line);color:var(--mut)}
+  .bo-form .formhead .cancel:hover{border-color:var(--ink);color:var(--ink)}
+  .bo-form .formhead .delete{border-color:var(--danger);color:var(--danger)}
+  .bo-form .formhead .delete:hover{background:var(--danger);color:#fff}
+
+  .bo-form fieldset{border:1px solid var(--line);border-radius:8px;padding:18px;margin:0;background:rgba(10,22,32,.4)}
+  .bo-form legend{padding:0 8px;font-family:monospace;font-size:11px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase}
+
+  .bo-form .row{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;margin-bottom:10px}
+  .bo-form .row:last-child{margin-bottom:0}
+  .bo-form .row label{font-family:monospace;font-size:11px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
+  .bo-form .row input, .bo-form .row select, .bo-form .row textarea{width:100%;background:rgba(2,8,13,.7);border:1px solid var(--line);border-radius:6px;padding:8px 10px;color:var(--ink);font-family:inherit;font-size:13px;outline:0;transition:border-color .12s}
+  .bo-form .row input:focus, .bo-form .row select:focus, .bo-form .row textarea:focus{border-color:var(--brand)}
+  .bo-form .row textarea{min-height:54px;resize:vertical;font-family:inherit}
+  .time-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .check-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+  .check-grid label{display:flex;align-items:center;gap:8px;background:rgba(2,8,13,.55);border:1px solid var(--line);border-radius:6px;padding:8px 10px;color:var(--ink);cursor:pointer}
+  .check-grid input{width:auto!important}
+  .meta-list{display:flex;flex-direction:column;gap:8px}
+  .meta-row{display:grid;grid-template-columns:1fr 1.2fr 1.2fr 90px 30px;gap:8px;align-items:center;background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:8px}
+  .meta-row input,.meta-row select{width:100%;background:rgba(2,8,13,.7);border:1px solid transparent;border-radius:4px;padding:6px 8px;color:var(--ink);font-size:12px;outline:0;font-family:inherit}
+  .meta-row input:focus,.meta-row select:focus{border-color:var(--brand)}
+  .meta-row .del{background:transparent;border:0;color:var(--mut);cursor:pointer;font-size:18px;padding:0;line-height:1}
+  .meta-row .del:hover{color:var(--danger)}
+  .mini-note{font-size:11px;color:var(--mut);line-height:1.5;margin:8px 0 0}
+  .bo-form .coords-row{display:grid;grid-template-columns:120px 1fr 1fr auto auto;gap:8px;align-items:center;margin-bottom:10px}
+  .bo-form .coords-row label{font-family:monospace;font-size:11px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
+  .bo-form .coords-row input{width:100%;background:rgba(2,8,13,.7);border:1px solid var(--line);border-radius:6px;padding:8px 10px;color:var(--ink);font-size:13px;outline:0;font-family:monospace}
+  .bo-form .coords-row button{padding:8px 12px;background:transparent;border:1px solid var(--line);border-radius:6px;color:var(--mut);font-family:monospace;font-size:11px;cursor:pointer;letter-spacing:.05em;white-space:nowrap}
+  .bo-form .coords-row button:hover{border-color:var(--brand);color:var(--brand)}
+
+  /* Surfaces editor */
+  .surf-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+  .surf-row{display:grid;grid-template-columns:1.4fr 2fr 88px 70px 70px 100px 30px;gap:8px;align-items:center;background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:8px}
+  .surf-row input, .surf-row select{width:100%;background:rgba(2,8,13,.7);border:1px solid transparent;border-radius:4px;padding:6px 8px;color:var(--ink);font-size:12px;outline:0;font-family:inherit}
+  .surf-row input:focus, .surf-row select:focus{border-color:var(--brand)}
+  .surf-row .del{background:transparent;border:0;color:var(--mut);cursor:pointer;font-size:18px;padding:0;line-height:1}
+  .surf-row .del:hover{color:var(--danger)}
+  .surf-add{padding:10px;border:1px dashed var(--line);border-radius:6px;background:transparent;color:var(--mut);font-family:monospace;font-size:11px;letter-spacing:.06em;cursor:pointer;width:100%;margin-top:10px;text-transform:uppercase}
+  .surf-add:hover{border-color:var(--brand);color:var(--brand)}
+  .surf-headrow{display:grid;grid-template-columns:1.4fr 2fr 88px 70px 70px 100px 30px;gap:8px;padding:0 8px;font-family:monospace;font-size:9px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;margin-bottom:-4px}
+
+  /* ── Mini-mapa derecho ── */
+  .bo-map-pane{border-left:1px solid var(--line);background:rgba(10,22,32,.55);display:flex;flex-direction:column;min-height:0}
+  .bo-map-pane .mh{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+  .bo-map-pane .mh h3{font-family:monospace;font-size:11px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase;margin:0}
+  .bo-map-pane .mh .hint{font-size:11px;color:var(--mut);line-height:1.4}
+  .bo-map-pane #bo-map{flex:1 1 48%;min-height:260px}
+  .bo-map-pane .mfoot{padding:10px 18px;border-top:1px solid var(--line);font-family:monospace;font-size:11px;color:var(--mut);display:flex;justify-content:space-between;gap:8px}
+  .bo-map-pane .mfoot b{color:var(--brand)}
+  .place-photo{border-top:1px solid var(--line);background:rgba(2,8,13,.72);padding:14px 18px 16px;display:flex;flex-direction:column;gap:10px}
+  .place-photo .photo-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .place-photo h3{font-family:monospace;font-size:11px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase;margin:0}
+  .place-photo a{font-family:monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);white-space:nowrap}
+  .place-photo .photo-frame{height:260px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:linear-gradient(135deg,rgba(10,22,32,.92),rgba(2,8,13,.96));position:relative}
+  .place-photo iframe{width:100%;height:100%;border:0;display:block;background:#0a1620}
+  .place-photo .photo-empty{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:22px;color:var(--mut);font-family:monospace;font-size:12px;line-height:1.5}
+  .place-photo .photo-caption{font-size:11px;color:var(--mut);line-height:1.4}
+  @media(max-width:1100px){.place-photo .photo-frame{height:220px}}
+
+  /* Toast */
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(10,22,32,.96);border:1px solid var(--brand);border-radius:8px;padding:12px 20px;font-family:monospace;font-size:12px;color:var(--ink);letter-spacing:.04em;z-index:30;display:none;backdrop-filter:blur(8px);box-shadow:0 4px 24px rgba(0,0,0,.5)}
+  .toast.show{display:block;animation:fadein .3s ease}
+  .toast.err{border-color:var(--danger);color:var(--warn)}
+  @keyframes fadein{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+  /* Modals */
+  .modal{position:fixed;inset:0;background:rgba(2,8,13,.85);z-index:40;display:none;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(4px)}
+  .modal.show{display:flex}
+  .modal .box{background:var(--card);border:1px solid var(--brand);border-radius:10px;padding:22px;max-width:560px;width:100%;max-height:80vh;display:flex;flex-direction:column;gap:14px}
+  .modal h3{margin:0;font-family:monospace;font-size:12px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase}
+  .modal textarea{width:100%;flex:1;min-height:280px;background:rgba(2,8,13,.7);border:1px solid var(--line);border-radius:6px;padding:12px;color:var(--ink);font-family:monospace;font-size:11px;outline:0;line-height:1.4;resize:vertical}
+  .modal .mactions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+  .modal button{padding:8px 14px;font-family:monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;cursor:pointer;border:1px solid;background:transparent;color:var(--mut)}
+  .modal button:hover{border-color:var(--ink);color:var(--ink)}
+  .modal button.primary{border-color:var(--good);color:var(--good)}
+  .modal button.primary:hover{background:var(--good);color:#001620}
+</style>
+</head>
+<body>
+
+<!-- Login gate -->
+<div class="gate" id="gate">
+  <div class="gbox">
+    <div class="glogo">OMNI<span class="dot">·</span>PUBLICITY</div>
+    <h2 data-i18n="gate_title">Backoffice</h2>
+    <p class="gsub" data-i18n-html="gate_sub">Acceso restringido a cuentas <b>@admira.com</b>. Inicia sesión con Google para gestionar <b>OmniPublicity</b>.</p>
+    <div id="g-signin" style="display:flex;justify-content:center;margin:8px 0 4px"></div>
+    <div class="gerr" id="g-err"></div>
+    <div class="gfoot" data-i18n-html="gate_foot">¿Vienes a mirar el mapa? <a href="index.html">Ir al mapa público →</a></div>
+  </div>
+</div>
+
+<header>
+  <span class="logo">OMNI<span class="dot">·</span>PUBLICITY <span class="sub" data-i18n="bo_sub">/ backoffice</span></span>
+  <nav>
+    <a href="target/" data-i18n="nav_target">Target Model</a>
+    <a href="index.html" data-i18n="nav_public_map">Mapa público</a>
+    <a href="about.html" data-i18n="nav_rtb">Concepto RTB</a>
+    <a href="../xpace-os/">Xpace OS</a>
+    <a href="../01.-AdmiraXperience-Game/" target="_blank" rel="noopener">↗ Admira XP</a>
+    <div class="lang-switch" id="lang-switch" role="group" aria-label="Idioma / Language">
+      <button type="button" class="lang-btn" data-lang="en">EN</button>
+      <button type="button" class="lang-btn" data-lang="es">ES</button>
+    </div>
+    <button id="btn-logout" class="logout" data-i18n="logout">Logout</button>
+    <span class="badge" id="badge-mode" title="Sync status with omnipublicity-api">CARGANDO…</span>
+  </nav>
+</header>
+
+<div class="shell">
+
+  <!-- ── Lista de tiendas ── -->
+  <aside class="bo-list">
+    <div class="lh">
+      <h3 data-i18n="stores">Xpaces</h3>
+      <span class="count" id="lh-count">0</span>
+    </div>
+    <button class="new" id="btn-new" data-i18n="new_store">+ Nuevo Xpace</button>
+    <ul id="bo-list-ul"></ul>
+    <div class="tools">
+      <button id="btn-publish" style="border-color:rgba(120,243,255,.5);color:var(--brand)" data-i18n="publish">☁ Publicar al sitio</button>
+      <button id="btn-import" data-i18n="import_json">📥 Importar JSON</button>
+      <button id="btn-export" data-i18n="export_json">📤 Exportar JSON</button>
+      <button id="btn-token" data-i18n="change_token">🔑 Cambiar API token</button>
+      <button id="btn-reset" class="danger" data-i18n="reset_default">↺ Reset al catálogo por defecto</button>
+    </div>
+  </aside>
+
+  <!-- ── Formulario ── -->
+  <section class="bo-form" id="bo-form">
+    <div class="empty" id="bo-empty">
+      <span class="big">🏪</span>
+      <span data-i18n-html="empty_msg">Selecciona un Xpace de la lista o pulsa <b style="color:var(--brand)">+ Nuevo Xpace</b> para empezar.<br><br>Los cambios se guardan en <b>localStorage</b> mientras editas. Cuando termines, pulsa <b style="color:var(--brand)">☁ Publicar al sitio</b> para subirlos al worker (KV) y que se vean en el mapa público.</span>
+    </div>
+    <div id="bo-editor" hidden>
+      <div class="formhead">
+        <h2><span id="f-title">Nuevo Xpace</span><span class="sub" id="f-sub"></span></h2>
+        <div class="actions">
+          <button class="save" id="btn-save" data-i18n="save">💾 Guardar</button>
+          <button class="cancel" id="btn-cancel" data-i18n="cancel">Cancelar</button>
+          <button class="delete" id="btn-delete" hidden data-i18n="del">🗑 Eliminar</button>
+        </div>
+      </div>
+
+      <fieldset>
+        <legend data-i18n="legend_identity">Identidad</legend>
+        <div class="row"><label for="f-id">ID</label><input id="f-id" type="text" placeholder="ej: admira-malaga" autocomplete="off"></div>
+        <div class="row"><label for="f-name" data-i18n="label_name">Nombre</label><input id="f-name" type="text" placeholder="Admira Málaga"></div>
+        <div class="row"><label for="f-kind" data-i18n="label_kind">Tipo</label><input id="f-kind" type="text" placeholder="Estanco · Retail físico"></div>
+        <div class="row"><label for="f-addr" data-i18n="label_addr">Dirección</label><input id="f-addr" type="text" placeholder="Calle Larios 8 · Málaga"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend data-i18n="legend_coords">Coordenadas</legend>
+        <div class="coords-row">
+          <label>lat / lng</label>
+          <input id="f-lat" type="number" step="any" placeholder="40.4036" inputmode="decimal">
+          <input id="f-lng" type="number" step="any" placeholder="-3.7283" inputmode="decimal">
+          <button type="button" id="btn-geocode" data-i18n="geocode">🔍 Geocodificar dirección</button>
+          <button type="button" id="btn-pin" data-i18n="pin_from_map">📍 Pin desde mapa →</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend data-i18n="legend_segmentation">Segmentación obligatoria</legend>
+        <div class="row">
+          <label data-i18n="label_schedule">Horario</label>
+          <div class="time-pair">
+            <input id="f-seg-start" type="time" required value="08:00">
+            <input id="f-seg-end" type="time" required value="20:00">
+          </div>
+        </div>
+        <div class="row">
+          <label for="f-seg-typology" data-i18n="label_typology">Tipología</label>
+          <select id="f-seg-typology" required>
+            <option value="both" data-i18n="typology_both">Exterior + interior</option>
+            <option value="exterior" data-i18n="typology_exterior">Exterior</option>
+            <option value="interior" data-i18n="typology_interior">Interior</option>
+          </select>
+        </div>
+        <div class="row" style="align-items:flex-start">
+          <label data-i18n="label_gender">Género</label>
+          <div class="check-grid" id="seg-genders"></div>
+        </div>
+        <div class="row" style="align-items:flex-start">
+          <label data-i18n="label_age">Edad</label>
+          <div class="check-grid" id="seg-ages"></div>
+        </div>
+        <div class="row" style="align-items:flex-start">
+          <label data-i18n="label_time_slots">Franjas</label>
+          <div class="check-grid" id="seg-timeSlots"></div>
+        </div>
+        <div class="row" style="align-items:flex-start">
+          <label data-i18n="label_metadata">Metadata</label>
+          <div>
+            <div class="meta-list" id="seg-meta-list"></div>
+            <button type="button" class="surf-add" id="btn-meta-add" data-i18n="add_metadata">+ Añadir metadata</button>
+            <p class="mini-note" data-i18n="metadata_note">Criterios opcionales creados por el exclusivista: zona, audiencia premium, afluencia, idioma, temporada, etc.</p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend data-i18n="legend_twin">Gemelo Digital</legend>
+        <div class="row"><label for="f-music" data-i18n="label_music">Hilo musical</label><input id="f-music" type="text" placeholder="lounge · techno · pop · flamenco · seoul · trap"></div>
+        <div class="row"><label for="f-cameras" data-i18n="label_cameras">Cámaras</label><label style="display:flex;align-items:center;gap:8px;font-weight:normal;cursor:pointer"><input id="f-cameras" type="checkbox" style="width:auto"> <span data-i18n="cameras_note">El punto tiene cámaras (LiveCam)</span></label></div>
+        <div class="row" style="align-items:flex-start"><label for="f-employees" data-i18n="label_employees">Empleados</label><textarea id="f-employees" rows="4" placeholder="Un empleado por línea: Nombre, rol&#10;Marta, cajero&#10;Jordi, repositor&#10;Núria, azafata&#10;Pau, manager" style="flex:1;min-width:0;font-family:inherit;font-size:13px;line-height:1.5;padding:8px 10px;border-radius:8px;background:rgba(2,8,13,.6);color:var(--ink);border:1px solid var(--line);resize:vertical"></textarea></div>
+        <div class="row"><label></label><span style="font-size:11px;color:var(--mut)" data-i18n-html="employees_note">Roles: cajero · repositor · azafata · manager · dj. El gemelo (game.html?loc=&lt;id&gt;) usa estos datos.</span></div>
+      </fieldset>
+
+      <fieldset>
+        <legend data-i18n="legend_surfaces">Surfaces</legend>
+        <div class="surf-headrow">
+          <span data-i18n="col_name">Nombre</span><span data-i18n="col_desc">Descripción</span><span data-i18n="col_status">Estado</span><span data-i18n="col_impr">Impr/día</span><span>CPM</span><span data-i18n="col_type">Tipo</span><span></span>
+        </div>
+        <div class="surf-list" id="surf-list"></div>
+        <button type="button" class="surf-add" id="btn-surf-add" data-i18n="add_surface">+ Añadir surface</button>
+      </fieldset>
+    </div>
+  </section>
+
+  <!-- ── Mini-mapa ── -->
+  <aside class="bo-map-pane">
+    <div class="mh">
+      <h3 data-i18n="pin_on_map">Pin en mapa</h3>
+      <span class="hint" data-i18n="pin_hint">Haz click en cualquier punto del mapa para fijar las coordenadas del formulario.</span>
+    </div>
+    <div id="bo-map"></div>
+    <section class="place-photo" id="place-photo">
+      <div class="photo-head">
+        <h3>Foto del Xpacio</h3>
+        <a id="photo-link" href="https://www.google.com/maps" target="_blank" rel="noopener">Abrir en Google Maps ↗</a>
+      </div>
+      <div class="photo-frame" id="photo-frame">
+        <div class="photo-empty">Selecciona un Xpacio para cargar su vista de Google Maps.</div>
+      </div>
+      <div class="photo-caption" id="photo-caption">La vista se genera automáticamente con las coordenadas del formulario.</div>
+    </section>
+    <div class="mfoot">
+      <span><span data-i18n="center">Centro:</span> <b id="m-center">—</b></span>
+      <span><span data-i18n="zoom">zoom</span> <b id="m-zoom">—</b></span>
+    </div>
+  </aside>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Modal genérico para importar / exportar JSON -->
+<div class="modal" id="modal">
+  <div class="box">
+    <h3 id="mo-title">JSON</h3>
+    <textarea id="mo-text" spellcheck="false"></textarea>
+    <div class="mactions">
+      <button id="mo-cancel" data-i18n="close">Cerrar</button>
+      <button id="mo-confirm" class="primary" hidden data-i18n="confirm">Confirmar</button>
+      <button id="mo-copy" hidden data-i18n="copy_clip">📋 Copiar al portapapeles</button>
+      <button id="mo-download" hidden data-i18n="download_loc">⬇ Descargar locations.js</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── i18n (comparte idioma con la portada vía localStorage omnip-lang) ──
+const I18N = {
+  es: {
+    bo_sub:'/ backoffice',
+    gate_title:'Backoffice',
+    gate_sub:'Acceso restringido a cuentas <b>@admira.com</b>. Inicia sesión con Google para gestionar <b>OmniPublicity</b>.',
+    remember:'Recordar en este navegador', enter:'Entrar',
+    gate_foot:'¿Vienes a mirar el mapa? <a href="index.html">Ir al mapa público →</a>',
+    nav_target:'Target Model', nav_public_map:'Mapa público', nav_rtb:'Concepto RTB', logout:'Logout',
+    stores:'Xpaces', new_store:'+ Nuevo Xpace',
+    publish:'☁ Publicar al sitio', import_json:'📥 Importar JSON', export_json:'📤 Exportar JSON',
+    change_token:'🔑 Cambiar API token', reset_default:'↺ Reset al catálogo por defecto',
+    empty_msg:'Selecciona un Xpace de la lista o pulsa <b style="color:var(--brand)">+ Nuevo Xpace</b> para empezar.<br><br>Los cambios se guardan en <b>localStorage</b> mientras editas. Cuando termines, pulsa <b style="color:var(--brand)">☁ Publicar al sitio</b> para subirlos al worker (KV) y que se vean en el mapa público.',
+    save:'💾 Guardar', cancel:'Cancelar', del:'🗑 Eliminar',
+    legend_identity:'Identidad', label_name:'Nombre', label_kind:'Tipo', label_addr:'Dirección',
+    legend_coords:'Coordenadas', geocode:'🔍 Geocodificar dirección', pin_from_map:'📍 Pin desde mapa →',
+    legend_segmentation:'Segmentación obligatoria', label_schedule:'Horario', label_typology:'Tipología',
+    typology_both:'Exterior + interior', typology_exterior:'Exterior', typology_interior:'Interior',
+    label_gender:'Género', label_age:'Edad', label_time_slots:'Franjas', label_metadata:'Metadata',
+    seg_male:'Hombre', seg_female:'Mujer', age_child:'Niño <14', age_young:'Joven 15-30',
+    age_adult:'Adulto 30-50', age_senior:'Senior 50-65', age_elder:'Vejez >65',
+    time_morning:'Mañana 08:00-12:00', time_midday:'Mediodía 12:00-16:00',
+    time_afternoon:'Tarde 16:00-20:00', time_night:'Noche 20:00-00:00',
+    add_metadata:'+ Añadir metadata', metadata_note:'Criterios opcionales creados por el exclusivista: zona, audiencia premium, afluencia, idioma, temporada, etc.',
+    meta_key:'criterio', meta_label:'etiqueta', meta_value:'valor', meta_delete:'Eliminar metadata',
+    meta_type_text:'texto', meta_type_tag:'tag', meta_type_number:'número', meta_type_bool:'sí/no',
+    legend_twin:'Gemelo Digital', label_music:'Hilo musical', label_cameras:'Cámaras',
+    cameras_note:'El punto tiene cámaras (LiveCam)', label_employees:'Empleados',
+    employees_note:'Roles: cajero · repositor · azafata · manager · dj. El gemelo (game.html?loc=&lt;id&gt;) usa estos datos.',
+    legend_surfaces:'Surfaces', col_name:'Nombre', col_desc:'Descripción', col_status:'Estado', col_impr:'Impr/día', col_type:'Tipo',
+    add_surface:'+ Añadir surface',
+    pin_on_map:'Pin en mapa', pin_hint:'Haz click en cualquier punto del mapa para fijar las coordenadas del formulario.',
+    center:'Centro:', zoom:'zoom',
+    close:'Cerrar', confirm:'Confirmar', copy_clip:'📋 Copiar al portapapeles', download_loc:'⬇ Descargar locations.js',
+    st_live:'● LIVE', st_sched:'PROG', st_idle:'IDLE',
+    badge_loading:'CARGANDO…', badge_synced:'KV · sincronizado', badge_offline:'OFFLINE · solo local',
+    badge_unpublished:'CAMBIOS SIN PUBLICAR', badge_local:'LOCAL · localStorage',
+    wrong_pass:'✕ Password incorrecto', logout_confirm:'¿Cerrar sesión del backoffice?',
+    publishing:'⏳ Publicando…', err_prefix:'Error: ',
+    noname:'(sin nombre)', editing:'· editando', new_store_title:'Nuevo Xpace', unsaved:'· sin guardar',
+    saved:'Guardado · ', no_geo:'Sin resultados — escribe la dirección completa', cant_copy:'No se pudo copiar',
+    invalid_store:'Xpace inválido: ',
+    delete_confirm_1:'¿Eliminar el Xpace "', delete_confirm_2:'"? Esta acción solo afecta a este navegador (localStorage).',
+    reset_confirm_1:'¿Borrar todos los cambios locales y restaurar el catálogo por defecto (', reset_confirm_2:' Xpaces)?',
+  },
+  en: {
+    bo_sub:'/ backoffice',
+    gate_title:'Backoffice',
+    gate_sub:'Restricted to <b>@admira.com</b> accounts. Sign in with Google to manage <b>OmniPublicity</b>.',
+    remember:'Remember on this browser', enter:'Sign in',
+    gate_foot:'Here to see the map? <a href="index.html">Go to the public map →</a>',
+    nav_target:'Target Model', nav_public_map:'Public map', nav_rtb:'RTB concept', logout:'Logout',
+    stores:'Xpaces', new_store:'+ New Xpace',
+    publish:'☁ Publish to site', import_json:'📥 Import JSON', export_json:'📤 Export JSON',
+    change_token:'🔑 Change API token', reset_default:'↺ Reset to default catalog',
+    empty_msg:'Select an Xpace from the list or click <b style="color:var(--brand)">+ New Xpace</b> to begin.<br><br>Changes are saved to <b>localStorage</b> while you edit. When you’re done, click <b style="color:var(--brand)">☁ Publish to site</b> to push them to the worker (KV) so they show on the public map.',
+    save:'💾 Save', cancel:'Cancel', del:'🗑 Delete',
+    legend_identity:'Identity', label_name:'Name', label_kind:'Type', label_addr:'Address',
+    legend_coords:'Coordinates', geocode:'🔍 Geocode address', pin_from_map:'📍 Pin from map →',
+    legend_segmentation:'Mandatory targeting', label_schedule:'Schedule', label_typology:'Typology',
+    typology_both:'Exterior + interior', typology_exterior:'Exterior', typology_interior:'Interior',
+    label_gender:'Gender', label_age:'Age', label_time_slots:'Time slots', label_metadata:'Metadata',
+    seg_male:'Male', seg_female:'Female', age_child:'Child <14', age_young:'Young 15-30',
+    age_adult:'Adult 30-50', age_senior:'Senior 50-65', age_elder:'Elder >65',
+    time_morning:'Morning 08:00-12:00', time_midday:'Midday 12:00-16:00',
+    time_afternoon:'Afternoon 16:00-20:00', time_night:'Night 20:00-00:00',
+    add_metadata:'+ Add metadata', metadata_note:'Optional criteria created by the exclusivist: zone, premium audience, footfall, language, season, etc.',
+    meta_key:'criterion', meta_label:'label', meta_value:'value', meta_delete:'Delete metadata',
+    meta_type_text:'text', meta_type_tag:'tag', meta_type_number:'number', meta_type_bool:'yes/no',
+    legend_twin:'Digital Twin', label_music:'Music thread', label_cameras:'Cameras',
+    cameras_note:'This location has cameras (LiveCam)', label_employees:'Employees',
+    employees_note:'Roles: cashier · stocker · host · manager · dj. The twin (game.html?loc=&lt;id&gt;) uses this data.',
+    legend_surfaces:'Surfaces', col_name:'Name', col_desc:'Description', col_status:'Status', col_impr:'Impr/day', col_type:'Type',
+    add_surface:'+ Add surface',
+    pin_on_map:'Pin on map', pin_hint:'Click anywhere on the map to set the form coordinates.',
+    center:'Center:', zoom:'zoom',
+    close:'Close', confirm:'Confirm', copy_clip:'📋 Copy to clipboard', download_loc:'⬇ Download locations.js',
+    st_live:'● LIVE', st_sched:'SCHED', st_idle:'IDLE',
+    badge_loading:'LOADING…', badge_synced:'KV · synced', badge_offline:'OFFLINE · local only',
+    badge_unpublished:'UNPUBLISHED CHANGES', badge_local:'LOCAL · localStorage',
+    wrong_pass:'✕ Wrong password', logout_confirm:'Log out of the backoffice?',
+    publishing:'⏳ Publishing…', err_prefix:'Error: ',
+    noname:'(no name)', editing:'· editing', new_store_title:'New Xpace', unsaved:'· unsaved',
+    saved:'Saved · ', no_geo:'No results — type the full address', cant_copy:'Couldn’t copy',
+    invalid_store:'Invalid Xpace: ',
+    delete_confirm_1:'Delete Xpace "', delete_confirm_2:'"? This only affects this browser (localStorage).',
+    reset_confirm_1:'Discard all local changes and restore the default catalog (', reset_confirm_2:' Xpaces)?',
+  },
+};
+let LANG = (function(){ try { return localStorage.getItem('omnip-lang') === 'es' ? 'es' : 'en'; } catch(_) { return 'en'; } })();
+function t(key){ return (I18N[LANG] && I18N[LANG][key] != null) ? I18N[LANG][key] : (I18N.es[key] != null ? I18N.es[key] : key); }
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  const currentSeg = $('bo-editor') && !$('bo-editor').hidden ? readSegmentationForm() : null;
+  renderSegmentationGroups();
+  if (currentSeg) fillSegmentation(currentSeg);
+  document.documentElement.lang = LANG;
+}
+function setLang(lang){
+  LANG = (lang === 'en') ? 'en' : 'es';
+  try { localStorage.setItem('omnip-lang', LANG); } catch(_){}
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === LANG));
+  applyI18n();
+  try { if (typeof renderList === 'function') renderList(); } catch(_){}
+  try { if (typeof refreshBadge === 'function') refreshBadge(); } catch(_){}
+}
+
+// ─── Login gate · Sign in with Google (solo @admira.com) ────────────
+// La seguridad real la impone el worker omnipublicity-api: verifica la
+// firma del ID token, aud=GOOGLE_CLIENT_ID y hd/email=admira.com. Aquí
+// el gate es la capa de UX.
+const GOOGLE_CLIENT_ID = '861856772040-quq6ut76k4mqj3fdq87h6g6caht3nm4l.apps.googleusercontent.com';
+const ALLOWED_DOMAIN = 'admira.com';
+const GTOK_KEY = 'omnip-bo-gtoken';
+
+const gate = document.getElementById('gate');
+const gErr = document.getElementById('g-err');
+
+function parseJwt(tok) {
+  try {
+    let p = String(tok).split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+    while (p.length % 4) p += '=';
+    const json = decodeURIComponent(atob(p).split('').map(c => '%' + ('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    return JSON.parse(json);
+  } catch { return null; }
+}
+function storedGoogle() {
+  try {
+    const raw = localStorage.getItem(GTOK_KEY) || sessionStorage.getItem(GTOK_KEY);
+    if (!raw) return null;
+    const o = JSON.parse(raw);
+    if (!o || !o.token) return null;
+    const pl = parseJwt(o.token);
+    if (!pl || !pl.exp || pl.exp * 1000 < Date.now()) return null;   // caducado
+    return o;
+  } catch { return null; }
+}
+function getGoogleToken() { const g = storedGoogle(); return g ? g.token : null; }
+function googleEmail() { const g = storedGoogle(); return g ? g.email : ''; }
+function isAuthed() {
+  const g = storedGoogle();
+  return !!(g && String(g.email||'').toLowerCase().endsWith('@'+ALLOWED_DOMAIN));
+}
+function clearAuth() {
+  try { localStorage.removeItem(GTOK_KEY); sessionStorage.removeItem(GTOK_KEY); } catch {}
+  try { if (window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect(); } catch {}
+}
+
+// Callback de Google Identity Services tras login.
+function onGoogleCredential(resp) {
+  const token = resp && resp.credential;
+  const pl = token ? parseJwt(token) : null;
+  if (!pl) { gErr.textContent = (LANG==='en'?'Google sign-in error':'Error de acceso con Google'); return; }
+  const email = String(pl.email || '').toLowerCase();
+  const okDomain = (String(pl.hd||'').toLowerCase() === ALLOWED_DOMAIN) || email.endsWith('@'+ALLOWED_DOMAIN);
+  if (!okDomain || pl.email_verified === false) {
+    gErr.textContent = (LANG==='en'?'Only @':'Solo cuentas @') + ALLOWED_DOMAIN;
+    try { localStorage.removeItem(GTOK_KEY); sessionStorage.removeItem(GTOK_KEY); google.accounts.id.disableAutoSelect(); } catch {}
+    return;
+  }
+  try { localStorage.setItem(GTOK_KEY, JSON.stringify({ token, email })); } catch {}
+  gErr.textContent = '';
+  gate.classList.add('hidden');
+  bootBackoffice();
+}
+
+function initGoogleGate() {
+  if (!(window.google && google.accounts && google.accounts.id)) return;
+  try {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: onGoogleCredential,
+      hd: ALLOWED_DOMAIN,
+      auto_select: true,
+      cancel_on_tap_outside: false,
+    });
+    const host = document.getElementById('g-signin');
+    if (host) google.accounts.id.renderButton(host, { theme:'filled_blue', size:'large', shape:'pill', text:'signin_with', logo_alignment:'center', width:260 });
+    if (!isAuthed()) { try { google.accounts.id.prompt(); } catch {} }
+  } catch (e) { /* GIS no disponible */ }
+}
+// GIS llama a esto cuando termina de cargar (script async); si ya está, ahora.
+window.onGoogleLibraryLoad = initGoogleGate;
+if (window.google && google.accounts && google.accounts.id) initGoogleGate();
+
+document.getElementById('btn-logout').addEventListener('click', () => {
+  if (!confirm(t('logout_confirm'))) return;
+  clearAuth();
+  location.reload();
+});
+
+// ─── State (se inicializa cuando hay auth) ─────────────────────────
+let locations = [];
+let editingIdx = -1; // -1 = nada seleccionado; -2 = nueva (todavía sin guardar)
+let pendingPin = false;
+let booted = false;
+
+async function bootBackoffice() {
+  if (booted) return;
+  booted = true;
+  // Arranque sincrónico para no esperar al worker.
+  locations = window.loadOmnipLocations().map(l => JSON.parse(JSON.stringify(normalizeLocation(l))));
+  renderSegmentationGroups();
+  bindSurfaces();
+  bindMetadata();
+  initMap();
+  renderList();
+  setBadge('local', null);
+  // Refresh asincrónico desde el worker. Si la KV trae algo más nuevo,
+  // re-render. Si falla, nos quedamos con lo local.
+  try {
+    const res = await window.loadOmnipLocationsAsync(4000);
+    if (res && Array.isArray(res.locations) && res.locations.length) {
+      const a = JSON.stringify(locations), b = JSON.stringify(res.locations);
+      if (a !== b) {
+        locations = res.locations.map(l => JSON.parse(JSON.stringify(normalizeLocation(l))));
+        renderList();
+        if (typeof renderMap === 'function') renderMap();
+      }
+      setBadge(res.source === 'kv' ? 'kv' : 'local', res.updatedAt);
+    } else {
+      setBadge('local', null);
+    }
+  } catch { setBadge('offline', null); }
+}
+
+// ─── Badge de estado de sincronización ─────────────────────────────
+let _lastBadge = { mode: 'local', at: 0 };
+function setBadge(mode, updatedAt) {
+  _lastBadge = { mode, at: updatedAt || 0 };
+  const el = document.getElementById('badge-mode'); if (!el) return;
+  if (mode === 'kv') {
+    const when = updatedAt ? new Date(updatedAt * 1000).toLocaleString(LANG === 'en' ? 'en-GB' : 'es-ES', {dateStyle:'short', timeStyle:'short'}) : '';
+    el.textContent = t('badge_synced') + (when ? ' · ' + when : '');
+    el.style.color = 'var(--good)';
+    el.style.borderColor = 'rgba(136,255,170,.4)';
+  } else if (mode === 'offline') {
+    el.textContent = t('badge_offline');
+    el.style.color = 'var(--warn)';
+    el.style.borderColor = 'rgba(255,136,102,.4)';
+  } else if (mode === 'dirty') {
+    el.textContent = t('badge_unpublished');
+    el.style.color = 'var(--accent)';
+    el.style.borderColor = 'rgba(255,216,102,.5)';
+  } else {
+    el.textContent = t('badge_local');
+    el.style.color = 'var(--accent)';
+    el.style.borderColor = 'rgba(255,216,102,.4)';
+  }
+}
+function refreshBadge(){ setBadge(_lastBadge.mode, _lastBadge.at); }
+
+// ─── API token storage ────────────────────────────────────────────
+const TOKEN_KEY = 'omnip-bo-api-token';
+function getApiToken() {
+  try { return localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; }
+}
+function setApiToken(t) {
+  try { if (t) localStorage.setItem(TOKEN_KEY, t); else localStorage.removeItem(TOKEN_KEY); } catch {}
+}
+function promptApiToken(reason) {
+  return new Promise((resolve) => {
+    const current = getApiToken();
+    openModal({
+      title: reason || 'API token (Bearer) para publicar al worker',
+      value: current,
+      allowEdit: true,
+      confirmLabel: current ? 'Actualizar token' : 'Guardar token',
+      onConfirm: (text) => {
+        const t = String(text || '').trim();
+        if (!t) throw new Error('Token vacío');
+        setApiToken(t);
+        showToast('Token guardado en este navegador');
+        resolve(t);
+      },
+    });
+    // Si el usuario cierra sin confirmar, resolvemos null tras un tick
+    document.getElementById('mo-cancel').addEventListener('click', () => resolve(null), { once: true });
+  });
+}
+
+// ─── Publicar al worker ────────────────────────────────────────────
+async function publishToWorker() {
+  if (!locations.length) { showToast('Catálogo vacío', 'err'); return; }
+  let token = getGoogleToken() || getApiToken();
+  if (!token) {
+    showToast(LANG==='en'?'Session expired — sign in with Google again':'Sesión caducada — vuelve a entrar con Google','err');
+    clearAuth(); setTimeout(()=>location.reload(), 1200);
+    return;
+  }
+  const btn = document.getElementById('btn-publish');
+  const orig = btn.textContent;
+  btn.textContent = t('publishing'); btn.disabled = true;
+  try {
+    const res = await window.publishOmnipLocations(locations, token);
+    setBadge('kv', res.updatedAt);
+    showToast('Publicadas ' + res.count + ' Xpaces al worker');
+  } catch (e) {
+    const msg = String(e.message || e);
+    if (msg === 'invalid_token' || msg === 'google_auth_failed' || msg === 'missing_token') {
+      showToast(LANG==='en'?'Session rejected — sign in again':'Sesión rechazada — vuelve a entrar','err');
+      clearAuth(); setTimeout(()=>location.reload(), 1200);
+    } else {
+      showToast(t('err_prefix') + msg, 'err');
+    }
+  } finally {
+    btn.textContent = orig; btn.disabled = false;
+  }
+}
+
+const SURF_TYPES = ['pantalla','escaparate','mostrador','vending','pwa'];
+const STATUSES = [
+  {v:'live',  k:'st_live'},
+  {v:'sched', k:'st_sched'},
+  {v:'idle',  k:'st_idle'},
+];
+const SEGMENTATION_GROUPS = {
+  genders: [
+    {v:'hombre', k:'seg_male'},
+    {v:'mujer', k:'seg_female'},
+  ],
+  ages: [
+    {v:'nino', k:'age_child'},
+    {v:'joven', k:'age_young'},
+    {v:'adulto', k:'age_adult'},
+    {v:'senior', k:'age_senior'},
+    {v:'vejez', k:'age_elder'},
+  ],
+  timeSlots: [
+    {v:'manana', k:'time_morning'},
+    {v:'mediodia', k:'time_midday'},
+    {v:'tarde', k:'time_afternoon'},
+    {v:'noche', k:'time_night'},
+  ],
+};
+const DEFAULT_SEGMENTATION = (window.OMNIP_SEGMENTATION_OPTIONS || {
+  schedule: {start:'08:00', end:'20:00'},
+  typologies: ['exterior','interior'],
+  genders: ['hombre','mujer'],
+  ages: ['nino','joven','adulto','senior','vejez'],
+  timeSlots: ['manana','mediodia','tarde','noche'],
+  defaultTimeSlots: ['manana','mediodia','tarde'],
+});
+
+// ─── Helpers ───────────────────────────────────────────────────────
+function $(id) { return document.getElementById(id); }
+function showToast(msg, kind) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (kind === 'err' ? ' err' : '');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function persistAndRefresh() {
+  locations = locations.map(normalizeLocation);
+  window.saveOmnipLocations(locations);
+  renderList();
+  renderMap();
+  // Marcar dirty para que el usuario sepa que hay que publicar.
+  if (typeof setBadge === 'function') setBadge('dirty', null);
+}
+
+function normalizeLocation(loc) {
+  if (typeof window.normalizeOmnipSegmentation === 'function') return window.normalizeOmnipSegmentation(loc);
+  const base = loc && typeof loc === 'object' ? loc : {};
+  const seg = base.segmentation && typeof base.segmentation === 'object' ? base.segmentation : {};
+  return Object.assign({}, base, {
+    segmentation: {
+      required: true,
+      schedule: Object.assign({}, DEFAULT_SEGMENTATION.schedule, seg.schedule || {}),
+      typologies: Array.isArray(seg.typologies) && seg.typologies.length ? seg.typologies : DEFAULT_SEGMENTATION.typologies.slice(),
+      genders: Array.isArray(seg.genders) && seg.genders.length ? seg.genders : DEFAULT_SEGMENTATION.genders.slice(),
+      ages: Array.isArray(seg.ages) && seg.ages.length ? seg.ages : DEFAULT_SEGMENTATION.ages.slice(),
+      timeSlots: Array.isArray(seg.timeSlots) && seg.timeSlots.length ? seg.timeSlots : DEFAULT_SEGMENTATION.defaultTimeSlots.slice(),
+      metadata: Array.isArray(seg.metadata) ? seg.metadata : [],
+    },
+  });
+}
+
+function renderSegmentationGroups() {
+  Object.entries(SEGMENTATION_GROUPS).forEach(([group, options]) => {
+    const el = $('seg-' + group);
+    if (!el) return;
+    el.innerHTML = options.map(o => `<label><input type="checkbox" data-seg-group="${group}" value="${o.v}"> ${escHtml(t(o.k))}</label>`).join('');
+  });
+}
+
+function setCheckedGroup(group, values) {
+  const selected = new Set(Array.isArray(values) ? values : []);
+  document.querySelectorAll(`[data-seg-group="${group}"]`).forEach(input => {
+    input.checked = selected.has(input.value);
+  });
+}
+
+function checkedGroup(group) {
+  return [...document.querySelectorAll(`[data-seg-group="${group}"]:checked`)].map(el => el.value);
+}
+
+function typologyToSelect(typologies) {
+  const set = new Set(Array.isArray(typologies) ? typologies : []);
+  if (set.has('exterior') && set.has('interior')) return 'both';
+  if (set.has('exterior')) return 'exterior';
+  if (set.has('interior')) return 'interior';
+  return 'both';
+}
+
+function selectToTypologies(value) {
+  if (value === 'exterior') return ['exterior'];
+  if (value === 'interior') return ['interior'];
+  return ['exterior','interior'];
+}
+
+function fillSegmentation(seg) {
+  const normalized = normalizeLocation({ segmentation: seg || {} }).segmentation;
+  $('f-seg-start').value = normalized.schedule.start || DEFAULT_SEGMENTATION.schedule.start;
+  $('f-seg-end').value = normalized.schedule.end || DEFAULT_SEGMENTATION.schedule.end;
+  $('f-seg-typology').value = typologyToSelect(normalized.typologies);
+  setCheckedGroup('genders', normalized.genders);
+  setCheckedGroup('ages', normalized.ages);
+  setCheckedGroup('timeSlots', normalized.timeSlots);
+  renderMetadata(normalized.metadata);
+}
+
+function readSegmentationForm() {
+  return normalizeLocation({
+    segmentation: {
+      required: true,
+      schedule: {
+        start: $('f-seg-start').value || DEFAULT_SEGMENTATION.schedule.start,
+        end: $('f-seg-end').value || DEFAULT_SEGMENTATION.schedule.end,
+      },
+      typologies: selectToTypologies($('f-seg-typology').value),
+      genders: checkedGroup('genders'),
+      ages: checkedGroup('ages'),
+      timeSlots: checkedGroup('timeSlots'),
+      metadata: readMetadata(),
+    },
+  }).segmentation;
+}
+
+function renderMetadata(items) {
+  const list = $('seg-meta-list');
+  if (!list) return;
+  const rows = Array.isArray(items) ? items : [];
+  list.innerHTML = rows.map((m, i) => metadataRow(m, i)).join('');
+}
+
+function metadataRow(m, i) {
+  const type = m && m.type ? m.type : 'text';
+  const opts = ['text','tag','number','bool'].map(v => `<option value="${v}"${type === v ? ' selected' : ''}>${escHtml(t('meta_type_' + v))}</option>`).join('');
+  return `<div class="meta-row" data-i="${i}">
+    <input data-meta="key" type="text" placeholder="${escHtml(t('meta_key'))}" value="${escHtml(m && m.key || '')}">
+    <input data-meta="label" type="text" placeholder="${escHtml(t('meta_label'))}" value="${escHtml(m && m.label || '')}">
+    <input data-meta="value" type="text" placeholder="${escHtml(t('meta_value'))}" value="${escHtml(m && m.value || '')}">
+    <select data-meta="type">${opts}</select>
+    <button type="button" class="del" title="${escHtml(t('meta_delete'))}">×</button>
+  </div>`;
+}
+
+function readMetadata() {
+  return [...document.querySelectorAll('#seg-meta-list .meta-row')].map(row => {
+    const key = row.querySelector('[data-meta=key]').value.trim();
+    const label = row.querySelector('[data-meta=label]').value.trim();
+    const value = row.querySelector('[data-meta=value]').value.trim();
+    const type = row.querySelector('[data-meta=type]').value || 'text';
+    if (!key && !label && !value) return null;
+    return { key, label, value, type };
+  }).filter(Boolean);
+}
+
+// ─── Lista lateral ─────────────────────────────────────────────────
+function renderList() {
+  $('lh-count').textContent = locations.length;
+  const ul = $('bo-list-ul');
+  ul.innerHTML = locations.map((l, i) => {
+    const live = l.surfaces.filter(s=>s.status==='live').length;
+    return `<li data-idx="${i}" class="${i===editingIdx?'active':''}">
+      <div class="nm">${escHtml(l.name||t('noname'))}</div>
+      <div class="ad">${escHtml(l.addr||'—')}</div>
+      <div class="sf">${l.surfaces.length} surfaces · ${live} LIVE</div>
+    </li>`;
+  }).join('');
+  ul.querySelectorAll('li').forEach(li => {
+    li.addEventListener('click', () => editLocation(parseInt(li.dataset.idx, 10)));
+  });
+}
+
+function escHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ─── Editor ────────────────────────────────────────────────────────
+function blankLocation() {
+  return {
+    id:'', name:'', kind:'', addr:'',
+    coords: map ? [map.getCenter().lng, map.getCenter().lat] : [-3.7, 40.4],
+    surfaces: [],
+    segmentation: normalizeLocation({}).segmentation,
+  };
+}
+
+function editLocation(idx) {
+  editingIdx = idx;
+  const loc = normalizeLocation(locations[idx]);
+  if (!loc) return;
+  locations[idx] = loc;
+  $('bo-empty').hidden = true;
+  $('bo-editor').hidden = false;
+  $('btn-delete').hidden = false;
+  $('f-title').textContent = loc.name || t('noname');
+  $('f-sub').textContent = t('editing');
+  $('f-id').value = loc.id || '';
+  $('f-id').disabled = true; // id no editable una vez creada (evita romper recientes)
+  $('f-name').value = loc.name || '';
+  $('f-kind').value = loc.kind || '';
+  $('f-addr').value = loc.addr || '';
+  $('f-lat').value = loc.coords ? loc.coords[1] : '';
+  $('f-lng').value = loc.coords ? loc.coords[0] : '';
+  $('f-music').value = loc.music || '';
+  $('f-cameras').checked = (loc.cameras !== false); // por defecto con cámaras
+  $('f-employees').value = employeesToText(loc.employees);
+  fillSegmentation(loc.segmentation);
+  renderSurfaces(loc.surfaces);
+  renderPlacePhoto(loc);
+  renderList();
+  if (loc.coords && map) map.flyTo({center: loc.coords, zoom: 14, duration: 600});
+}
+
+function newLocation() {
+  editingIdx = -2;
+  const loc = blankLocation();
+  // empuja una surface plantilla para no salir vacío
+  loc.surfaces = [{name:'LED Frontal', desc:'', status:'live', impr:200, cpm:'€5', surface:'pantalla'}];
+  $('bo-empty').hidden = true;
+  $('bo-editor').hidden = false;
+  $('btn-delete').hidden = true;
+  $('f-title').textContent = t('new_store_title');
+  $('f-sub').textContent = t('unsaved');
+  $('f-id').value = '';
+  $('f-id').disabled = false;
+  $('f-name').value = '';
+  $('f-kind').value = '';
+  $('f-addr').value = '';
+  $('f-lat').value = loc.coords[1];
+  $('f-lng').value = loc.coords[0];
+  $('f-music').value = '';
+  $('f-cameras').checked = true;
+  $('f-employees').value = '';
+  fillSegmentation(loc.segmentation);
+  renderSurfaces(loc.surfaces);
+  renderPlacePhoto(loc);
+  renderList();
+}
+
+// Empleados ⇄ texto (una línea "Nombre, rol" por empleado).
+function employeesToText(emp) {
+  if (!Array.isArray(emp)) return '';
+  return emp.map(e => `${e.name || ''}, ${e.role != null ? e.role : (e.roleLabel || 'cajero')}`).join('\n');
+}
+function parseEmployees(text, prev) {
+  // Conserva la antigüedad (since) de los empleados previos por nombre; a los
+  // nuevos les asigna la fecha/hora de alta de ahora.
+  const prevBy = {};
+  (Array.isArray(prev) ? prev : []).forEach(e => { if (e && e.name) prevBy[String(e.name).toLowerCase()] = e; });
+  return String(text || '').split('\n').map(line => {
+    const t = line.trim(); if (!t) return null;
+    const parts = t.split(',').map(x => x.trim());
+    const name = parts[0]; if (!name) return null;
+    const role = (parts[1] || 'cajero').toLowerCase();
+    const old = prevBy[name.toLowerCase()];
+    const since = (old && old.since) ? old.since : new Date().toISOString();
+    return { name, role, since };
+  }).filter(Boolean);
+}
+
+function closeEditor() {
+  editingIdx = -1;
+  $('bo-empty').hidden = false;
+  $('bo-editor').hidden = true;
+  renderPlacePhoto(null);
+  renderList();
+}
+
+function readForm() {
+  const lat = parseFloat($('f-lat').value);
+  const lng = parseFloat($('f-lng').value);
+  // Tienda previa (al editar): para preservar campos que el form no gestiona
+  // explícitamente — pixerScreens de cada surface.
+  const prev = (editingIdx >= 0 && locations[editingIdx]) ? locations[editingIdx] : null;
+  const prevSurf = (prev && Array.isArray(prev.surfaces)) ? prev.surfaces : [];
+  const surfaces = [...document.querySelectorAll('#surf-list .surf-row')].map(row => {
+    const s = {
+      name: row.querySelector('[data-k=name]').value.trim(),
+      desc: row.querySelector('[data-k=desc]').value.trim(),
+      status: row.querySelector('[data-k=status]').value,
+      impr: parseInt(row.querySelector('[data-k=impr]').value, 10) || 0,
+      cpm: row.querySelector('[data-k=cpm]').value.trim() || '€0',
+      surface: row.querySelector('[data-k=surface]').value,
+    };
+    // Preserva pixerScreens (mapeo a pantallas reales) de la surface previa homónima.
+    const match = prevSurf.find(ps => ps && ps.name === s.name);
+    if (match && Array.isArray(match.pixerScreens) && match.pixerScreens.length) s.pixerScreens = match.pixerScreens;
+    return s;
+  }).filter(s => s.name); // descarta filas vacías
+  const loc = Object.assign({}, prev ? JSON.parse(JSON.stringify(prev)) : {}, {
+    id: $('f-id').value.trim(),
+    name: $('f-name').value.trim(),
+    kind: $('f-kind').value.trim(),
+    addr: $('f-addr').value.trim(),
+    coords: [Number.isFinite(lng) ? lng : 0, Number.isFinite(lat) ? lat : 0],
+    surfaces,
+    segmentation: readSegmentationForm(),
+  });
+  // Config del Digital Twin
+  const music = $('f-music').value.trim();
+  if (music) loc.music = music;
+  else delete loc.music;
+  loc.cameras = $('f-cameras').checked;
+  const emp = parseEmployees($('f-employees').value, prev && prev.employees);
+  if (emp.length) loc.employees = emp;
+  else delete loc.employees;
+  // Preserva el twin propio si la tienda lo tenía.
+  if (prev && prev.twin) loc.twin = prev.twin;
+  return normalizeLocation(loc);
+}
+
+function validateLocation(loc, isNew) {
+  if (!loc.id) return 'El id es obligatorio.';
+  if (!/^[a-z0-9-]+$/.test(loc.id)) return 'El id solo admite minúsculas, números y guiones.';
+  if (!loc.name) return 'El nombre es obligatorio.';
+  if (!Number.isFinite(loc.coords[0]) || !Number.isFinite(loc.coords[1])) return 'Coordenadas inválidas.';
+  if (Math.abs(loc.coords[1]) > 90 || Math.abs(loc.coords[0]) > 180) return 'Coordenadas fuera de rango.';
+  if (isNew && locations.some(l => l.id === loc.id)) return 'Ya existe un Xpace con ese id.';
+  const seg = loc.segmentation || {};
+  if (!seg.schedule || !seg.schedule.start || !seg.schedule.end) return 'El horario de segmentación es obligatorio.';
+  if (!Array.isArray(seg.typologies) || !seg.typologies.length) return 'La tipología de segmentación es obligatoria.';
+  if (!Array.isArray(seg.genders) || !seg.genders.length) return 'El género de segmentación es obligatorio.';
+  if (!Array.isArray(seg.ages) || !seg.ages.length) return 'La edad de segmentación es obligatoria.';
+  if (!Array.isArray(seg.timeSlots) || !seg.timeSlots.length) return 'Las franjas horarias de segmentación son obligatorias.';
+  return null;
+}
+
+function saveLocation() {
+  const loc = readForm();
+  const isNew = editingIdx === -2;
+  const err = validateLocation(loc, isNew);
+  if (err) { showToast(err, 'err'); return; }
+  if (isNew) {
+    locations.push(loc);
+    editingIdx = locations.length - 1;
+  } else {
+    const orig = locations[editingIdx];
+    // Conservar el id original (no editable)
+    loc.id = orig.id;
+    locations[editingIdx] = loc;
+  }
+  persistAndRefresh();
+  // Re-cargar el formulario en modo edición (para reflejar el nuevo orden de id en list y desactivar el id input)
+  editLocation(editingIdx);
+  showToast(t('saved') + loc.name);
+}
+
+function deleteLocation() {
+  if (editingIdx < 0) return;
+  const loc = locations[editingIdx];
+  if (!confirm(t('delete_confirm_1') + (loc.name || loc.id) + t('delete_confirm_2'))) return;
+  locations.splice(editingIdx, 1);
+  closeEditor();
+  persistAndRefresh();
+  showToast('Eliminada');
+}
+
+// ─── Surfaces editor ───────────────────────────────────────────────
+function renderSurfaces(arr) {
+  const list = $('surf-list');
+  list.innerHTML = arr.map((s, i) => surfaceRow(s, i)).join('');
+}
+function surfaceRow(s, i) {
+  return `<div class="surf-row" data-i="${i}">
+    <input data-k="name" type="text" placeholder="LED Frontal" value="${escHtml(s.name||'')}">
+    <input data-k="desc" type="text" placeholder="Descripción visible en el panel" value="${escHtml(s.desc||'')}">
+    <select data-k="status">${STATUSES.map(st => `<option value="${st.v}"${s.status===st.v?' selected':''}>${t(st.k)}</option>`).join('')}</select>
+    <input data-k="impr" type="number" min="0" placeholder="200" value="${s.impr ?? ''}">
+    <input data-k="cpm" type="text" placeholder="€5" value="${escHtml(s.cpm||'')}">
+    <select data-k="surface">${SURF_TYPES.map(t => `<option value="${t}"${s.surface===t?' selected':''}>${t}</option>`).join('')}</select>
+    <button type="button" class="del" title="Eliminar surface">×</button>
+  </div>`;
+}
+function bindSurfaces() {
+  $('surf-list').addEventListener('click', e => {
+    const btn = e.target.closest('.del');
+    if (!btn) return;
+    const row = btn.closest('.surf-row');
+    if (row) row.remove();
+  });
+  $('btn-surf-add').addEventListener('click', () => {
+    const newSurf = {name:'', desc:'', status:'live', impr:0, cpm:'€0', surface:'pantalla'};
+    $('surf-list').insertAdjacentHTML('beforeend', surfaceRow(newSurf, $('surf-list').children.length));
+  });
+}
+
+function bindMetadata() {
+  $('seg-meta-list').addEventListener('click', e => {
+    const btn = e.target.closest('.del');
+    if (!btn) return;
+    const row = btn.closest('.meta-row');
+    if (row) row.remove();
+  });
+  $('btn-meta-add').addEventListener('click', () => {
+    $('seg-meta-list').insertAdjacentHTML('beforeend', metadataRow({key:'', label:'', value:'', type:'text'}, $('seg-meta-list').children.length));
+  });
+}
+
+// ─── Geocoder ──────────────────────────────────────────────────────
+async function geocodeAddress() {
+  const q = $('f-addr').value.trim();
+  if (!q) { showToast('Escribe primero una dirección', 'err'); return; }
+  showToast('Buscando "' + q.slice(0,40) + '"...');
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`;
+    const r = await fetch(url, {headers:{'Accept':'application/json'}});
+    const d = await r.json();
+    if (!d.length) throw new Error('sin resultados');
+    const lat = parseFloat(d[0].lat), lng = parseFloat(d[0].lon);
+    $('f-lat').value = lat.toFixed(6);
+    $('f-lng').value = lng.toFixed(6);
+    if (map) map.flyTo({center:[lng, lat], zoom:15, duration: 800});
+    renderPlacePhoto(readPhotoFormLocation());
+    showToast('Coordenadas fijadas: ' + lat.toFixed(4) + ', ' + lng.toFixed(4));
+  } catch (e) {
+    showToast(t('no_geo'), 'err');
+  }
+}
+
+// ─── Mapa ──────────────────────────────────────────────────────────
+let map = null;
+let pinMarker = null;
+let locMarkers = [];
+
+function initMap() {
+  map = new maplibregl.Map({
+    container:'bo-map',
+    style:'https://tiles.openfreemap.org/styles/liberty',
+    center:[-3.7, 40.4], zoom:5, attributionControl:false,
+    renderWorldCopies:false,
+  });
+  map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-left');
+  map.addControl(new maplibregl.NavigationControl({visualizePitch:false}), 'top-right');
+  map.on('move', () => {
+    const c = map.getCenter();
+    $('m-center').textContent = c.lng.toFixed(3) + ', ' + c.lat.toFixed(3);
+    $('m-zoom').textContent = map.getZoom().toFixed(1);
+  });
+  map.on('load', () => {
+    map.getCanvas().addEventListener('click', () => {}); // no-op, real handler abajo
+    renderMap();
+  });
+  // Click en mapa fija coords si hay un editor abierto
+  map.on('click', (e) => {
+    if (editingIdx === -1) return; // no hay editor abierto
+    const {lng, lat} = e.lngLat;
+    $('f-lat').value = lat.toFixed(6);
+    $('f-lng').value = lng.toFixed(6);
+    placePinMarker(lng, lat);
+    renderPlacePhoto(readPhotoFormLocation());
+    showToast('Pin: ' + lat.toFixed(4) + ', ' + lng.toFixed(4));
+  });
+}
+
+function placePinMarker(lng, lat) {
+  if (pinMarker) pinMarker.remove();
+  const el = document.createElement('div');
+  el.style.cssText = 'width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#88ffaa,#1a5520);border:2px solid var(--good);box-shadow:0 0 12px rgba(136,255,170,.6);';
+  pinMarker = new maplibregl.Marker({element: el, draggable: true}).setLngLat([lng, lat]).addTo(map);
+  pinMarker.on('dragend', () => {
+    const c = pinMarker.getLngLat();
+    $('f-lat').value = c.lat.toFixed(6);
+    $('f-lng').value = c.lng.toFixed(6);
+    renderPlacePhoto(readPhotoFormLocation());
+  });
+}
+
+// ─── Foto del Xpacio desde Google Maps / Street View ──────────────
+function readPhotoFormLocation() {
+  const lat = parseFloat($('f-lat').value);
+  const lng = parseFloat($('f-lng').value);
+  return {
+    name: $('f-name').value.trim() || $('f-title').textContent || 'Xpacio',
+    addr: $('f-addr').value.trim(),
+    coords: [Number.isFinite(lng) ? lng : NaN, Number.isFinite(lat) ? lat : NaN],
+  };
+}
+
+function googleMapsUrl(loc) {
+  const [lng, lat] = loc.coords || [];
+  const query = loc.addr ? loc.addr : `${lat},${lng}`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+
+function googleStreetViewEmbedUrl(loc) {
+  const [lng, lat] = loc.coords || [];
+  const label = loc.addr || loc.name || `${lat},${lng}`;
+  const q = encodeURIComponent(label);
+  return `https://maps.google.com/maps?q=${q}&layer=c&cbll=${encodeURIComponent(lat + ',' + lng)}&cbp=12,0,0,0,0&output=svembed`;
+}
+
+function renderPlacePhoto(loc) {
+  const frame = $('photo-frame');
+  const caption = $('photo-caption');
+  const link = $('photo-link');
+  if (!frame || !caption || !link) return;
+  const coords = loc && Array.isArray(loc.coords) ? loc.coords : [];
+  const lng = Number(coords[0]);
+  const lat = Number(coords[1]);
+  if (!Number.isFinite(lng) || !Number.isFinite(lat)) {
+    frame.innerHTML = '<div class="photo-empty">Selecciona un Xpacio para cargar su vista de Google Maps.</div>';
+    caption.textContent = 'La vista se genera automáticamente con las coordenadas del formulario.';
+    link.href = 'https://www.google.com/maps';
+    return;
+  }
+  const title = (loc.name || 'Xpacio') + (loc.addr ? ' · ' + loc.addr : '');
+  link.href = googleMapsUrl(loc);
+  frame.innerHTML = `<iframe title="Foto Google Maps · ${escHtml(title)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="${escHtml(googleStreetViewEmbedUrl(loc))}"></iframe>`;
+  caption.textContent = title;
+}
+
+function renderMap() {
+  if (!map) return;
+  // Limpia markers existentes
+  locMarkers.forEach(m => m.remove());
+  locMarkers = [];
+  for (const loc of locations) {
+    if (!loc.coords || !Number.isFinite(loc.coords[0]) || !Number.isFinite(loc.coords[1])) continue;
+    const live = loc.surfaces.filter(s => s.status==='live').length;
+    const el = document.createElement('div');
+    el.style.cssText = `width:18px;height:18px;border-radius:50%;background:${live?'radial-gradient(circle at 30% 30%,#ffd866,#7a5d00)':'radial-gradient(circle at 30% 30%,#75aab9,#1a3340)'};border:2px solid ${live?'#ffd866':'#75aab9'};box-shadow:0 0 8px rgba(${live?'255,216,102':'117,170,185'},.4);cursor:pointer`;
+    el.title = loc.name + ' · ' + loc.addr;
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = locations.findIndex(l => l.id === loc.id);
+      if (idx >= 0) editLocation(idx);
+    });
+    locMarkers.push(new maplibregl.Marker({element: el}).setLngLat(loc.coords).addTo(map));
+  }
+}
+
+// ─── Import / Export / Reset ───────────────────────────────────────
+function openModal({title, value, allowEdit, confirmLabel, onConfirm, showCopy, showDownload}) {
+  $('mo-title').textContent = title;
+  $('mo-text').value = value || '';
+  $('mo-text').readOnly = !allowEdit;
+  $('mo-confirm').hidden = !onConfirm;
+  $('mo-confirm').textContent = confirmLabel || t('confirm');
+  $('mo-copy').hidden = !showCopy;
+  $('mo-download').hidden = !showDownload;
+  $('modal').classList.add('show');
+  $('mo-confirm').onclick = () => {
+    try { onConfirm($('mo-text').value); $('modal').classList.remove('show'); }
+    catch (e) { showToast(String(e.message || e), 'err'); }
+  };
+  $('mo-copy').onclick = async () => {
+    try { await navigator.clipboard.writeText($('mo-text').value); showToast('Copiado'); }
+    catch { showToast(t('cant_copy'), 'err'); }
+  };
+  $('mo-download').onclick = () => {
+    const content = `// OmniPublicity — catálogo de tiendas (gemelos digitales).\n// Generado por backoffice.html · ${new Date().toISOString()}\nwindow.OMNIP_LOCATIONS_DEFAULT = ${$('mo-text').value};\nwindow.OMNIP_STORE_KEY = 'omnip-locations';\nwindow.loadOmnipLocations = function() {\n  try {\n    const raw = localStorage.getItem(window.OMNIP_STORE_KEY);\n    if (raw) { const p = JSON.parse(raw); if (Array.isArray(p) && p.length) return p; }\n  } catch (e) {}\n  return window.OMNIP_LOCATIONS_DEFAULT;\n};\nwindow.saveOmnipLocations = function(arr) {\n  try { localStorage.setItem(window.OMNIP_STORE_KEY, JSON.stringify(arr)); return true; }\n  catch (e) { return false; }\n};\n`;
+    const blob = new Blob([content], {type:'text/javascript'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'locations.js'; a.click();
+    URL.revokeObjectURL(url);
+    showToast('Descargado locations.js');
+  };
+}
+$('mo-cancel').addEventListener('click', () => $('modal').classList.remove('show'));
+
+function exportJSON() {
+  const json = JSON.stringify(locations, null, 2);
+  openModal({
+    title: 'Exportar · ' + locations.length + ' Xpaces · ' + new Blob([json]).size + ' bytes',
+    value: json,
+    allowEdit: false,
+    showCopy: true,
+    showDownload: true,
+  });
+}
+
+function importJSON() {
+  openModal({
+    title: 'Importar JSON · pega aquí el array de Xpaces',
+    value: '',
+    allowEdit: true,
+    confirmLabel: 'Reemplazar catálogo',
+    onConfirm: (text) => {
+      const parsed = JSON.parse(text);
+      if (!Array.isArray(parsed)) throw new Error('El JSON debe ser un array');
+      // Validación básica: todos tienen id y coords
+      for (const l of parsed) {
+        if (!l.id || !Array.isArray(l.coords) || l.coords.length !== 2) throw new Error(t('invalid_store') + (l.name || l.id || '?'));
+        if (!Array.isArray(l.surfaces)) l.surfaces = [];
+      }
+      locations = parsed.map(normalizeLocation);
+      closeEditor();
+      persistAndRefresh();
+      showToast('Importadas ' + parsed.length + ' Xpaces');
+    },
+  });
+}
+
+function resetToDefault() {
+  if (!confirm(t('reset_confirm_1') + window.OMNIP_LOCATIONS_DEFAULT.length + t('reset_confirm_2'))) return;
+  try { localStorage.removeItem(window.OMNIP_STORE_KEY); } catch {}
+  locations = window.OMNIP_LOCATIONS_DEFAULT.map(l => JSON.parse(JSON.stringify(normalizeLocation(l))));
+  closeEditor();
+  persistAndRefresh();
+  showToast('Catálogo restaurado');
+}
+
+// ─── Bindings ──────────────────────────────────────────────────────
+$('btn-new').addEventListener('click', newLocation);
+$('btn-save').addEventListener('click', saveLocation);
+$('btn-cancel').addEventListener('click', closeEditor);
+$('btn-delete').addEventListener('click', deleteLocation);
+$('btn-geocode').addEventListener('click', geocodeAddress);
+$('btn-pin').addEventListener('click', () => {
+  const lat = parseFloat($('f-lat').value), lng = parseFloat($('f-lng').value);
+  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+    placePinMarker(lng, lat);
+    map.flyTo({center:[lng, lat], zoom:16, duration:800});
+  } else if (map) {
+    showToast('Click en el mapa para fijar el pin');
+    map.flyTo({zoom:13, duration:600});
+  }
+});
+$('btn-import').addEventListener('click', importJSON);
+$('btn-export').addEventListener('click', exportJSON);
+$('btn-reset').addEventListener('click', resetToDefault);
+$('btn-publish').addEventListener('click', publishToWorker);
+$('btn-token').addEventListener('click', () => promptApiToken('Editar API token (Bearer) — se guarda en localStorage de este navegador'));
+
+// Re-renderiza cuando los inputs cambian (para el title "editando")
+['f-name'].forEach(id => $(id).addEventListener('input', e => {
+  $('f-title').textContent = e.target.value || t('noname');
+}));
+
+// ─── Init ──────────────────────────────────────────────────────────
+// El boot real (locations, map, list) vive en bootBackoffice() y solo
+// se dispara tras autenticar correctamente. Si la auth ya está en
+// localStorage, levantamos sesión inmediatamente y saltamos el gate.
+// Esta comprobación tiene que ir AL FINAL para que las let de arriba
+// (locations, booted, ...) ya estén fuera de la TDZ cuando bootBackoffice corra.
+if (isAuthed()) {
+  gate.classList.add('hidden');
+  bootBackoffice();
+}
+
+// ─── Selector de idioma EN/ES (comparte preferencia con la portada) ──
+document.querySelectorAll('#lang-switch .lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+});
+const _badgeEl = document.getElementById('badge-mode');
+if (_badgeEl) _badgeEl.textContent = t('badge_loading');
+setLang(LANG);
+</script>
+
+</body>
+</html>

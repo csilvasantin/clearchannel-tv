@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo funciona Admira · Plataforma agéntica</title>
+<meta name="description" content="Cómo funciona la plataforma agéntica de Admira en 3 pasos: el gemelo mide la audiencia real, PixerIA crea la publicidad y admira.app la vende de forma programática y segmentada.">
+<style>
+  :root{
+    --bg:#06090e; --bg2:#0b121b; --card:#0e1722; --line:#1f3344; --line2:#2a4a60;
+    --tx:#dbeaff; --mut:#8aa0b4; --acc:#78f3ff; --acc2:#9effa0; --gold:#ffd866; --pink:#ff9ecf; --viol:#c9a8ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:radial-gradient(1200px 600px at 50% -10%,#10243a 0,var(--bg) 60%);color:var(--tx);
+    font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1.55;padding:0 18px 80px}
+  .wrap{max-width:880px;margin:0 auto}
+  header{padding:54px 0 26px;text-align:center}
+  .kicker{color:var(--acc);letter-spacing:.22em;font-size:12px;text-transform:uppercase}
+  h1{font-size:clamp(28px,6vw,46px);margin:10px 0 8px;letter-spacing:-.5px}
+  .lead{color:var(--mut);font-size:clamp(14px,2.4vw,17px);max-width:640px;margin:0 auto}
+  .one-liner{margin:22px auto 0;max-width:680px;background:var(--card);border:1px solid var(--line2);border-radius:14px;
+    padding:16px 20px;font-size:15px;color:var(--tx)}
+  .one-liner b{color:var(--gold)}
+  section{margin:40px 0}
+  h2{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin-bottom:14px;
+    border-bottom:1px dashed var(--line2);padding-bottom:8px}
+  .steps{display:grid;gap:14px}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+  .step::before{content:attr(data-n);position:absolute;right:14px;top:6px;font-size:64px;font-weight:800;color:#13202e;line-height:1}
+  .step h3{font-size:18px;margin-bottom:6px}
+  .step .who{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:10px}
+  .abc{list-style:none;display:grid;gap:7px;position:relative;z-index:1}
+  .abc li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--tx)}
+  .abc li .b{flex:0 0 22px;height:22px;border-radius:6px;background:#10283a;border:1px solid var(--line2);
+    color:var(--acc);font-weight:bold;font-size:12px;display:flex;align-items:center;justify-content:center}
+  .abc li span.t{color:var(--mut)}
+  .abc li b{color:var(--tx)}
+  .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .pill{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+  .pill h4{font-size:15px;margin-bottom:4px}
+  .pill .tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc2);margin-bottom:8px}
+  .pill p{color:var(--mut);font-size:13px}
+  .loop{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;overflow:auto}
+  .loop pre{color:var(--mut);font-size:12px;white-space:pre;line-height:1.45}
+  .adv{display:grid;gap:10px;counter-reset:adv}
+  .adv .a{display:flex;gap:12px;align-items:flex-start;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .adv .a .n{counter-increment:adv;flex:0 0 26px;height:26px;border-radius:8px;background:#10283a;border:1px solid var(--line2);
+    color:var(--gold);font-weight:bold;display:flex;align-items:center;justify-content:center}
+  .adv .a .n::before{content:counter(adv)}
+  .adv .a b{color:var(--tx)} .adv .a span{color:var(--mut)}
+  .demo{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .demo ol{list-style:none;counter-reset:d;display:grid;gap:9px}
+  .demo li{counter-increment:d;display:flex;gap:11px;align-items:flex-start;font-size:14px}
+  .demo li::before{content:counter(d);flex:0 0 24px;height:24px;border-radius:7px;background:#0e2a22;border:1px solid #2f8d8d;
+    color:var(--acc2);font-weight:bold;display:flex;align-items:center;justify-content:center}
+  code{background:#0a141d;border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--acc);font-size:12.5px}
+  .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .links a{color:var(--acc);text-decoration:none;border:1px solid var(--line2);border-radius:8px;padding:8px 14px;font-size:13px;transition:.15s}
+  .links a:hover{border-color:var(--acc);background:#0e2230}
+  footer{margin-top:50px;text-align:center;color:var(--mut);font-size:12px;border-top:1px dashed var(--line);padding-top:20px}
+  .em-acc{color:var(--acc)} .em-pink{color:var(--pink)} .em-gold{color:var(--gold)} .em-viol{color:var(--viol)} .em-grn{color:var(--acc2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Plataforma agéntica · Admira</div>
+    <h1>Cómo funciona Admira</h1>
+    <p class="lead">Convertimos cualquier espacio físico en un medio publicitario inteligente: mide su audiencia real, crea su propia publicidad con IA y la vende de forma programática y segmentada. Todo en un bucle automático.</p>
+    <div class="one-liner">El espacio <b>mide</b> quién pasa → la IA <b>crea</b> el anuncio para cada persona → la plataforma lo <b>vende</b> por segmento, y el resultado vuelve en vivo. Sin agencias, sin estimaciones.</div>
+  </header>
+
+  <!-- 3 PASOS -->
+  <section>
+    <h2>El bucle, en 3 pasos</h2>
+    <div class="steps">
+
+      <div class="step" data-n="1">
+        <h3>El gemelo <span class="em-acc">mide</span></h3>
+        <div class="who">Gemelo Admira XP · el digital twin del punto físico</div>
+        <ul class="abc">
+          <li><span class="b">a</span><span><b>Réplica viva del local:</b> <span class="t">mismo mobiliario, mismas pantallas, misma gente entrando, comprando y paseando.</span></span></li>
+          <li><span class="b">b</span><span><b>Dos cámaras MUPI:</b> <span class="t">una mide a los viandantes de la calle, otra a los clientes dentro de la tienda.</span></span></li>
+          <li><span class="b">c</span><span><b>Audiencia segmentada:</b> <span class="t">cuenta quién pasa, quién entra y quién mira la pantalla — por género y edad (niño, joven, adulto, senior).</span></span></li>
+        </ul>
+      </div>
+
+      <div class="step" data-n="2">
+        <h3>PixerIA <span class="em-pink">crea</span></h3>
+        <div class="who">Motor de creación de contenido por IA</div>
+        <ul class="abc">
+          <li><span class="b">a</span><span><b>Creatividad por segmento:</b> <span class="t">chuches para un niño, vapeadores para un joven, perfume para un adulto, prensa y lotería para un mayor.</span></span></li>
+          <li><span class="b">b</span><span><b>En segundos y sin agencia:</b> <span class="t">imágenes de producto, anuncios, locución, vídeo, música — todo generado y guardado para reutilizar.</span></span></li>
+          <li><span class="b">c</span><span><b>Hasta humanos foto-realistas:</b> <span class="t">convierte a un viandante captado en una persona real con IA, "como si hubiera estado allí".</span></span></li>
+        </ul>
+      </div>
+
+      <div class="step" data-n="3">
+        <h3>admira.app <span class="em-gold">vende</span></h3>
+        <div class="who">La capa programática (RTB)</div>
+        <ul class="abc">
+          <li><span class="b">a</span><span><b>Eliges el público:</b> <span class="t">emplazamiento (exterior/interior), género, edad y franja horaria.</span></span></li>
+          <li><span class="b">b</span><span><b>Fijas el precio por segmento:</b> <span class="t">un CPM distinto para cada combinación (♂♀ × edad). Cada persona ve el anuncio que le toca.</span></span></li>
+          <li><span class="b">c</span><span><b>Ves los impactos reales en vivo:</b> <span class="t">impactos por segmento × tu CPM = ingreso del día, con el mismo dato de punta a punta.</span></span></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PIEZAS -->
+  <section>
+    <h2>Las piezas</h2>
+    <div class="pillars">
+      <div class="pill"><div class="tag em-acc">A · Mide</div><h4>Gemelo Admira XP</h4><p>El digital twin jugable del punto. Simula y mide clientes, ventas, pantallas y audiencia en tiempo real. Con calendario histórico y DVR para rebobinar cualquier día.</p></div>
+      <div class="pill"><div class="tag em-pink">B · Crea</div><h4>PixerIA</h4><p>La IA que genera todo el contenido: producto, anuncios por segmento, humanos foto-realistas, locución, vídeo y música. Lo publica al Stock reutilizable.</p></div>
+      <div class="pill"><div class="tag em-gold">C · Vende</div><h4>admira.app</h4><p>La plataforma programática. Define audiencias, fija el CPM por segmento, lanza campañas y muestra los impactos reales valorados, en vivo.</p></div>
+    </div>
+  </section>
+
+  <!-- LOOP -->
+  <section>
+    <h2>El bucle agéntico (cómo encaja todo)</h2>
+    <div class="loop"><pre>  admira.app            PixerIA              Gemelo Admira XP
+ (programática)       (creación IA)        (medición + pantallas)
+      │                   │                        │
+ 1. target +         2. genera la            3. muestra el anuncio
+    CPM/segmento ─────► creatividad ──────────►  a quien pasa (su
+      │                 por segmento             segmento exacto)
+      │                                              │
+      │                                         4. MIDE el impacto
+      │                                            real por género
+ 6. lo ve en vivo    5. el gemelo REPORTA          y edad
+    (impactos × ◄────── los impactos por  ◄─────────┘
+     CPM = €)          segmento</pre></div>
+  </section>
+
+  <!-- VENTAJAS -->
+  <section>
+    <h2>Por qué Admira (ventajas)</h2>
+    <div class="adv">
+      <div class="a"><div class="n"></div><div><b>Audiencia real, no estimaciones.</b> <span>Se paga por impactos reales y cualificados, segmentados por género y edad.</span></div></div>
+      <div class="a"><div class="n"></div><div><b>El contenido se crea solo.</b> <span>PixerIA genera la versión adecuada a cada segmento; no hace falta una agencia por anuncio.</span></div></div>
+      <div class="a"><div class="n"></div><div><b>Programática en el mundo físico (DOOH agéntico).</b> <span>Cada persona ve el anuncio que le corresponde, automáticamente.</span></div></div>
+      <div class="a"><div class="n"></div><div><b>Bucle cerrado y transparente.</b> <span>Lo que se muestra se mide, lo que se mide se valora, lo que se valora se ve en vivo. Mismo dato extremo a extremo.</span></div></div>
+      <div class="a"><div class="n"></div><div><b>Escala a una red entera.</b> <span>Un solo motor, configurado por punto: lo que vale para una tienda vale para todas.</span></div></div>
+      <div class="a"><div class="n"></div><div><b>Es un gemelo, no un PowerPoint.</b> <span>Todo es demostrable en vivo, jugable, con histórico y rebobinado.</span></div></div>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section>
+    <h2>Cómo probarlo en 1 minuto</h2>
+    <div class="demo">
+      <ol>
+        <li>Abre el gemelo y acelera el tiempo con <code>/velocidad 8</code>.</li>
+        <li>Mira el <b>escaparate</b>: cambia de anuncio según pasa un niño, un joven, un adulto o un mayor (♀/♂).</li>
+        <li>Abre <code>/mupicam</code> para ver a la gente captada; pulsa <b>✨</b> para convertir un viandante en persona real con IA.</li>
+        <li>Abre <code>/impactos</code>: aforo real, franjas horarias e <b>impactos por segmento × CPM</b>.</li>
+        <li>Aquí en <b>admira.app</b>: abre <b>"✎ CPM por segmento"</b>, cambia un precio y Guarda → el gemelo recalcula el ingreso.</li>
+        <li>Cierra el día y abre el <b>calendario</b> → el <b>DVR</b> de un día pasado → play.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <h2>Enlaces</h2>
+    <div class="links">
+      <a href="https://admira.app">▶ admira.app (programática)</a>
+      <a href="https://www.xpaceos.com/admira-xp/">▶ Gemelo Admira XP</a>
+      <a href="https://pixeria.com">▶ PixerIA</a>
+    </div>
+  </section>
+
+  <footer>
+    Admira · la plataforma agéntica que convierte tu espacio físico en medio publicitario inteligente.
+  </footer>
+
+</div>
+</body>
+</html>

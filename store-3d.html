@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admira.app | Mapa 3D de Xpace</title>
+<meta name="description" content="Mapa 3D navegable de un Xpace Admira.app con puntos calientes de pantallas y superficies retail media.">
+<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/tokens.css">
+<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/nav.css">
+  <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/contact-panel.css">
+  <script defer src="https://csilvasantin.github.io/admira-design/contact-panel.js"></script>
+<script src="locations.js?v=kioskos-20260608"></script>
+<style>
+  :root{color-scheme:dark;--bg:#02080d;--ink:#eaf8ff;--mut:#8ab6c4;--brand:#28d7ef;--accent:#ffb629;--good:#62f29b;--warn:#ff6d6d;--panel:#07131d;--panel2:#0b1b27;--line:rgba(138,182,196,.22);--glass:rgba(7,19,29,.78)}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;overflow:hidden;background:radial-gradient(circle at 20% 0,rgba(40,215,239,.14),transparent 34rem),radial-gradient(circle at 90% 20%,rgba(255,182,41,.10),transparent 28rem),var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,sans-serif}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit}
+  .app{height:calc(100% - 42px);display:grid;grid-template-rows:auto 1fr}
+  header{position:relative;z-index:20;min-height:72px;display:flex;align-items:center;gap:16px;padding:14px 22px;background:rgba(2,8,13,.86);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}
+  .back{display:inline-flex;align-items:center;gap:10px;min-height:42px;padding:0 14px;border:1px solid var(--line);border-radius:8px;color:var(--mut);background:rgba(255,255,255,.035);font-weight:800}
+  .back:hover{color:var(--ink);border-color:var(--brand)}
+  .title{min-width:0}
+  .title p{margin:0 0 2px;color:var(--accent);font-family:monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900}
+  .title h1{margin:0;font-size:24px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .status{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--mut);font-family:monospace;font-size:12px}
+  .status b{color:var(--good)}
+  .layout{position:relative;display:grid;grid-template-columns:1fr 360px;min-height:0}
+  .stage{position:relative;overflow:hidden;perspective:1100px;background:linear-gradient(180deg,rgba(7,16,24,.2),rgba(2,8,13,.78))}
+  .stage::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at center,black,transparent 78%)}
+  .scene-wrap{position:absolute;inset:0;display:grid;place-items:center;cursor:grab;user-select:none}
+  .scene-wrap.dragging{cursor:grabbing}
+  .scene{position:relative;width:860px;height:520px;transform-style:preserve-3d;transition:transform .18s ease-out}
+  .floor{position:absolute;inset:48px 72px;border:1px solid rgba(40,215,239,.24);border-radius:12px;background:linear-gradient(135deg,#17232a,#0b151d 60%,#111820);box-shadow:0 36px 120px rgba(0,0,0,.42),inset 0 0 0 1px rgba(255,255,255,.04);transform:translateZ(0)}
+  .floor::before{content:"";position:absolute;inset:0;border-radius:12px;background-image:linear-gradient(rgba(138,182,196,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(138,182,196,.10) 1px,transparent 1px);background-size:52px 52px}
+  .front{position:absolute;left:72px;right:72px;bottom:38px;height:44px;border-radius:0 0 12px 12px;background:linear-gradient(180deg,rgba(40,215,239,.16),rgba(40,215,239,.035));border:1px solid rgba(40,215,239,.22);transform:rotateX(72deg) translateY(20px);transform-origin:top}
+  .wall{position:absolute;background:linear-gradient(180deg,#1a2d38,#0d1a23);border:1px solid rgba(138,182,196,.18);box-shadow:0 18px 36px rgba(0,0,0,.26)}
+  .wall.top{left:96px;right:96px;top:52px;height:42px;transform:translateZ(32px)}
+  .wall.left{left:72px;top:90px;width:44px;height:340px;transform:translateZ(32px)}
+  .wall.right{right:72px;top:90px;width:44px;height:340px;transform:translateZ(32px)}
+  .aisle{position:absolute;border-radius:8px;background:linear-gradient(180deg,#313c39,#1d2929);border:1px solid rgba(255,255,255,.08);box-shadow:0 16px 30px rgba(0,0,0,.28);transform:translateZ(16px)}
+  .a1{left:178px;top:150px;width:86px;height:236px}.a2{left:314px;top:128px;width:92px;height:288px}.a3{left:462px;top:148px;width:88px;height:230px}.a4{left:606px;top:122px;width:104px;height:280px}
+  .counter{position:absolute;left:214px;bottom:92px;width:340px;height:54px;border-radius:8px;background:linear-gradient(180deg,#4b4030,#231c16);border:1px solid rgba(255,182,41,.18);transform:translateZ(24px)}
+  .entry{position:absolute;left:362px;bottom:42px;width:142px;height:64px;border-radius:12px;background:linear-gradient(180deg,rgba(40,215,239,.20),rgba(40,215,239,.03));border:1px solid rgba(40,215,239,.35);transform:translateZ(10px)}
+  .label3d{position:absolute;color:rgba(234,248,255,.55);font-family:monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;transform:translateZ(38px)}
+  .l-entry{left:398px;bottom:62px}.l-counter{left:306px;bottom:112px}.l-window{right:116px;top:106px}
+  #hotspots{position:absolute;inset:0;z-index:10;transform-style:preserve-3d;pointer-events:none}
+  .hotspot{position:absolute;z-index:5;display:grid;place-items:center;width:46px;height:46px;border:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#dffcff,var(--brand) 45%,#09616d);box-shadow:0 0 0 9px rgba(40,215,239,.16),0 0 26px rgba(40,215,239,.55);color:#001016;font-weight:900;cursor:pointer;transform:translateZ(74px);transition:transform .16s,box-shadow .16s}
+  #hotspots .hotspot{pointer-events:auto}
+  .hotspot::after{content:attr(data-short);position:absolute;left:50%;top:52px;transform:translateX(-50%);white-space:nowrap;padding:4px 7px;border-radius:6px;background:rgba(2,8,13,.86);border:1px solid var(--line);color:var(--ink);font-size:10px;font-family:monospace;letter-spacing:.06em}
+  .hotspot.live{animation:pulse 1.8s ease-in-out infinite}.hotspot.idle{background:radial-gradient(circle at 35% 30%,#31424b,#0d1820);box-shadow:0 0 0 6px rgba(138,182,196,.11);color:var(--mut)}.hotspot.active{box-shadow:0 0 0 12px rgba(255,182,41,.22),0 0 34px rgba(255,182,41,.7);background:radial-gradient(circle at 35% 30%,#fff4c8,var(--accent) 48%,#8a5a00)}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 8px rgba(40,215,239,.12),0 0 24px rgba(40,215,239,.45)}50%{box-shadow:0 0 0 16px rgba(40,215,239,.05),0 0 32px rgba(40,215,239,.75)}}
+  .h0{left:392px;top:96px}.h1{left:598px;top:196px}.h2{right:120px;top:112px}.h3{left:278px;bottom:104px}.h4{left:184px;top:254px}.h5{left:706px;bottom:132px}
+  .controls{position:absolute;left:22px;bottom:22px;z-index:12;display:flex;gap:8px;padding:8px;border:1px solid var(--line);border-radius:14px;background:var(--glass);backdrop-filter:blur(12px)}
+  .controls button{min-width:44px;height:42px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);color:var(--ink);font-weight:900;cursor:pointer}
+  .controls button:hover{border-color:var(--brand);color:var(--brand)}
+  .hint{position:absolute;left:22px;top:22px;z-index:12;max-width:360px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--glass);backdrop-filter:blur(12px);color:var(--mut);font-size:13px}
+  .hint b{color:var(--ink)}
+  .side{border-left:1px solid var(--line);background:rgba(4,13,20,.88);backdrop-filter:blur(16px);padding:22px;overflow:auto}
+  .side h2{margin:0 0 8px;font-size:26px;line-height:1.1}
+  .side .addr{margin:0 0 22px;color:var(--mut)}
+  .detail{border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.035);padding:18px;margin-bottom:16px}
+  .detail .type{margin:0 0 8px;color:var(--accent);font-family:monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:900}
+  .detail h3{margin:0 0 8px;font-size:22px}
+  .detail p{margin:0 0 14px;color:var(--mut);line-height:1.45}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .stat{border-top:1px solid var(--line);padding-top:10px}
+  .stat b{display:block;font-size:22px}.stat span{color:var(--mut);font-family:monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+  .surface-list{display:grid;gap:10px}
+  .surface-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.03);padding:12px;cursor:pointer}
+  .surface-row:hover,.surface-row.active{border-color:var(--brand);background:rgba(40,215,239,.08)}
+  .surface-row strong{display:block;font-size:14px}.surface-row span{color:var(--mut);font-size:12px}
+  .pill{border:1px solid rgba(98,242,155,.4);color:var(--good);border-radius:999px;padding:4px 8px;font-family:monospace;font-size:10px;font-weight:900}.pill.idle{border-color:rgba(138,182,196,.32);color:var(--mut)}
+  @media (max-width:980px){.layout{grid-template-columns:1fr}.side{position:absolute;right:12px;top:88px;bottom:12px;width:min(360px,calc(100% - 24px));border:1px solid var(--line);border-radius:12px}.title h1{font-size:19px}.status{display:none}}
+  @media (max-width:640px){header{padding:10px;gap:10px}.back{padding:0 10px}.scene{width:720px;height:470px}.hint{display:none}.controls{left:10px;bottom:10px}.side{top:auto;height:40vh}.hotspot::after{display:none}}
+</style>
+</head>
+<body>
+<nav class="admira-nav admira-nav-static" aria-label="Admira · Xperience">
+  <a class="admira-nav-brand" href="https://www.admira.app">
+    <span class="admira-nav-brand-name">Admira</span>
+    <span class="admira-nav-brand-tag">Xperience</span>
+  </a>
+  <div class="admira-nav-items">
+    <a class="admira-nav-link admira-nav-link-external" href="https://www.pixeria.com">PixerIA</a>
+    <a class="admira-nav-link admira-nav-link-external" href="https://www.xpaceos.com">XpaceOS</a>
+    <a class="admira-nav-link admira-nav-link-active" href="https://www.admira.app">Xbusiness</a>
+    <a class="admira-nav-link admira-nav-link-cta" href="#contact" data-admira-contact>Contacto</a>
+  </div>
+</nav>
+<div class="app">
+  <header>
+    <a class="back" id="back-detail" href="detail.html">← Detalle Xpace</a>
+    <div class="title">
+      <p>Admira.app · interior retail 3D</p>
+      <h1 id="store-title">Mapa 3D</h1>
+    </div>
+    <div class="status"><span>hotspots</span><b id="hotspot-count">0</b><span> · arrastra para navegar</span></div>
+  </header>
+
+  <main class="layout">
+    <section class="stage" aria-label="Mapa 3D navegable de Xpace">
+      <div class="hint"><b>Explora el Xpace:</b> arrastra para moverte, rueda para zoom, usa los controles para rotar y pulsa cualquier punto caliente.</div>
+      <div class="scene-wrap" id="scene-wrap">
+        <div class="scene" id="scene">
+          <div class="floor"></div>
+          <div class="front"></div>
+          <div class="wall top"></div>
+          <div class="wall left"></div>
+          <div class="wall right"></div>
+          <div class="aisle a1"></div>
+          <div class="aisle a2"></div>
+          <div class="aisle a3"></div>
+          <div class="aisle a4"></div>
+          <div class="counter"></div>
+          <div class="entry"></div>
+          <div class="label3d l-entry">entrada</div>
+          <div class="label3d l-counter">mostrador</div>
+          <div class="label3d l-window">escaparate</div>
+          <div id="hotspots"></div>
+        </div>
+      </div>
+      <div class="controls" aria-label="Controles 3D">
+        <button id="zoom-out" type="button" title="Alejar">−</button>
+        <button id="zoom-in" type="button" title="Acercar">+</button>
+        <button id="rotate-left" type="button" title="Rotar izquierda">↺</button>
+        <button id="rotate-right" type="button" title="Rotar derecha">↻</button>
+        <button id="reset-view" type="button" title="Reset vista">⌂</button>
+      </div>
+    </section>
+
+    <aside class="side">
+      <h2 id="side-name">Xpace</h2>
+      <p class="addr" id="side-addr">Selecciona un punto caliente.</p>
+      <article class="detail" id="surface-detail">
+        <p class="type">Surface activa</p>
+        <h3 id="detail-name">Pantalla</h3>
+        <p id="detail-desc">Pulsa un hotspot del mapa para inspeccionar la pantalla, su audiencia y su valor publicitario.</p>
+        <div class="stats">
+          <div class="stat"><b id="detail-impr">--</b><span>impr/día</span></div>
+          <div class="stat"><b id="detail-cpm">--</b><span>CPM</span></div>
+        </div>
+      </article>
+      <div class="surface-list" id="surface-list"></div>
+    </aside>
+  </main>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const locId = params.get('loc') || 'admira-bcn';
+const locations = window.loadOmnipLocations();
+const loc = locations.find(item => item.id === locId) || locations[0];
+const positions = [
+  { cls:'h0', short:'LED frontal' },
+  { cls:'h1', short:'LED vertical' },
+  { cls:'h2', short:'Escaparate' },
+  { cls:'h3', short:'Vending' },
+  { cls:'h4', short:'PWA club' },
+  { cls:'h5', short:'Mostrador' },
+];
+let view = { x: 0, y: 0, scale: 1, rot: -18, pitch: 62 };
+let activeIndex = 0;
+let drag = null;
+
+const scene = document.getElementById('scene');
+const sceneWrap = document.getElementById('scene-wrap');
+const hotspotsEl = document.getElementById('hotspots');
+const listEl = document.getElementById('surface-list');
+
+function cpmValue(surface) {
+  return parseFloat(String(surface.cpm || '').replace(/[^\d.]/g, '')) || 0;
+}
+
+function updateTransform() {
+  scene.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale}) rotateX(${view.pitch}deg) rotateZ(${view.rot}deg)`;
+}
+
+function selectSurface(index) {
+  activeIndex = index;
+  const surface = loc.surfaces[index];
+  document.querySelectorAll('.hotspot').forEach((el, i) => el.classList.toggle('active', i === index));
+  document.querySelectorAll('.surface-row').forEach((el, i) => el.classList.toggle('active', i === index));
+  document.getElementById('detail-name').textContent = surface.name;
+  document.getElementById('detail-desc').textContent = surface.desc + ' · ' + surface.surface;
+  document.getElementById('detail-impr').textContent = Number(surface.impr || 0).toLocaleString('es-ES');
+  document.getElementById('detail-cpm').textContent = surface.cpm;
+}
+
+function render() {
+  document.title = loc.name + ' · Mapa 3D | Admira.app';
+  document.getElementById('store-title').textContent = loc.name + ' · mapa interior';
+  document.getElementById('side-name').textContent = loc.name;
+  document.getElementById('side-addr').textContent = loc.addr;
+  document.getElementById('hotspot-count').textContent = loc.surfaces.length;
+  document.getElementById('back-detail').href = 'detail.html?loc=' + encodeURIComponent(loc.id);
+
+  hotspotsEl.innerHTML = '';
+  listEl.innerHTML = '';
+  loc.surfaces.forEach((surface, index) => {
+    const pos = positions[index % positions.length];
+    const button = document.createElement('button');
+    button.className = `hotspot ${pos.cls} ${surface.status}`;
+    button.type = 'button';
+    button.dataset.short = pos.short;
+    button.textContent = index + 1;
+    button.setAttribute('aria-label', 'Abrir ' + surface.name);
+    button.addEventListener('pointerdown', event => event.stopPropagation());
+    button.addEventListener('click', () => selectSurface(index));
+    hotspotsEl.append(button);
+
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'surface-row';
+    row.innerHTML = `<span><strong>${surface.name}</strong><span>${surface.impr} impr/día · ${surface.cpm} CPM · ${surface.surface}</span></span><i class="pill ${surface.status === 'idle' ? 'idle' : ''}">${surface.status === 'live' ? 'LIVE' : surface.status === 'sched' ? 'PROG' : 'IDLE'}</i>`;
+    row.addEventListener('click', () => selectSurface(index));
+    listEl.append(row);
+  });
+  selectSurface(0);
+  updateTransform();
+}
+
+sceneWrap.addEventListener('pointerdown', event => {
+  drag = { x: event.clientX, y: event.clientY, startX: view.x, startY: view.y };
+  sceneWrap.classList.add('dragging');
+  sceneWrap.setPointerCapture(event.pointerId);
+});
+
+sceneWrap.addEventListener('pointermove', event => {
+  if (!drag) return;
+  view.x = drag.startX + event.clientX - drag.x;
+  view.y = drag.startY + event.clientY - drag.y;
+  updateTransform();
+});
+
+sceneWrap.addEventListener('pointerup', event => {
+  drag = null;
+  sceneWrap.classList.remove('dragging');
+  try { sceneWrap.releasePointerCapture(event.pointerId); } catch {}
+});
+
+sceneWrap.addEventListener('wheel', event => {
+  event.preventDefault();
+  const next = view.scale + (event.deltaY > 0 ? -0.08 : 0.08);
+  view.scale = Math.max(0.65, Math.min(1.7, next));
+  updateTransform();
+}, { passive:false });
+
+document.getElementById('zoom-in').addEventListener('click', () => { view.scale = Math.min(1.7, view.scale + 0.12); updateTransform(); });
+document.getElementById('zoom-out').addEventListener('click', () => { view.scale = Math.max(0.65, view.scale - 0.12); updateTransform(); });
+document.getElementById('rotate-left').addEventListener('click', () => { view.rot -= 12; updateTransform(); });
+document.getElementById('rotate-right').addEventListener('click', () => { view.rot += 12; updateTransform(); });
+document.getElementById('reset-view').addEventListener('click', () => { view = { x:0, y:0, scale:1, rot:-18, pitch:62 }; updateTransform(); selectSurface(activeIndex); });
+
+window.addEventListener('keydown', event => {
+  if (event.key === 'ArrowLeft') view.x -= 24;
+  if (event.key === 'ArrowRight') view.x += 24;
+  if (event.key === 'ArrowUp') view.y -= 24;
+  if (event.key === 'ArrowDown') view.y += 24;
+  if (event.key === '+' || event.key === '=') view.scale = Math.min(1.7, view.scale + 0.1);
+  if (event.key === '-') view.scale = Math.max(0.65, view.scale - 0.1);
+  updateTransform();
+});
+
+render();
+</script>
+</body>
+</html>

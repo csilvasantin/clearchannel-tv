@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admira.app | Detalle de Xpace</title>
+<meta name="description" content="Detalle comercial de un Xpace en Admira.app: inventario retail media, pantallas, audiencia, pujas y campañas.">
+<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/tokens.css">
+<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/nav.css">
+  <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/contact-panel.css">
+  <script defer src="https://csilvasantin.github.io/admira-design/contact-panel.js"></script>
+<script src="locations.js?v=kioskos-20260608"></script>
+<style>
+  :root{color-scheme:dark;--bg:#02080d;--ink:#eaf8ff;--mut:#8ab6c4;--brand:#28d7ef;--accent:#ffb629;--violet:#a768ff;--good:#62f29b;--card:#08141e;--card2:#0d1b27;--line:rgba(138,182,196,.2);--shadow:0 24px 90px rgba(0,0,0,.42)}
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:radial-gradient(circle at 18% 0,rgba(40,215,239,.14),transparent 32rem),radial-gradient(circle at 95% 15%,rgba(255,182,41,.11),transparent 28rem),var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,sans-serif;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit}
+  .shell{display:grid;grid-template-columns:112px 1fr;min-height:100vh}
+  aside{border-right:1px solid var(--line);background:rgba(3,12,18,.72);padding:28px 14px;display:flex;flex-direction:column;align-items:center;gap:26px}
+  .mark{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--accent));color:#041017;font-weight:900;font-family:monospace}
+  .side-nav{display:grid;gap:12px;width:100%}
+  .side-nav span,.side-nav a{display:grid;place-items:center;min-height:48px;border-radius:8px;color:var(--mut);border:1px solid transparent;font-size:12px;font-family:monospace;text-transform:uppercase;letter-spacing:.08em}
+  .side-nav span{background:rgba(40,215,239,.12);color:var(--brand);border-color:rgba(40,215,239,.18)}
+  .side-nav a:hover{border-color:var(--line);color:var(--ink)}
+  main{padding:28px clamp(18px,3vw,42px) 36px}
+  .topbar{display:flex;align-items:center;gap:18px;margin-bottom:18px}
+  .back{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:8px;color:var(--mut);background:rgba(255,255,255,.03);font-weight:700}
+  .back:hover{color:var(--ink);border-color:var(--brand)}
+  .filters{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+  .filter{min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:8px;color:var(--ink);background:rgba(255,255,255,.03);font-size:14px}
+  .hero{display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:stretch}
+  .panel{background:linear-gradient(180deg,rgba(13,27,39,.88),rgba(6,15,23,.94));border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow)}
+  .store-head{padding:22px 22px 0}
+  .eyebrow{margin:0 0 8px;color:var(--accent);font-family:monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:900}
+  h1,h2,h3,p{margin-top:0}
+  h1{margin-bottom:4px;font-size:clamp(34px,4.5vw,58px);line-height:1}
+  .addr{margin:0;color:var(--mut);font-size:17px}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:22px}
+  .metric{border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.035);padding:16px;min-height:92px}
+  .metric b{display:block;color:var(--ink);font-size:28px;line-height:1.1}
+  .metric span{display:block;margin-top:6px;color:var(--mut);font-family:monospace;font-size:11px;text-transform:uppercase;letter-spacing:.12em}
+  .cockpit{position:relative;display:block;margin:0 22px 22px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#02080d}
+  .cockpit:hover{border-color:var(--brand)}
+  .cockpit img{width:100%;display:block;aspect-ratio:16/7.7;object-fit:cover;opacity:.9}
+  .cockpit .badge{position:absolute;right:18px;top:18px;border:1px solid rgba(98,242,155,.45);background:rgba(5,22,15,.82);color:var(--good);border-radius:999px;padding:5px 10px;font-family:monospace;font-size:12px;font-weight:800;letter-spacing:.1em}
+  .cockpit .enter{position:absolute;left:18px;bottom:18px;border:1px solid rgba(40,215,239,.45);background:rgba(4,16,23,.82);color:var(--ink);border-radius:8px;padding:9px 12px;font-size:13px;font-weight:800}
+  .live-card{padding:20px}
+  .live-card h2,.surface-panel h2,.campaigns h2{font-size:19px;margin-bottom:16px}
+  .bid{border-left:3px solid var(--brand);background:rgba(255,255,255,.04);border-radius:8px;padding:14px;margin-bottom:12px}
+  .bid:nth-child(3){border-left-color:var(--accent)}
+  .bid:nth-child(4){border-left-color:var(--violet)}
+  .bid .line{display:flex;justify-content:space-between;gap:12px;align-items:center}
+  .bid strong{font-size:17px}
+  .bid small{color:var(--mut)}
+  .bid button{width:100%;margin-top:12px;border:0;border-radius:6px;min-height:36px;background:linear-gradient(90deg,var(--brand),#42c0ff);color:#041017;font-weight:900;cursor:pointer}
+  .lower{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;margin-top:16px}
+  .surface-panel,.campaigns{padding:20px}
+  .surface-list{display:grid;gap:10px}
+  .surface{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.035);padding:14px}
+  .surface strong{display:block}
+  .surface p{margin:3px 0 0;color:var(--mut);font-size:13px}
+  .pill{border:1px solid rgba(98,242,155,.4);color:var(--good);border-radius:999px;padding:4px 8px;font-family:monospace;font-size:11px;font-weight:800;white-space:nowrap}
+  .pill.idle{border-color:rgba(138,182,196,.32);color:var(--mut)}
+  .bars{display:grid;gap:12px}
+  .bar{display:grid;grid-template-columns:150px 1fr 54px;gap:12px;align-items:center;color:var(--mut);font-size:13px}
+  .track{height:22px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--violet),var(--brand));width:60%}
+  .bar:nth-child(2) .fill{width:48%;background:linear-gradient(90deg,var(--brand),#35e0a3)}
+  .bar:nth-child(3) .fill{width:72%;background:linear-gradient(90deg,var(--accent),#ffdd70)}
+  .bar:nth-child(4) .fill{width:38%;background:linear-gradient(90deg,#3e9bff,var(--brand))}
+  .empty{padding:28px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.03);color:var(--mut)}
+  @media (max-width:980px){.shell{grid-template-columns:1fr}aside{display:none}.hero,.lower{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.filters{display:none}}
+  @media (max-width:560px){main{padding:18px 14px 28px}.topbar{align-items:flex-start}.metrics{grid-template-columns:1fr}.cockpit img{aspect-ratio:16/10}.bar{grid-template-columns:1fr}.track{height:18px}}
+</style>
+</head>
+<body>
+<nav class="admira-nav admira-nav-static" aria-label="Admira · Xperience">
+  <a class="admira-nav-brand" href="https://www.admira.app">
+    <span class="admira-nav-brand-name">Admira</span>
+    <span class="admira-nav-brand-tag">Xperience</span>
+  </a>
+  <div class="admira-nav-items">
+    <a class="admira-nav-link admira-nav-link-external" href="https://www.pixeria.com">PixerIA</a>
+    <a class="admira-nav-link admira-nav-link-external" href="https://www.xpaceos.com">XpaceOS</a>
+    <a class="admira-nav-link admira-nav-link-active" href="https://www.admira.app">Xbusiness</a>
+    <a class="admira-nav-link admira-nav-link-cta" href="#contact" data-admira-contact>Contacto</a>
+  </div>
+</nav>
+<div class="shell">
+  <aside>
+    <a class="mark" id="side-back" href="index.html">AD</a>
+    <nav class="side-nav" aria-label="Detalle">
+      <span>Resumen</span>
+      <a id="side-map" href="index.html">Mapa</a>
+      <a href="https://www.xpaceos.com">OS</a>
+      <a href="backoffice.html">Login</a>
+    </nav>
+  </aside>
+  <main>
+    <div class="topbar">
+      <a class="back" id="back-map" href="index.html">← Volver al mapa</a>
+      <div class="filters" aria-hidden="true">
+        <span class="filter">Hoy</span>
+        <span class="filter">Todos los sitios</span>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="panel">
+        <div class="store-head">
+          <p class="eyebrow" id="kind">Retail físico</p>
+          <h1 id="name">Xpace</h1>
+          <p class="addr" id="addr">Cargando inventario...</p>
+        </div>
+        <div class="metrics">
+          <div class="metric"><b id="m-screens">--</b><span>Pantallas activas</span></div>
+          <div class="metric"><b id="m-impr">--</b><span>Impresiones hoy</span></div>
+          <div class="metric"><b id="m-audience">--</b><span>Audiencia ahora</span></div>
+          <div class="metric"><b id="m-cpm">--</b><span>CPM promedio</span></div>
+        </div>
+        <a class="cockpit" id="store-3d-link" href="store-3d.html?loc=admira-bcn" aria-label="Entrar en el mapa 3D del Xpace">
+          <img src="assets/admira-app-cockpit.webp" width="1672" height="941" loading="lazy" decoding="async" alt="Cockpit de retail media con Xpace, pantallas y pujas">
+          <span class="badge">RTB online</span>
+          <span class="enter">Entrar al mapa 3D</span>
+        </a>
+      </div>
+      <aside class="panel live-card">
+        <h2>Live bidding</h2>
+        <div class="bid"><div class="line"><strong>Marca A</strong><small>25-34</small></div><div class="line"><small>CPM actual</small><strong id="bid-a">--</strong></div><button>Ofertar</button></div>
+        <div class="bid"><div class="line"><strong>Marca B</strong><small>18-24</small></div><div class="line"><small>CPM actual</small><strong id="bid-b">--</strong></div><button>Ofertar</button></div>
+        <div class="bid"><div class="line"><strong>Marca C</strong><small>35-44</small></div><div class="line"><small>CPM actual</small><strong id="bid-c">--</strong></div><button>Ofertar</button></div>
+      </aside>
+    </section>
+
+    <section class="lower">
+      <div class="panel surface-panel">
+        <h2>Inventario disponible</h2>
+        <div class="surface-list" id="surfaces"></div>
+      </div>
+      <div class="panel" id="live-consume" style="display:none">
+        <h2>📡 Consumo en vivo <span id="lc-pulse" style="color:#7dffb5;font-size:11px;float:right;transition:opacity .4s">● LIVE</span></h2>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin:4px 0 8px"><span style="opacity:.7;font-size:12px">Consumido hoy</span><span><b id="lc-total" style="font-size:22px;color:#7dffb5">0,00 €</b> <span id="lc-delta" style="font-size:12px;color:#7dffb5"></span></span></div>
+        <svg id="lc-chart" viewBox="0 0 300 40" preserveAspectRatio="none" style="width:100%;height:44px;display:none;margin-bottom:6px"></svg>
+        <div id="lc-rows" style="font-size:12px"></div>
+      </div>
+      <div class="panel campaigns">
+        <h2>Campañas del día</h2>
+        <div class="bars">
+          <div class="bar"><span>Lanzamiento verano</span><div class="track"><div class="fill"></div></div><b>12:00</b></div>
+          <div class="bar"><span>Back to School</span><div class="track"><div class="fill"></div></div><b>16:00</b></div>
+          <div class="bar"><span>Promos fin de semana</span><div class="track"><div class="fill"></div></div><b>20:00</b></div>
+          <div class="bar"><span>Marca awareness</span><div class="track"><div class="fill"></div></div><b>24:00</b></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const locId = params.get('loc') || 'admira-bcn';
+const locations = window.loadOmnipLocations();
+const loc = locations.find(item => item.id === locId) || locations[0];
+
+function fmtInt(n) {
+  return Number(n || 0).toLocaleString('es-ES');
+}
+
+function fmtMoney(n) {
+  return '€' + Number(n || 0).toFixed(2).replace('.', ',');
+}
+
+function cpmValue(surface) {
+  return parseFloat(String(surface.cpm || '').replace(/[^\d.]/g, '')) || 0;
+}
+
+function setText(id, value) {
+  document.getElementById(id).textContent = value;
+}
+
+function renderDetail() {
+  const mapHref = 'index.html?loc=' + encodeURIComponent(loc.id);
+  const store3dHref = 'store-3d.html?loc=' + encodeURIComponent(loc.id);
+  document.getElementById('back-map').href = mapHref;
+  document.getElementById('side-map').href = mapHref;
+  document.getElementById('side-back').href = mapHref;
+  document.getElementById('store-3d-link').href = store3dHref;
+  document.title = loc.name + ' | Admira.app';
+
+  setText('kind', loc.kind);
+  setText('name', loc.name);
+  setText('addr', loc.addr);
+
+  const active = loc.surfaces.filter(s => s.status === 'live').length;
+  const totalImpr = loc.surfaces.reduce((sum, s) => sum + Number(s.impr || 0), 0);
+  const avgCpm = loc.surfaces.length ? loc.surfaces.reduce((sum, s) => sum + cpmValue(s), 0) / loc.surfaces.length : 0;
+  const audience = Math.max(120, Math.round(totalImpr * 4.6));
+  setText('m-screens', active + ' / ' + loc.surfaces.length);
+  setText('m-impr', fmtInt(totalImpr * 128));
+  setText('m-audience', fmtInt(audience));
+  setText('m-cpm', fmtMoney(avgCpm));
+  setText('bid-a', fmtMoney(avgCpm + 0.55));
+  setText('bid-b', fmtMoney(avgCpm + 0.30));
+  setText('bid-c', fmtMoney(Math.max(0.9, avgCpm - 0.10)));
+
+  const list = document.getElementById('surfaces');
+  list.innerHTML = '';
+  loc.surfaces.forEach(surface => {
+    const row = document.createElement('article');
+    row.className = 'surface';
+    const text = document.createElement('div');
+    const title = document.createElement('strong');
+    title.textContent = surface.name;
+    const desc = document.createElement('p');
+    desc.textContent = surface.desc + ' · ' + surface.impr + ' impr/día · ' + surface.cpm + ' CPM';
+    text.append(title, desc);
+    const pill = document.createElement('span');
+    pill.className = 'pill' + (surface.status === 'idle' ? ' idle' : '');
+    pill.textContent = surface.status === 'live' ? 'LIVE' : surface.status === 'sched' ? 'PROG' : 'IDLE';
+    row.append(text, pill);
+    list.append(row);
+  });
+}
+
+renderDetail();
+
+// ── Consumo de CPM EN VIVO del Xpacio (lee el día parcial que el gemelo empuja) ──
+const PIXER='https://pixer-eleven.csilvasantin.workers.dev';
+const LC_SEG={nino_m:'♂ Niño',nino_f:'♀ Niña',joven_m:'♂ Joven',joven_f:'♀ Joven',adulto_m:'♂ Adulto',adulto_f:'♀ Adulta',senior_m:'♂ Senior',senior_f:'♀ Senior'};
+function lcToday(){const d=new Date();return ''+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+async function renderLive(){
+  const box=document.getElementById('live-consume'); if(!box) return;
+  try{
+    const t=lcToday();
+    const r=await fetch(PIXER+'/day/range?loc='+encodeURIComponent(loc.id)+'&from='+t+'&to='+t,{cache:'no-store'});
+    const d=await r.json(); const day=(d&&d.days&&d.days[t])||null; const ea=day&&day.extAds;
+    if(!ea||!Object.keys(ea).length){ box.style.display='none'; return; }
+    const rev=day.extAdsRev||{};
+    const rows=Object.keys(ea).map(k=>({lbl:LC_SEG[k]||k,n:ea[k],rv:rev[k]||0})).sort((a,b)=>b.rv-a.rv);
+    const tot=day.extAdsRevTotal!=null?day.extAdsRevTotal:rows.reduce((s,x)=>s+x.rv,0);
+    const fmt=v=>v.toFixed(2).replace('.',',')+' €';
+    document.getElementById('lc-total').textContent=fmt(tot);
+    const dEl=document.getElementById('lc-delta'),prev=renderLive._last; renderLive._last=tot;
+    if(dEl) dEl.textContent=(prev!=null&&tot-prev>0.001)?('▲ +'+fmt(tot-prev)):'';
+    const pu=document.getElementById('lc-pulse'); if(pu){ pu.style.opacity='1'; setTimeout(()=>{try{pu.style.opacity='.35';}catch(_){}}, 350); }
+    document.getElementById('lc-rows').innerHTML=rows.map(x=>'<div style="display:flex;justify-content:space-between;padding:2px 0"><span>'+x.lbl+'</span><span><b>'+x.n+'</b> <span style="color:#7dffb5">'+x.rv.toFixed(2)+'€</span></span></div>').join('');
+    const ch=document.getElementById('lc-chart'),hrs=Array.isArray(day.hours)?day.hours:[];
+    if(ch&&hrs.length>1){ const mx=Math.max(1,...hrs.map(h=>h.in||0)),cur=hrs[hrs.length-1].h,W=300,H=40,bw=W/hrs.length;
+      ch.innerHTML=hrs.map((h,i)=>{const bh=Math.round((h.in||0)/mx*H),x=Math.round(i*bw);return '<rect x="'+(x+1)+'" y="'+(H-bh)+'" width="'+Math.max(2,Math.round(bw-2))+'" height="'+bh+'" rx="1" fill="'+(h.h===cur?'#ffd166':'#3a86a8')+'"/>';}).join('');
+      ch.style.display='block';
+    }
+    box.style.display='block';
+  }catch(e){}
+}
+renderLive(); setInterval(renderLive, 12000);
+</script>
+</body>
+</html>

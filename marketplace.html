@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OmniPublicity — El mercado de la atención física | AdmiraNext</title>
+<meta name="description" content="Marketplace de doble cara del Xpace OS: anunciantes que pujan por la atención en el punto de venta y espacios físicos que monetizan cada impresión, con subasta en tiempo real al centro.">
+<link rel="canonical" href="https://www.admira.app/marketplace.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="OmniPublicity">
+<meta property="og:title" content="OmniPublicity — El mercado de la atención física">
+<meta property="og:description" content="Marketplace de doble cara: anunciantes que pujan por la atención en el punto de venta y espacios físicos que monetizan cada impresión, con RTB al centro.">
+<meta property="og:url" content="https://www.admira.app/marketplace.html">
+<meta property="og:image" content="https://www.admira.app/assets/og-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="es_ES">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OmniPublicity — El mercado de la atención física">
+<meta name="twitter:description" content="Marketplace de doble cara del Xpace OS con subasta en tiempo real en el punto de venta.">
+<meta name="twitter:image" content="https://www.admira.app/assets/og-cover.jpg">
+<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/tokens.css">
+<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/nav.css">
+<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/contact-panel.css">
+<script defer src="https://csilvasantin.github.io/admira-design/contact-panel.js"></script>
+<style>
+  :root{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--twin:#b78cff;--studio:#ff7ad9;--card:#0a1620;--line:rgba(120,243,255,.18);--good:#88ffaa;--amber-line:rgba(255,216,102,.30);--twin-line:rgba(183,140,255,.34);--studio-line:rgba(255,122,217,.34)}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,sans-serif;line-height:1.55}
+  a{color:var(--brand);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  .admira-nav.admira-nav-static{position:sticky;top:0;z-index:20}
+
+  /* Hero */
+  .hero{padding:84px 0 56px;background:radial-gradient(ellipse at 18% 0%,rgba(120,243,255,.12),transparent 55%),radial-gradient(ellipse at 100% 26%,rgba(255,216,102,.10),transparent 55%)}
+  .badge{display:inline-block;font-family:monospace;font-size:11px;color:var(--accent);letter-spacing:.18em;border:1px solid var(--amber-line);padding:4px 10px;border-radius:999px;margin-bottom:18px}
+  .hero h1{font-size:54px;line-height:1.04;margin:0 0 22px;letter-spacing:-.02em;font-weight:800;max-width:880px}
+  .hero h1 .grad{background:linear-gradient(90deg,var(--brand),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.lede{font-size:19px;color:var(--mut);max-width:740px;margin:0 0 30px}
+  .ctas{display:flex;gap:12px;flex-wrap:wrap}
+  .cta{display:inline-flex;gap:10px;align-items:center;padding:13px 22px;border-radius:8px;font-weight:700;font-size:14px;letter-spacing:.03em;cursor:pointer;border:1px solid transparent}
+  .cta.adv{background:var(--brand);color:#001620}
+  .cta.sup{background:var(--accent);color:#1a1300}
+  .cta.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+
+  /* Diagrama marketplace */
+  .market{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:stretch;margin:18px 0 0}
+  .side{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .side.adv{border-color:rgba(120,243,255,.35)}
+  .side.sup{border-color:var(--amber-line)}
+  .side .tag{font-family:monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+  .side.adv .tag{color:var(--brand)} .side.sup .tag{color:var(--accent)}
+  .side h3{margin:8px 0 6px;font-size:20px}
+  .side p{margin:0;color:var(--mut);font-size:14px}
+  .engine{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-width:150px;background:linear-gradient(180deg,rgba(120,243,255,.10),rgba(255,216,102,.08));border:1px solid var(--line);border-radius:14px;padding:18px 14px}
+  .engine b{font-size:13px;font-family:monospace;letter-spacing:.1em;color:var(--ink)}
+  .engine .pulse{font-size:11px;color:var(--good);font-family:monospace;margin-top:6px}
+  .engine .ms{font-size:28px;font-weight:800;font-family:monospace;background:linear-gradient(90deg,var(--brand),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* Base layer: gemelo bajo el diagrama */
+  .twin-base{margin:16px 0 0;background:linear-gradient(180deg,rgba(183,140,255,.10),rgba(183,140,255,.04));border:1px solid var(--twin-line);border-radius:14px;padding:16px 20px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+  .twin-base .tag{font-family:monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--twin)}
+  .twin-base p{margin:0;color:var(--mut);font-size:14px;flex:1;min-width:240px}
+  .twin-base b{color:var(--twin)}
+
+  /* Ecosistema: crea -> vende -> muestra */
+  section.eco-sec{background:radial-gradient(ellipse at 14% 0%,rgba(255,122,217,.06),transparent 58%),radial-gradient(ellipse at 86% 0%,rgba(183,140,255,.06),transparent 58%)}
+  .eco-sec .eyebrow{color:var(--studio)}
+  .flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:stretch;margin-top:8px}
+  .node{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .node .lv{font-family:monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+  .node h3{margin:6px 0 2px;font-size:19px}
+  .node .prod{font-family:monospace;font-size:12px;color:var(--mut)}
+  .node p{margin:10px 0 0;color:var(--mut);font-size:13px}
+  .node.crea{border-color:var(--studio-line)} .node.crea .lv,.node.crea h3{color:var(--studio)}
+  .node.vende{border-color:rgba(120,243,255,.45)} .node.vende .lv,.node.vende h3{color:var(--brand)}
+  .node.muestra{border-color:var(--twin-line)} .node.muestra .lv,.node.muestra h3{color:var(--twin)}
+  .node .here{position:absolute;top:-10px;right:14px;font-family:monospace;font-size:10px;letter-spacing:.1em;background:var(--brand);color:#001620;padding:2px 9px;border-radius:999px}
+  .flow .arrow{display:flex;align-items:center;font-size:24px;color:var(--mut)}
+
+  section{padding:62px 0;border-top:1px solid var(--line)}
+  section.adv-sec{background:radial-gradient(ellipse at 0% 0%,rgba(120,243,255,.06),transparent 60%)}
+  section.sup-sec{background:radial-gradient(ellipse at 100% 0%,rgba(255,216,102,.06),transparent 60%)}
+  section.twin-sec{background:radial-gradient(ellipse at 50% 0%,rgba(183,140,255,.07),transparent 62%)}
+  .eyebrow{font-family:monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 10px}
+  .adv-sec .eyebrow{color:var(--brand)} .sup-sec .eyebrow{color:var(--accent)} .twin-sec .eyebrow{color:var(--twin)}
+  .twin-sec .card h3{color:var(--twin)} .twin-sec .card:hover{border-color:var(--twin)}
+  .twin-sec .steps .s b{color:var(--twin)}
+  .cta.twin{background:var(--twin);color:#14081f}
+
+  /* Diagrama de 3 capas */
+  .layers{display:grid;gap:10px;margin:28px 0 6px}
+  .layer{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .layer .lv{font-family:monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  .layer h4{margin:0 0 4px;font-size:16px}
+  .layer p{margin:0;color:var(--mut);font-size:13px}
+  .layer.phys{border-color:var(--amber-line)} .layer.phys .lv{color:var(--accent)}
+  .layer.twin{border-color:var(--twin-line)} .layer.twin .lv{color:var(--twin)}
+  .layer.mkt{border-color:rgba(120,243,255,.35)} .layer.mkt .lv{color:var(--brand)}
+  section h2{font-size:32px;margin:0 0 16px;letter-spacing:-.01em;max-width:820px}
+  section .lede{color:var(--mut);font-size:16px;max-width:760px;margin:0 0 30px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;transition:transform .12s,border-color .12s}
+  .card:hover{transform:translateY(-2px)}
+  .adv-sec .card:hover{border-color:var(--brand)} .sup-sec .card:hover{border-color:var(--accent)}
+  .card .ico{font-size:22px;margin-bottom:10px}
+  .card h3{margin:0 0 8px;font-size:17px}
+  .adv-sec .card h3{color:var(--brand)} .sup-sec .card h3{color:var(--accent)}
+  .card p{margin:0;color:var(--mut);font-size:14px}
+  .card .kpi{display:block;font-family:monospace;font-weight:800;font-size:15px;color:var(--ink);margin-top:10px}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:26px 0 6px}
+  .steps .s{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .steps .s b{display:block;font-family:monospace;font-size:11px;letter-spacing:.12em;margin-bottom:6px}
+  .adv-sec .steps .s b{color:var(--brand)} .sup-sec .steps .s b{color:var(--accent)}
+  .steps .s span{color:var(--mut);font-size:13px}
+  .sec-cta{margin-top:26px}
+
+  /* Motor band */
+  .engine-band .stack{display:grid;grid-template-columns:1fr 1fr;gap:12px;font-family:monospace;font-size:13px}
+  .engine-band .row{background:var(--card);border:1px solid var(--line);padding:14px 16px;border-radius:8px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+  .engine-band .row b{color:var(--accent);letter-spacing:.03em}
+  .engine-band .row span{color:var(--mut);text-align:right}
+  .nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:24px}
+  .nums .n{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+  .nums .n .v{font-size:30px;font-weight:800;color:var(--brand);font-family:monospace}
+  .nums .n .l{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+
+  /* CTA final */
+  .final{padding:72px 0;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(120,243,255,.10),transparent 60%)}
+  .final h2{font-size:34px;margin:0 0 14px;border:0}
+  .final p{color:var(--mut);max-width:600px;margin:0 auto 26px}
+  .final .ctas{justify-content:center}
+
+  footer{padding:38px 0;border-top:1px solid var(--line);font-size:13px;color:var(--mut)}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  footer a{color:var(--mut)}
+  footer .sig{margin-left:auto;font-family:monospace;font-size:11px;letter-spacing:.1em;color:var(--accent)}
+
+  @media (max-width:760px){
+    .admira-nav.admira-nav-static{display:grid;grid-template-columns:1fr;gap:9px;padding:10px 14px}
+    .admira-nav .admira-nav-brand{justify-self:center}
+    .admira-nav .admira-nav-items{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+    .admira-nav .admira-nav-link{min-height:34px;justify-content:center;text-align:center}
+    .hero{padding:54px 0 46px}
+    .badge{font-size:9.5px;letter-spacing:.14em;line-height:1.35}
+    .hero h1{font-size:36px}
+    .hero p.lede{font-size:17px}
+    .ctas{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .cta{justify-content:center;text-align:center;padding:12px 14px}
+    .cta.ghost{grid-column:1/-1}
+    .market{grid-template-columns:1fr}
+    .engine{order:-1}
+    .engine-band .stack{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr}
+    .layer{grid-template-columns:1fr;gap:6px}
+    .flow{grid-template-columns:1fr}
+    .flow .arrow{justify-content:center;transform:rotate(90deg)}
+  }
+</style>
+</head>
+<body>
+
+<nav class="admira-nav admira-nav-static admira-nav-app-bar" aria-label="Admira · Xperience">
+  <a class="admira-nav-brand" href="https://www.admira.app">
+    <span class="admira-nav-brand-name">Admira</span>
+    <span class="admira-nav-brand-tag">Xperience</span>
+  </a>
+  <div class="admira-nav-items">
+    <a class="admira-nav-link admira-nav-link-external" href="https://www.pixeria.com">PixerIA</a>
+    <a class="admira-nav-link admira-nav-link-external" href="https://www.xpaceos.com">XpaceOS</a>
+    <a class="admira-nav-link admira-nav-link-active" href="https://www.admira.app">Xbusiness</a>
+    <a class="admira-nav-link admira-nav-link-cta" href="#contact" data-admira-contact>Contacto</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="badge">XPACE OS · MERCADO DE LA ATENCIÓN</span>
+    <h1>El mundo físico,<br><span class="grad">un mercado en tiempo real.</span></h1>
+    <p class="lede">OmniPublicity conecta a quien quiere comprar atención en el punto de venta con quien tiene los metros para venderla. Pero entre el ladrillo y la subasta hay una capa que lo hace posible: el <b style="color:var(--twin)">gemelo digital</b> de cada espacio. Tres capas, un solo motor.</p>
+    <div class="ctas">
+      <a class="cta adv" href="#anunciantes">Soy anunciante</a>
+      <a class="cta sup" href="#espacios">Tengo un espacio</a>
+      <a class="cta ghost" href="#contact" data-admira-contact>Hablar con ventas</a>
+    </div>
+
+    <div class="market">
+      <div class="side adv">
+        <span class="tag">Demanda</span>
+        <h3>Anunciantes</h3>
+        <p>Pujan por aparecer ante la persona correcta, en el momento y lugar exactos: el último metro antes de la compra.</p>
+      </div>
+      <div class="engine">
+        <b>MOTOR RTB</b>
+        <div class="ms">&lt;200ms</div>
+        <div class="pulse">● subastando</div>
+      </div>
+      <div class="side sup">
+        <span class="tag">Oferta</span>
+        <h3>Espacios</h3>
+        <p>Estancos, retail y cualquier superficie de la red ponen sus huecos a la venta y cobran por cada impresión servida.</p>
+      </div>
+    </div>
+
+    <div class="twin-base">
+      <span class="tag">Capa intermedia · XpaceOS</span>
+      <p>Todo corre sobre el <b>gemelo digital</b>: cada espacio reconstruido, sus surfaces geolocalizadas y su audiencia medida. Sin gemelo no hay inventario que subastar. <a href="#gemelo">Ver cómo ↓</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ECOSISTEMA · CREA -> VENDE -> MUESTRA -->
+<section id="ecosistema" class="eco-sec">
+  <div class="wrap">
+    <p class="eyebrow">El ecosistema AdmiraNext</p>
+    <h2>El contenido nace, se vende y se muestra sin salir del ecosistema.</h2>
+    <p class="lede">admira.app no es una isla: es el mercado en el centro de un circuito de extremo a extremo. El creativo se <b style="color:var(--studio)">crea</b> en PixerIA, se <b style="color:var(--brand)">vende</b> aquí en la subasta y se <b style="color:var(--twin)">muestra</b> en los espacios del Xpace OS, sobre su gemelo digital. Un mismo activo recorre las tres patas.</p>
+    <div class="flow">
+      <div class="node crea">
+        <span class="lv">1 · Crea</span>
+        <h3>PixerIA</h3>
+        <div class="prod">admira.studio</div>
+        <p>IA generativa que produce el creativo a medida de cada surface, formato y momento. El contenido entra al circuito ya listo para pujar.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node vende">
+        <span class="here">ESTÁS AQUÍ</span>
+        <span class="lv">2 · Vende</span>
+        <h3>OmniPublicity</h3>
+        <div class="prod">admira.app</div>
+        <p>El mercado RTB que subasta cada impresión en &lt;200 ms y casa la demanda de los anunciantes con la oferta de los espacios.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node muestra">
+        <span class="lv">3 · Muestra</span>
+        <h3>Xpace OS</h3>
+        <div class="prod">xpaceos.com</div>
+        <p>Reproduce el anuncio ganador en el espacio físico, sobre su gemelo digital, y devuelve la medición de atención y conversión al circuito.</p>
+      </div>
+    </div>
+    <div class="sec-cta">
+      <a class="cta" style="background:var(--studio);color:#1f0817" href="https://www.admira.studio" target="_blank" rel="noopener">Crear en PixerIA ↗</a>
+      <a class="cta twin" href="https://www.xpaceos.com" target="_blank" rel="noopener">Mostrar en Xpace OS ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- ANUNCIANTES -->
+<section id="anunciantes" class="adv-sec">
+  <div class="wrap">
+    <p class="eyebrow">Para anunciantes</p>
+    <h2>Llega en el último metro antes de la compra —y demuéstralo.</h2>
+    <p class="lede">Donde la publicidad digital se queda en el clic, OmniPublicity llega hasta el lineal. Pujas por impresiones reales en el punto de venta y cierras el círculo con la conversión en el TPV: por primera vez, la valla sabe si vendió.</p>
+    <div class="grid">
+      <div class="card"><div class="ico">🎯</div><h3>Contexto que importa</h3><p>Pujas según hora, climatología, perfil de cliente Club, stock y promociones activas. No compras un cartel: compras un momento.</p></div>
+      <div class="card"><div class="ico">🧾</div><h3>Atribución impresión → venta</h3><p>Cada impresión se cruza con la venta en caja. Mides retorno real sobre la compra, no estimaciones de alcance.</p><span class="kpi">CPM medible · ROI a TPV</span></div>
+      <div class="card"><div class="ico">⚡</div><h3>Pago por impresión</h3><p>Sin contratos anuales ni mínimos de cartel. Defines presupuesto y pujas; pagas solo por lo servido, second-price.</p></div>
+      <div class="card"><div class="ico">🖥️</div><h3>Formatos del mundo real</h3><p>Pantallas LED, escaparate, panel de mostrador, vending y la PWA del Club. Un creativo, todas las superficies.</p></div>
+    </div>
+    <div class="steps">
+      <div class="s"><b>1 · DEFINE</b><span>Objetivo, audiencia y presupuesto. Subes el creativo (o lo genera PixerIA).</span></div>
+      <div class="s"><b>2 · PUJA</b><span>El motor te mete en cada subasta que encaje con tu contexto, en &lt;200 ms.</span></div>
+      <div class="s"><b>3 · MIDE</b><span>Impresiones, atención y conversión a TPV en un panel auditable.</span></div>
+    </div>
+    <div class="sec-cta">
+      <a class="cta adv" href="#contact" data-admira-contact>Lanza tu primera campaña</a>
+      <a class="cta ghost" href="./index.html">Ver el mapa de espacios ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- ESPACIOS -->
+<section id="espacios" class="sup-sec">
+  <div class="wrap">
+    <p class="eyebrow">Para espacios</p>
+    <h2>Convierte tus metros en inventario que se vende solo.</h2>
+    <p class="lede">Tu escaparate, tu pantalla y tu mostrador ya tienen audiencia: miles de personas al día. OmniPublicity los pone a la venta por impresión y te paga por una atención que hoy regalas. Sin comerciales, sin huecos vacíos.</p>
+    <div class="grid">
+      <div class="card"><div class="ico">💶</div><h3>Ingresos por impresión</h3><p>Cada vista de cada surface se subasta al anunciante que más la valora en ese instante. Nuevo ingreso sobre lo que ya tienes.</p></div>
+      <div class="card"><div class="ico">🤖</div><h3>Cero gestión</h3><p>El motor da de alta, subasta, sirve y mide solo. Tú decides qué entra; del resto se encarga el Xpace OS.</p></div>
+      <div class="card"><div class="ico">🛡️</div><h3>Tu marca, tus reglas</h3><p>Vetas categorías, fijas precio mínimo y proteges la imagen del punto de venta. Tú mandas en tu espacio.</p></div>
+      <div class="card"><div class="ico">📺</div><h3>Nunca un hueco vacío</h3><p>Si nadie supera tu mínimo, la pantalla muestra tu propio contenido —lotería, club, promos—. Fill rate del 100%.</p><span class="kpi">100% fill · fallback propio</span></div>
+    </div>
+    <div class="steps">
+      <div class="s"><b>1 · ALTA</b><span>Mapeamos tus surfaces (pantallas, escaparate, mostrador, vending).</span></div>
+      <div class="s"><b>2 · SUBASTA</b><span>El motor vende cada impresión en tiempo real al mejor postor válido.</span></div>
+      <div class="s"><b>3 · COBRA</b><span>Cobras por lo servido, con liquidación y reporting auditable.</span></div>
+    </div>
+    <div class="sec-cta">
+      <a class="cta sup" href="#contact" data-admira-contact>Monetiza tu espacio</a>
+      <a class="cta ghost" href="./backoffice.html">Ver el backoffice ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- GEMELO DIGITAL · CAPA INTERMEDIA -->
+<section id="gemelo" class="twin-sec">
+  <div class="wrap">
+    <p class="eyebrow">La capa que falta · Admira XpaceOS</p>
+    <h2>Un metro de pared no se puede subastar. Su gemelo digital, sí.</h2>
+    <p class="lede">Entre el anunciante y el espacio hay una pregunta que nadie respondía: <em>¿qué estoy comprando exactamente?</em> El gemelo digital del Xpace OS la contesta. Reconstruye cada punto de venta como un espacio navegable, geolocaliza cada surface y mide su audiencia. Convierte ladrillo en <b style="color:var(--twin)">inventario direccionable</b> —y es lo que da sentido a toda la venta de espacios.</p>
+    <div class="grid">
+      <div class="card"><div class="ico">📸</div><h3>Del espacio al gemelo</h3><p>Una sola captura —incluso desde las gafas Ray-Ban Meta de un comercial— reconstruye el local en un gemelo navegable 2.5D. El alta de un espacio deja de ser un proyecto: es una foto.</p></div>
+      <div class="card"><div class="ico">📍</div><h3>Surfaces direccionables</h3><p>Cada pantalla, escaparate, mostrador o vending queda situado dentro del gemelo con coordenadas, tamaño y contexto. Pasa a ser una unidad de inventario única e identificable.</p></div>
+      <div class="card"><div class="ico">👁️</div><h3>Audiencia medida</h3><p>El gemelo cruza aforo, recorridos y dwell time. Sabe cuánta atención vale cada surface <em>antes</em> de subastarla: el precio nace de un dato, no de un tarifario.</p></div>
+      <div class="card"><div class="ico">🔄</div><h3>Sincronía físico-digital</h3><p>Stock, promociones y ocupación se reflejan en vivo en el gemelo. El anunciante puja sobre el estado real del espacio en ese instante, no sobre una foto de hace un año.</p></div>
+    </div>
+
+    <div class="layers">
+      <div class="layer phys"><span class="lv">Capa 1 · Física</span><div><h4>El espacio real y su gente</h4><p>Estancos, retail, pantallas y escaparates con miles de personas al día. El activo que hoy regala su atención.</p></div></div>
+      <div class="layer twin"><span class="lv">Capa 2 · Gemelo</span><div><h4>El espacio digitalizado, medido y direccionable</h4><p>El Digital Twin del Xpace OS: geometría real, surfaces geolocalizadas y audiencia cuantificada. <b style="color:var(--twin)">Aquí el espacio se convierte en inventario.</b></p></div></div>
+      <div class="layer mkt"><span class="lv">Capa 3 · Mercado</span><div><h4>La subasta en tiempo real sobre ese gemelo</h4><p>OmniPublicity puja, sirve y mide cada impresión en &lt;200 ms sobre un inventario que el gemelo hace existir.</p></div></div>
+    </div>
+
+    <div class="sec-cta">
+      <a class="cta twin" href="https://www.xpaceos.com" target="_blank" rel="noopener">Conoce el Xpace OS ↗</a>
+      <a class="cta ghost" href="./store-3d.html">Entra en un gemelo ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- MOTOR AL CENTRO -->
+<section id="motor" class="engine-band">
+  <div class="wrap">
+    <h2>Un solo motor entre las dos caras.</h2>
+    <p class="lede">La misma infraestructura RTB del Xpace OS que ya corre en el simulador Xtanco: subasta, sirve y mide cada impresión en menos de 200 ms.</p>
+    <div class="stack">
+      <div class="row"><b>SSP · Oferta</b><span>Surfaces del gemelo digital · Xpace OS</span></div>
+      <div class="row"><b>DSP · Demanda</b><span>Marketplace de anunciantes (CF Worker)</span></div>
+      <div class="row"><b>Bid Router</b><span>Subasta second-price · &lt;200 ms</span></div>
+      <div class="row"><b>Targeting</b><span>Hora · clima · perfil Club · stock</span></div>
+      <div class="row"><b>Measurement</b><span>Cámara · dwell time · conversión TPV</span></div>
+      <div class="row"><b>Compliance</b><span>Sin cookies · anonimizado · RGPD-ready</span></div>
+    </div>
+    <div class="nums">
+      <div class="n"><div class="v">&lt;200ms</div><div class="l">Tiempo de subasta</div></div>
+      <div class="n"><div class="v">100%</div><div class="l">Fill rate (con fallback)</div></div>
+      <div class="n"><div class="v">6</div><div class="l">Surfaces por punto de venta</div></div>
+      <div class="n"><div class="v">0</div><div class="l">Cookies · datos anonimizados</div></div>
+    </div>
+    <p class="lede" style="margin-top:22px">¿Quieres el detalle técnico del stack? <a href="./about.html">Lee la ficha técnica de OmniPublicity ↗</a></p>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<div class="final">
+  <div class="wrap">
+    <h2>El mundo físico ya es programático.</h2>
+    <p>Compra atención donde de verdad se decide la compra, o monetiza la que ya tienes. Te montamos un piloto sobre tu red.</p>
+    <div class="ctas">
+      <a class="cta adv" href="#contact" data-admira-contact>Soy anunciante</a>
+      <a class="cta sup" href="#contact" data-admira-contact>Tengo un espacio</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 AdmiraNext · OmniPublicity</span>
+    <a href="./about.html">Ficha técnica</a>
+    <a href="./index.html">Mapa de espacios</a>
+    <a href="https://www.xpaceos.com" target="_blank" rel="noopener">↗ Xpace OS</a>
+    <span class="sig">v.AdmiraNeXT.2026.05.31.r3 · _Admirito by Claude_</span>
+  </div>
+</footer>
+
+</body>
+</html>
