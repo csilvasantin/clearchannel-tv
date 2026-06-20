@@ -709,7 +709,7 @@
       </div>
       <!-- Publi exterior EN VIVO del gemelo (impactos reales por segmento × CPM) -->
       <div id="extad-live" style="display:none;margin-top:10px;padding:9px 11px;border:1px solid rgba(120,210,255,.35);border-radius:10px;background:rgba(8,18,28,.5);font-size:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;color:#8ed2ff;font-size:10px;letter-spacing:.06em;margin-bottom:5px">📡 CONSUMO EN VIVO · CPM POR SEGMENTO <button id="extad-circuit-btn" style="margin-left:auto;cursor:pointer;background:rgba(120,210,255,.12);border:1px solid rgba(120,210,255,.35);color:#9fd6ff;border-radius:6px;padding:2px 8px;font:inherit;font-size:9px;letter-spacing:.05em">📊 CIRCUITO</button> <span style="opacity:.6" id="extad-live-loc"></span> <span id="extad-live-pulse" style="color:#9effa0;transition:opacity .4s">● LIVE</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;color:#8ed2ff;font-size:10px;letter-spacing:.06em;margin-bottom:5px">📡 CONSUMO EN VIVO · CPM POR SEGMENTO <button id="extad-circuit-btn" style="margin-left:auto;cursor:pointer;background:rgba(120,210,255,.12);border:1px solid rgba(120,210,255,.35);color:#9fd6ff;border-radius:6px;padding:2px 8px;font:inherit;font-size:9px;letter-spacing:.05em">📊 CIRCUITO</button> <button id="extad-emit-btn" style="cursor:pointer;background:rgba(125,255,208,.10);border:1px solid rgba(125,255,208,.35);color:#7dffd0;border-radius:6px;padding:2px 8px;font:inherit;font-size:9px;letter-spacing:.05em">📡 EMISIÓN</button> <span style="opacity:.6" id="extad-live-loc"></span> <span id="extad-live-pulse" style="color:#9effa0;transition:opacity .4s">● LIVE</span></div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin:2px 0 5px"><span style="font-size:10px;opacity:.7">Consumido hoy</span><span><b id="extad-live-total" style="font-size:18px;color:#9effa0">0,00 €</b> <span id="extad-live-delta" style="font-size:11px;color:#9effa0"></span></span></div>
         <svg id="extad-live-spark" viewBox="0 0 300 34" preserveAspectRatio="none" style="width:100%;height:30px;display:none;margin-bottom:5px"></svg>
         <div id="extad-live-chart" style="margin-bottom:6px"></div>
@@ -4621,6 +4621,189 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
       +'<div style="display:flex;justify-content:space-between;border-top:1px dashed rgba(120,210,255,.25);margin-top:8px;padding-top:6px;color:#9effa0"><b>Total red · '+nX+' Xpacios con consumo hoy</b><b>'+gImp+' impr · '+gRev.toFixed(2)+'€</b></div>'
       +'<div style="font-size:10px;opacity:.5;margin-top:6px">Revisados los '+locs.length+' Xpacios principales de la red.</div>';
   }
+  // ═══════ SALA DE EMISIÓN · admira.tv · cockpit en tiempo real ("nave espacial") ═══════
+  // Lee /emit/range por circuito (proof-of-play real) y lo pinta como un puente de
+  // mando: radar de circuitos, KPIs animados, mezcla por tipo, ranking y feed en vivo.
+  const EMIT_TYPE_LBL={video:'🎬 Vídeo',animation:'✨ Animación',image:'🖼️ Imagen','digital-twin':'🏬 Gemelo','twin-npc':'🤖 NPC',audio:'🔊 Audio',music:'🎵 Música',locucion:'🎙️ Locución'};
+  const EMIT_TYPE_COL={video:'#7dffd0',animation:'#b388ff',image:'#8ed2ff','digital-twin':'#ffd866','twin-npc':'#ff9a6b',audio:'#6bd1ff',music:'#ff6bd1',locucion:'#9effa0'};
+  function emitBrand(l){ try{ return (l.external&&l.external.brand)||((l.kind||'').split(/[·|]/)[0].trim())||'Otros'; }catch(_){ return 'Otros'; } }
+  function edHash(s){ let h=0; s=String(s); for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return h; }
+  function edEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function edInt(n){ return (n||0).toLocaleString('es-ES'); }
+  async function fetchEmissionData(){
+    const all=(typeof window.loadOmnipLocations==='function')?window.loadOmnipLocations():[];
+    const locs=all.slice(0,60), t=todayStr();
+    const results=await Promise.all(locs.map(l=>fetch(PIXER+'/emit/range?loc='+encodeURIComponent(l.id)+'&from='+t+'&to='+t,{cache:'no-store'}).then(r=>r.json()).then(d=>({l,screens:(d&&d.screens)||{}})).catch(()=>({l,screens:{}}))));
+    const circuits={}, totType={}, pieceSet=new Set(); const recent=[]; let totPlays=0,totScreens=0,totSecs=0;
+    for(const {l,screens} of results){ const brand=emitBrand(l);
+      for(const sn of Object.keys(screens)){ const rec=screens[sn][t]; if(!rec||!rec.totalPlays) continue;
+        totScreens++; totPlays+=rec.totalPlays; totSecs+=rec.totalSecs||0;
+        const c=circuits[brand]||(circuits[brand]={brand,plays:0,screens:0,secs:0,byType:{},last:0});
+        c.plays+=rec.totalPlays; c.screens++; c.secs+=rec.totalSecs||0;
+        for(const ty in (rec.byType||{})){ c.byType[ty]=(c.byType[ty]||0)+rec.byType[ty]; totType[ty]=(totType[ty]||0)+rec.byType[ty]; }
+        for(const id in (rec.assets||{})){ const a=rec.assets[id]; pieceSet.add(id); if((a.last||0)>c.last) c.last=a.last;
+          recent.push({screen:sn,brand,title:a.title||id,type:a.type||'image',last:a.last||0}); }
+      }
+    }
+    recent.sort((a,b)=>b.last-a.last);
+    return { t, locsChecked:locs.length, totPlays, totScreens, totSecs, pieces:pieceSet.size, totType,
+      circuits:Object.values(circuits).sort((a,b)=>b.plays-a.plays), recent:recent.slice(0,40) };
+  }
+  function injectEdeckStyle(){ if(document.getElementById('edeck-style')) return;
+    const s=document.createElement('style'); s.id='edeck-style'; s.textContent=`
+    #emission-deck{position:fixed;inset:0;z-index:100001;background:radial-gradient(130% 130% at 50% -10%,#06151f 0%,#02090e 58%,#01060a 100%);color:#dff8ff;font-family:'Courier New',ui-monospace,SFMono-Regular,monospace;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;animation:ed-in .4s ease}
+    @keyframes ed-in{from{opacity:0;transform:scale(1.015)}to{opacity:1;transform:none}}
+    #emission-deck .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(45,141,141,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(45,141,141,.08) 1px,transparent 1px);background-size:44px 44px;-webkit-mask:radial-gradient(circle at 50% 42%,#000 28%,transparent 78%);mask:radial-gradient(circle at 50% 42%,#000 28%,transparent 78%);pointer-events:none}
+    #emission-deck .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(125,255,208,.035) 0 1px,transparent 1px 4px);mix-blend-mode:screen;pointer-events:none;opacity:.55}
+    #emission-deck .ed-corner{position:absolute;width:30px;height:30px;border:2px solid #2f8d8d;opacity:.55;pointer-events:none}
+    #emission-deck .ed-corner.tl{top:12px;left:12px;border-right:0;border-bottom:0}
+    #emission-deck .ed-corner.tr{top:12px;right:12px;border-left:0;border-bottom:0}
+    #emission-deck .ed-corner.bl{bottom:12px;left:12px;border-right:0;border-top:0}
+    #emission-deck .ed-corner.br{bottom:12px;right:12px;border-left:0;border-top:0}
+    #emission-deck .ed-top{display:flex;align-items:center;gap:14px;padding:16px 26px 10px;position:relative;flex-shrink:0;flex-wrap:wrap}
+    #emission-deck .ed-brand{font-size:15px;letter-spacing:.14em;color:#bfeaff}
+    #emission-deck .ed-brand b{color:#7dffd0}
+    #emission-deck .ed-logo{color:#7dffd0;text-shadow:0 0 12px #7dffd0}
+    #emission-deck .ed-sub{color:#8ed2ff;opacity:.85}
+    #emission-deck .ed-status{margin-left:auto;display:flex;align-items:center;gap:16px;font-size:11px;letter-spacing:.1em}
+    #emission-deck .ed-net{color:#6d8a96}
+    #emission-deck .ed-net.ok{color:#7dffd0}
+    #emission-deck .ed-net.err{color:#ff7a7a}
+    #emission-deck .ed-live{color:#9effa0;animation:ed-blink 1.4s steps(2) infinite}
+    @keyframes ed-blink{50%{opacity:.25}}
+    #emission-deck .ed-clock{color:#bfeaff;font-size:13px;letter-spacing:.16em;text-shadow:0 0 10px rgba(125,255,208,.4)}
+    #emission-deck .ed-close{margin-left:6px;cursor:pointer;background:rgba(255,90,90,.1);border:1px solid rgba(255,120,120,.4);color:#ff9a9a;border-radius:7px;width:30px;height:30px;font:inherit;font-size:15px}
+    #emission-deck .ed-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:6px 26px;flex-shrink:0}
+    #emission-deck .ed-kpi{position:relative;background:linear-gradient(180deg,rgba(8,24,34,.7),rgba(4,16,26,.5));border:1px solid rgba(45,141,141,.45);border-radius:12px;padding:14px 16px;overflow:hidden}
+    #emission-deck .ed-kpi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(#7dffd0,transparent)}
+    #emission-deck .ed-kpi-v{font-size:38px;font-weight:800;line-height:1;letter-spacing:.02em}
+    #emission-deck .ed-kpi-l{margin-top:7px;font-size:10px;letter-spacing:.13em;color:#7fa6b4}
+    #emission-deck .ed-main{flex:1 0 auto;display:grid;grid-template-columns:1.3fr .9fr;gap:14px;padding:12px 26px;min-height:380px}
+    #emission-deck .ed-panel{position:relative;background:rgba(4,16,26,.45);border:1px solid rgba(45,141,141,.35);border-radius:14px;padding:14px;display:flex;flex-direction:column;min-height:0}
+    #emission-deck .ed-ph{font-size:10px;letter-spacing:.16em;color:#8ed2ff;opacity:.8;margin-bottom:8px}
+    #emission-deck .ed-radar-wrap{align-items:center;justify-content:center}
+    #emission-deck .ed-radar-wrap .ed-ph{align-self:flex-start}
+    #emission-deck .ed-radar{position:relative;width:min(46vh,420px);aspect-ratio:1;margin:auto}
+    #emission-deck .ed-radar svg{width:100%;height:100%;overflow:visible}
+    #emission-deck .ed-sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(125,255,208,.34),transparent 28%);animation:ed-spin 4s linear infinite;pointer-events:none;mix-blend-mode:screen}
+    @keyframes ed-spin{to{transform:rotate(360deg)}}
+    #emission-deck .ed-empty{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;letter-spacing:.16em;color:#5d7a86;animation:ed-blink 2s steps(2) infinite}
+    #emission-deck .ed-side{overflow:auto}
+    #emission-deck .ed-meter{margin:6px 0}
+    #emission-deck .ed-meter-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+    #emission-deck .ed-bar{height:9px;background:#081420;border:1px solid rgba(45,141,141,.25);border-radius:5px;overflow:hidden}
+    #emission-deck .ed-bar i{display:block;height:100%;border-radius:5px;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+    #emission-deck .ed-circuits{display:flex;flex-direction:column;gap:5px}
+    #emission-deck .ed-crow{display:grid;grid-template-columns:18px 1fr auto auto;gap:7px;align-items:center;font-size:12px;position:relative;padding:4px 6px;border:1px solid rgba(45,141,141,.18);border-radius:8px;background:rgba(8,20,30,.4)}
+    #emission-deck .ed-rank{color:#7dffd0;font-weight:800}
+    #emission-deck .ed-cname{color:#dbeeff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #emission-deck .ed-cscr{font-size:10px;color:#7fa6b4}
+    #emission-deck .ed-cplays{color:#7dffd0;font-weight:800}
+    #emission-deck .ed-cbar{grid-column:1/-1;height:4px;background:#081420;border-radius:3px;overflow:hidden}
+    #emission-deck .ed-cbar i{display:block;height:100%;background:linear-gradient(90deg,#2f8d8d,#7dffd0);transition:width .7s ease}
+    #emission-deck .ed-dim{color:#5d7a86;font-size:11px}
+    #emission-deck .ed-ticker{display:flex;align-items:center;gap:12px;border-top:1px solid rgba(45,141,141,.35);background:rgba(2,10,16,.6);padding:9px 26px;overflow:hidden;white-space:nowrap;flex-shrink:0}
+    #emission-deck .ed-ticker-lbl{flex:0 0 auto;font-size:10px;letter-spacing:.14em;color:#7dffd0;background:#05121a;position:relative;z-index:2;padding-right:10px}
+    #emission-deck .ed-ticker-track{flex:1;overflow:hidden;white-space:nowrap;will-change:transform;-webkit-mask:linear-gradient(90deg,transparent,#000 3%,#000 95%,transparent);mask:linear-gradient(90deg,transparent,#000 3%,#000 95%,transparent)}
+    #emission-deck .ed-tk{font-size:12px;color:#cfeaff;padding:0 4px}
+    #emission-deck .ed-tk-scr{color:#8ed2ff}
+    #emission-deck .ed-tk-sep{color:#2f8d8d;padding:0 10px}
+    @keyframes ed-marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    #ed-launch{position:fixed;z-index:9000;cursor:pointer;display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,rgba(10,30,40,.92),rgba(4,18,28,.92));border:1px solid rgba(125,255,208,.5);color:#7dffd0;border-radius:999px;padding:9px 16px;font:inherit;font-size:11px;letter-spacing:.12em;box-shadow:0 0 22px rgba(125,255,208,.22),inset 0 0 14px rgba(125,255,208,.06);backdrop-filter:blur(4px)}
+    #ed-launch .dot{width:8px;height:8px;border-radius:50%;background:#9effa0;box-shadow:0 0 10px #9effa0;animation:ed-blink 1.4s steps(2) infinite}
+    #ed-launch:hover{border-color:#7dffd0;box-shadow:0 0 30px rgba(125,255,208,.4)}
+    @media(max-width:760px){#emission-deck .ed-kpis{grid-template-columns:repeat(2,1fr)}#emission-deck .ed-main{grid-template-columns:1fr}#emission-deck .ed-kpi-v{font-size:30px}}
+    `; document.head.appendChild(s);
+  }
+  function edKpi(id,label,color){ return '<div class="ed-kpi"><div class="ed-kpi-v" id="'+id+'" data-v="0" style="color:'+color+';text-shadow:0 0 18px '+color+'66">0</div><div class="ed-kpi-l">'+label+'</div></div>'; }
+  function edTween(el,to){ if(!el) return; const from=+(el.getAttribute('data-v')||0); el.setAttribute('data-v',to); if(from===to){ el.textContent=edInt(to); return; }
+    const t0=performance.now(),dur=650; (function step(now){ const k=Math.min(1,(now-t0)/dur); const v=Math.round(from+(to-from)*(0.5-0.5*Math.cos(k*Math.PI))); el.textContent=edInt(v); if(k<1) requestAnimationFrame(step); })(t0);
+    setTimeout(function(){ if(+el.getAttribute('data-v')===to) el.textContent=edInt(to); },dur+90); }
+  function edClock(){ const el=document.getElementById('ed-clock'); if(!el) return; try{ el.textContent=new Date().toLocaleTimeString('es-ES',{hour12:false,timeZone:'Europe/Madrid'}); }catch(_){ } }
+  let _edTimer=null,_edClk=null,_edPrev=null;
+  function emissionDeck(){
+    if(document.getElementById('emission-deck')) return;
+    injectEdeckStyle(); _edPrev=null;
+    const ov=document.createElement('div'); ov.id='emission-deck';
+    ov.innerHTML='<div class="grid-bg"></div><div class="scan"></div>'
+      +'<div class="ed-corner tl"></div><div class="ed-corner tr"></div><div class="ed-corner bl"></div><div class="ed-corner br"></div>'
+      +'<header class="ed-top"><div class="ed-brand"><span class="ed-logo">▲</span> ADMIRA<b>.TV</b> · <span class="ed-sub">SALA DE EMISIÓN</span></div>'
+      +'<div class="ed-status"><span id="ed-net" class="ed-net">◍ ENLAZANDO RED…</span><span class="ed-live">● EN ANTENA</span><span id="ed-clock" class="ed-clock"></span></div>'
+      +'<button id="ed-close" class="ed-close" title="Cerrar (Esc)">✕</button></header>'
+      +'<div class="ed-kpis">'+edKpi('ed-k-plays','PASES HOY','#7dffd0')+edKpi('ed-k-screens','PANTALLAS EN ANTENA','#8ed2ff')+edKpi('ed-k-pieces','PIEZAS EMITIDAS','#ffd866')+edKpi('ed-k-rate','PASES / MIN','#9effa0')+'</div>'
+      +'<div class="ed-main">'
+        +'<section class="ed-panel ed-radar-wrap"><div class="ed-ph">RADAR DE CIRCUITOS · RED FÍSICA</div><div class="ed-radar"><svg id="ed-radar-svg" viewBox="0 0 320 320"></svg><div class="ed-sweep"></div><div id="ed-radar-empty" class="ed-empty">◌ ESPERANDO SEÑAL</div></div></section>'
+        +'<section class="ed-panel ed-side"><div class="ed-ph">MEZCLA POR TIPO</div><div id="ed-types"></div><div class="ed-ph" style="margin-top:14px">CIRCUITOS · RANKING</div><div id="ed-circuits" class="ed-circuits"></div></section>'
+      +'</div>'
+      +'<footer class="ed-ticker"><div class="ed-ticker-lbl">▸ FEED DE EMISIÓN</div><div class="ed-ticker-track" id="ed-ticker"></div></footer>';
+    document.body.appendChild(ov);
+    const close=()=>{ clearInterval(_edTimer); clearInterval(_edClk); _edTimer=_edClk=null; document.removeEventListener('keydown',onKey); ov.remove(); };
+    function onKey(e){ if(e.key==='Escape') close(); }
+    document.getElementById('ed-close').onclick=close; document.addEventListener('keydown',onKey);
+    edClock(); edeckRefresh(); _edClk=setInterval(edClock,1000); _edTimer=setInterval(edeckRefresh,12000);
+  }
+  async function edeckRefresh(){
+    let d; try{ d=await fetchEmissionData(); }catch(_){ const n=document.getElementById('ed-net'); if(n){ n.textContent='⚠ SIN ENLACE'; n.className='ed-net err'; } return; }
+    if(!document.getElementById('emission-deck')) return;
+    const net=document.getElementById('ed-net'); if(net){ net.textContent='◉ RED ENLAZADA · '+d.locsChecked+' XPACIOS'; net.className='ed-net ok'; }
+    edTween(document.getElementById('ed-k-plays'),d.totPlays);
+    edTween(document.getElementById('ed-k-screens'),d.totScreens);
+    edTween(document.getElementById('ed-k-pieces'),d.pieces);
+    const now=performance.now(); let rate=0;
+    if(_edPrev){ const dt=(now-_edPrev.t)/60000; if(dt>0) rate=Math.max(0,(d.totPlays-_edPrev.plays)/dt); }
+    _edPrev={plays:d.totPlays,t:now};
+    const rEl=document.getElementById('ed-k-rate'); if(rEl){ rEl.textContent=rate?rate.toFixed(1):'0'; rEl.setAttribute('data-v',Math.round(rate)); }
+    edeckRadar(d.circuits);
+    const emp=document.getElementById('ed-radar-empty'); if(emp) emp.style.display=d.circuits.length?'none':'block';
+    edeckTypes(d.totType);
+    edeckCircuits(d.circuits);
+    edeckTicker(d.recent);
+  }
+  function edeckRadar(circuits){
+    const svg=document.getElementById('ed-radar-svg'); if(!svg) return; const cx=160,cy=160; let g='';
+    [142,104,66,30].forEach(r=>{ g+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="rgba(45,141,141,.35)" stroke-width="1"/>'; });
+    g+='<line x1="'+cx+'" y1="14" x2="'+cx+'" y2="306" stroke="rgba(45,141,141,.20)"/><line x1="14" y1="'+cy+'" x2="306" y2="'+cy+'" stroke="rgba(45,141,141,.20)"/><circle cx="'+cx+'" cy="'+cy+'" r="3" fill="#7dffd0"/>';
+    const maxP=Math.max(1,...circuits.map(c=>c.plays)), N=Math.min(14,circuits.length);
+    circuits.slice(0,14).forEach((c,i)=>{
+      const ang=(edHash(c.brand)%360)*Math.PI/180, rr=Math.min(142,40+i*(100/Math.max(1,N)));
+      const x=cx+Math.cos(ang)*rr, y=cy+Math.sin(ang)*rr, sz=4+Math.round(11*c.plays/maxP);
+      const topTy=Object.keys(c.byType).sort((a,b)=>c.byType[b]-c.byType[a])[0], col=EMIT_TYPE_COL[topTy]||'#7dffd0';
+      g+='<g><circle cx="'+x+'" cy="'+y+'" r="'+(sz+5)+'" fill="'+col+'" opacity="0.12"><animate attributeName="r" values="'+(sz+3)+';'+(sz+13)+';'+(sz+3)+'" dur="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.18;0;0.18" dur="2.6s" repeatCount="indefinite"/></circle>'
+        +'<circle cx="'+x+'" cy="'+y+'" r="'+sz+'" fill="'+col+'"/>'
+        +'<text x="'+x+'" y="'+(y-sz-5)+'" fill="#cfeaff" font-size="8" text-anchor="middle">'+edEsc(c.brand).slice(0,13)+'</text>'
+        +'<text x="'+x+'" y="'+(y+sz+11)+'" fill="'+col+'" font-size="8.5" font-weight="700" text-anchor="middle">'+c.plays+'</text></g>';
+    });
+    svg.innerHTML=g;
+  }
+  function edeckTypes(totType){
+    const host=document.getElementById('ed-types'); if(!host) return;
+    const keys=Object.keys(totType).sort((a,b)=>totType[b]-totType[a]);
+    if(!keys.length){ host.innerHTML='<div class="ed-dim">— sin emisión —</div>'; return; }
+    const mx=Math.max(1,...keys.map(k=>totType[k]));
+    host.innerHTML=keys.map(k=>{ const v=totType[k],w=Math.round(v/mx*100),col=EMIT_TYPE_COL[k]||'#7dffd0';
+      return '<div class="ed-meter"><div class="ed-meter-top"><span>'+(EMIT_TYPE_LBL[k]||k)+'</span><b style="color:'+col+'">'+v+'</b></div><div class="ed-bar"><i style="width:'+w+'%;background:linear-gradient(90deg,'+col+'33,'+col+');box-shadow:0 0 12px '+col+'88"></i></div></div>'; }).join('');
+  }
+  function edeckCircuits(list){
+    const host=document.getElementById('ed-circuits'); if(!host) return;
+    if(!list.length){ host.innerHTML='<div class="ed-dim">— sin circuitos activos —</div>'; return; }
+    const mx=Math.max(1,...list.map(c=>c.plays));
+    host.innerHTML=list.slice(0,8).map((c,i)=>{ const w=Math.round(c.plays/mx*100);
+      return '<div class="ed-crow"><span class="ed-rank">'+(i+1)+'</span><span class="ed-cname">'+edEsc(c.brand)+'</span><span class="ed-cscr">'+c.screens+'📺</span><span class="ed-cplays">'+c.plays+'</span><div class="ed-cbar"><i style="width:'+w+'%"></i></div></div>'; }).join('');
+  }
+  function edeckTicker(recent){
+    const host=document.getElementById('ed-ticker'); if(!host) return;
+    if(!recent.length){ host.innerHTML='<span class="ed-dim">esperando primeras emisiones del canal…</span>'; host.style.animation='none'; return; }
+    const items=recent.map(r=>'<span class="ed-tk"><b style="color:'+(EMIT_TYPE_COL[r.type]||'#7dffd0')+'">'+(EMIT_TYPE_LBL[r.type]||r.type).split(' ')[0]+'</b> <span class="ed-tk-scr">'+edEsc(r.screen)+'</span> ▸ '+edEsc(r.title).slice(0,42)+'</span>').join('<span class="ed-tk-sep">·</span>');
+    host.innerHTML=items+'<span class="ed-tk-sep">·</span>'+items; host.style.animation='ed-marq 40s linear infinite';
+  }
+  // Lanzador fijo siempre visible (el botón 📡 del panel RTB también abre la Sala).
+  function mountEmissionLauncher(){
+    if(document.getElementById('ed-launch')) return;
+    injectEdeckStyle();
+    const b=document.createElement('button'); b.id='ed-launch'; b.style.right='14px'; b.style.bottom='118px';
+    b.innerHTML='<span class="dot"></span>🚀 SALA DE EMISIÓN';
+    b.onclick=emissionDeck; document.body.appendChild(b);
+  }
   async function render(){
     const box=document.getElementById('extad-live'); if(!box) return;
     const loc=pickLoc(); const t=todayStr();
@@ -4807,7 +4990,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     }catch(e){}
   }
   function wireCampaign(){ fillCampSeg(); const b=document.getElementById('camp-launch'); if(b) b.onclick=launchCampaign; const ed=document.getElementById('camp-buy'); if(ed) ed.addEventListener('toggle',()=>{ if(ed.open) renderCampaigns(); }); renderCampaigns(); setInterval(renderCampaigns,20000); }
-  function start(){ render(); setInterval(render, 12000); wireEditor(); wireCampaign(); const cb=document.getElementById('extad-circuit-btn'); if(cb) cb.onclick=circuitReport; }
+  function start(){ render(); setInterval(render, 12000); wireEditor(); wireCampaign(); const cb=document.getElementById('extad-circuit-btn'); if(cb) cb.onclick=circuitReport; const eb=document.getElementById('extad-emit-btn'); if(eb) eb.onclick=emissionDeck; mountEmissionLauncher(); }
   if(document.readyState!=='loading') start(); else document.addEventListener('DOMContentLoaded', start);
 })();
 </script>
