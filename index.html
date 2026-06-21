@@ -3666,7 +3666,7 @@ function renderPanel(loc) {
     const hasTwin = screensForSurface(loc, s).length;   // pantalla fija o gemelo vivo del Xpacio
     return `
     <div class="surface" data-surface="${s.surface}">
-      <div class="thumb ${s.status==='live'?'live':''} ${s.screen?'feed':''}">${s.screen ? `<iframe class="surf-feed" src="https://admira.tv/canal.html?clean=1&screen=${encodeURIComponent(s.screen)}&muted=1&max=12&refresh=20" title="preview en vivo" loading="lazy" scrolling="no" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>` : thumbFor(s.surface, s.status)}</div>
+      <div class="thumb ${s.status==='live'?'live':''} ${s.screen?'feed':''}">${s.screen ? `<iframe class="surf-feed" src="https://admira.tv/canal.html?clean=1&circuit=${encodeURIComponent(loc.id)}&screen=${encodeURIComponent(s.screen)}&muted=1&max=24&refresh=20" title="preview en vivo" loading="lazy" scrolling="no" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>` : thumbFor(s.surface, s.status)}</div>
       <div class="info">
         <div class="top">
           <div class="name">${escHtml(s.name)}</div>
