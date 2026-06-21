@@ -1,0 +1,61 @@
+# Clear Channel · clearchannel.tv — Audiencia & Emisión (MCP)
+
+> Hub MCP de clearchannel.tv. Punto de entrada para que cualquier agente (Claude,
+> Codex, OpenCode, ChatGPT, bots de Telegram u otra IA) y cualquier humano puedan
+> CONSULTAR e INTERACTUAR con los datos verificados de Emisión × Audiencia de las
+> pantallas retail-media — y viceversa, para que nosotros consultemos a otros.
+> Convención abierta y estable para silicio (bots) y carbono (humanos).
+
+Sitio público: https://www.clearchannel.tv
+Hub MCP: https://www.clearchannel.tv/mcp/
+Manifest máquina: https://www.clearchannel.tv/mcp/manifest.json
+Versión: v.26.06.21.r1
+Repo: https://github.com/csilvasantin/clearchannel-tv
+
+## Qué es
+
+clearchannel.tv mide el retail-media de forma verificable: cruza QUÉ se emitió en cada
+pantalla (proof-of-play de admira.tv) con QUIÉN lo vio (cámara on-device del gemelo
+XpaceOS: presencia sí/no, género hombre/mujer, edad y franja horaria). El resultado es
+un "Informe de Audiencia Verificada" por circuito, exportable a PDF.
+
+## API en vivo (base: https://api.admira.store)
+
+Lecturas (abiertas; CORS refleja el origen):
+- GET /emit/range?loc={loc} — proof-of-play del circuito: pases, segundos, byType
+  (image/video/animation), top creatividades, por pantalla y día.
+- GET /audience/range?loc={loc} — audiencia del circuito: muestras, presencia, pico,
+  género {male,female}, edad {nino,joven,adulto,senior}, franja horaria {0..23}.
+
+Escrituras (telemetría, sin credencial):
+- POST /emit — registra un pase. body: {loc, screen, type, title, secs, num?}.
+  La emite admira.tv (canal) por pantalla cada ~12 s.
+- POST /audience — registra una muestra de cámara. body: {loc, screen, faces,
+  gender, genderScore, ageBucket, emotion?}. La envía el gemelo XpaceOS cada ~20 s.
+
+Ejemplo: https://api.admira.store/audience/range?loc=xtanco-demo
+
+## Informe (humano)
+
+- Informe por circuito: https://www.clearchannel.tv/detail.html?loc={loc}
+- Botón "Exportar informe" → Informe de Audiencia Verificada (HTML imprimible a PDF):
+  resumen ejecutivo, KPIs, donut de género, barras de edad/hora/tipo, top creatividades,
+  desglose por pantalla, metodología y privacidad.
+
+## Privacidad
+
+Detección on-device (@vladmandic/human, TensorFlow.js). No se almacenan imágenes ni
+datos personales: solo conteos agregados (presencia, género, edad, hora). Género y edad
+son estimaciones estadísticas, no identificación de personas.
+
+## Federación (viceversa)
+
+Misma convención /mcp/ en cada pata del ecosistema AdmiraNeXT (y nosotros las consultamos):
+- Preproducción: https://www.admira.app/mcp/
+- Consejo de Silicio: https://www.admira.live/mcp/
+- XpaceOS (el OS retail): https://www.xpaceos.com/mcp/
+
+## Convenciones
+
+- Versionado visible: v.AA.MM.DD.rN (año.mes.día.release).
+- Avisos de cambios: Telegram grupo AdmiraXP, firmados "Admira IA".

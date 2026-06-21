@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>clearchannel.tv MCP | Audiencia &amp; Emisión verificada para agentes y humanos</title>
+  <meta name="description" content="Hub MCP de clearchannel.tv: API y documentación de Emisión × Audiencia (proof-of-play de admira.tv × cámara on-device del gemelo XpaceOS). Para silicio (bots) y carbono (humanos).">
+  <link rel="icon" href="../favicon-32.png">
+  <style>
+    :root{
+      --bg:#02080d; --ink:#eaf8ff; --mut:#8ab6c4; --brand:#28d7ef; --accent:#ffb629;
+      --violet:#a768ff; --good:#62f29b; --red:#ff6b6b; --card:#08141e; --card2:#0d1b27;
+      --line:rgba(138,182,196,.2); --shadow:0 24px 90px rgba(0,0,0,.42);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.6;
+      background:radial-gradient(circle at 16% 0,rgba(40,215,239,.12),transparent 32rem),radial-gradient(circle at 96% 12%,rgba(255,182,41,.10),transparent 28rem),var(--bg)}
+    a{color:inherit;text-decoration:none}
+    code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .shell{width:min(1100px,calc(100% - 32px));margin:0 auto}
+    header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;flex-wrap:wrap}
+    .brand{display:inline-flex;align-items:center;gap:12px;font-weight:900;letter-spacing:.02em}
+    .logo{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--accent));color:#041017;font-weight:900;font-family:monospace;box-shadow:var(--shadow)}
+    nav{display:flex;gap:8px;flex-wrap:wrap}
+    nav a,.btn{min-height:40px;display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.03);font-weight:800;font-size:.9rem}
+    nav a:hover,.btn:hover{border-color:var(--brand);color:var(--brand)}
+    .btn.primary{background:linear-gradient(90deg,var(--brand),#42c0ff);color:#041017;border-color:transparent}
+    .eyebrow{margin:0 0 12px;color:var(--accent);font-family:ui-monospace,monospace;font-size:.76rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+    h1,h2,h3,p{margin:0}
+    h1{font-size:clamp(2.6rem,6vw,4.6rem);line-height:.98;letter-spacing:-.01em}
+    h2{font-size:clamp(1.7rem,3.4vw,2.7rem);line-height:1.05;letter-spacing:-.01em}
+    h3{font-size:1.05rem}
+    .lead{max-width:720px;margin-top:20px;color:var(--mut);font-size:1.1rem}
+    .hero{padding:34px 0 18px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:34px}
+    .stat{padding:16px;border:1px solid var(--line);border-radius:11px;background:var(--card)}
+    .stat strong{display:block;font-size:1.7rem;line-height:1;color:var(--brand)}
+    .stat span{display:block;margin-top:8px;color:var(--mut);font-size:.86rem}
+    .band{padding:48px 0;border-top:1px solid var(--line)}
+    .band > .shell > .eyebrow{margin-bottom:6px}
+    .head2{max-width:760px;margin-bottom:24px}
+    .head2 p{margin-top:12px;color:var(--mut)}
+    .grid{display:grid;gap:14px}
+    .g2{grid-template-columns:repeat(2,1fr)}
+    .g3{grid-template-columns:repeat(3,1fr)}
+    .card{padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--card);min-width:0}
+    .card h3{margin-bottom:6px}
+    .card p,.card li{color:var(--mut);font-size:.95rem}
+    .card ul{margin:10px 0 0;padding-left:18px}
+    .card code{color:var(--ink);background:rgba(40,215,239,.1);padding:1px 6px;border-radius:5px;font-size:.85em}
+    .tag{display:inline-flex;margin-bottom:10px;padding:4px 9px;border-radius:7px;font-family:ui-monospace,monospace;font-size:.72rem;font-weight:900;letter-spacing:.04em}
+    .tag.get{background:rgba(98,242,155,.12);color:var(--good)}
+    .tag.post{background:rgba(255,107,107,.12);color:var(--red)}
+    .tag.res{background:rgba(255,182,41,.14);color:var(--accent)}
+    .tag.priv{background:rgba(167,104,255,.14);color:var(--violet)}
+    pre{margin:14px 0 0;padding:15px;overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:#020c12;color:#cfe9f2;font-size:.84rem;line-height:1.5}
+    .callout{display:grid;grid-template-columns:.85fr 1.15fr;gap:22px;align-items:center;padding:26px;border-radius:14px;background:linear-gradient(120deg,#041824,#0a2a3a);border:1px solid var(--line);box-shadow:var(--shadow)}
+    .callout p{color:var(--mut);margin-top:10px}
+    footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:30px 0 40px;color:var(--mut);border-top:1px solid var(--line);font-size:.9rem}
+    @media(max-width:860px){.stats,.g2,.g3,.callout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="shell top">
+    <a class="brand" href="https://www.clearchannel.tv"><span class="logo">CC</span><span>Clear Channel · <span style="color:var(--brand)">clearchannel.tv</span></span></a>
+    <nav aria-label="MCP">
+      <a href="#api">API</a>
+      <a href="#informe">Informe</a>
+      <a href="#privacidad">Privacidad</a>
+      <a href="#conectar">Conectar</a>
+      <a class="btn primary" href="llms.txt">llms.txt</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="shell hero">
+      <p class="eyebrow">Model Context Protocol · para silicio y carbono</p>
+      <h1>clearchannel.tv <span style="color:var(--brand)">MCP</span></h1>
+      <p class="lead">La puerta común para que cualquier agente (Claude, Codex, ChatGPT, bots…) <b style="color:var(--ink)">y cualquier humano</b> consulten los datos verificados de <b style="color:var(--ink)">Emisión × Audiencia</b> de las pantallas retail-media — y para que nosotros nos conectemos a otros. Toda la info, en un sitio estable.</p>
+      <div class="actions">
+        <a class="btn primary" href="llms.txt">llms.txt</a>
+        <a class="btn" href="manifest.json">manifest.json</a>
+        <a class="btn" href="https://www.clearchannel.tv/detail.html?loc=xtanco-demo">Ver un informe →</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong>2</strong><span>fuentes cruzadas: admira.tv (emisión) × cámara (audiencia)</span></div>
+        <div class="stat"><strong>4</strong><span>endpoints HTTP: 2 de lectura, 2 de escritura</span></div>
+        <div class="stat"><strong>0</strong><span>datos personales: medición on-device, solo agregados</span></div>
+        <div class="stat"><strong>1</strong><span>informe por circuito, exportable a PDF</span></div>
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="shell">
+        <p class="eyebrow">Qué es</p>
+        <div class="head2"><h2>Retail-media medible y verificable.</h2>
+          <p>clearchannel.tv cruza <b style="color:var(--ink)">QUÉ se emitió</b> en cada pantalla (proof-of-play de admira.tv) con <b style="color:var(--ink)">QUIÉN lo vio</b> (la cámara on-device del gemelo XpaceOS: presencia, género, edad y franja horaria). El resultado es un Informe de Audiencia Verificada por circuito, abierto a agentes y humanos vía este MCP.</p>
+        </div>
+        <div class="grid g3">
+          <article class="card"><span class="tag res">interoperable</span><h3>Un lenguaje común</h3><p>Bots y webs hablan con endpoints estables en vez de integraciones sueltas. Léelo, crúzalo, expórtalo.</p></article>
+          <article class="card"><span class="tag res">verificable</span><h3>Prueba × audiencia</h3><p>Cada pase queda registrado (proof-of-play) y se cruza con la presencia real medida por cámara.</p></article>
+          <article class="card"><span class="tag res">privado</span><h3>Sin PII</h3><p>La cámara procesa en el dispositivo; solo viajan conteos agregados. Cumplimiento por diseño.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="api" class="band">
+      <div class="shell">
+        <p class="eyebrow">API en vivo</p>
+        <div class="head2"><h2>Consultar e interactuar.</h2>
+          <p>Base: <code style="color:var(--brand)">https://api.admira.store</code> (worker pixer-eleven). Lecturas abiertas con CORS que refleja el origen; escrituras son telemetría de pantalla/cámara. Descriptor completo en <a style="color:var(--brand)" href="manifest.json">manifest.json</a>.</p>
+        </div>
+        <div class="grid g2">
+          <article class="card"><span class="tag get">GET</span><h3><code>/emit/range?loc={loc}</code></h3><p>Proof-of-play del circuito: pases, segundos en pantalla, <code>byType</code> (image/video/animation), top creatividades, desglose por pantalla y día.</p></article>
+          <article class="card"><span class="tag get">GET</span><h3><code>/audience/range?loc={loc}</code></h3><p>Audiencia del circuito: muestras, presencia, pico, género <code>{male,female}</code>, edad <code>{nino,joven,adulto,senior}</code> y franja horaria <code>{0..23}</code>.</p></article>
+          <article class="card"><span class="tag post">POST</span><h3><code>/emit</code></h3><p>Registra un pase. <code>{loc, screen, type, title, secs}</code>. admira.tv lo emite por pantalla cada ~12 s.</p></article>
+          <article class="card"><span class="tag post">POST</span><h3><code>/audience</code></h3><p>Registra una muestra de cámara. <code>{loc, screen, faces, gender, genderScore, ageBucket}</code>. El gemelo XpaceOS la envía cada ~20 s.</p></article>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <span class="tag get">ejemplo</span><h3>Leer la audiencia de un circuito</h3>
+<pre><code>curl "https://api.admira.store/audience/range?loc=xtanco-demo"
+curl "https://api.admira.store/emit/range?loc=xtanco-demo"</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="informe" class="band">
+      <div class="shell">
+        <p class="eyebrow">Informe</p>
+        <div class="head2"><h2>El cruce, ya montado.</h2>
+          <p>Para humanos: el informe por circuito combina ambas fuentes en una sola página, con exportación científica a PDF.</p>
+        </div>
+        <div class="grid g2">
+          <article class="card"><span class="tag res">humano</span><h3><a style="color:var(--brand)" href="https://www.clearchannel.tv/detail.html?loc=xtanco-demo"><code>detail.html?loc={loc}</code></a></h3><p>Emisión × Audiencia en vivo: pases, % de presencia, género con barras, edad, presencia por hora y desglose por pantalla.</p></article>
+          <article class="card"><span class="tag res">PDF</span><h3>Informe de Audiencia Verificada</h3><p>Botón <code>🔬 Exportar informe</code> → documento autocontenido con gráficos SVG (donut de género, barras de edad/hora/tipo), KPIs, metodología y privacidad. Imprimible a PDF.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacidad" class="band">
+      <div class="shell">
+        <div class="callout">
+          <div><p class="eyebrow" style="color:var(--violet)">Privacidad por diseño</p><h2>Sin imágenes. Sin PII.</h2></div>
+          <div>
+            <p>La detección de audiencia es <b style="color:var(--ink)">on-device</b> (@vladmandic/human, TensorFlow.js): el procesamiento ocurre en la pantalla, <b style="color:var(--ink)">no se almacenan imágenes ni datos personales</b>. Solo viajan conteos agregados: presencia, género, franja de edad y hora.</p>
+            <p>Género y edad son <b style="color:var(--ink)">estimaciones estadísticas</b>, no identificación de personas.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="conectar" class="band">
+      <div class="shell">
+        <p class="eyebrow">Conectar</p>
+        <div class="head2"><h2>Cómo lo consume un agente.</h2>
+          <p>Empieza por <a style="color:var(--brand)" href="llms.txt">llms.txt</a> (índice legible) y <a style="color:var(--brand)" href="manifest.json">manifest.json</a> (descriptor máquina). Después, lee directo de la API o crúzala como hace el informe.</p>
+        </div>
+        <div class="card">
+          <span class="tag res">flujo</span><h3>Patrón de cruce Emisión × Audiencia</h3>
+<pre><code>// 1. QUÉ se emitió
+GET https://api.admira.store/emit/range?loc=&lt;circuito&gt;
+// 2. QUIÉN lo vio
+GET https://api.admira.store/audience/range?loc=&lt;circuito&gt;
+// 3. cruza por pantalla/día/hora → presencia, género, edad
+//    (referencia: clearchannel.tv/detail.html, función loadReport)</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="shell">
+        <div class="callout">
+          <div><p class="eyebrow" style="color:var(--brand)">Federación</p><h2>Una puerta /mcp en cada pata.</h2></div>
+          <div>
+            <p>Misma convención en todo el ecosistema AdmiraNeXT, para que cualquier agente salte de una a otra y para que nosotros también consultemos a las hermanas (viceversa):</p>
+            <p><a style="color:var(--brand)" href="https://www.admira.app/mcp/">admira.app/mcp</a> (preproducción) · <a style="color:var(--brand)" href="https://www.admira.live/mcp/">admira.live/mcp</a> (Consejo de Silicio) · <a style="color:var(--brand)" href="https://www.xpaceos.com/mcp/">xpaceos.com/mcp</a> (el OS retail).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell">
+    <span>clearchannel.tv MCP · v.26.06.21.r1 · para silicio y carbono</span>
+    <span><a style="color:var(--brand)" href="llms.txt">llms.txt</a> · <a style="color:var(--brand)" href="manifest.json">manifest.json</a> · <a style="color:var(--brand)" href="https://github.com/csilvasantin/clearchannel-tv">repo</a></span>
+  </footer>
+</body>
+</html>
