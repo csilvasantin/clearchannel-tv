@@ -133,6 +133,13 @@
       </aside>
     </section>
 
+    <section class="report">
+      <div class="panel">
+        <h2>📡 Emisión × Audiencia <small id="rep-loc" style="opacity:.6;font-weight:400"></small></h2>
+        <div id="rep-body"><p class="addr">Cargando datos reales de emisión (admira.tv) y cámara…</p></div>
+      </div>
+    </section>
+
     <section class="lower">
       <div class="panel surface-panel">
         <h2>Inventario disponible</h2>
@@ -254,6 +261,100 @@ async function renderLive(){
   }catch(e){}
 }
 renderLive(); setInterval(renderLive, 12000);
+
+// ── Informe REAL: cruza QUÉ se emitió (admira.tv /emit) × QUIÉN lo vio (cámara /audience) ──
+const REPORT_API = 'https://api.admira.store';
+let REPORT = null;
+const AGE_LBL = { nino: '👶 Niños', joven: '🧑 Jóvenes', adulto: '👤 Adultos', senior: '👴 Senior' };
+async function loadReport() {
+  const body = document.getElementById('rep-body');
+  const ll = document.getElementById('rep-loc'); if (ll) ll.textContent = '· ' + locId;
+  const getj = p => fetch(REPORT_API + p).then(r => r.ok ? r.json() : { screens: {} }).catch(() => ({ screens: {} }));
+  try {
+    const [emitR, audR] = await Promise.all([ getj('/emit/range?loc=' + encodeURIComponent(locId)), getj('/audience/range?loc=' + encodeURIComponent(locId)) ]);
+    let plays = 0, secs = 0, byType = {}, assets = [], emitScreens = {};
+    for (const [scn, sc] of Object.entries(emitR.screens || {})) { let sp = 0, ss = 0; for (const rec of Object.values(sc)) { sp += rec.totalPlays || 0; ss += rec.totalSecs || 0; plays += rec.totalPlays || 0; secs += rec.totalSecs || 0; for (const [t, n] of Object.entries(rec.byType || {})) byType[t] = (byType[t] || 0) + n; for (const [id, a] of Object.entries(rec.assets || {})) assets.push({ title: a.title || id, n: a.n || 0 }); } emitScreens[scn] = { plays: sp, secs: ss }; }
+    let samples = 0, present = 0, facesPeak = 0, male = 0, female = 0, age = {}, hours = {}, audScreens = {};
+    for (const [scn, sc] of Object.entries(audR.screens || {})) { let ss = 0, sp = 0, sm = 0, sf = 0; for (const agg of Object.values(sc)) { samples += agg.samples || 0; present += agg.present || 0; facesPeak = Math.max(facesPeak, agg.facesPeak || 0); male += (agg.gender && agg.gender.male) || 0; female += (agg.gender && agg.gender.female) || 0; for (const [k, v] of Object.entries(agg.age || {})) age[k] = (age[k] || 0) + v; ss += agg.samples || 0; sp += agg.present || 0; sm += (agg.gender && agg.gender.male) || 0; sf += (agg.gender && agg.gender.female) || 0; for (const [h, hd] of Object.entries(agg.hours || {})) { const H = hours[h] = hours[h] || { samples: 0, present: 0, male: 0, female: 0 }; H.samples += hd.samples || 0; H.present += hd.present || 0; H.male += hd.male || 0; H.female += hd.female || 0; } } audScreens[scn] = { samples: ss, present: sp, male: sm, female: sf }; }
+    const gtot = male + female, pMale = gtot ? Math.round(male / gtot * 100) : 0, pFemale = gtot ? Math.round(female / gtot * 100) : 0;
+    const occ = samples ? Math.round(present / samples * 100) : 0;
+    const ageTot = Object.values(age).reduce((s, x) => s + x, 0);
+    const ageRow = ageTot ? Object.entries(age).sort((a, b) => b[1] - a[1]).map(([k, v]) => (AGE_LBL[k] || k) + ' ' + Math.round(v / ageTot * 100) + '%').join(' · ') : '';
+    const topAge = ageTot ? (AGE_LBL[Object.entries(age).sort((a, b) => b[1] - a[1])[0][0]] || '').replace(/^\S+ /, '').toLowerCase() : '';
+    REPORT = { loc: locId, name: (loc && loc.name) || locId, generatedAt: new Date(), plays, secs, byType, assets, emitScreens, samples, present, facesPeak, male, female, age, hours, audScreens, gtot, pMale, pFemale, occ, ageRow, topAge };
+    if (!plays && !samples) { body.innerHTML = '<p class="addr">Sin datos reales todavía para «' + locId + '». Configura el circuito en admira.tv y la cámara del gemelo con loc=' + locId + '.</p>'; return; }
+    const bar = (lbl, p, col) => '<div style="margin:7px 0"><div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:3px"><span>' + lbl + '</span><b>' + p + '%</b></div><div style="height:9px;background:#1c2142;border-radius:5px;overflow:hidden"><div style="height:100%;width:' + p + '%;background:' + col + '"></div></div></div>';
+    const typeRow = Object.entries(byType).sort((a, b) => b[1] - a[1]).map(([t, n]) => t + ': <b>' + n + '</b>').join(' · ') || '—';
+    const top = assets.slice().sort((a, b) => b.n - a.n).slice(0, 5);
+    const hk = Object.keys(hours).map(Number).sort((a, b) => a - b);
+    const hourMini = hk.length ? ('<div style="display:flex;gap:3px;align-items:flex-end;height:44px;margin-top:6px">' + (() => { const mx = Math.max(1, ...hk.map(h => hours[h].present)); return hk.map(h => '<div title="' + h + 'h: ' + hours[h].present + '" style="flex:1;min-width:7px;height:' + Math.max(2, Math.round(hours[h].present / mx * 44)) + 'px;background:#28d7ef;border-radius:2px 2px 0 0"></div>').join(''); })() + '</div><div style="display:flex;justify-content:space-between;font-size:.62rem;color:#5a6b7a;margin-top:2px"><span>' + hk[0] + 'h</span><span>' + hk[hk.length - 1] + 'h</span></div>') : '';
+    const scrRows = Object.keys(Object.assign({}, emitScreens, audScreens)).slice(0, 8).map(sc => { const e = emitScreens[sc] || { plays: 0 }, a = audScreens[sc] || { samples: 0, present: 0, male: 0, female: 0 }, gt = a.male + a.female; return '<tr><td style="padding:4px 8px 4px 0">' + String(sc).replace(/[<>]/g, '') + '</td><td style="text-align:right;padding:4px 0">' + (e.plays || 0) + ' pases</td><td style="text-align:right;padding:4px 0;color:#9aa0b4">' + (a.samples ? Math.round(a.present / a.samples * 100) + '% pres.' : '—') + '</td><td style="text-align:right;padding:4px 0 4px 8px;color:#9aa0b4">' + (gt ? Math.round(a.male / gt * 100) + '%♂/' + Math.round(a.female / gt * 100) + '%♀' : '—') + '</td></tr>'; }).join('');
+    body.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">'
+      + (gtot ? '<div style="background:#0d1b27;border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:.95rem;line-height:1.5;flex:1;min-width:240px">🎯 <b>' + fmtInt(plays) + ' pases</b> vistos por una audiencia mayormente <b>' + (pMale >= pFemale ? 'masculina' : 'femenina') + '</b>' + (topAge ? ' y <b>' + topAge + '</b>' : '') + ' · ' + occ + '% del tiempo con gente delante.</div>' : '<div style="flex:1"></div>')
+      + '<button onclick="exportReport()" style="background:linear-gradient(90deg,var(--brand),#42c0ff);color:#041017;border:0;border-radius:8px;padding:11px 16px;font-weight:800;cursor:pointer;font-size:.9rem;white-space:nowrap">🔬 Exportar informe</button>'
+      + '</div>'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:14px">'
+      + '<div><h3 style="margin:0 0 8px;font-size:1rem">📺 Qué se emitió <small style="opacity:.6">· admira.tv</small></h3>'
+      + '<p style="margin:0 0 6px"><b style="font-size:1.4rem">' + fmtInt(plays) + '</b> pases · <b>' + Math.round(secs / 60) + '</b> min</p>'
+      + '<p style="font-size:.85rem;color:#9aa0b4">' + typeRow + '</p>'
+      + (top.length ? '<p style="font-size:.8rem;color:#9aa0b4;margin:10px 0 2px">Top creatividades:</p><ol style="margin:0 0 0 18px;font-size:.85rem;line-height:1.7">' + top.map(a => '<li>' + String(a.title || '—').replace(/[<>]/g, '') + ' — ' + a.n + ' pases</li>').join('') + '</ol>' : '')
+      + '</div>'
+      + '<div><h3 style="margin:0 0 8px;font-size:1rem">📷 Quién lo vio <small style="opacity:.6">· cámara</small></h3>'
+      + '<p style="margin:0 0 8px"><b style="font-size:1.4rem">' + occ + '%</b> con audiencia · pico <b>' + facesPeak + '</b> pers.</p>'
+      + bar('👨 Hombres', pMale, '#3498db') + bar('👩 Mujeres', pFemale, '#e0a92c')
+      + (ageRow ? '<p style="font-size:.8rem;color:#9aa0b4;margin-top:9px">Edad: ' + ageRow + '</p>' : '')
+      + (hourMini ? '<p style="font-size:.8rem;color:#9aa0b4;margin:10px 0 0">Presencia por hora:</p>' + hourMini : '')
+      + '</div></div>'
+      + (scrRows ? '<div style="margin-top:14px"><h3 style="margin:0 0 6px;font-size:.95rem">🖥️ Por pantalla</h3><table style="width:100%;border-collapse:collapse;font-size:.84rem">' + scrRows + '</table></div>' : '');
+  } catch (e) { body.innerHTML = '<p class="addr">Error cargando el informe: ' + (e && e.message) + '</p>'; }
+}
+
+// ── Informe científico exportable (gráficos SVG + metodología, imprimible a PDF) ──
+function exportReport() {
+  const R = REPORT; if (!R) { alert('Aún no hay datos del informe.'); return; }
+  const E = s => String(s == null ? '' : s).replace(/[<>&]/g, x => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[x]));
+  const P = (a, b) => b ? Math.round(a / b * 100) : 0;
+  const donut = (pA, colA, colB, big, sub) => { const r = 52, c = 2 * Math.PI * r, da = c * pA / 100; return '<svg viewBox="0 0 140 140" width="150" height="150"><circle cx="70" cy="70" r="' + r + '" fill="none" stroke="' + colB + '" stroke-width="22"/><circle cx="70" cy="70" r="' + r + '" fill="none" stroke="' + colA + '" stroke-width="22" stroke-dasharray="' + da + ' ' + c + '" transform="rotate(-90 70 70)" stroke-linecap="round"/><text x="70" y="68" text-anchor="middle" font-size="27" font-weight="800" fill="#0b2030">' + big + '</text><text x="70" y="88" text-anchor="middle" font-size="11" fill="#5a7080">' + sub + '</text></svg>'; };
+  const bars = (entries, col) => { if (!entries.length) return '<p style="color:#90a0b0;font-size:13px">Sin datos.</p>'; const mx = Math.max(1, ...entries.map(e => e[1])), bw = 50, gap = 26, H = 120, W = entries.length * (bw + gap); return '<svg viewBox="0 0 ' + W + ' 172" width="100%" style="max-width:' + Math.max(W, 240) + 'px;height:auto">' + entries.map((e, i) => { const h = Math.max(3, Math.round(e[1] / mx * H)), x = i * (bw + gap) + gap / 2; return '<rect x="' + x + '" y="' + (H - h + 16) + '" width="' + bw + '" height="' + h + '" rx="5" fill="' + col + '"/><text x="' + (x + bw / 2) + '" y="' + (H - h + 9) + '" text-anchor="middle" font-size="13" font-weight="700" fill="#0b2030">' + e[1] + '</text><text x="' + (x + bw / 2) + '" y="' + (H + 34) + '" text-anchor="middle" font-size="11" fill="#5a7080">' + E(e[0]) + '</text>'; }).join('') + '</svg>'; };
+  const hk = Object.keys(R.hours).map(Number).sort((a, b) => a - b);
+  const kpi = (n, l) => '<div class="kpi"><b>' + n + '</b><span>' + l + '</span></div>';
+  const top = R.assets.slice().sort((a, b) => b.n - a.n).slice(0, 8);
+  const scrRows = Object.keys(Object.assign({}, R.emitScreens, R.audScreens)).map(sc => { const e = R.emitScreens[sc] || { plays: 0, secs: 0 }, a = R.audScreens[sc] || { samples: 0, present: 0, male: 0, female: 0 }, gt = a.male + a.female; return '<tr><td>' + E(sc) + '</td><td>' + (e.plays || 0) + '</td><td>' + Math.round((e.secs || 0) / 60) + ' min</td><td>' + P(a.present, a.samples) + '%</td><td>' + (gt ? P(a.male, gt) + '% ♂ / ' + P(a.female, gt) + '% ♀' : '—') + '</td></tr>'; }).join('');
+  const html = '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informe de Audiencia Verificada · ' + E(R.name) + '</title>'
+    + '<style>'
+    + '*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#0b2030;background:#eef3f7;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    + '.page{max-width:980px;margin:0 auto;background:#fff;box-shadow:0 10px 40px rgba(0,0,0,.12)}'
+    + '.hd{background:linear-gradient(120deg,#041824,#0a2a3a);color:#fff;padding:34px 40px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px}'
+    + '.hd .brand{font-weight:900;letter-spacing:.18em;font-size:13px;color:#28d7ef}.hd h1{font-size:30px;margin:8px 0 4px;font-weight:800}.hd .sub{color:#9fc3d2;font-size:14px}'
+    + '.seal{border:2px solid #28d7ef;border-radius:10px;padding:10px 14px;text-align:center;color:#28d7ef}.seal b{display:block;font-size:13px;letter-spacing:.1em}.seal span{font-size:10px;color:#9fc3d2}'
+    + '.sec{padding:26px 40px;border-bottom:1px solid #e2ebf0}.sec h2{font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:#1f7a99;margin-bottom:16px}'
+    + '.lead{font-size:20px;font-weight:600;line-height:1.45}.lead b{color:#0a6e8c}'
+    + '.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.kpi{background:#f4f8fb;border:1px solid #e2ebf0;border-radius:10px;padding:16px}.kpi b{display:block;font-size:30px;line-height:1.1;color:#06303f}.kpi span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#5a7080;margin-top:6px;display:block}'
+    + '.grid2{display:grid;grid-template-columns:1fr 1fr;gap:30px}.grid3{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center}'
+    + '.chartbox h3{font-size:13px;color:#5a7080;margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em}'
+    + '.leg{font-size:13px;color:#36505f;margin-top:8px}.leg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:middle}'
+    + 'table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #e8eef2}th{color:#5a7080;font-size:11px;text-transform:uppercase;letter-spacing:.06em}td:not(:first-child),th:not(:first-child){text-align:right}'
+    + '.method{background:#f4f8fb;border-left:4px solid #28d7ef;border-radius:6px;padding:16px 18px;font-size:13px;color:#36505f}.method b{color:#0b2030}'
+    + '.ft{padding:18px 40px;color:#7a93a2;font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}'
+    + '.printbtn{position:fixed;right:18px;bottom:18px;background:#0a6e8c;color:#fff;border:0;border-radius:30px;padding:14px 22px;font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25)}'
+    + '@media print{body{background:#fff}.page{box-shadow:none;max-width:none}.printbtn{display:none}.sec{break-inside:avoid}}'
+    + '</style></head><body><div class="page">'
+    + '<div class="hd"><div style="display:flex;gap:16px;align-items:center"><svg width="58" height="58" viewBox="0 0 56 56" style="flex:none"><defs><linearGradient id="cclg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#28d7ef"/><stop offset="1" stop-color="#ffb629"/></linearGradient></defs><rect width="56" height="56" rx="14" fill="url(#cclg)"/><text x="28" y="37" text-anchor="middle" font-size="22" font-weight="900" font-family="monospace" fill="#041824">CC</text></svg><div><div class="brand">CLEAR CHANNEL · CLEARCHANNEL.TV</div><h1>Informe de Audiencia Verificada</h1><div class="sub">' + E(R.name) + ' · loc: ' + E(R.loc) + ' · generado ' + R.generatedAt.toLocaleString('es-ES') + '</div></div></div><div class="seal"><b>✓ VERIFICADO</b><span>cámara on-device</span></div></div>'
+    + '<div class="sec"><h2>Resumen ejecutivo</h2><p class="lead">Se emitieron <b>' + fmtInt(R.plays) + ' pases</b> (' + Math.round(R.secs / 60) + ' min en pantalla) ante una audiencia presente el <b>' + R.occ + '%</b> del tiempo, mayormente <b>' + (R.pMale >= R.pFemale ? 'masculina' : 'femenina') + '</b>' + (R.topAge ? ' y <b>' + R.topAge + '</b>' : '') + '. Pico de <b>' + R.facesPeak + ' personas</b> simultáneas.</p></div>'
+    + '<div class="sec"><h2>Métricas clave</h2><div class="kpis">' + kpi(fmtInt(R.plays), 'Pases emitidos') + kpi(Math.round(R.secs / 60), 'Minutos en pantalla') + kpi(R.occ + '%', 'Tiempo con audiencia') + kpi(R.facesPeak, 'Pico de personas') + kpi(R.pMale + '% / ' + R.pFemale + '%', 'Hombres / Mujeres') + kpi(fmtInt(R.samples), 'Lecturas de cámara') + kpi(Object.keys(R.audScreens).length || Object.keys(R.emitScreens).length, 'Pantallas') + kpi(R.topAge ? R.topAge[0].toUpperCase() + R.topAge.slice(1) : '—', 'Edad dominante') + '</div></div>'
+    + '<div class="sec"><h2>Perfil de audiencia (cámara)</h2><div class="grid2"><div class="chartbox grid3"><div>' + donut(R.pMale, '#3498db', '#e0a92c', R.pMale + '%', '♂ Hombres') + '</div><div><div class="leg"><i style="background:#3498db"></i><b>' + R.pMale + '%</b> Hombres</div><div class="leg"><i style="background:#e0a92c"></i><b>' + R.pFemale + '%</b> Mujeres</div><div class="leg" style="margin-top:10px;color:#7a93a2">Basado en ' + fmtInt(R.gtot) + ' detecciones de género con confianza ≥ 0.6</div></div></div>'
+    + '<div class="chartbox"><h3>Edad estimada</h3>' + bars(Object.entries(R.age).sort((a, b) => b[1] - a[1]).map(([k, v]) => [(AGE_LBL[k] || k).replace(/^\S+ /, ''), v]), '#ffb629') + '</div></div></div>'
+    + '<div class="sec"><h2>Presencia por franja horaria</h2>' + (hk.length ? bars(hk.map(h => [h + 'h', R.hours[h].present]), '#28d7ef') : '<p style="color:#90a0b0;font-size:13px">Aún sin datos por hora (se llenan a lo largo del día).</p>') + '</div>'
+    + '<div class="sec"><h2>Qué se emitió (admira.tv)</h2><div class="grid2"><div class="chartbox"><h3>Pases por tipo de contenido</h3>' + bars(Object.entries(R.byType).sort((a, b) => b[1] - a[1]), '#a768ff') + '</div><div class="chartbox"><h3>Top creatividades</h3><table><tbody>' + (top.map(a => '<tr><td>' + E(a.title) + '</td><td>' + a.n + ' pases</td></tr>').join('') || '<tr><td>—</td></tr>') + '</tbody></table></div></div></div>'
+    + (scrRows ? '<div class="sec"><h2>Desglose por pantalla</h2><table><thead><tr><th>Pantalla</th><th>Pases</th><th>Tiempo</th><th>Presencia</th><th>Género</th></tr></thead><tbody>' + scrRows + '</tbody></table></div>' : '')
+    + '<div class="sec"><h2>Metodología</h2><div class="method"><b>Fuentes:</b> emisión de <b>admira.tv</b> (proof-of-play por pantalla, registro /emit) cruzada con la <b>cámara del gemelo XpaceOS</b> (registro /audience). <b>Medición de audiencia:</b> detección facial <b>on-device</b> (@vladmandic/human, TensorFlow.js) muestreada cada 20 s; ' + fmtInt(R.samples) + ' lecturas. <b>Privacidad:</b> el procesamiento ocurre en el dispositivo; <b>no se almacenan imágenes ni datos personales</b>, solo conteos agregados (presencia, género, franja de edad). Las métricas de género y edad son estimaciones estadísticas, no identificación de personas.</div></div>'
+    + '<div class="ft"><span>Clear Channel · clearchannel.tv · Informe generado automáticamente · powered by Admira</span><span>' + R.generatedAt.toLocaleString('es-ES') + '</span></div>'
+    + '</div><button class="printbtn" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button></body></html>';
+  const w = window.open('', '_blank'); if (!w) { alert('Permite las ventanas emergentes para exportar el informe.'); return; }
+  w.document.write(html); w.document.close();
+}
+loadReport();
 </script>
 </body>
 </html>
