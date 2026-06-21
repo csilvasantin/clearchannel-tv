@@ -3182,6 +3182,47 @@ document.getElementById('pm-close').addEventListener('click', closePlanet);
 if (planetModal) planetModal.addEventListener('click', e => { if (e.target === planetModal) closePlanet(); });
 
 // ─── Cluster source con todas las tiendas ──────────────────────────
+// ── ESTADO DE EMISIÓN del punto (anillo exterior) ──────────────────────
+// Verde = la pantalla está publicando en /signage/now (conectada, emitiendo).
+// Rojo = sin señal fresca (apagada/sin conexión). Lo sondea pollEmissionStatus.
+const EMIT_STATUS = {};            // screenId -> 1 online | -1 offline
+const EMIT_FRESH_MS = 170000;      // item más viejo que esto = sin conexión
+const EMIT_NOW_API = 'https://api.admira.store/signage/now';
+function emitScreenOf(l){
+  if(!l) return '';
+  if(l.screen) return l.screen;
+  const surfaces = Array.isArray(l.surfaces) ? l.surfaces : [];
+  const s = surfaces.find(x=>x && x.screen);
+  return s ? s.screen : '';
+}
+function emitStatusOf(l){ const sc=emitScreenOf(l); return sc ? (EMIT_STATUS[sc]||0) : 0; }
+function emissionScreens(){
+  const set = new Set();
+  (Array.isArray(LOCATIONS)?LOCATIONS:[]).forEach(l=>{ const sc=emitScreenOf(l); if(sc) set.add(sc); });
+  return [...set];
+}
+let _emitPollTimer = null;
+async function pollEmissionStatus(){
+  const screens = emissionScreens();
+  if(!screens.length) return;
+  let changed = false;
+  await Promise.all(screens.map(async sc=>{
+    let st = -1;
+    try{
+      const r = await fetch(EMIT_NOW_API+'?screen='+encodeURIComponent(sc), {cache:'no-store'});
+      const j = await r.json(); const it = j && j.item;
+      st = (it && it.ts && (Date.now()-it.ts) < EMIT_FRESH_MS) ? 1 : -1;
+    }catch(_){ st = EMIT_STATUS[sc] || -1; }
+    if(EMIT_STATUS[sc] !== st){ EMIT_STATUS[sc] = st; changed = true; }
+  }));
+  if(changed){ try{ updateLocationsSource(); }catch(_){} }
+}
+function startEmissionStatusPolling(){
+  if(_emitPollTimer) return;
+  pollEmissionStatus();
+  _emitPollTimer = setInterval(pollEmissionStatus, 12000);
+}
+
 function locationsGeoJSON() {
   const visible = mapVisibleLocations();
   const selectionKey = selectedLocationIds && selectedLocationIds.size ? [...selectedLocationIds].sort().join(',') : '';
@@ -3212,6 +3253,8 @@ function locationsGeoJSON() {
           selected: selectedLocationIds && selectedLocationIds.has(l.id) ? 1 : 0,
           live: surfaces.filter(s=>s.status==='live').length,
           total: surfaces.length,
+          screen: emitScreenOf(l),
+          emit: emitStatusOf(l),
         },
       };
     }),
@@ -3325,9 +3368,13 @@ function addLocationsLayer() {
     paint:{
       'circle-color':'rgba(136,255,170,0)',
       'circle-radius':12,
-      'circle-stroke-color': mapScopeColorExpression(),
-      'circle-stroke-width':2,
-      'circle-stroke-opacity':0.6,
+      // Punto de emisión: verde=conectado, rojo=sin conexión. Resto: color de circuito.
+      'circle-stroke-color': ['case',
+        ['==',['get','emit'],1], '#88ffaa',
+        ['==',['get','emit'],-1], '#ff4d4d',
+        mapScopeColorExpression()],
+      'circle-stroke-width': ['case', ['!=',['get','emit'],0], 3, 2],
+      'circle-stroke-opacity': ['case', ['!=',['get','emit'],0], 0.95, 0.6],
       'circle-blur':0.25,
     },
   });
@@ -3353,6 +3400,7 @@ function addLocationsLayer() {
       'circle-stroke-width':2,
     },
   });
+  try{ startEmissionStatusPolling(); }catch(_){}
   // Click en cluster → zoom in
   map.on('click', 'clusters', (e) => {
     const f = map.queryRenderedFeatures(e.point, {layers:['clusters']})[0];
