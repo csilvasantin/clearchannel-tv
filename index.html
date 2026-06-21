@@ -327,14 +327,14 @@
   aside.panel .ph .addr{color:var(--mut);font-size:13px}
   aside.panel .ph .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;font-family:monospace;font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em}
   aside.panel .ph .meta b{color:var(--brand);display:block;font-size:18px;letter-spacing:0;text-transform:none;margin-bottom:1px}
-  /* Segmentación en vivo (cámara/audiencia) bajo impr·día y CPM */
-  aside.panel .ph .seg-live{margin-top:12px}
-  aside.panel .ph .seg-pill{display:inline-flex;align-items:center;gap:7px;font-family:monospace;font-size:12px;letter-spacing:.04em;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(10,22,32,.6);color:var(--mut)}
-  aside.panel .ph .seg-pill b{color:var(--ink);font-weight:700}
-  aside.panel .ph .seg-live.on .seg-pill{border-color:rgba(136,255,170,.5);color:var(--good);box-shadow:0 0 14px rgba(136,255,170,.12)}
-  aside.panel .ph .seg-live.on .seg-pill b{color:var(--good)}
-  aside.panel .ph .seg-live.idle .seg-pill{border-color:rgba(255,216,102,.45);color:var(--accent)}
-  aside.panel .ph .seg-live .seg-ico{opacity:.85}
+  /* Segmentación en vivo (cámara/audiencia) en la tarjeta del MUPI, bajo el CPM */
+  aside.panel .surf-seg{margin-top:8px}
+  aside.panel .seg-pill{display:inline-flex;align-items:center;gap:7px;font-family:monospace;font-size:12px;letter-spacing:.04em;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(10,22,32,.6);color:var(--mut)}
+  aside.panel .seg-pill b{color:var(--ink);font-weight:700}
+  aside.panel .seg-live.on .seg-pill{border-color:rgba(136,255,170,.5);color:var(--good);box-shadow:0 0 14px rgba(136,255,170,.12)}
+  aside.panel .seg-live.on .seg-pill b{color:var(--good)}
+  aside.panel .seg-live.idle .seg-pill{border-color:rgba(255,216,102,.45);color:var(--accent)}
+  aside.panel .seg-pill .seg-ico{opacity:.85}
   aside.panel .ph .close{position:absolute;top:14px;right:16px;background:transparent;border:0;color:var(--mut);font-size:22px;cursor:pointer;line-height:1}
   aside.panel .ph .close:hover{color:var(--ink)}
 
@@ -1043,7 +1043,6 @@
       <div><b id="p-impr">~1.2K</b><span data-i18n="meta_imprday">impr/día</span></div>
       <div><b id="p-cpm">€2-€8</b><span data-i18n="meta_cpm">CPM rango</span></div>
     </div>
-    <div class="seg-live" id="p-seg" hidden></div>
   </div>
   <div class="body">
     <h3 data-i18n="surfaces_available">Surfaces disponibles</h3>
@@ -3666,7 +3665,6 @@ function startSurfMirrors(){
       const el=nodes[i]; const screen=el.getAttribute('data-screen'); if(!screen) continue;
       try{ const r=await fetch(SURF_NOW_API+'?screen='+encodeURIComponent(screen),{cache:'no-store'});
         const j=await r.json(); const it=j&&j.item; renderSurfMirror(el, it);
-        if(i===0){ try{ updatePanelSegmentation(it && it.aud); }catch(_){} }
       }catch(_){}
     }
   };
@@ -3675,6 +3673,9 @@ function startSurfMirrors(){
 function renderSurfMirror(el, it){
   const thumb=el.closest('.thumb');
   const fresh = it && it.url && (!it.ts || (Date.now()-it.ts) < 200000);
+  // Audiencia de cámara en la propia tarjeta del MUPI, bajo su línea de CPM.
+  const card=el.closest('.surface'); const segEl=card && card.querySelector('.surf-seg');
+  if(segEl) renderSegPill(segEl, fresh ? (it && it.aud) : null);
   if(!fresh){
     if(el.getAttribute('data-empty')!=='1'){ el.setAttribute('data-empty','1'); el.removeAttribute('data-id');
       el.innerHTML='<div class="surf-off">○ sin señal</div>'; if(thumb) thumb.classList.remove('live'); }
@@ -3709,20 +3710,21 @@ function renderSurfMirror(el, it){
 // Segmentación por cámara en el panel (bajo impr·día y CPM). `aud` viene en el
 // item de /signage/now que publica el canal: { cam, faces, gender, age }.
 function fmtSegAge(a){ return ({nino:'Niño',joven:'Joven',adulto:'Adulto',senior:'Senior',vejez:'Vejez'})[a] || a || ''; }
-function updatePanelSegmentation(aud){
-  const el=document.getElementById('p-seg'); if(!el) return;
+function renderSegPill(el, aud){
+  if(!el) return;
+  const base='surf-seg seg-live ';
   if(!aud || !aud.cam){
-    el.hidden=false; el.className='seg-live off';
+    el.hidden=false; el.className=base+'off';
     el.innerHTML='<span class="seg-pill"><span class="seg-ico">📷</span> Sin cámara</span>';
     return;
   }
   if(!aud.faces){
-    el.hidden=false; el.className='seg-live idle';
+    el.hidden=false; el.className=base+'idle';
     el.innerHTML='<span class="seg-pill"><span class="seg-ico">📷</span> Cámara activa · nadie delante</span>';
     return;
   }
   const g = aud.gender==='f' ? '♀ Mujer' : aud.gender==='m' ? '♂ Hombre' : '';
-  el.hidden=false; el.className='seg-live on';
+  el.hidden=false; el.className=base+'on';
   el.innerHTML='<span class="seg-pill"><span class="seg-ico">👥</span><b>'+aud.faces+'</b>'+
     (aud.age?' · '+fmtSegAge(aud.age):'') + (g?' · '+g:'') + '</span>';
 }
@@ -3790,7 +3792,6 @@ function renderPanel(loc) {
   document.getElementById('p-addr').textContent = loc.addr;
   document.getElementById('p-kind').textContent = loc.kind;
   document.getElementById('p-surfaces').textContent = loc.surfaces.length;
-  { const segEl=document.getElementById('p-seg'); if(segEl){ segEl.hidden=true; segEl.innerHTML=''; } }
   const totalImpr = loc.surfaces.reduce((a,s)=>a+s.impr, 0);
   document.getElementById('p-impr').textContent = '~' + (totalImpr/1000).toFixed(1) + 'K';
   const cpms = loc.surfaces.map(s => parseFloat(String(s.cpm).replace(/[^\d.]/g,''))).filter(Boolean);
@@ -3811,6 +3812,7 @@ function renderPanel(loc) {
         </div>
         <div class="desc">${escHtml(s.desc)}</div>
         <div class="stats"><span>${s.impr}</span> ${t('meta_imprday')} · <span>${escHtml(s.cpm)}</span> CPM · <span>${escHtml(s.surface)}</span></div>
+        ${s.screen ? `<div class="surf-seg" hidden></div>` : ''}
         ${hasTwin ? `<button class="twin-launch" data-surf-idx="${i}">${t('twin_launch')}</button>` : ''}
       </div>
     </div>`;
