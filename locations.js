@@ -1096,7 +1096,7 @@ window.OMNIP_LOCATIONS_DEFAULT = [
     addr:'Avinguda de Miquel Utrillo 72 · Sitges · Barcelona', coords:[1.8017801, 41.2495549],
     osm:{ id:9499402689 }, device:'MacBookAir',
     surfaces:[
-      { name:'MUPI vertical', desc:'MacBookAir reproduciendo el MUPI · 9:16 · seguimiento de visitas en vivo', status:'live', impr:0, cpm:'€8', surface:'pantalla' },
+      { name:'MUPI vertical', desc:'MacBookAir reproduciendo el MUPI · 9:16 · seguimiento de visitas en vivo', status:'live', impr:0, cpm:'€8', surface:'pantalla', screen:'admira-sitges-mupi' },
     ],
     segmentation:{ required:false, schedule:{ start:'08:00', end:'22:00' }, typologies:['exterior'], genders:['hombre','mujer'], ages:['joven','adulto','senior'], timeSlots:['manana','mediodia','tarde','noche'] },
   },
