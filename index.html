@@ -3611,7 +3611,7 @@ function startSurfMirrors(){
         const j=await r.json(); renderSurfMirror(el, j&&j.item); }catch(_){}
     }
   };
-  tick(); _surfMirrorTimer=setInterval(tick, 6000);
+  tick(); _surfMirrorTimer=setInterval(tick, 2500);
 }
 function renderSurfMirror(el, it){
   const thumb=el.closest('.thumb');
