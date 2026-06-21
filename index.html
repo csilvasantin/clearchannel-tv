@@ -338,10 +338,12 @@
   .surface .thumb{width:64px;height:48px;border-radius:6px;overflow:hidden;background:#000;border:1px solid var(--line);position:relative}
   .surface .thumb svg{width:100%;height:100%;display:block}
   .surface .thumb.live::after{content:'';position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(136,255,170,.5);border-radius:5px;pointer-events:none;z-index:2}
-  /* Preview en vivo del MUPI: thumb vertical 9:16 que embebe el canal real */
+  /* Espejo en vivo del MUPI: thumb vertical 9:16 con el asset real que se emite */
   .surface{align-items:start}
   .surface .thumb.feed{height:114px}
-  .surface .surf-feed{width:100%;height:100%;border:0;display:block;pointer-events:none;background:#000}
+  .surface .surf-mirror{width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .surface .surf-mirror img,.surface .surf-mirror video{width:100%;height:100%;object-fit:cover;display:block}
+  .surface .surf-off{font-size:9px;color:var(--mut);letter-spacing:.4px;text-align:center;padding:4px}
   .surface .info .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px}
   .surface .info .name{font-weight:700;color:var(--ink);font-size:13px;line-height:1.25}
   .surface .info .status{font-family:monospace;font-size:9px;letter-spacing:.1em;padding:2px 6px;border-radius:4px;border:1px solid;text-transform:uppercase;flex-shrink:0;white-space:nowrap}
@@ -3591,6 +3593,43 @@ document.getElementById('sv-close').addEventListener('click', () => {
   document.getElementById('streetview').hidden = true;
 });
 
+// ─── ESPEJO EN VIVO de la pantalla en "available surfaces" ──────────
+// Lee /signage/now?screen= (lo que publica el canal del dispositivo REAL,
+// el MacBookAir) y pinta el asset que se emite AHORA. Espejo real, sin iframe,
+// independiente del modo de reproduccion (local/sync/camara).
+const SURF_NOW_API='https://api.admira.store/signage/now';
+let _surfMirrorTimer=null;
+function startSurfMirrors(){
+  if(_surfMirrorTimer){ clearInterval(_surfMirrorTimer); _surfMirrorTimer=null; }
+  const nodes=[...document.querySelectorAll('#surfaces .surf-mirror[data-screen]')];
+  if(!nodes.length) return;
+  const tick=async()=>{
+    if(!nodes[0]||!document.body.contains(nodes[0])){ clearInterval(_surfMirrorTimer); _surfMirrorTimer=null; return; }
+    for(const el of nodes){
+      const screen=el.getAttribute('data-screen'); if(!screen) continue;
+      try{ const r=await fetch(SURF_NOW_API+'?screen='+encodeURIComponent(screen),{cache:'no-store'});
+        const j=await r.json(); renderSurfMirror(el, j&&j.item); }catch(_){}
+    }
+  };
+  tick(); _surfMirrorTimer=setInterval(tick, 6000);
+}
+function renderSurfMirror(el, it){
+  const thumb=el.closest('.thumb');
+  const fresh = it && it.url && (!it.ts || (Date.now()-it.ts) < 200000);
+  if(!fresh){
+    if(el.getAttribute('data-empty')!=='1'){ el.setAttribute('data-empty','1'); el.removeAttribute('data-id');
+      el.innerHTML='<div class="surf-off">○ sin señal</div>'; if(thumb) thumb.classList.remove('live'); }
+    return;
+  }
+  el.removeAttribute('data-empty'); if(thumb) thumb.classList.add('live');
+  if(el.getAttribute('data-id')===String(it.id)) return;   // mismo asset → no re-pintar (sin parpadeo)
+  el.setAttribute('data-id', String(it.id));
+  const u=String(it.url).replace(/"/g,'&quot;'), type=it.type||'image';
+  el.innerHTML = (type==='video'||type==='animation')
+    ? '<video src="'+u+'" muted loop autoplay playsinline></video>'
+    : '<img src="'+u+'" alt="" loading="lazy">';
+}
+
 // ─── Thumbnails SVG por tipo de surface ───────────────────────────
 function thumbFor(kind, status) {
   const live = status === 'live';
@@ -3666,7 +3705,7 @@ function renderPanel(loc) {
     const hasTwin = screensForSurface(loc, s).length;   // pantalla fija o gemelo vivo del Xpacio
     return `
     <div class="surface" data-surface="${s.surface}">
-      <div class="thumb ${s.status==='live'?'live':''} ${s.screen?'feed':''}">${s.screen ? `<iframe class="surf-feed" src="https://admira.tv/canal.html?clean=1&circuit=${encodeURIComponent(loc.id)}&screen=${encodeURIComponent(s.screen)}&muted=1&max=24&refresh=20" title="preview en vivo" loading="lazy" scrolling="no" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>` : thumbFor(s.surface, s.status)}</div>
+      <div class="thumb ${s.status==='live'?'live':''} ${s.screen?'feed':''}">${s.screen ? `<div class="surf-mirror" data-screen="${escHtml(s.screen)}"><div class="surf-off">○ conectando…</div></div>` : thumbFor(s.surface, s.status)}</div>
       <div class="info">
         <div class="top">
           <div class="name">${escHtml(s.name)}</div>
@@ -3678,6 +3717,7 @@ function renderPanel(loc) {
       </div>
     </div>`;
   }).join('');
+  try{ startSurfMirrors(); }catch(_){}
   // Reset bid feed
   bidFeedItems = [];
   renderBidFeedEmpty();
