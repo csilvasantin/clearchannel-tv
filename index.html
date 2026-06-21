@@ -4319,6 +4319,37 @@ consumePixeriaDraftFromUrl();
   } catch {}
 })();
 
+// ─── Equipos auto-registrados (admira.tv/alta) → merge ligero ──────
+// El catálogo completo pesa varios MB y su carga async puede caducar (timeout),
+// dejando fuera los equipos dados de alta solos. Se traen aparte con ?selfreg=1
+// (payload mínimo) y se fusionan SOBRE lo ya cargado (aditivo, sin reemplazar),
+// así aparecen siempre y rápido. Refresca cada 60s para captar nuevas altas.
+const SELFREG_URL = 'https://omnipublicity-api.csilvasantin.workers.dev/locations?selfreg=1';
+async function mergeSelfRegDevices(){
+  try{
+    const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), 6000);
+    const r = await fetch(SELFREG_URL, { cache:'no-store', signal:ctrl.signal });
+    clearTimeout(to);
+    const j = await r.json();
+    const devs = (j && Array.isArray(j.locations)) ? j.locations : [];
+    if(!devs.length) return;
+    const byId = new Map((Array.isArray(LOCATIONS)?LOCATIONS:[]).map(l=>[l.id, l]));
+    let changed = false;
+    for(const d of devs){
+      if(!d || !d.id) continue;
+      const norm = window.normalizeOmnipLocations ? window.normalizeOmnipLocations([d])[0] : d;
+      if(norm){ byId.set(d.id, norm); changed = true; }
+    }
+    if(changed){
+      setLocations([...byId.values()]);
+      updateLocationsSource();
+      try{ updateBiddingLiveCounters(); }catch(_){}
+    }
+  }catch(_){}
+}
+mergeSelfRegDevices();
+setInterval(mergeSelfRegDevices, 60000);
+
 // Descubrir gemelos ONLINE (pantallas vivas) y refrescar cada 60s → el inventario
 // vendible se mantiene al día sin hardcodear screenIds. Cierra el loop hacia "vender".
 (async () => {
