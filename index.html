@@ -3622,12 +3622,29 @@ function renderSurfMirror(el, it){
     return;
   }
   el.removeAttribute('data-empty'); if(thumb) thumb.classList.add('live');
-  if(el.getAttribute('data-id')===String(it.id)) return;   // mismo asset → no re-pintar (sin parpadeo)
-  el.setAttribute('data-id', String(it.id));
-  const u=String(it.url).replace(/"/g,'&quot;'), type=it.type||'image';
-  el.innerHTML = (type==='video'||type==='animation')
-    ? '<video src="'+u+'" muted loop autoplay playsinline></video>'
-    : '<img src="'+u+'" alt="" loading="lazy">';
+  const type=it.type||'image';
+  const sameAsset = el.getAttribute('data-id')===String(it.id);
+  if(!sameAsset){
+    el.setAttribute('data-id', String(it.id));
+    el.setAttribute('data-started', String(it.startedAt || it.ts || Date.now()));
+    const u=String(it.url).replace(/"/g,'&quot;');
+    el.innerHTML = (type==='video'||type==='animation')
+      ? '<video src="'+u+'" muted playsinline autoplay preload="auto"></video>'
+      : '<img src="'+u+'" alt="" loading="lazy">';
+  } else if(it.startedAt){ el.setAttribute('data-started', String(it.startedAt)); }
+  // Sync de posición fotograma a fotograma: el preview va al segundo real que
+  // emite el dispositivo (now-startedAt), corrigiendo solo si deriva > 0.7s.
+  if(type==='video'||type==='animation'){
+    const v=el.querySelector('video'); const started=parseInt(el.getAttribute('data-started'),10);
+    if(v && started){
+      if(v.readyState>=1 && isFinite(v.duration) && v.duration>0){
+        const expected=(Date.now()-started)/1000;
+        const target=Math.max(0, Math.min(expected, v.duration-0.05));
+        if(Math.abs(v.currentTime-target)>0.7){ try{ v.currentTime=target; }catch(_){} }
+      }
+      if(v.paused){ v.play().catch(()=>{}); }
+    }
+  }
 }
 
 // ─── Thumbnails SVG por tipo de surface ───────────────────────────
