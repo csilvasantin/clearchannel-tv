@@ -1092,6 +1092,15 @@ window.OMNIP_LOCATIONS_DEFAULT = [
     ],
   },
   {
+    id:'admira-sitges', name:'Clear Channel Sitges', kind:'MUPI · Circuito Admira · MacBookAir',
+    addr:'Avinguda de Miquel Utrillo 72 · Sitges · Barcelona', coords:[1.8017801, 41.2495549],
+    osm:{ id:9499402689 }, device:'MacBookAir',
+    surfaces:[
+      { name:'MUPI vertical', desc:'MacBookAir reproduciendo el MUPI · 9:16 · seguimiento de visitas en vivo', status:'live', impr:0, cpm:'€8', surface:'pantalla' },
+    ],
+    segmentation:{ required:false, schedule:{ start:'08:00', end:'22:00' }, typologies:['exterior'], genders:['hombre','mujer'], ages:['joven','adulto','senior'], timeSlots:['manana','mediodia','tarde','noche'] },
+  },
+  {
     id:'super-santa-rosa', name:'Súper Santa Rosa', kind:'Supermercado · Retail físico',
     addr:'Carrer de Santa Rosa 4 · Barcelona 08012', coords:[2.1583, 41.4061],
     surfaces:[
