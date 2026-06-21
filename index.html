@@ -349,6 +349,7 @@
   /* Espejo en vivo del MUPI: thumb vertical 9:16 con el asset real que se emite */
   .surface{align-items:start}
   .surface .thumb.feed{height:114px}
+  .surface .thumb.feed.landscape{height:36px}  /* 64px ancho · 16:9 */
   .surface .surf-mirror{width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
   .surface .surf-mirror img,.surface .surf-mirror video{width:100%;height:100%;object-fit:cover;display:block}
   .surface .surf-off{font-size:9px;color:var(--mut);letter-spacing:.4px;text-align:center;padding:4px}
@@ -3804,7 +3805,7 @@ function renderPanel(loc) {
     const hasTwin = screensForSurface(loc, s).length;   // pantalla fija o gemelo vivo del Xpacio
     return `
     <div class="surface" data-surface="${s.surface}">
-      <div class="thumb ${s.status==='live'?'live':''} ${s.screen?'feed':''}">${s.screen ? `<div class="surf-mirror" data-screen="${escHtml(s.screen)}"><div class="surf-off">○ conectando…</div></div>` : thumbFor(s.surface, s.status)}</div>
+      <div class="thumb ${s.status==='live'?'live':''} ${s.screen?'feed':''} ${s.orientation==='landscape'?'landscape':''}">${s.screen ? `<div class="surf-mirror" data-screen="${escHtml(s.screen)}"><div class="surf-off">○ conectando…</div></div>` : thumbFor(s.surface, s.status)}</div>
       <div class="info">
         <div class="top">
           <div class="name">${escHtml(s.name)}</div>
