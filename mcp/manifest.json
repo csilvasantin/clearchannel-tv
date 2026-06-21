@@ -22,6 +22,15 @@
     ]
   },
 
+  "mcp_server": {
+    "endpoint": "https://mcp.admira.store/mcp",
+    "transport": "streamable-http",
+    "auth": "none",
+    "tools": ["fleet_status", "list_screens", "screen_now", "emission_report", "register_device"],
+    "docs": "https://www.xpaceos.com/mcp/",
+    "note": "Servidor MCP real del ecosistema XpaceOS (cubre flota, emisión y audiencia). Conéctalo desde tu cliente MCP: {\"mcpServers\":{\"xpaceos\":{\"url\":\"https://mcp.admira.store/mcp\"}}}."
+  },
+
   "report": {
     "human": "https://www.clearchannel.tv/detail.html?loc={loc}",
     "cross": "QUÉ se emitió (admira.tv /emit) × QUIÉN lo vio (cámara /audience: presencia + género + edad + franja horaria).",

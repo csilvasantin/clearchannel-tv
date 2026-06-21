@@ -48,6 +48,14 @@ Detección on-device (@vladmandic/human, TensorFlow.js). No se almacenan imágen
 datos personales: solo conteos agregados (presencia, género, edad, hora). Género y edad
 son estimaciones estadísticas, no identificación de personas.
 
+## Servidor MCP (conectar de verdad)
+
+Además de la API REST, el ecosistema expone un servidor MCP real:
+- Endpoint: https://mcp.admira.store/mcp (transporte streamable-http, sin auth)
+- Tools: fleet_status, list_screens, screen_now, emission_report, register_device
+- Config de cliente: {"mcpServers":{"xpaceos":{"url":"https://mcp.admira.store/mcp"}}}
+- Docs: https://www.xpaceos.com/mcp/
+
 ## Federación (viceversa)
 
 Misma convención /mcp/ en cada pata del ecosistema AdmiraNeXT (y nosotros las consultamos):
