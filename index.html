@@ -3222,11 +3222,11 @@ function locationsGeoJSON() {
 // ── COLOR POR CIRCUITO (Carlos 2026-06-11) ──────────────────────────────
 // Cada circuito (Desigual, Mango, Estancos, Metro BCN…) con su propio color en
 // las burbujas del mapa, para distinguirlos al segmentar. Antes todo era rosa.
-const CIRCUIT_PALETTE = ['#ff4fd8','#ffb030','#88ffaa','#78f3ff','#3a86ff','#c9a8ff','#ff6b6b','#06d6a0','#ffd23f','#9b5de5','#00f5d4','#f72585','#4cc9f0','#fee440'];
+const CIRCUIT_PALETTE = ['#ff4fd8','#ffb030','#88ffaa','#78f3ff','#3a86ff','#c9a8ff','#ff6b6b','#06d6a0','#ffd23f','#9b5de5','#00f5d4','#f72585','#4cc9f0','#fee440','#39d98a'];
 const CIRCUIT_COLOR_IDX = {
   'Desigual':0, 'Mango':1, 'Estancos':2, 'Kioscos':3, 'Decathlon':4, 'El Palacio de Hierro':5,
   'Liverpool':6, 'El Corte Inglés':7, 'Correos':8, 'MultiÓpticas':9, 'Metro Barcelona':10,
-  'Banorte':11, 'BBVA':12, 'La Caixa / CaixaBank':13,
+  'Banorte':11, 'BBVA':12, 'La Caixa / CaixaBank':13, 'Admira':14,
 };
 function circuitBaseName(label) { return String(label || '').split(' · ')[0]; }  // sin las líneas de metro
 function circuitColorIdx(label) {

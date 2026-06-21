@@ -1092,7 +1092,7 @@ window.OMNIP_LOCATIONS_DEFAULT = [
     ],
   },
   {
-    id:'admira-sitges', name:'Clear Channel Sitges', kind:'MUPI · Circuito Admira · MacBookAir',
+    id:'admira-sitges', name:'Clear Channel Sitges', kind:'MUPI · Circuito Admira · MacBookAir', network:'Admira',
     addr:'Avinguda de Miquel Utrillo 72 · Sitges · Barcelona', coords:[1.8017801, 41.2495549],
     osm:{ id:9499402689 }, device:'MacBookAir',
     surfaces:[
