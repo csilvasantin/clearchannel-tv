@@ -3168,6 +3168,16 @@ function updateGalaxy(){
 map.on('zoom', updateGalaxy);
 map.on('load', updateGalaxy);
 
+// Deep-link a un PUNTO concreto: ?lng=..&lat=..&label=..  (lo usa el botón "Mapa"
+// del CMS de flota de admira.tv para abrir el mapa en la ubicación real del equipo).
+map.on('load', () => {
+  try {
+    const p = new URLSearchParams(location.search || '');
+    const lng = parseFloat(p.get('lng')), lat = parseFloat(p.get('lat'));
+    if (isFinite(lng) && isFinite(lat)) setTimeout(() => flyToAddress(lng, lat, p.get('label') || ''), 350);
+  } catch (_) {}
+});
+
 // ─── Planetas clicables → "Próximamente en …" ────────────────────
 const PLANET_ORB = {
   mercury:'radial-gradient(circle at 34% 30%,#d6cbc1,#6c635b)',
