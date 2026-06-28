@@ -3510,7 +3510,7 @@ function isoUrlFor(loc) {
   else url += '&view=red';
   return url + '&embed=1';
 }
-function openIsoView() {
+function openIsoView(customUrl, customName) {
   const ov = document.getElementById('iso-overlay');
   const fr = document.getElementById('iso-frame');
   const loading = document.getElementById('iso-loading');
@@ -3519,9 +3519,11 @@ function openIsoView() {
   const btn = document.getElementById('btn-iso');
   if (!ov || !fr) return;
   const loc = (typeof activeLocation !== 'undefined') ? activeLocation : null;
-  const url = isoUrlFor(loc);
-  where.textContent = loc && loc.name
-    ? loc.name + ' · ' + t('iso_network').split('·').slice(-1)[0].trim()
+  // customUrl = gemelo propio del punto (p.ej. Xpacio en pixeria.com) embebido SIN salir de clearchannel.tv
+  const url = customUrl || isoUrlFor(loc);
+  const nm = customName || (loc && loc.name);
+  where.textContent = nm
+    ? nm + ' · ' + t('iso_network').split('·').slice(-1)[0].trim()
     : t('iso_network');
   openLink.href = url;
   if (loading) loading.classList.remove('hide');
@@ -3837,7 +3839,13 @@ function renderPanel(loc) {
   // si no, el gemelo generico por id.
   const pTwin = document.getElementById('p-twin');
   pTwin.href = loc.twin || (TWIN_BASE + '&loc=' + encodeURIComponent(loc.id));
-  pTwin.setAttribute('target', '_blank'); // siempre nueva pestaña (URL absoluta)
+  pTwin.setAttribute('target', '_blank'); // fallback: nueva pestaña (clic medio / abrir en pestaña)
+  // Si el punto tiene su propio gemelo (twin, p.ej. Xpacio en pixeria.com), lo abrimos
+  // EMBEBIDO dentro de clearchannel.tv (overlay iso, con cerrar/Escape) → no se pierde la
+  // página madre y se puede volver atrás. Sin twin propio: comportamiento por defecto.
+  pTwin.onclick = function(e){
+    if (loc.twin) { e.preventDefault(); openIsoView(loc.twin, loc.name); }
+  };
   // Gemelo Hiperrealista (UE5 · Pixel Streaming): aparece solo si el punto tiene
   // su propia URL (loc.twinHD) o si hay base global configurada (TWIN_HD_BASE).
   const pTwinHD = document.getElementById('p-twin-hd');
