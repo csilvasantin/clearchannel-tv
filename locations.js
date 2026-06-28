@@ -1121,6 +1121,21 @@ window.OMNIP_LOCATIONS_DEFAULT = [
 // completo al KV.
 window.OMNIP_LOCATIONS_EXTRA = [
   {
+    // Xtanco Valencia — Xpacio 3D (XpaceOS Locations). Buscable en clearchannel.tv;
+    // al pulsar el punto o el botón "Gemelo" abre el Xpacio isométrico en pixeria.com.
+    id:'xtanco-valencia', name:'Xtanco Valencia', kind:'Estanco · Retail físico · Gemelo digital · Xpacio 3D',
+    addr:'Valencia · 46002 · València · Spain', coords:[-0.3753, 39.4699],
+    music:'lounge', cameras:true,
+    twin:'https://www.pixeria.com/xpacios/xtanco-valencia/',
+    twinOnClick:true,
+    surfaces:[
+      { name:'Pantalla A · Lotería',      desc:'Mural zona A · 322×500 cm · 16 m² · h 280',  status:'live', impr:480, cpm:'€8', surface:'pantalla', screen:'xtanco-valencia-a' },
+      { name:'Pantalla B · Vapeo/Tabaco', desc:'Mural zona B · 491×337 cm · 16 m² · h 280',  status:'live', impr:520, cpm:'€8', surface:'pantalla', screen:'xtanco-valencia-b' },
+      { name:'Pantalla C · Bebidas',      desc:'Mural zona C · 405×400 cm · 16 m² · h 280',  status:'live', impr:460, cpm:'€7', surface:'pantalla', screen:'xtanco-valencia-c' },
+      { name:'Pantalla D · Ofertas',      desc:'Mural zona D · 398×409 cm · 16 m² · h 280',  status:'live', impr:440, cpm:'€7', surface:'pantalla', screen:'xtanco-valencia-d' },
+    ],
+  },
+  {
     // Gemelo digital Desigual Ginza (Tokio) — al pulsar el punto abre el tour Matterport.
     id:'desigual-ginza-tokyo', name:'Desigual Ginza', kind:'Desigual · Tienda oficial',
     addr:'Chūō-dōri, 銀座七丁目 · Ginza · Chūō, Tokio · 104-0061 · Japón', coords:[139.7627166, 35.6692638],
