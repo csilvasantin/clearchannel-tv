@@ -1136,6 +1136,21 @@ window.OMNIP_LOCATIONS_EXTRA = [
     ],
   },
   {
+    // Xtanco Barcelona (Gran de Gràcia) — Xpacio 3D duplicado de Valencia, estilo flagship
+    // Desigual (como el de Ginza). Sandbox de innovación: walkable + decorable.
+    id:'xtanco-bcn-gracia', name:'Xtanco Barcelona', kind:'Flagship Desigual-style · Retail físico · Gemelo digital · Xpacio 3D',
+    addr:'Carrer Gran de Gràcia · Gràcia · Barcelona · 08012 · Spain', coords:[2.1539, 41.4015],
+    music:'fashion', cameras:true,
+    twin:'https://www.pixeria.com/xpacios/xtanco-barcelona/',
+    twinOnClick:true,
+    surfaces:[
+      { name:'Pantalla A · Escaparate flagship', desc:'Mural zona A · 322×500 cm · 16 m² · h 280', status:'live', impr:720, cpm:'€9', surface:'escaparate', screen:'xtanco-bcn-gracia-a' },
+      { name:'Pantalla B · Colecciones',         desc:'Mural zona B · 491×337 cm · 17 m² · h 280', status:'live', impr:520, cpm:'€8', surface:'pantalla',   screen:'xtanco-bcn-gracia-b' },
+      { name:'Pantalla C · Probadores',          desc:'Mural zona C · 405×400 cm · 16 m² · h 280', status:'live', impr:460, cpm:'€7', surface:'pantalla',   screen:'xtanco-bcn-gracia-c' },
+      { name:'Pantalla D · Desigual Club',       desc:'Mural zona D · 398×409 cm · 16 m² · h 280', status:'live', impr:440, cpm:'€7', surface:'pantalla',   screen:'xtanco-bcn-gracia-d' },
+    ],
+  },
+  {
     // Gemelo digital Desigual Ginza (Tokio) — al pulsar el punto abre el tour Matterport.
     id:'desigual-ginza-tokyo', name:'Desigual Ginza', kind:'Desigual · Tienda oficial',
     addr:'Chūō-dōri, 銀座七丁目 · Ginza · Chūō, Tokio · 104-0061 · Japón', coords:[139.7627166, 35.6692638],
