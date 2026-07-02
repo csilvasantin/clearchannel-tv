@@ -29,10 +29,20 @@
 <meta name="twitter:title" content="Clear Channel — Programmatic advertising in the real world">
 <meta name="twitter:description" content="Every gap in physical retail, auctioned by impression. Watch retail spaces bidding in real time.">
 <meta name="twitter:image" content="https://www.clearchannel.tv/assets/og-cover.jpg">
+<!-- Perf: abre pronto conexión con libs y servidores de tiles del mapa -->
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="preconnect" href="https://www.carlossilva.info">
+<link rel="dns-prefetch" href="https://a.tile.opentopomap.org">
+<link rel="dns-prefetch" href="https://b.tile.opentopomap.org">
+<link rel="dns-prefetch" href="https://c.tile.opentopomap.org">
+<link rel="dns-prefetch" href="https://demotiles.maplibre.org">
+<link rel="dns-prefetch" href="https://basemaps.cartocdn.com">
+<link rel="dns-prefetch" href="https://tiles.basemaps.cartocdn.com">
+<link rel="dns-prefetch" href="https://server.arcgisonline.com">
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/tokens.css">
-<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/contact-panel.css">
-<script defer src="https://csilvasantin.github.io/admira-design/contact-panel.js"></script>
+<link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
+<link rel="stylesheet" href="https://www.carlossilva.info/admira-design/contact-panel.css">
+<script defer src="https://www.carlossilva.info/admira-design/contact-panel.js"></script>
 <!-- Descarga temprano (no bloqueante); se ejecutan al final del body, justo antes del script de init -->
 <link rel="preload" as="script" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js">
 <link rel="preload" as="script" href="locations.js?v=kioskos-20260608">
