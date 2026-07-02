@@ -4865,24 +4865,37 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
   function edEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
   function edLocale(){ return (typeof LANG!=='undefined' && LANG==='en') ? 'en-GB' : 'es-ES'; }
   function edInt(n){ return (n||0).toLocaleString(edLocale()); }
-  async function fetchEmissionData(){
-    const all=(typeof window.loadOmnipLocations==='function')?window.loadOmnipLocations():[];
-    const locs=all.slice(0,60), t=todayStr();
-    const results=await Promise.all(locs.map(l=>fetch(PIXER+'/emit/range?loc='+encodeURIComponent(l.id)+'&from='+t+'&to='+t,{cache:'no-store'}).then(r=>r.json()).then(d=>({l,screens:(d&&d.screens)||{}})).catch(()=>({l,screens:{}}))));
+  function edDaysAgoStr(n){ const d=new Date(Date.now()-n*86400000); return ''+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0'); }
+  // Agrega los proof-of-play que caen dentro de la ventana (inWin: clave 'YYYYMMDD' -> bool).
+  function edAgg(results,inWin){
     const circuits={}, totType={}, pieceSet=new Set(); const recent=[]; let totPlays=0,totScreens=0,totSecs=0;
     for(const {l,screens} of results){ const brand=emitBrand(l);
-      for(const sn of Object.keys(screens)){ const rec=screens[sn][t]; if(!rec||!rec.totalPlays) continue;
-        totScreens++; totPlays+=rec.totalPlays; totSecs+=rec.totalSecs||0;
-        const c=circuits[brand]||(circuits[brand]={brand,plays:0,screens:0,secs:0,byType:{},last:0});
-        c.plays+=rec.totalPlays; c.screens++; c.secs+=rec.totalSecs||0;
-        for(const ty in (rec.byType||{})){ c.byType[ty]=(c.byType[ty]||0)+rec.byType[ty]; totType[ty]=(totType[ty]||0)+rec.byType[ty]; }
-        for(const id in (rec.assets||{})){ const a=rec.assets[id]; pieceSet.add(id); if((a.last||0)>c.last) c.last=a.last;
-          recent.push({screen:sn,brand,title:a.title||id,type:a.type||'image',last:a.last||0}); }
+      for(const sn of Object.keys(screens)){ const byDate=screens[sn]||{}; let hit=false;
+        for(const dk of Object.keys(byDate)){ if(!inWin(dk)) continue; const rec=byDate[dk]; if(!rec||!rec.totalPlays) continue;
+          hit=true; totPlays+=rec.totalPlays; totSecs+=rec.totalSecs||0;
+          const c=circuits[brand]||(circuits[brand]={brand,plays:0,screens:0,secs:0,byType:{},last:0});
+          c.plays+=rec.totalPlays; c.secs+=rec.totalSecs||0;
+          for(const ty in (rec.byType||{})){ c.byType[ty]=(c.byType[ty]||0)+rec.byType[ty]; totType[ty]=(totType[ty]||0)+rec.byType[ty]; }
+          for(const id in (rec.assets||{})){ const a=rec.assets[id]; pieceSet.add(id); if((a.last||0)>c.last) c.last=a.last;
+            recent.push({screen:sn,brand,title:a.title||id,type:a.type||'image',last:a.last||0}); }
+        }
+        if(hit){ totScreens++; const c=circuits[brand]; if(c) c.screens++; }
       }
     }
     recent.sort((a,b)=>b.last-a.last);
-    return { t, locsChecked:locs.length, totPlays, totScreens, totSecs, pieces:pieceSet.size, totType,
+    return { totPlays, totScreens, totSecs, pieces:pieceSet.size, totType,
       circuits:Object.values(circuits).sort((a,b)=>b.plays-a.plays), recent:recent.slice(0,40) };
+  }
+  async function fetchEmissionData(){
+    const all=(typeof window.loadOmnipLocations==='function')?window.loadOmnipLocations():[];
+    const locs=all.slice(0,60), t=todayStr(), from=edDaysAgoStr(30), d7=edDaysAgoStr(6);
+    // Un solo tiro de 30 días por Xpacio. Si HOY no ha emitido nadie, caemos a 7d y luego
+    // a 30d: la sala muestra siempre la actividad real de la red, nunca aparece en cero.
+    const results=await Promise.all(locs.map(l=>fetch(PIXER+'/emit/range?loc='+encodeURIComponent(l.id)+'&from='+from+'&to='+t,{cache:'no-store'}).then(r=>r.json()).then(d=>({l,screens:(d&&d.screens)||{}})).catch(()=>({l,screens:{}}))));
+    let win='today', agg=edAgg(results,dk=>dk===t);
+    if(!agg.totPlays){ win='7d';  agg=edAgg(results,dk=>dk>=d7   && dk<=t); }
+    if(!agg.totPlays){ win='30d'; agg=edAgg(results,dk=>dk>=from && dk<=t); }
+    return Object.assign({ t, win, locsChecked:locs.length }, agg);
   }
   function injectEdeckStyle(){ if(document.getElementById('edeck-style')) return;
     const s=document.createElement('style'); s.id='edeck-style'; s.textContent=`
@@ -4904,6 +4917,8 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     #emission-deck .ed-net{color:#6d8a96}
     #emission-deck .ed-net.ok{color:#7dffd0}
     #emission-deck .ed-net.err{color:#ff7a7a}
+    #emission-deck .ed-window{color:#ffd866;font-size:10px;letter-spacing:.12em;border:1px solid rgba(255,216,102,.4);border-radius:6px;padding:2px 8px;white-space:nowrap}
+    #emission-deck .ed-window:empty{display:none}
     #emission-deck .ed-live{color:#9effa0;animation:ed-blink 1.4s steps(2) infinite}
     @keyframes ed-blink{50%{opacity:.25}}
     #emission-deck .ed-clock{color:#bfeaff;font-size:13px;letter-spacing:.16em;text-shadow:0 0 10px rgba(125,255,208,.4)}
@@ -4950,7 +4965,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     @media(max-width:760px){#emission-deck .ed-kpis{grid-template-columns:repeat(2,1fr)}#emission-deck .ed-main{grid-template-columns:1fr}#emission-deck .ed-kpi-v{font-size:30px}}
     `; document.head.appendChild(s);
   }
-  function edKpi(id,label,color){ return '<div class="ed-kpi"><div class="ed-kpi-v" id="'+id+'" data-v="0" style="color:'+color+';text-shadow:0 0 18px '+color+'66">0</div><div class="ed-kpi-l">'+label+'</div></div>'; }
+  function edKpi(id,label,color){ return '<div class="ed-kpi"><div class="ed-kpi-v" id="'+id+'" data-v="0" style="color:'+color+';text-shadow:0 0 18px '+color+'66">0</div><div class="ed-kpi-l" id="'+id+'-l">'+label+'</div></div>'; }
   function edTween(el,to){ if(!el) return; const from=+(el.getAttribute('data-v')||0); el.setAttribute('data-v',to); if(from===to){ el.textContent=edInt(to); return; }
     const t0=performance.now(),dur=650; (function step(now){ const k=Math.min(1,(now-t0)/dur); const v=Math.round(from+(to-from)*(0.5-0.5*Math.cos(k*Math.PI))); el.textContent=edInt(v); if(k<1) requestAnimationFrame(step); })(t0);
     setTimeout(function(){ if(+el.getAttribute('data-v')===to) el.textContent=edInt(to); },dur+90); }
@@ -4963,7 +4978,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     ov.innerHTML='<div class="grid-bg"></div><div class="scan"></div>'
       +'<div class="ed-corner tl"></div><div class="ed-corner tr"></div><div class="ed-corner bl"></div><div class="ed-corner br"></div>'
       +'<header class="ed-top"><div class="ed-brand"><span class="ed-logo">▲</span> ADMIRA<b>.TV</b> · <span class="ed-sub" data-i18n="emission_room">'+t('emission_room')+'</span></div>'
-      +'<div class="ed-status"><span id="ed-net" class="ed-net">'+t('ed_linking')+'</span><span class="ed-live">'+t('ed_on_air')+'</span><span id="ed-clock" class="ed-clock"></span></div>'
+      +'<div class="ed-status"><span id="ed-net" class="ed-net">'+t('ed_linking')+'</span><span id="ed-window" class="ed-window"></span><span class="ed-live">'+t('ed_on_air')+'</span><span id="ed-clock" class="ed-clock"></span></div>'
       +'<button id="ed-close" class="ed-close" title="'+t('ed_close_esc')+'">✕</button></header>'
       +'<div class="ed-kpis">'+edKpi('ed-k-plays',t('ed_kpi_plays'),'#7dffd0')+edKpi('ed-k-screens',t('ed_kpi_screens'),'#8ed2ff')+edKpi('ed-k-pieces',t('ed_kpi_pieces'),'#ffd866')+edKpi('ed-k-rate',t('ed_kpi_rate'),'#9effa0')+'</div>'
       +'<div class="ed-main">'
@@ -4981,13 +4996,27 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     let d; try{ d=await fetchEmissionData(); }catch(_){ const n=document.getElementById('ed-net'); if(n){ n.textContent=t('ed_nolink'); n.className='ed-net err'; } return; }
     if(!document.getElementById('emission-deck')) return;
     const net=document.getElementById('ed-net'); if(net){ net.textContent=tf('ed_linked',{n:d.locsChecked}); net.className='ed-net ok'; }
+    // ── Ventana temporal (hoy → 7d → 30d): etiquetas honestas para no verse nunca muerta ──
+    const es=(typeof LANG==='undefined'||LANG!=='en'), live=(d.win==='today');
+    const wb=document.getElementById('ed-window');
+    if(wb) wb.textContent = live ? '' : (d.win==='7d' ? (es?'ÚLTIMOS 7 DÍAS':'LAST 7 DAYS') : (es?'ÚLTIMOS 30 DÍAS':'LAST 30 DAYS'));
+    const plL=document.getElementById('ed-k-plays-l');
+    if(plL) plL.textContent = live ? t('ed_kpi_plays') : (es?'PASES · ':'PLAYS · ')+(d.win==='7d'?'7D':'30D');
     edTween(document.getElementById('ed-k-plays'),d.totPlays);
     edTween(document.getElementById('ed-k-screens'),d.totScreens);
     edTween(document.getElementById('ed-k-pieces'),d.pieces);
-    const now=performance.now(); let rate=0;
-    if(_edPrev){ const dt=(now-_edPrev.t)/60000; if(dt>0) rate=Math.max(0,(d.totPlays-_edPrev.plays)/dt); }
-    _edPrev={plays:d.totPlays,t:now};
-    const rEl=document.getElementById('ed-k-rate'); if(rEl){ rEl.textContent=rate?rate.toFixed(1):'0'; rEl.setAttribute('data-v',Math.round(rate)); }
+    const rEl=document.getElementById('ed-k-rate'), rL=document.getElementById('ed-k-rate-l');
+    if(live){
+      const now=performance.now(); let rate=0;
+      if(_edPrev){ const dt=(now-_edPrev.t)/60000; if(dt>0) rate=Math.max(0,(d.totPlays-_edPrev.plays)/dt); }
+      _edPrev={plays:d.totPlays,t:now};
+      if(rL) rL.textContent=t('ed_kpi_rate');
+      if(rEl){ rEl.textContent=rate?rate.toFixed(1):'0'; rEl.setAttribute('data-v',Math.round(rate)); }
+    } else {
+      _edPrev=null; const dias=(d.win==='7d'?7:30), perDay=d.totPlays/dias;
+      if(rL) rL.textContent=(es?'PASES / DÍA':'PLAYS / DAY');
+      if(rEl){ rEl.textContent=(perDay<10?perDay.toFixed(1):String(Math.round(perDay))); rEl.setAttribute('data-v',Math.round(perDay)); }
+    }
     edeckRadar(d.circuits);
     const emp=document.getElementById('ed-radar-empty'); if(emp) emp.style.display=d.circuits.length?'none':'block';
     edeckTypes(d.totType);
