@@ -1298,6 +1298,7 @@ const I18N = {
     logo_home_title:'Volver al inicio',
     search_ph:'Buscar Xpace · "Xtanco", "Loterías", "BCN" o cualquier dirección',
     login:'Login', contact:'Contacto',
+    emission_room:'Sala de emisión',
     stores:'Xpaces', screens:'pantallas',
     select_circuit:'Seleccionar circuito', select_target:'Seleccionar target',
     lang_toggle:'ENG', lang_toggle_aria:'Cambiar a inglés',
@@ -1412,6 +1413,7 @@ const I18N = {
     logo_home_title:'Back to start',
     search_ph:'Search Xpace · "Xtanco", "Loterías", "BCN" or any address',
     login:'Login', contact:'Contact',
+    emission_room:'Broadcast room',
     stores:'Xpaces', screens:'screens',
     select_circuit:'Select circuit', select_target:'Select target',
     lang_toggle:'ESP', lang_toggle_aria:'Switch to Spanish',
@@ -4884,7 +4886,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     #emission-deck .ed-brand{font-size:15px;letter-spacing:.14em;color:#bfeaff}
     #emission-deck .ed-brand b{color:#7dffd0}
     #emission-deck .ed-logo{color:#7dffd0;text-shadow:0 0 12px #7dffd0}
-    #emission-deck .ed-sub{color:#8ed2ff;opacity:.85}
+    #emission-deck .ed-sub{color:#8ed2ff;opacity:.85;text-transform:uppercase}
     #emission-deck .ed-status{margin-left:auto;display:flex;align-items:center;gap:16px;font-size:11px;letter-spacing:.1em}
     #emission-deck .ed-net{color:#6d8a96}
     #emission-deck .ed-net.ok{color:#7dffd0}
@@ -4929,7 +4931,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     #emission-deck .ed-tk-scr{color:#8ed2ff}
     #emission-deck .ed-tk-sep{color:#2f8d8d;padding:0 10px}
     @keyframes ed-marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-    #ed-launch{position:fixed;z-index:9000;cursor:pointer;display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,rgba(10,30,40,.92),rgba(4,18,28,.92));border:1px solid rgba(125,255,208,.5);color:#7dffd0;border-radius:999px;padding:9px 16px;font:inherit;font-size:11px;letter-spacing:.12em;box-shadow:0 0 22px rgba(125,255,208,.22),inset 0 0 14px rgba(125,255,208,.06);backdrop-filter:blur(4px)}
+    #ed-launch{position:fixed;z-index:9000;cursor:pointer;display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,rgba(10,30,40,.92),rgba(4,18,28,.92));border:1px solid rgba(125,255,208,.5);color:#7dffd0;border-radius:999px;padding:9px 16px;font:inherit;font-size:11px;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 22px rgba(125,255,208,.22),inset 0 0 14px rgba(125,255,208,.06);backdrop-filter:blur(4px)}
     #ed-launch .dot{width:8px;height:8px;border-radius:50%;background:#9effa0;box-shadow:0 0 10px #9effa0;animation:ed-blink 1.4s steps(2) infinite}
     #ed-launch:hover{border-color:#7dffd0;box-shadow:0 0 30px rgba(125,255,208,.4)}
     @media(max-width:760px){#emission-deck .ed-kpis{grid-template-columns:repeat(2,1fr)}#emission-deck .ed-main{grid-template-columns:1fr}#emission-deck .ed-kpi-v{font-size:30px}}
@@ -4947,7 +4949,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     const ov=document.createElement('div'); ov.id='emission-deck';
     ov.innerHTML='<div class="grid-bg"></div><div class="scan"></div>'
       +'<div class="ed-corner tl"></div><div class="ed-corner tr"></div><div class="ed-corner bl"></div><div class="ed-corner br"></div>'
-      +'<header class="ed-top"><div class="ed-brand"><span class="ed-logo">▲</span> ADMIRA<b>.TV</b> · <span class="ed-sub">SALA DE EMISIÓN</span></div>'
+      +'<header class="ed-top"><div class="ed-brand"><span class="ed-logo">▲</span> ADMIRA<b>.TV</b> · <span class="ed-sub" data-i18n="emission_room">'+t('emission_room')+'</span></div>'
       +'<div class="ed-status"><span id="ed-net" class="ed-net">◍ ENLAZANDO RED…</span><span class="ed-live">● EN ANTENA</span><span id="ed-clock" class="ed-clock"></span></div>'
       +'<button id="ed-close" class="ed-close" title="Cerrar (Esc)">✕</button></header>'
       +'<div class="ed-kpis">'+edKpi('ed-k-plays','PASES HOY','#7dffd0')+edKpi('ed-k-screens','PANTALLAS EN ANTENA','#8ed2ff')+edKpi('ed-k-pieces','PIEZAS EMITIDAS','#ffd866')+edKpi('ed-k-rate','PASES / MIN','#9effa0')+'</div>'
@@ -5021,7 +5023,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     if(document.getElementById('ed-launch')) return;
     injectEdeckStyle();
     const b=document.createElement('button'); b.id='ed-launch'; b.style.right='14px'; b.style.bottom='118px';
-    b.innerHTML='<span class="dot"></span>🚀 SALA DE EMISIÓN';
+    b.innerHTML='<span class="dot"></span>🚀 <span data-i18n="emission_room">'+t('emission_room')+'</span>';
     b.onclick=emissionDeck; document.body.appendChild(b);
   }
   async function render(){
