@@ -1299,6 +1299,11 @@ const I18N = {
     search_ph:'Buscar Xpace · "Xtanco", "Loterías", "BCN" o cualquier dirección',
     login:'Login', contact:'Contacto',
     emission_room:'Sala de emisión',
+    ed_type_video:'Vídeo', ed_type_animation:'Animación', ed_type_image:'Imagen', ed_type_twin:'Gemelo', ed_type_npc:'NPC', ed_type_audio:'Audio', ed_type_music:'Música', ed_type_voice:'Locución', ed_others:'Otros',
+    ed_linking:'◍ ENLAZANDO RED…', ed_on_air:'● EN ANTENA', ed_close_esc:'Cerrar (Esc)',
+    ed_kpi_plays:'PASES HOY', ed_kpi_screens:'PANTALLAS EN ANTENA', ed_kpi_pieces:'PIEZAS EMITIDAS', ed_kpi_rate:'PASES / MIN',
+    ed_radar_title:'RADAR DE CIRCUITOS · RED FÍSICA', ed_awaiting:'◌ ESPERANDO SEÑAL', ed_mix_type:'MEZCLA POR TIPO', ed_ranking:'CIRCUITOS · RANKING', ed_feed:'▸ FEED DE EMISIÓN',
+    ed_nolink:'⚠ SIN ENLACE', ed_linked:'◉ RED ENLAZADA · {n} XPACIOS', ed_no_emission:'— sin emisión —', ed_no_circuits:'— sin circuitos activos —', ed_ticker_waiting:'esperando primeras emisiones del canal…',
     stores:'Xpaces', screens:'pantallas',
     select_circuit:'Seleccionar circuito', select_target:'Seleccionar target',
     lang_toggle:'ENG', lang_toggle_aria:'Cambiar a inglés',
@@ -1414,6 +1419,11 @@ const I18N = {
     search_ph:'Search Xpace · "Xtanco", "Loterías", "BCN" or any address',
     login:'Login', contact:'Contact',
     emission_room:'Broadcast room',
+    ed_type_video:'Video', ed_type_animation:'Animation', ed_type_image:'Image', ed_type_twin:'Twin', ed_type_npc:'NPC', ed_type_audio:'Audio', ed_type_music:'Music', ed_type_voice:'Voice-over', ed_others:'Others',
+    ed_linking:'◍ LINKING NETWORK…', ed_on_air:'● ON AIR', ed_close_esc:'Close (Esc)',
+    ed_kpi_plays:'PLAYS TODAY', ed_kpi_screens:'SCREENS ON AIR', ed_kpi_pieces:'PIECES AIRED', ed_kpi_rate:'PLAYS / MIN',
+    ed_radar_title:'CIRCUITS RADAR · PHYSICAL NETWORK', ed_awaiting:'◌ AWAITING SIGNAL', ed_mix_type:'MIX BY TYPE', ed_ranking:'CIRCUITS · RANKING', ed_feed:'▸ BROADCAST FEED',
+    ed_nolink:'⚠ NO LINK', ed_linked:'◉ NETWORK LINKED · {n} XPACES', ed_no_emission:'— no broadcast —', ed_no_circuits:'— no active circuits —', ed_ticker_waiting:'awaiting the channel\'s first broadcasts…',
     stores:'Xpaces', screens:'screens',
     select_circuit:'Select circuit', select_target:'Select target',
     lang_toggle:'ESP', lang_toggle_aria:'Switch to Spanish',
@@ -4846,12 +4856,15 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
   // ═══════ SALA DE EMISIÓN · admira.tv · cockpit en tiempo real ("nave espacial") ═══════
   // Lee /emit/range por circuito (proof-of-play real) y lo pinta como un puente de
   // mando: radar de circuitos, KPIs animados, mezcla por tipo, ranking y feed en vivo.
-  const EMIT_TYPE_LBL={video:'🎬 Vídeo',animation:'✨ Animación',image:'🖼️ Imagen','digital-twin':'🏬 Gemelo','twin-npc':'🤖 NPC',audio:'🔊 Audio',music:'🎵 Música',locucion:'🎙️ Locución'};
+  const EMIT_TYPE_EMOJI={video:'🎬',animation:'✨',image:'🖼️','digital-twin':'🏬','twin-npc':'🤖',audio:'🔊',music:'🎵',locucion:'🎙️'};
+  const EMIT_TYPE_KEY={video:'ed_type_video',animation:'ed_type_animation',image:'ed_type_image','digital-twin':'ed_type_twin','twin-npc':'ed_type_npc',audio:'ed_type_audio',music:'ed_type_music',locucion:'ed_type_voice'};
+  function edTypeLbl(k){ return EMIT_TYPE_EMOJI[k] ? (EMIT_TYPE_EMOJI[k]+' '+t(EMIT_TYPE_KEY[k])) : k; }
   const EMIT_TYPE_COL={video:'#7dffd0',animation:'#b388ff',image:'#8ed2ff','digital-twin':'#ffd866','twin-npc':'#ff9a6b',audio:'#6bd1ff',music:'#ff6bd1',locucion:'#9effa0'};
-  function emitBrand(l){ try{ return (l.external&&l.external.brand)||((l.kind||'').split(/[·|]/)[0].trim())||'Otros'; }catch(_){ return 'Otros'; } }
+  function emitBrand(l){ try{ return (l.external&&l.external.brand)||((l.kind||'').split(/[·|]/)[0].trim())||t('ed_others'); }catch(_){ return t('ed_others'); } }
   function edHash(s){ let h=0; s=String(s); for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return h; }
   function edEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-  function edInt(n){ return (n||0).toLocaleString('es-ES'); }
+  function edLocale(){ return (typeof LANG!=='undefined' && LANG==='en') ? 'en-GB' : 'es-ES'; }
+  function edInt(n){ return (n||0).toLocaleString(edLocale()); }
   async function fetchEmissionData(){
     const all=(typeof window.loadOmnipLocations==='function')?window.loadOmnipLocations():[];
     const locs=all.slice(0,60), t=todayStr();
@@ -4941,7 +4954,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
   function edTween(el,to){ if(!el) return; const from=+(el.getAttribute('data-v')||0); el.setAttribute('data-v',to); if(from===to){ el.textContent=edInt(to); return; }
     const t0=performance.now(),dur=650; (function step(now){ const k=Math.min(1,(now-t0)/dur); const v=Math.round(from+(to-from)*(0.5-0.5*Math.cos(k*Math.PI))); el.textContent=edInt(v); if(k<1) requestAnimationFrame(step); })(t0);
     setTimeout(function(){ if(+el.getAttribute('data-v')===to) el.textContent=edInt(to); },dur+90); }
-  function edClock(){ const el=document.getElementById('ed-clock'); if(!el) return; try{ el.textContent=new Date().toLocaleTimeString('es-ES',{hour12:false,timeZone:'Europe/Madrid'}); }catch(_){ } }
+  function edClock(){ const el=document.getElementById('ed-clock'); if(!el) return; try{ el.textContent=new Date().toLocaleTimeString(edLocale(),{hour12:false,timeZone:'Europe/Madrid'}); }catch(_){ } }
   let _edTimer=null,_edClk=null,_edPrev=null;
   function emissionDeck(){
     if(document.getElementById('emission-deck')) return;
@@ -4950,14 +4963,14 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     ov.innerHTML='<div class="grid-bg"></div><div class="scan"></div>'
       +'<div class="ed-corner tl"></div><div class="ed-corner tr"></div><div class="ed-corner bl"></div><div class="ed-corner br"></div>'
       +'<header class="ed-top"><div class="ed-brand"><span class="ed-logo">▲</span> ADMIRA<b>.TV</b> · <span class="ed-sub" data-i18n="emission_room">'+t('emission_room')+'</span></div>'
-      +'<div class="ed-status"><span id="ed-net" class="ed-net">◍ ENLAZANDO RED…</span><span class="ed-live">● EN ANTENA</span><span id="ed-clock" class="ed-clock"></span></div>'
-      +'<button id="ed-close" class="ed-close" title="Cerrar (Esc)">✕</button></header>'
-      +'<div class="ed-kpis">'+edKpi('ed-k-plays','PASES HOY','#7dffd0')+edKpi('ed-k-screens','PANTALLAS EN ANTENA','#8ed2ff')+edKpi('ed-k-pieces','PIEZAS EMITIDAS','#ffd866')+edKpi('ed-k-rate','PASES / MIN','#9effa0')+'</div>'
+      +'<div class="ed-status"><span id="ed-net" class="ed-net">'+t('ed_linking')+'</span><span class="ed-live">'+t('ed_on_air')+'</span><span id="ed-clock" class="ed-clock"></span></div>'
+      +'<button id="ed-close" class="ed-close" title="'+t('ed_close_esc')+'">✕</button></header>'
+      +'<div class="ed-kpis">'+edKpi('ed-k-plays',t('ed_kpi_plays'),'#7dffd0')+edKpi('ed-k-screens',t('ed_kpi_screens'),'#8ed2ff')+edKpi('ed-k-pieces',t('ed_kpi_pieces'),'#ffd866')+edKpi('ed-k-rate',t('ed_kpi_rate'),'#9effa0')+'</div>'
       +'<div class="ed-main">'
-        +'<section class="ed-panel ed-radar-wrap"><div class="ed-ph">RADAR DE CIRCUITOS · RED FÍSICA</div><div class="ed-radar"><svg id="ed-radar-svg" viewBox="0 0 320 320"></svg><div class="ed-sweep"></div><div id="ed-radar-empty" class="ed-empty">◌ ESPERANDO SEÑAL</div></div></section>'
-        +'<section class="ed-panel ed-side"><div class="ed-ph">MEZCLA POR TIPO</div><div id="ed-types"></div><div class="ed-ph" style="margin-top:14px">CIRCUITOS · RANKING</div><div id="ed-circuits" class="ed-circuits"></div></section>'
+        +'<section class="ed-panel ed-radar-wrap"><div class="ed-ph">'+t('ed_radar_title')+'</div><div class="ed-radar"><svg id="ed-radar-svg" viewBox="0 0 320 320"></svg><div class="ed-sweep"></div><div id="ed-radar-empty" class="ed-empty">'+t('ed_awaiting')+'</div></div></section>'
+        +'<section class="ed-panel ed-side"><div class="ed-ph">'+t('ed_mix_type')+'</div><div id="ed-types"></div><div class="ed-ph" style="margin-top:14px">'+t('ed_ranking')+'</div><div id="ed-circuits" class="ed-circuits"></div></section>'
       +'</div>'
-      +'<footer class="ed-ticker"><div class="ed-ticker-lbl">▸ FEED DE EMISIÓN</div><div class="ed-ticker-track" id="ed-ticker"></div></footer>';
+      +'<footer class="ed-ticker"><div class="ed-ticker-lbl">'+t('ed_feed')+'</div><div class="ed-ticker-track" id="ed-ticker"></div></footer>';
     document.body.appendChild(ov);
     const close=()=>{ clearInterval(_edTimer); clearInterval(_edClk); _edTimer=_edClk=null; document.removeEventListener('keydown',onKey); ov.remove(); };
     function onKey(e){ if(e.key==='Escape') close(); }
@@ -4965,9 +4978,9 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     edClock(); edeckRefresh(); _edClk=setInterval(edClock,1000); _edTimer=setInterval(edeckRefresh,12000);
   }
   async function edeckRefresh(){
-    let d; try{ d=await fetchEmissionData(); }catch(_){ const n=document.getElementById('ed-net'); if(n){ n.textContent='⚠ SIN ENLACE'; n.className='ed-net err'; } return; }
+    let d; try{ d=await fetchEmissionData(); }catch(_){ const n=document.getElementById('ed-net'); if(n){ n.textContent=t('ed_nolink'); n.className='ed-net err'; } return; }
     if(!document.getElementById('emission-deck')) return;
-    const net=document.getElementById('ed-net'); if(net){ net.textContent='◉ RED ENLAZADA · '+d.locsChecked+' XPACIOS'; net.className='ed-net ok'; }
+    const net=document.getElementById('ed-net'); if(net){ net.textContent=tf('ed_linked',{n:d.locsChecked}); net.className='ed-net ok'; }
     edTween(document.getElementById('ed-k-plays'),d.totPlays);
     edTween(document.getElementById('ed-k-screens'),d.totScreens);
     edTween(document.getElementById('ed-k-pieces'),d.pieces);
@@ -5000,22 +5013,22 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
   function edeckTypes(totType){
     const host=document.getElementById('ed-types'); if(!host) return;
     const keys=Object.keys(totType).sort((a,b)=>totType[b]-totType[a]);
-    if(!keys.length){ host.innerHTML='<div class="ed-dim">— sin emisión —</div>'; return; }
+    if(!keys.length){ host.innerHTML='<div class="ed-dim">'+t('ed_no_emission')+'</div>'; return; }
     const mx=Math.max(1,...keys.map(k=>totType[k]));
     host.innerHTML=keys.map(k=>{ const v=totType[k],w=Math.round(v/mx*100),col=EMIT_TYPE_COL[k]||'#7dffd0';
-      return '<div class="ed-meter"><div class="ed-meter-top"><span>'+(EMIT_TYPE_LBL[k]||k)+'</span><b style="color:'+col+'">'+v+'</b></div><div class="ed-bar"><i style="width:'+w+'%;background:linear-gradient(90deg,'+col+'33,'+col+');box-shadow:0 0 12px '+col+'88"></i></div></div>'; }).join('');
+      return '<div class="ed-meter"><div class="ed-meter-top"><span>'+edTypeLbl(k)+'</span><b style="color:'+col+'">'+v+'</b></div><div class="ed-bar"><i style="width:'+w+'%;background:linear-gradient(90deg,'+col+'33,'+col+');box-shadow:0 0 12px '+col+'88"></i></div></div>'; }).join('');
   }
   function edeckCircuits(list){
     const host=document.getElementById('ed-circuits'); if(!host) return;
-    if(!list.length){ host.innerHTML='<div class="ed-dim">— sin circuitos activos —</div>'; return; }
+    if(!list.length){ host.innerHTML='<div class="ed-dim">'+t('ed_no_circuits')+'</div>'; return; }
     const mx=Math.max(1,...list.map(c=>c.plays));
     host.innerHTML=list.slice(0,8).map((c,i)=>{ const w=Math.round(c.plays/mx*100);
       return '<div class="ed-crow"><span class="ed-rank">'+(i+1)+'</span><span class="ed-cname">'+edEsc(c.brand)+'</span><span class="ed-cscr">'+c.screens+'📺</span><span class="ed-cplays">'+c.plays+'</span><div class="ed-cbar"><i style="width:'+w+'%"></i></div></div>'; }).join('');
   }
   function edeckTicker(recent){
     const host=document.getElementById('ed-ticker'); if(!host) return;
-    if(!recent.length){ host.innerHTML='<span class="ed-dim">esperando primeras emisiones del canal…</span>'; host.style.animation='none'; return; }
-    const items=recent.map(r=>'<span class="ed-tk"><b style="color:'+(EMIT_TYPE_COL[r.type]||'#7dffd0')+'">'+(EMIT_TYPE_LBL[r.type]||r.type).split(' ')[0]+'</b> <span class="ed-tk-scr">'+edEsc(r.screen)+'</span> ▸ '+edEsc(r.title).slice(0,42)+'</span>').join('<span class="ed-tk-sep">·</span>');
+    if(!recent.length){ host.innerHTML='<span class="ed-dim">'+t('ed_ticker_waiting')+'</span>'; host.style.animation='none'; return; }
+    const items=recent.map(r=>'<span class="ed-tk"><b style="color:'+(EMIT_TYPE_COL[r.type]||'#7dffd0')+'">'+(EMIT_TYPE_EMOJI[r.type]||'▸')+'</b> <span class="ed-tk-scr">'+edEsc(r.screen)+'</span> ▸ '+edEsc(r.title).slice(0,42)+'</span>').join('<span class="ed-tk-sep">·</span>');
     host.innerHTML=items+'<span class="ed-tk-sep">·</span>'+items; host.style.animation='ed-marq 40s linear infinite';
   }
   // Lanzador fijo siempre visible (el botón 📡 del panel RTB también abre la Sala).
