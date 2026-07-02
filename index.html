@@ -614,6 +614,8 @@
       <div id="suggest" class="suggest" hidden></div>
     </div>
     <nav>
+      <button type="button" class="header-circuit-btn" id="header-circuit-btn" data-i18n="select_circuit">Seleccionar circuito</button>
+      <button type="button" class="header-circuit-btn" id="header-target-btn" data-i18n="select_target">Seleccionar target</button>
       <a href="backoffice.html" data-i18n="login">Login</a>
       <div class="lang-switch" id="lang-switch" role="group" aria-label="Idioma / Language">
         <button type="button" class="lang-btn" id="lang-toggle" data-lang-target="en" aria-label="Switch to English">ENG</button>
@@ -676,7 +678,7 @@
   <div class="lt-row"><span data-i18n="screens">pantallas</span><b id="t-screens">—</b></div>
 </div>
 
-<section class="circuit-panel collapsed" id="circuit-panel" aria-label="Selector de circuitos">
+<section class="circuit-panel collapsed" id="circuit-panel" hidden aria-label="Selector de circuitos">
   <div class="circuit-head">
     <h3 data-i18n="circuit_panel_title">Seleccionar circuito</h3>
     <button class="circuit-toggle" id="circuit-toggle" type="button" title="Desplegar / replegar">+</button>
@@ -957,7 +959,7 @@
   </div>
 </div>
 
-<div class="splash" id="splash">
+<div class="splash hidden" id="splash">
   <button class="splash-close" id="splash-close" type="button" data-i18n-aria="close" aria-label="Cerrar">×</button>
   <div class="eyebrow" data-i18n="hero_eyebrow">Clear Channel · Programática en el mundo real</div>
   <h1 id="hero-h1">Retail Media<br><span class="grad">in the real world</span></h1>
@@ -2966,6 +2968,8 @@ function bindCircuitSelector() {
       circuitMapFilterActive = !panelEl.hidden;
       if (!panelEl.hidden) {
         restoreCircuitPanelPosition();
+        panelEl.classList.remove('collapsed');
+        if (toggle) toggle.textContent = '−';
         setCircuitTargetMode(false);
         circuitAutoSelect = false;
         selectedLocationIds = new Set();
@@ -4386,21 +4390,42 @@ setInterval(mergeSelfRegDevices, 60000);
 })();
 
 // ─── Auto-rotación lenta del globo ────────────────────────────────
+// El globo SIEMPRE arranca girando al abrir (cualquier navegador). Al interactuar
+// se pausa y se reanuda sola tras unos segundos de inactividad, en vez de matarse.
 let rotating = true;
 let lastTs = 0;
+let resumeTimer = null;
+const ROTATE_RESUME_MS = 5000;
 function tickRotate(ts) {
-  if (!rotating) { lastTs = ts; requestAnimationFrame(tickRotate); return; }
-  if (lastTs && map && map.getZoom() < 2.5) {
-    const dt = ts - lastTs;
+  if (rotating && lastTs && map && map.getZoom() < 2.5) {
+    const dt = Math.min(ts - lastTs, 64); // clamp: evita tirones al volver de una pestaña en 2º plano
     const c = map.getCenter();
     map.easeTo({center:[c.lng + (dt * 0.005), c.lat], duration:0});
   }
-  lastTs = ts;
+  lastTs = ts; // se actualiza siempre para no acumular dt mientras está pausado
   requestAnimationFrame(tickRotate);
 }
 requestAnimationFrame(tickRotate);
+// Garantiza el arranque girando en cuanto el estilo del mapa esté listo
+map.on('load', () => { rotating = true; lastTs = 0; });
+// Arranque limpio: el contador "Bidding Live" se oculta hasta el primer gesto del usuario
+const bootTicker = document.getElementById('ticker');
+if (bootTicker) bootTicker.style.display = 'none';
+let tickerRevealed = false;
+function revealTicker() {
+  if (tickerRevealed) return;
+  tickerRevealed = true;
+  if (bootTicker) bootTicker.style.display = '';
+}
+// Pausa al interactuar y programa la reanudación tras inactividad
+function pauseAndScheduleResume() {
+  revealTicker();
+  rotating = false;
+  if (resumeTimer) clearTimeout(resumeTimer);
+  resumeTimer = setTimeout(() => { if (map.getZoom() < 2.5) rotating = true; }, ROTATE_RESUME_MS);
+}
 ['mousedown','wheel','touchstart','keydown'].forEach(ev => {
-  document.addEventListener(ev, () => { rotating = false; }, {once:true});
+  document.addEventListener(ev, pauseAndScheduleResume, {passive:true});
 });
 // Al empezar a girar la bola del mundo, retiramos el hero para dejar la
 // exploración limpia (estilo Google Earth) y paramos la autorrotación.
@@ -4629,6 +4654,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
       + '<div class="circuit-body" style="gap:12px">' + buildBody()
       + '<div style="font-size:10.5px;color:var(--mut);line-height:1.3" data-i18n="target_panel_hint">'+t('target_panel_hint')+'</div></div>';
     document.body.appendChild(panel);
+    panel.hidden=true;   // arranca oculto: se abre desde la pastilla "Seleccionar target" del header
     panel.style.left='505px'; panel.style.top='8px'; panel.style.right='auto';   // arriba, pegado al de circuito
     try{ const p=JSON.parse(localStorage.getItem('omnip-target-panel-pos2')||'null'); if(p&&Number.isFinite(p.x)){ panel.style.left=p.x+'px'; panel.style.top=p.y+'px'; } }catch(_){}
     const head=panel.querySelector('.circuit-head');
@@ -4647,7 +4673,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     head.addEventListener('pointerup',e=>{ if(!drag)return; drag=false; try{head.releasePointerCapture(e.pointerId);}catch(_){} if(moved){ try{localStorage.setItem('omnip-target-panel-pos2',JSON.stringify({x:panel.offsetLeft,y:panel.offsetTop}));}catch(_){} } });
     syncPills();
     const hb=document.getElementById('header-target-btn');
-    if(hb){ hb.addEventListener('click',()=>{ panel.hidden=!panel.hidden; hb.classList.toggle('active',!panel.hidden); }); hb.classList.add('active'); }
+    if(hb){ hb.addEventListener('click',()=>{ panel.hidden=!panel.hidden; if(!panel.hidden){ panel.classList.remove('collapsed'); tg.textContent='−'; } hb.classList.toggle('active',!panel.hidden); }); hb.classList.toggle('active',!panel.hidden); }
   }
   if(document.readyState!=='loading') init(); else document.addEventListener('DOMContentLoaded', init);
 })();
