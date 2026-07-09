@@ -3339,10 +3339,10 @@ let lastTs = 0;
 let resumeTimer = null;
 const ROTATE_RESUME_MS = 5000;
 function tickRotate(ts) {
-  if (rotating && lastTs && map && map.getZoom() < 2.5) {
+  if (rotating && lastTs && map && map.getZoom() < 6) {
     const dt = Math.min(ts - lastTs, 64); // clamp: evita tirones al volver de una pestaña en 2º plano
     const c = map.getCenter();
-    map.easeTo({center:[c.lng + (dt * 0.005), c.lat], duration:0});
+    map.easeTo({center:[c.lng + (dt * 0.005), c.lat], duration:0, essential: true});
   }
   lastTs = ts; // se actualiza siempre para no acumular dt mientras está pausado
   requestAnimationFrame(tickRotate);
@@ -3364,7 +3364,7 @@ function pauseAndScheduleResume() {
   revealTicker();
   rotating = false;
   if (resumeTimer) clearTimeout(resumeTimer);
-  resumeTimer = setTimeout(() => { if (map.getZoom() < 2.5) rotating = true; }, ROTATE_RESUME_MS);
+  resumeTimer = setTimeout(() => { if (map.getZoom() < 6) rotating = true; }, ROTATE_RESUME_MS);
 }
 ['mousedown','wheel','touchstart','keydown'].forEach(ev => {
   document.addEventListener(ev, pauseAndScheduleResume, {passive:true});
