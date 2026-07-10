@@ -125,11 +125,11 @@
           <span class="enter">Entrar al mapa 3D</span>
         </a>
       </div>
-      <aside class="panel live-card">
+      <aside class="panel live-card" id="live-card">
         <h2>Live bidding</h2>
-        <div class="bid"><div class="line"><strong>Marca A</strong><small>25-34</small></div><div class="line"><small>CPM actual</small><strong id="bid-a">--</strong></div><button>Ofertar</button></div>
-        <div class="bid"><div class="line"><strong>Marca B</strong><small>18-24</small></div><div class="line"><small>CPM actual</small><strong id="bid-b">--</strong></div><button>Ofertar</button></div>
-        <div class="bid"><div class="line"><strong>Marca C</strong><small>35-44</small></div><div class="line"><small>CPM actual</small><strong id="bid-c">--</strong></div><button>Ofertar</button></div>
+        <div class="bid" id="bid-row-a"><div class="line"><strong>Marca A</strong><small>25-34</small></div><div class="line"><small>CPM actual</small><strong id="bid-a">--</strong></div><button>Ofertar</button></div>
+        <div class="bid" id="bid-row-b"><div class="line"><strong>Marca B</strong><small>18-24</small></div><div class="line"><small>CPM actual</small><strong id="bid-b">--</strong></div><button>Ofertar</button></div>
+        <div class="bid" id="bid-row-c"><div class="line"><strong>Marca C</strong><small>35-44</small></div><div class="line"><small>CPM actual</small><strong id="bid-c">--</strong></div><button>Ofertar</button></div>
       </aside>
     </section>
 
@@ -231,6 +231,34 @@ function renderDetail() {
 }
 
 renderDetail();
+
+// ── Live bidding con decisiones REALES del motor RTB (api.admira.store) ──
+// Sustituye las Marca A/B/C de relleno por los últimos ganadores reales de la
+// subasta de segundo precio. Si el motor no responde, se conservan los valores
+// derivados que ya pintó renderDetail() (degradado honesto, sin inventar marcas).
+(async function realLiveBidding(){
+  const SEG_LBL={nino_m:'♂ niño',nino_f:'♀ niña',joven_m:'♂ 18-24',joven_f:'♀ 18-24',adulto_m:'♂ 25-44',adulto_f:'♀ 25-44',senior_m:'♂ 55+',senior_f:'♀ 55+'};
+  try{
+    const r=await fetch('https://api.admira.store/rtb/feed?limit=12',{cache:'no-store'});
+    if(!r.ok) return; const d=await r.json();
+    const decs=Array.isArray(d&&d.decisions)?d.decisions:[];
+    // Ganadores reales únicos por anunciante, más recientes primero.
+    const seen=new Set(), uniq=[];
+    for(const x of decs){ if(!x||!x.advertiser||seen.has(x.advertiser)) continue; seen.add(x.advertiser); uniq.push(x); if(uniq.length>=3) break; }
+    if(!uniq.length) return;
+    const rows=['a','b','c'];
+    rows.forEach((k,i)=>{
+      const dec=uniq[i]; const row=document.getElementById('bid-row-'+k); const price=document.getElementById('bid-'+k);
+      if(!row) return;
+      if(!dec){ row.style.display='none'; return; }
+      const brand=row.querySelector('.line strong'); const age=row.querySelector('.line small');
+      if(brand) brand.textContent=dec.advertiser;
+      if(age) age.textContent=SEG_LBL[dec.seg]||(dec.circuit||'RTB');
+      if(price) price.textContent='€'+(Number(dec.price)||0).toFixed(2);
+      row.title=(dec.title||dec.advertiser)+' · paga 2º precio €'+(Number(dec.price)||0).toFixed(2)+' (CPM €'+dec.cpm+') · '+(dec.circuit||'');
+    });
+  }catch(e){ /* motor dormido — se conservan los valores derivados */ }
+})();
 
 // ── Consumo de CPM EN VIVO del Xpacio (lee el día parcial que el gemelo empuja) ──
 const PIXER='https://pixer-eleven.csilvasantin.workers.dev';

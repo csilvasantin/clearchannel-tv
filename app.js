@@ -321,10 +321,10 @@ const I18N = {
     sv_enter:'Entrar a Street View ↗',
     wish_title:'¡Has atrapado una estrella fugaz!', wish_sub:'Cierra los ojos y pide un deseo…',
     wish_ok:'Pedido ✨', make_wish:'Pide un deseo',
-    surfaces_available:'Surfaces disponibles', live_bids:'Pujas en vivo', create_campaign:'➕ Crear campaña',
+    surfaces_available:'Surfaces disponibles', live_bids:'Pujas en vivo', create_campaign:'➕ Crear campaña', ecosystem:'ecosistema',
     how_auction:'Cómo funciona la subasta', view_twin:'Ver Gemelo Digital ↗', twin_hd:'🎥 Gemelo Hiperrealista ↗',
     meta_surfaces:'surfaces', meta_imprday:'impr/día', meta_cpm:'CPM rango',
-    waiting_bid:'// esperando primera puja…',
+    waiting_bid:'// motor RTB conectado · esperando demanda…',
     recent:'Recientes', addresses:'Direcciones', searching_addr:'buscando direcciones…', no_addr:'sin direcciones',
     stores_bidding_1:'Xpace en bidding', stores_bidding_n:'Xpaces en bidding',
     status_landing:'Aterrizando en ', status_locating:'Localizando…',
@@ -441,10 +441,10 @@ const I18N = {
     sv_enter:'Enter Street View ↗',
     wish_title:'You caught a shooting star!', wish_sub:'Close your eyes and make a wish…',
     wish_ok:'Wished ✨', make_wish:'Make a wish',
-    surfaces_available:'Available surfaces', live_bids:'Live bids', create_campaign:'➕ Create campaign',
+    surfaces_available:'Available surfaces', live_bids:'Live bids', create_campaign:'➕ Create campaign', ecosystem:'ecosystem',
     how_auction:'How the auction works', view_twin:'View Digital Twin ↗', twin_hd:'🎥 Hyperrealistic Twin ↗',
     meta_surfaces:'surfaces', meta_imprday:'impr/day', meta_cpm:'CPM range',
-    waiting_bid:'// waiting for first bid…',
+    waiting_bid:'// RTB engine connected · waiting for demand…',
     recent:'Recent', addresses:'Addresses', searching_addr:'searching addresses…', no_addr:'no addresses',
     stores_bidding_1:'Xpace bidding', stores_bidding_n:'Xpaces bidding',
     status_landing:'Landing on ', status_locating:'Locating…',
@@ -551,6 +551,11 @@ function ensureCircuitMatchesScope() {
 
 // ─── Workers (mismos que xpace-os) ────────────────────────────────
 const PIXER = 'https://pixer-eleven.csilvasantin.workers.dev';
+// Motor RTB real (subasta de segundo precio) — pixer-worker en api.admira.store.
+// GET /rtb/feed?limit=N y POST /rtb/decide. CORS habilitado para clearchannel.tv.
+const RTB_BASE = 'https://api.admira.store';
+// Circuito con demanda demo viva (campañas Sant Jordi / Vermut / Gelateria / Comerç).
+const RTB_DEMO_CIRCUIT = 'sim-gracia';
 
 // ── PANTALLAS VIVAS (cierra el loop crear→distribuir→VENDER) ──────────────
 // Un gemelo online manda heartbeat a /signage/heartbeat con su screenId y su
@@ -2777,14 +2782,15 @@ function renderPanel(loc) {
     </div>`;
   }).join('');
   try{ startSurfMirrors(); }catch(_){}
-  // Reset bid feed
-  bidFeedItems = [];
-  renderBidFeedEmpty();
+  // El feed de pujas es REAL y global (poller RTB): al abrir un panel NO lo
+  // vaciamos, solo re-pintamos las decisiones reales ya recibidas (o el estado
+  // "esperando demanda" si aún no ha llegado ninguna).
   startBidFeed(loc);
   // Twin link target: si la ubicacion define su propio gemelo (twin), usarlo;
-  // si no, el gemelo generico por id.
+  // si no, el Gemelo Digital REAL público (Xpace OS). Antes apuntaba al game de
+  // carlossilva.info (ruta que fuera de ese host rompía); xpaceos.com es la sede real.
   const pTwin = document.getElementById('p-twin');
-  pTwin.href = loc.twin || (TWIN_BASE + '&loc=' + encodeURIComponent(loc.id));
+  pTwin.href = loc.twin || 'https://www.xpaceos.com';
   pTwin.setAttribute('target', '_blank'); // fallback: nueva pestaña (clic medio / abrir en pestaña)
   // Si el punto tiene su propio gemelo (twin, p.ej. Xpacio en pixeria.com), lo abrimos
   // EMBEBIDO dentro de clearchannel.tv (overlay iso, con cerrar/Escape) → no se pierde la
@@ -2808,55 +2814,150 @@ function renderBidFeedEmpty() {
   el.innerHTML = '<div class="bidfeed-empty">' + escHtml(t('waiting_bid')) + '</div>';
 }
 
-// ─── Live bid feed (decorativo, second-price simulado) ────────────
+// ─── Live bid feed — decisiones REALES del motor RTB (api.admira.store) ──
+// Antes: generador Math.random decorativo. Ahora: polling de GET /rtb/feed con
+// las subastas de segundo precio reales (advertiser, title, cpm de puja, price
+// de clearing, screen/circuit). Si el motor no da demanda, el feed muestra las
+// últimas conocidas + un estado honesto "esperando demanda" (nunca inventa pujas).
+// ADVERTISERS se conserva solo para el fallback de launchWinnerToTwin cuando el
+// decide real no devuelve demanda para esa surface.
 const ADVERTISERS = ['Coca-Cola','El Corte Inglés','BBVA','Iberia','Estrella Galicia','Lotería Nac','Vapeo Pro','Nestlé','Sanitas','Telefónica','Repsol','Mahou','Mercadona','Google'];
 let bidFeedItems = [];
-let bidFeedTimer = null;
 let globalImprCount = 0;
 
-function spawnBid(loc) {
-  const live = loc.surfaces.filter(s => s.status === 'live');
-  if (!live.length) return;
-  const surf = live[Math.floor(Math.random() * live.length)];
-  const cpm = parseFloat(String(surf.cpm).replace(/[^\d.]/g,'')) || 1;
-  // Second-price: se cobra segundo precio. Generamos rango dispersión 0.6-1.05 vs CPM
-  const winCents = Math.max(0.0008, (cpm * (0.6 + Math.random()*0.45) / 1000));
-  const advertiser = ADVERTISERS[Math.floor(Math.random() * ADVERTISERS.length)];
-  const ts = new Date().toLocaleTimeString('es-ES', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  bidFeedItems.unshift({advertiser, surface: surf.name, price: winCents.toFixed(4), ts});
-  if (bidFeedItems.length > 12) bidFeedItems.pop();
-  renderBidFeed();
-  globalImprCount++;
-  document.getElementById('t-impr').textContent = globalImprCount.toLocaleString('es');
-}
 function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function renderBidFeed() {
   const el = document.getElementById('bidfeed');
-  if (!el || !bidFeedItems.length) return;
-  el.innerHTML = bidFeedItems.map((b,i) => `
-    <div class="bid-row${i===0?' fresh':''}${b.real?' real':''}${b.win?' win':''}">
+  if (!el) return;
+  if (!bidFeedItems.length) { renderBidFeedEmpty(); return; }
+  el.innerHTML = bidFeedItems.map((b,i) => {
+    const where = b.circuit ? (b.circuit + (b.screen ? ' · ' + b.screen.replace(b.circuit + '-','') : '')) : b.surface;
+    const tip = b.cpm != null
+      ? `${b.advertiser}${b.title ? ' — ' + b.title : ''} · puja CPM €${b.cpm} → paga 2º precio €${b.price}${b.seg ? ' · seg ' + b.seg : ''}${b.circuit ? ' · ' + b.circuit : ''}`
+      : (b.advertiser + (b.surface ? ' · ' + b.surface : ''));
+    return `
+    <div class="bid-row${i===0?' fresh':''}${b.real?' real':''}${b.win?' win':''}" title="${escHtml(tip)}">
       <span class="bf-price">€${escHtml(b.price)}</span>
       <span class="bf-adv">${b.win?'🔨 ':''}${b.real&&!b.win?'<span class="bf-live">LIVE</span>':''}${escHtml(b.advertiser)}</span>
-      <span class="bf-surf">${escHtml(b.surface)}</span>
+      <span class="bf-surf">${escHtml(where)}</span>
       <span class="bf-ts">${escHtml(b.ts)}</span>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
-function startBidFeed(loc) {
-  stopBidFeed();
-  // Primera puja rápida para que se vea actividad
-  setTimeout(() => spawnBid(loc), 600);
-  const live = loc.surfaces.filter(s=>s.status==='live').length;
-  // Más live → más frecuencia
-  const baseMs = Math.max(1800, 5000 - live * 600);
-  bidFeedTimer = setInterval(() => {
-    if (activeLocation === loc) spawnBid(loc);
-  }, baseMs + Math.random()*1500);
+// renderPanel llama a estos; el feed real es global (poller propio) e independiente
+// de la ubicación abierta, así que solo re-pintamos lo que ya haya llegado.
+function startBidFeed(loc) { renderBidFeed(); }
+function stopBidFeed() {}
+
+// ─── Poller del feed RTB real ─────────────────────────────────────
+// GET /rtb/feed?limit=20 → {ok,count,decisions:[{id,advertiser,title,cpm,price,
+// currency,screen,circuit,seg,budgetLeft,ts},…]} (más recientes primero).
+let rtbSeen = new Set();
+let rtbBootstrapped = false;
+function rtbKey(d) { return String(d.id) + ':' + String(d.ts); }
+function decisionToRow(d) {
+  const ts = new Date(Number(d.ts) || Date.now()).toLocaleTimeString('es-ES', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const price = (Number(d.price) || 0).toFixed(2);
+  return { advertiser: d.advertiser || 'campaña', title: d.title || '', surface: d.screen || d.circuit || '',
+           screen: d.screen || '', circuit: d.circuit || '', seg: d.seg || '', cpm: d.cpm, price, ts, real: true };
 }
-function stopBidFeed() {
-  if (bidFeedTimer) clearInterval(bidFeedTimer);
-  bidFeedTimer = null;
+async function pollRtbFeed() {
+  try {
+    const r = await fetch(RTB_BASE + '/rtb/feed?limit=20', {cache:'no-store'});
+    if (!r.ok) return;
+    const d = await r.json();
+    const decisions = Array.isArray(d && d.decisions) ? d.decisions : [];
+    if (!rtbBootstrapped) {
+      // Primera carga: sembramos el feed con las últimas reales para que se vea
+      // actividad al abrir, marcándolas como vistas (no las volvemos a inyectar).
+      const seed = decisions.slice(0, 10);
+      seed.forEach(x => rtbSeen.add(rtbKey(x)));
+      bidFeedItems = seed.map(decisionToRow);   // ya vienen más recientes primero
+      rtbBootstrapped = true;
+      renderBidFeed();
+      return;
+    }
+    // Prepend solo las nuevas, en orden cronológico (viejas→nuevas) para que la
+    // más reciente quede arriba.
+    for (let i = decisions.length - 1; i >= 0; i--) {
+      const dec = decisions[i];
+      if (!dec || dec.id == null) continue;
+      const k = rtbKey(dec);
+      if (rtbSeen.has(k)) continue;
+      rtbSeen.add(k);
+      bidFeedItems.unshift(decisionToRow(dec));
+      if (bidFeedItems.length > 14) bidFeedItems.pop();
+      globalImprCount++;
+    }
+    if (rtbSeen.size > 600) { const arr = Array.from(rtbSeen); rtbSeen = new Set(arr.slice(-400)); }
+    renderBidFeed();
+    const ti = document.getElementById('t-impr'); if (ti) ti.textContent = globalImprCount.toLocaleString('es');
+  } catch { /* motor dormido — conservamos las últimas conocidas, sin inventar */ }
 }
+pollRtbFeed();
+setInterval(pollRtbFeed, 6000);
+
+// ─── Generador de tráfico para la demo (subastas REALES) ──────────
+// Solo tras gesto del usuario. Cada disparo es un POST /rtb/decide real contra
+// el circuito demo (sim-gracia) con un segmento variado: descuenta presupuesto de
+// verdad de las campañas demo. Muestra la decisión real (ganador + 2º precio) y
+// refresca el feed inmediatamente.
+const RTB_DEMO_SEGMENTS = [
+  {audience:'female', age:'adulto'},
+  {audience:'male',   age:'adulto', slot:'mediodia'},
+  {audience:'female', age:'joven',  slot:'tarde'},
+  {audience:'male',   age:'senior', slot:'noche'},
+  {audience:'female', age:'senior'},
+  {audience:'male',   age:'joven',  slot:'tarde'},
+  {audience:'female', age:'adulto', slot:'manana'},
+  {audience:'male',   age:'adulto'},
+];
+let rtbTrafficTimer = null;
+let rtbTrafficIdx = 0;
+function setTrafficStatus(msg, cls) {
+  const el = document.getElementById('bf-traffic-status'); if (!el) return;
+  el.textContent = msg; el.className = 'bf-traffic-status' + (cls ? ' ' + cls : '');
+}
+async function fireOneDecide() {
+  const seg = RTB_DEMO_SEGMENTS[rtbTrafficIdx % RTB_DEMO_SEGMENTS.length];
+  rtbTrafficIdx++;
+  const screen = RTB_DEMO_CIRCUIT + '-kiosko';
+  try {
+    const r = await fetch(RTB_BASE + '/rtb/decide', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ screen, circuit: RTB_DEMO_CIRCUIT, segment: seg }),
+    });
+    const d = await r.json();
+    const segLbl = seg.audience + '/' + seg.age + (seg.slot ? '/' + seg.slot : '');
+    if (d && d.ok && d.decision) {
+      setTrafficStatus('🔨 ' + d.decision.advertiser + ' gana ' + segLbl + ' · 2º precio €' + (Number(d.decision.price)||0).toFixed(2) + ' (CPM €' + d.decision.cpm + ')', 'ok');
+    } else {
+      setTrafficStatus('· sin demanda para ' + segLbl + ' (presupuesto agotado)', 'muted');
+    }
+    // El decide ya quedó registrado en /rtb/feed → refresco inmediato del feed real.
+    pollRtbFeed();
+  } catch {
+    setTrafficStatus('⚠️ error de red al subastar', 'muted');
+  }
+}
+function toggleTraffic(btn) {
+  if (rtbTrafficTimer) {
+    clearInterval(rtbTrafficTimer); rtbTrafficTimer = null;
+    btn.textContent = '▶ Simular tráfico'; btn.classList.remove('on');
+    setTrafficStatus('', '');
+    return;
+  }
+  btn.textContent = '⏸ Parar tráfico'; btn.classList.add('on');
+  setTrafficStatus('subastando impresiones reales cada 15 s…', '');
+  fireOneDecide();
+  rtbTrafficTimer = setInterval(fireOneDecide, 15000);
+}
+function wireBidFeedControls() {
+  const tg = document.getElementById('bf-traffic-toggle'); if (tg) tg.onclick = () => toggleTraffic(tg);
+  const one = document.getElementById('bf-decide-one'); if (one) one.onclick = fireOneDecide;
+}
+if (document.readyState !== 'loading') wireBidFeedControls();
+else document.addEventListener('DOMContentLoaded', wireBidFeedControls);
 
 // ─── Cierre del loop RTB → Gemelo Digital ─────────────────────────
 // Cuando una surface respaldada por una pantalla real del gemelo
