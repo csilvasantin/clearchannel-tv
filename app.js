@@ -2387,7 +2387,7 @@ function addLocationsLayer() {
     const id = e.features[0].properties.id;
     const loc = LOC_BY_ID.get(id);
     if (!loc) return;
-    if (loc.twinOnClick && loc.twin) { window.open(loc.twin, '_blank', 'noopener'); }
+    if (loc.twinOnClick && (loc.fly || loc.twin)) { window.open(loc.fly || loc.twin, '_blank', 'noopener'); }
     flyToLocation(loc);
   });
   // Cursor
@@ -2786,18 +2786,49 @@ function renderPanel(loc) {
   // vaciamos, solo re-pintamos las decisiones reales ya recibidas (o el estado
   // "esperando demanda" si aún no ha llegado ninguna).
   startBidFeed(loc);
-  // Twin link target: si la ubicacion define su propio gemelo (twin), usarlo;
-  // si no, el Gemelo Digital REAL público (Xpace OS). Antes apuntaba al game de
-  // carlossilva.info (ruta que fuera de ese host rompía); xpaceos.com es la sede real.
+  // Botón de gemelo/harness del panel. Data-driven por ubicación:
+  //   · loc.fly     → destino del "vuelo" (con transición de despegue). p.ej.:
+  //                   News & Coffee (Gràcia) → adcelerate/demo (harness CanalKiosk);
+  //                   Xtanco Barcelona       → xpaceos.com/scan/visor (gemelo digital).
+  //   · loc.flyLabel→ rótulo propio del botón (p.ej. 'AI HARNESS ↗'); sin él se
+  //                   mantiene el rótulo por defecto traducible ('Ver Gemelo Digital').
+  // Sin loc.fly → comportamiento ACTUAL intacto (loc.twin embebido / xpaceos.com).
   const pTwin = document.getElementById('p-twin');
-  pTwin.href = loc.twin || 'https://www.xpaceos.com';
+  const panelEl = document.getElementById('panel');
+  pTwin.classList.remove('launch');
   pTwin.setAttribute('target', '_blank'); // fallback: nueva pestaña (clic medio / abrir en pestaña)
-  // Si el punto tiene su propio gemelo (twin, p.ej. Xpacio en pixeria.com), lo abrimos
-  // EMBEBIDO dentro de clearchannel.tv (overlay iso, con cerrar/Escape) → no se pierde la
-  // página madre y se puede volver atrás. Sin twin propio: comportamiento por defecto.
-  pTwin.onclick = function(e){
-    if (loc.twin) { e.preventDefault(); openIsoView(loc.twin, loc.name); }
-  };
+  if (loc.fly) {
+    pTwin.href = loc.fly;
+    if (loc.flyLabel) {
+      // Rótulo propio: lo sacamos del ciclo i18n para que no lo pise applyI18n al cambiar idioma.
+      pTwin.removeAttribute('data-i18n');
+      pTwin.textContent = loc.flyLabel;
+    } else {
+      pTwin.setAttribute('data-i18n', 'view_twin');
+      pTwin.textContent = t('view_twin');
+    }
+    const reduceTwin = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    pTwin.onclick = function(e){
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // respeta nueva pestaña
+      e.preventDefault();
+      if (reduceTwin) { window.location.href = loc.fly; return; }
+      // Despegue: el panel se atenúa/escala y volamos al destino.
+      pTwin.classList.add('launch');
+      if (panelEl) panelEl.classList.add('flying');
+      let done = false;
+      const go = () => { if (done) return; done = true; window.location.href = loc.fly; };
+      (panelEl || pTwin).addEventListener('transitionend', go, { once: true });
+      setTimeout(go, 520);
+    };
+  } else {
+    // Comportamiento actual: rótulo por defecto; twin embebido (iso) si lo hay, si no xpaceos.com.
+    pTwin.setAttribute('data-i18n', 'view_twin');
+    pTwin.textContent = t('view_twin');
+    pTwin.href = loc.twin || 'https://www.xpaceos.com';
+    pTwin.onclick = function(e){
+      if (loc.twin) { e.preventDefault(); openIsoView(loc.twin, loc.name); }
+    };
+  }
   // Gemelo Hiperrealista (UE5 · Pixel Streaming): aparece solo si el punto tiene
   // su propia URL (loc.twinHD) o si hay base global configurada (TWIN_HD_BASE).
   const pTwinHD = document.getElementById('p-twin-hd');

@@ -45,7 +45,7 @@
 <script defer src="https://www.carlossilva.info/admira-design/contact-panel.js"></script>
 <!-- Descarga temprano (no bloqueante); se ejecutan al final del body, justo antes del script de init -->
 <link rel="preload" as="script" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js">
-<link rel="preload" as="script" href="locations.js?v=kioskos-20260608">
+<link rel="preload" as="script" href="locations.js?v=kioskos-20260712d">
 <style>
   :root{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--warn:#ff8866;--card:#0a1620;--card2:#0d1c28;--line:rgba(120,243,255,.18)}
   *{box-sizing:border-box}
@@ -416,6 +416,10 @@
   aside.panel .actions a:hover{background:var(--brand);color:#001620;text-decoration:none}
   aside.panel .actions a.primary{background:var(--brand);color:#001620}
   aside.panel .actions a.primary:hover{background:transparent;color:var(--brand)}
+  /* "Despegue" del panel al pulsar AI HARNESS (vuelo al gemelo/harness) */
+  aside.panel .actions a#p-twin.launch{background:var(--brand);color:#001620;transform:translateY(-4px) scale(1.02)}
+  aside.panel.flying{opacity:0;transform:translateX(6%) scale(.99);transition:opacity .42s cubic-bezier(.4,0,.2,1),transform .42s cubic-bezier(.4,0,.2,1)}
+  @media (prefers-reduced-motion:reduce){ aside.panel.flying{transition:none} }
 
   /* hint inicial sobre el globo — tarjeta de cristal para legibilidad total */
   .splash{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;z-index:5;transition:opacity .4s,transform .4s;width:min(520px,calc(100vw - 32px));padding:20px 32px 22px;border-radius:18px;background:radial-gradient(120% 130% at 50% 0%,rgba(24,43,54,.88),rgba(2,8,13,.72));border:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 1px 0 rgba(120,243,255,.14),inset 0 -1px 0 rgba(255,216,102,.06)}
@@ -1108,7 +1112,7 @@
 
 <!-- Cargados aquí (no en <head>) para que el chrome de la UI pinte antes; preload los anticipa -->
 <script defer src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script defer src="locations.js?v=kioskos-20260608"></script>
-<script defer src="app.js?v=lazy-20260702"></script>
+<script defer src="locations.js?v=kioskos-20260712d"></script>
+<script defer src="app.js?v=harness-20260712"></script>
 </body>
 </html>

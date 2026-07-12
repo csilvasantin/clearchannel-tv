@@ -260,6 +260,9 @@ window.OMNIP_LOCATIONS_DEFAULT = [
     id:'bcn-kiosk-016', name:'News & Coffee · premsa', kind:'Quiosco de prensa · DOOH exterior',
     addr:'Gràcia · Barcelona', coords:[2.157333, 41.400264],
     osm:{ id:3350101407, shop:'kiosk' },
+    // DOOH · AI Harness: vuela al gemelo CanalKiosk de esta misma plaza
+    // (Plaça de la Vila de Gràcia). `fly` = destino, `flyLabel` = rótulo del botón.
+    fly:'https://www.admira.tv/adcelerate/demo', flyLabel:'AI HARNESS ↗',
     surfaces:[
       { name:'Pantalla exterior vertical', desc:'DOOH exterior lateral · 1080×1920 · prensa + publicidad programática', status:'live', impr:1227, cpm:'€8', surface:'pantalla' },
     ],
@@ -1127,6 +1130,9 @@ window.OMNIP_LOCATIONS_EXTRA = [
     addr:'Valencia · 46002 · València · Spain', coords:[-0.3753, 39.4699],
     music:'lounge', cameras:true,
     twin:'https://www.pixeria.com/xpacios/xtanco-valencia/',
+    // InstoreMedia · gemelo digital: el botón «Ver Gemelo Digital» (sin flyLabel, mantiene
+    // su rótulo) vuela al Xpacio admira-xp del gemelo XpaceOS.
+    fly:'https://www.xpaceos.com/admira-xp/',
     twinOnClick:true,
     surfaces:[
       { name:'Pantalla A · Lotería',      desc:'Mural zona A · 322×500 cm · 16 m² · h 280',  status:'live', impr:480, cpm:'€8', surface:'pantalla', screen:'xtanco-valencia-a' },
@@ -1142,6 +1148,9 @@ window.OMNIP_LOCATIONS_EXTRA = [
     addr:'Carrer Gran de Gràcia · Gràcia · Barcelona · 08012 · Spain', coords:[2.1539, 41.4015],
     music:'fashion', cameras:true,
     twin:'https://www.pixeria.com/xpacios/xtanco-barcelona/',
+    // InstoreMedia · gemelo digital: el botón «Ver Gemelo Digital» (sin flyLabel, mantiene
+    // su rótulo) vuela al visor isométrico del gemelo XpaceOS de este Xpacio.
+    fly:'https://www.xpaceos.com/scan/visor',
     twinOnClick:true,
     surfaces:[
       { name:'Pantalla A · Escaparate flagship', desc:'Mural zona A · 322×500 cm · 16 m² · h 280', status:'live', impr:720, cpm:'€9', surface:'escaparate', screen:'xtanco-bcn-gracia-a' },
@@ -1261,6 +1270,21 @@ window.mergeOmnipLocations = function(base, extra) {
     out.push(loc);
     seen.add(loc.id);
   });
+  // Enlaces de "vuelo" curados en el bundle (fly/flyLabel) mandan sobre la fuente
+  // remota/local: se superponen por id para que el KV/localStorage no los pise
+  // (p.ej. el botón «AI HARNESS» de News & Coffee vive en el bundle, no en la KV).
+  try {
+    const flyById = new Map();
+    [window.OMNIP_LOCATIONS_DEFAULT, window.OMNIP_LOCATIONS_EXTRA].forEach(src => {
+      (src || []).forEach(l => {
+        if (l && l.id && l.fly) flyById.set(l.id, { fly: l.fly, flyLabel: l.flyLabel });
+      });
+    });
+    if (flyById.size) out.forEach(l => {
+      const f = l && l.id && flyById.get(l.id);
+      if (f) { l.fly = f.fly; if (f.flyLabel != null) l.flyLabel = f.flyLabel; }
+    });
+  } catch (e) {}
   return out;
 };
 
