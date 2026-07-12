@@ -1132,7 +1132,7 @@ window.OMNIP_LOCATIONS_EXTRA = [
     twin:'https://www.pixeria.com/xpacios/xtanco-valencia/',
     // InstoreMedia · gemelo digital: el botón «Ver Gemelo Digital» (sin flyLabel, mantiene
     // su rótulo) vuela al Xpacio admira-xp del gemelo XpaceOS.
-    fly:'https://www.xpaceos.com/admira-xp/',
+    fly:'https://www.xpaceos.com/admira-xp/?play=1',
     twinOnClick:true,
     surfaces:[
       { name:'Pantalla A · Lotería',      desc:'Mural zona A · 322×500 cm · 16 m² · h 280',  status:'live', impr:480, cpm:'€8', surface:'pantalla', screen:'xtanco-valencia-a' },
