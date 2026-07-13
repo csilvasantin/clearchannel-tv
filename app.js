@@ -3945,9 +3945,15 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     return { totPlays, totScreens, totSecs, pieces:pieceSet.size, totType,
       circuits:Object.values(circuits).sort((a,b)=>b.plays-a.plays), recent:recent.slice(0,40) };
   }
+  // Locs de DEMO en vivo (DOOH admira.tv) cuyo proof-of-play cae FUERA del top-60 del
+  // mapa (p.ej. el kiosk canal.html?circuit=kiosko → loc 'kiosko'). Se consultan
+  // explícitamente para que la Sala refleje la emisión real del directo. Aditivo.
+  const ED_DEMO_LOCS=[{id:'kiosko',kind:'Kioskos de prensa'}];
   async function fetchEmissionData(){
     const all=(typeof window.loadOmnipLocations==='function')?window.loadOmnipLocations():[];
-    const locs=all.slice(0,60), t=todayStr(), from=edDaysAgoStr(30), d7=edDaysAgoStr(6);
+    const _seen=new Set(), locs=[];
+    for(const l of ED_DEMO_LOCS.concat(all.slice(0,60))){ if(l&&l.id&&!_seen.has(l.id)){ _seen.add(l.id); locs.push(l); } }
+    const t=todayStr(), from=edDaysAgoStr(30), d7=edDaysAgoStr(6);
     // Un solo tiro de 30 días por Xpacio. Si HOY no ha emitido nadie, caemos a 7d y luego
     // a 30d: la sala muestra siempre la actividad real de la red, nunca aparece en cero.
     const results=await Promise.all(locs.map(l=>fetch(PIXER+'/emit/range?loc='+encodeURIComponent(l.id)+'&from='+from+'&to='+t,{cache:'no-store'}).then(r=>r.json()).then(d=>({l,screens:(d&&d.screens)||{}})).catch(()=>({l,screens:{}}))));
