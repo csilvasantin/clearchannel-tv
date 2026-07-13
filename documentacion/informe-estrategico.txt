@@ -1,0 +1,43 @@
+﻿Informe Estratégico: Publicidad Agéntica y Ecosistema Geo-Contextual (Admira)
+Resumen Ejecutivo
+El panorama de la publicidad exterior (DOOH) y el Retail Media está experimentando una transición fundamental desde una gestión manual basada en sistemas de gestión de contenidos (CMS) hacia una solución íntegramente  agéntica . El núcleo de esta propuesta reside en una flota de agentes autónomos que ejecutan de principio a fin el ciclo de creación, operación, emisión y medición sin intervención humana constante.Bajo la tesis del modelo  "Inside-out" , se prioriza la captura de datos en el propio soporte (first-party, sin cookies) frente al modelo dominante "Outside-in", que depende de datos alquilados y señales móviles externas. Las implementaciones actuales en  CanalKiosk  (DOOH) y  Xtanco  (Retail Media) demuestran que es posible automatizar la segmentación en tiempo real por género y edad, ajustar contenidos según el contexto ambiental (como el clima) y garantizar una medición de impacto basada en impresiones reales ( proof-of-play ) en lugar de estimaciones de mercado.
+1. El Cambio de Paradigma: Del Operador Humano a la Flota de Agentes
+La documentación subraya un cambio de filosofía en la operación del inventario publicitario. El modelo tradicional se caracteriza por la saturación de intermediarios, estimaciones de audiencia poco precisas e inventarios infrautilizados debido a la falta de escalabilidad de la coordinación manual.
+Comparativa de Enfoques: Agéntica vs. Tradicional
+Característica,Modelo Tradicional (Manual),Solución Agéntica (Admira)
+Operación,Un operador por pantalla / CMS.,Flota de agentes autónomos.
+Creatividad,Una agencia por cada pieza.,Generación dinámica mediante agentes (Pixeria).
+Audiencia,Estimada a posteriori.,Medida en tiempo real (impresión a impresión).
+Inventario,Llenado manual / parcial.,Subastado y optimizado por agentes.
+Control,Alquilado (datos de terceros).,"Propio (First-party, total control del dato)."
+2. El Stack Tecnológico: Ciclo de Vida del Impacto
+La solución se estructura en una "trilogía" de herramientas coordinadas que cierran un bucle de retroalimentación continua:
+1. Crear (Pixeria):  El agente genera la pieza publicitaria basándose en el stock disponible, eliminando la necesidad de recurrir a agencias externas para cada cambio creativo.
+2. Operar (XpaceOS):  El agente decide cuándo y dónde se emite el contenido basándose en reglas contextuales y perfiles de audiencia detectados.
+3. Emitir (admira.tv):  El agente pone la pieza en antena en el circuito propio, garantizando la fidelidad de la señal.
+4. Medir (clearchannel.tv):  El agente cierra el círculo contando cada impacto real. Este aprendizaje vuelve a la fase de creación para optimizar futuras campañas.
+3. Filosofía ADcelerate: El Modelo "Inside-Out"
+El documento detalla una diferenciación crítica en la metodología de obtención de datos. Mientras que el mercado suele inferir la audiencia desde el móvil y fuera de la pantalla (Outside-in), el modelo  Inside-out  se define por:
+* Detección en pantalla:  La audiencia se detecta en el propio punto de emisión mediante analítica local.
+* Sin Cookies:  No depende de SDKs de terceros ni data lakes alquilados (señales telco).
+* Control de punta a punta:  La marca controla el dato, el soporte y la medición de forma unificada.
+* Resultados Tangibles:  El sistema permite calcular el Retorno de Inversión (ROI) y el ROAS estimado (ej. 4,3x en modelos de simulación) basándose en visitas incrementales reales al punto de venta.
+4. Casos de Implementación en Vivo
+Caso 01: CanalKiosk (DOOH)
+Se define como un "quiosco que se programa solo".
+* Funcionamiento:  Un reproductor vertical en el punto de venta emite piezas segmentadas por género y edad en tiempo real.
+* Valor Comercial:  Cada reproducción genera un  proof-of-play  que alimenta un informe de emisión inmediato. Esto permite que cada hueco publicitario se subaste por impresión real (RTB/CPM), no por tiempo contratado.
+Caso 02: Xtanco (Retail Media)
+Utiliza un  gemelo digital  para gestionar una tienda física de manera autónoma.
+* Capacidades:  Orquestación de megafonía por voz (TTS), hilo musical y contenidos visuales segmentados por cámara.
+* Reactividad Contextual:  El sistema aplica reglas lógicas automáticas. Por ejemplo, si los sensores detectan lluvia, el agente activa automáticamente promociones de productos específicos (ej. botas de agua) sin intervención manual.
+5. Infraestructura y Operativa en Tiempo Real
+La supervisión de este ecosistema se realiza a través de  AdmiraNeXT Status , una interfaz que visualiza la "constelación" de agentes en funcionamiento.
+* Monitorización:  Permite ver la señal real de cada nodo (MUPI, pantalla o sensor) con latencias inferiores a 10 minutos.
+* Interacción Agéntica:  Los agentes pueden recibir instrucciones asíncronas vía "Buzón" o inyecciones de  prompts  directas en sesiones CLI para ajustes inmediatos.
+* Admira vs. AdmiraNeXT:  El documento aclara que AdmiraNeXT actúa como el laboratorio de I+D e incubadora, mientras que la relación comercial, contractual y operativa recae exclusivamente en  Admira .
+6. Consideraciones Técnicas y de Contingencia
+Para presentaciones y despliegues en vivo, el documento establece protocolos estrictos:
+* Dependencias de Conectividad:  Se advierte sobre el riesgo de bloqueo de dominios workers.dev por parte de algunos ISPs españoles, recomendando el uso de api.admira.store como plan B.
+* Validación de Audio:  Para las demos interactivas (como Xtanco), se requiere una interacción inicial del usuario para desbloquear el audio del navegador y permitir la megafonía generada por IA.
+* Limitaciones Actuales:  Ciertas funcionalidades como los avatares 3D MetaHuman y la música generativa (Suno) están restringidas a entornos de red específicos (Tailscale) y no deben usarse en demostraciones externas directas."El cambio no es una pantalla nueva. Es quién la opera."

@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Documentación — clearchannel.tv · La primera solución agéntica de RetailMedia y DOOH</title>
+<meta name="description" content="Documentación completa de la solución agéntica de RetailMedia y DOOH: resumen en audio y vídeo, diapositivas, informe estratégico, guía de estudio, FAQ de ventas, cronología, infografía y material interactivo (quiz y flashcards).">
+<link rel="canonical" href="https://www.clearchannel.tv/documentacion/">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/favicon-180.png">
+<meta name="theme-color" content="#05070d">
+<meta name="robots" content="index,follow">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="clearchannel.tv">
+<meta property="og:title" content="Documentación — clearchannel.tv · Solución agéntica de RetailMedia y DOOH">
+<meta property="og:description" content="Todo el material de la presentación: audio, vídeo, diapositivas, informe, guía de estudio, FAQ, cronología, infografía y contenido interactivo.">
+<meta property="og:url" content="https://www.clearchannel.tv/documentacion/">
+<meta property="og:image" content="https://www.clearchannel.tv/assets/og-cover.jpg">
+<meta property="og:locale" content="es_ES">
+<style>
+:root{
+  --bg:#05070d; --bg-soft:#0a0e18; --panel:#0c1120;
+  --ink:#f4f0ff; --ink-soft:#d7d0ee; --mut:#8b86a8; --dim:#524d6c;
+  --line:rgba(150,140,200,.12); --line-2:rgba(150,140,200,.22);
+  --crear:#aa88ff; --operar:#ffd866; --gestionar:#50c8ff; --medir:#ff4488;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative;min-height:100vh}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+::selection{background:rgba(170,136,255,.32);color:#fff}
+
+/* Ambient bg */
+.bg-fx{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.bg-fx::before{content:"";position:absolute;width:120vmax;height:120vmax;left:-38vmax;top:-52vmax;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(170,136,255,.13),transparent 70%)}
+.bg-fx::after{content:"";position:absolute;width:110vmax;height:110vmax;right:-42vmax;bottom:-46vmax;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(80,200,255,.09),transparent 70%)}
+
+.wrap{width:100%;max-width:1080px;margin:0 auto;padding:0 clamp(18px,4vw,44px)}
+.mono{font-family:var(--mono);letter-spacing:.16em;text-transform:uppercase;font-size:12px}
+
+/* Topbar */
+.topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+  padding:16px clamp(18px,4vw,44px);background:linear-gradient(to bottom,rgba(5,7,13,.9),rgba(5,7,13,.55));
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{font-family:var(--mono);font-weight:700;letter-spacing:.22em;font-size:13px;color:var(--ink)}
+.brand b{color:var(--crear)}
+.topbar .back{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);transition:color .2s}
+.topbar .back:hover{color:var(--ink)}
+
+/* Hero */
+.hero{padding:clamp(48px,9vw,96px) 0 clamp(30px,5vw,52px)}
+.hero .eyebrow{color:var(--mut);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hero .eyebrow .tick{width:26px;height:1px;background:linear-gradient(90deg,var(--crear),transparent)}
+.hero h1{font-weight:840;letter-spacing:-.03em;line-height:1.02;margin:22px 0 0;font-size:clamp(32px,6.4vw,62px)}
+.hero h1 .g{background:linear-gradient(96deg,var(--crear),var(--operar) 34%,var(--gestionar) 66%,var(--medir));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .support{font-size:clamp(15px,2vw,19px);color:var(--ink-soft);max-width:720px;margin:24px 0 0;line-height:1.55}
+.hero .support b{color:#fff;font-weight:600}
+
+/* Section heading */
+.sec{padding:clamp(26px,5vw,44px) 0 0}
+.sec-h{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.sec-h .n{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--dim)}
+.sec-h h2{font-size:clamp(19px,3vw,26px);font-weight:750;letter-spacing:-.01em}
+.sec-h .hint{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+
+/* Player card */
+.player{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px clamp(16px,3vw,26px);margin-bottom:16px}
+.player .top{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.player .ico{flex:0 0 auto;width:42px;height:42px;border-radius:11px;display:grid;place-items:center;border:1px solid var(--line-2)}
+.player .meta h3{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.player .meta p{color:var(--mut);font-size:13.5px;margin-top:4px;line-height:1.45}
+.player .fmt{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:7px}
+.player audio{width:100%;margin-top:2px}
+.player video{width:100%;border-radius:11px;background:#000;display:block;max-height:70vh}
+
+/* Grid of file cards */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:12px;transition:border-color .25s,transform .25s}
+.card:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.card .row{display:flex;align-items:flex-start;gap:12px}
+.card .ico{flex:0 0 auto;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;border:1px solid var(--line-2)}
+.card h3{font-size:15.5px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
+.card p{color:var(--mut);font-size:13px;line-height:1.45;margin-top:3px}
+.card .fmt{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+.card .acts{display:flex;gap:9px;flex-wrap:wrap;margin-top:auto;padding-top:2px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:9px 15px;border-radius:100px;border:1px solid var(--line-2);color:var(--ink-soft);transition:background .2s,border-color .2s,color .2s;cursor:pointer}
+.btn:hover{background:rgba(170,136,255,.1);border-color:var(--crear);color:#fff}
+.btn.primary{background:var(--crear);border-color:var(--crear);color:#0a0714;font-weight:700}
+.btn.primary:hover{background:#c1a4ff;border-color:#c1a4ff}
+.btn svg{width:14px;height:14px;flex:0 0 auto}
+
+/* accent colors per icon */
+.a-crear{color:var(--crear)} .a-operar{color:var(--operar)} .a-gestionar{color:var(--gestionar)} .a-medir{color:var(--medir)}
+
+/* Infographic */
+.infographic{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:4px}
+.infographic img{width:100%;max-width:100%;border-radius:10px}
+.infographic .cap{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:12px 4px 4px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* Interactive banner */
+.inter{background:linear-gradient(120deg,rgba(170,136,255,.1),rgba(80,200,255,.06));border:1px solid var(--line-2);border-radius:16px;
+  padding:clamp(20px,3.5vw,30px);display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:space-between}
+.inter .txt{max-width:560px}
+.inter h3{font-size:18px;font-weight:750;letter-spacing:-.01em}
+.inter p{color:var(--ink-soft);font-size:14px;margin-top:7px;line-height:1.5}
+
+/* Footer */
+footer{margin-top:clamp(46px,7vw,72px);padding:34px 0 56px;border-top:1px solid var(--line);color:var(--mut);
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center}
+footer b{color:var(--crear)}
+footer a:hover{color:var(--ink)}
+footer .seal{color:var(--dim);letter-spacing:.14em}
+</style>
+</head>
+<body>
+<div class="bg-fx"></div>
+
+<header class="topbar">
+  <a class="brand" href="/">CLEARCHANNEL<b>.TV</b></a>
+  <a class="back" href="/presentation/">← Presentación</a>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div class="eyebrow mono"><span class="tick"></span>Documentación</div>
+    <h1>Solución agéntica de <span class="g">RetailMedia y DOOH</span></h1>
+    <p class="support">Todo el material que acompaña a la presentación de <b>clearchannel.tv</b>: el resumen en audio y en vídeo, las diapositivas, el informe estratégico, la guía de estudio, la guía de ventas con FAQ, la cronología del demo y la infografía. Al final, material interactivo con quiz y flashcards.</p>
+  </section>
+
+  <!-- ── RESÚMENES (audio + vídeo) ── -->
+  <section class="sec wrap">
+    <div class="sec-h"><span class="n">01</span><h2>Resúmenes</h2><span class="hint">Audio · Vídeo</span></div>
+
+    <div class="player">
+      <div class="top">
+        <div class="ico a-operar" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4h4l5 5V5L7 10H3z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8 8 0 0 1 0 12"/></svg>
+        </div>
+        <div class="meta">
+          <h3>Resumen en audio</h3>
+          <p>Repaso conversacional en profundidad de la tesis agéntica, los dos casos en vivo y la medición proof-of-play.</p>
+          <div class="fmt">M4A · 27:11 · audio bajo demanda</div>
+        </div>
+      </div>
+      <audio controls preload="none" src="https://pub-bf043a4daa3b43b7a0b769617729d074.r2.dev/grid/ccdoc/aed054da9db9b102.m4a"></audio>
+    </div>
+
+    <div class="player">
+      <div class="top">
+        <div class="ico a-medir" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="M10 9l5 3-5 3V9z"/></svg>
+        </div>
+        <div class="meta">
+          <h3>Resumen en vídeo</h3>
+          <p>Recorrido visual por el ciclo Crear · Operar · Emitir · Medir y las demos de CanalKiosk y Xtanco.</p>
+          <div class="fmt">MP4 · 6:41 · vídeo bajo demanda</div>
+        </div>
+      </div>
+      <video controls preload="metadata" playsinline src="https://pub-bf043a4daa3b43b7a0b769617729d074.r2.dev/grid/ccdoc/d30496f31e860ccc.mp4"></video>
+    </div>
+  </section>
+
+  <!-- ── DIAPOSITIVAS ── -->
+  <section class="sec wrap">
+    <div class="sec-h"><span class="n">02</span><h2>Diapositivas</h2><span class="hint">PDF · PPTX</span></div>
+    <div class="grid">
+      <div class="card">
+        <div class="row">
+          <div class="ico a-medir" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+          </div>
+          <div><h3>Diapositivas — PDF</h3><p>Deck completo listo para imprimir o proyectar.</p><div class="fmt">PDF · 15 MB</div></div>
+        </div>
+        <div class="acts">
+          <a class="btn primary" href="agentic-retail-media-dooh.pdf" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Ver</a>
+          <a class="btn" href="agentic-retail-media-dooh.pdf" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Descargar</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row">
+          <div class="ico a-operar" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M12 17v3M8 20h8"/></svg>
+          </div>
+          <div><h3>Diapositivas — PowerPoint</h3><p>Fuente editable para adaptar la presentación.</p><div class="fmt">PPTX · 18 MB</div></div>
+        </div>
+        <div class="acts">
+          <a class="btn primary" href="agentic-retail-media-dooh.pptx" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Descargar</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DOCUMENTOS ── -->
+  <section class="sec wrap">
+    <div class="sec-h"><span class="n">03</span><h2>Documentos</h2><span class="hint">Informe · Estudio · Ventas · Cronología</span></div>
+    <div class="grid">
+      <div class="card">
+        <div class="row">
+          <div class="ico a-crear" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+          </div>
+          <div><h3>Informe estratégico</h3><p>La tesis Inside-out, la flota de agentes y la medición real, en detalle.</p><div class="fmt">TXT</div></div>
+        </div>
+        <div class="acts">
+          <a class="btn primary" href="informe-estrategico.txt" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Leer</a>
+          <a class="btn" href="informe-estrategico.txt" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Descargar</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row">
+          <div class="ico a-gestionar" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <div><h3>Guía de estudio</h3><p>Cuestionario de repaso y conceptos clave para dominar la propuesta.</p><div class="fmt">TXT</div></div>
+        </div>
+        <div class="acts">
+          <a class="btn primary" href="guia-de-estudio.txt" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Leer</a>
+          <a class="btn" href="guia-de-estudio.txt" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Descargar</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row">
+          <div class="ico a-operar" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div><h3>Guía de ventas y FAQ</h3><p>Argumentario para la reunión con Clear Channel y respuestas frecuentes.</p><div class="fmt">TXT</div></div>
+        </div>
+        <div class="acts">
+          <a class="btn primary" href="faq-guia-estrategica-ventas.txt" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Leer</a>
+          <a class="btn" href="faq-guia-estrategica-ventas.txt" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Descargar</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row">
+          <div class="ico a-medir" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+          </div>
+          <div><h3>Cronología del demo</h3><p>Guion sección a sección con duración, acción en pantalla y frase clave.</p><div class="fmt">CSV</div></div>
+        </div>
+        <div class="acts">
+          <a class="btn primary" href="cronologia-demo.csv" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Descargar</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── INFOGRAFÍA ── -->
+  <section class="sec wrap">
+    <div class="sec-h"><span class="n">04</span><h2>Infografía</h2><span class="hint">Imagen</span></div>
+    <figure class="infographic">
+      <img src="revolucion-agentica-retail-media.png" alt="Infografía: la revolución agéntica en Retail Media — del operador humano a la flota de agentes que crea, opera, emite y mide." loading="lazy">
+      <figcaption class="cap"><span>Revolución agéntica en Retail Media</span><a class="btn" href="revolucion-agentica-retail-media.png" download style="margin-top:-4px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>PNG · 6 MB</a></figcaption>
+    </figure>
+  </section>
+
+  <!-- ── INTERACTIVO ── -->
+  <section class="sec wrap">
+    <div class="sec-h"><span class="n">05</span><h2>Interactivo</h2><span class="hint">Quiz · Flashcards</span></div>
+    <div class="inter">
+      <div class="txt">
+        <h3>Quiz y flashcards del cuaderno</h3>
+        <p>Repasa la propuesta de forma interactiva en el cuaderno de NotebookLM: preguntas tipo test y tarjetas de memoria. Solo disponible en línea; se abre en una pestaña nueva.</p>
+      </div>
+      <a class="btn primary" href="https://notebooklm.google.com/notebook/08c27e6e-a882-4630-93a5-63ab02a49738" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Abrir cuaderno interactivo</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>CLEARCHANNEL<b>.TV</b> · Documentación · Solución agéntica de RetailMedia y DOOH · I+D incubado por AdmiraNeXT</span>
+    <span class="seal">cc-v.13.07.2026.r7</span>
+    <span><a href="mailto:info@admira.com">info@admira.com</a></span>
+  </div>
+</footer>
+</body>
+</html>

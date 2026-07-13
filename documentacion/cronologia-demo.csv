@@ -1,0 +1,6 @@
+Sección,Duración,Acción en pantalla,Frase clave,Fuente
+Hero+Tesis,30-45s,Scroll por la portada del portal y el titular.,El cambio no es una pantalla nueva. Es quién la opera.,1
+Ciclo agéntica,45-60s,Scroll al diagrama del ciclo (Crear-Operar-Emitir-Medir). Abrir pestaña nueva con la flota en tiempo real (admira.live/status).,Esta es nuestra flota de agentes operando en este instante. No es una demo aparte.,1
+Caso 01 CanalKiosk,60-90s,Scroll a Caso 01. Abrir quiosco en pestaña nueva a pantalla completa. Emitir 20s. Abrir BROADCAST ROOM en clearchannel.tv.,El quiosco que se programa solo... este ranking y este radar se están llenando con lo que acaba de emitir el kiosco.,1
+Caso 02 Xtanco,60-90s,"Scroll a Caso 02. Abrir xpaceos.com/admira-xp y clic en 'Demo automático'. Mostrar gemelo digital, megafonía y panel de reglas.","Si llueve, el agente saca las botas de agua. Automático, sin que nadie lo programe pantalla por pantalla.",1
+Cierre,30s,Scroll a la sección final del portal (medición y siguientes pasos).,"La medición no es una estimación a posteriori: es proof-of-play real, impresión a impresión.",1

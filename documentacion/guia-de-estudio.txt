@@ -1,0 +1,44 @@
+﻿Guía de Estudio: ADcelerate, Admira XP y el Ecosistema Agéntico de Admira
+Esta guía de estudio ha sido diseñada para profundizar en la comprensión de las tecnologías de publicidad geo-contextual, sistemas operativos de espacios (XpaceOS) y soluciones agénticas desarrolladas por Admira. El contenido se basa exclusivamente en la documentación técnica y comercial proporcionada sobre ADcelerate, AdmiraNeXT, Admira XP y la colaboración con Clear Channel.
+I. Cuestionario de Repaso (Preguntas de Respuesta Corta)
+1. ¿Cuál es la diferencia fundamental entre el modelo publicitario "outside-in" y el modelo "inside-out" de ADcelerate?
+2. ¿Cuáles son las cuatro etapas del ciclo agéntico descrito en la solución para Clear Channel y qué herramienta de software se asocia a cada una?
+3. ¿Cómo garantiza ADcelerate la privacidad de la audiencia y la calidad de los datos (first-party)?
+4. ¿Qué funciones cumple el "Gemelo Digital" en el caso de uso de Xtanco dentro de RetailMedia?
+5. ¿En qué consiste el concepto de "Proof-of-play" y por qué es vital para el informe de emisión?
+6. ¿Qué elementos visuales y sonoros componen el panel de control "Status" de AdmiraNeXT?
+7. ¿Cómo interactúa el sistema operativo Xpace OS (v.2026) con la inteligencia artificial según la documentación de Admira XP?
+8. ¿Qué es CanalKiosk y cómo utiliza el "Stock de Pixeria" para su funcionamiento?
+9. ¿Qué papel desempeña el contexto (como el clima o festivos) en la toma de decisiones programáticas de ADcelerate?
+10. ¿Cuál es la distinción operativa y comercial entre Admira y AdmiraNeXT según las directrices de presentación?
+II. Clave de Respuestas
+1. El modelo  outside-in  (dominante en el mercado) infiere la audiencia desde dispositivos móviles externos y utiliza datos alquilados de terceros. En cambio, el modelo  inside-out  de ADcelerate detecta a la audiencia directamente en la pantalla, emite en el propio circuito y mide el impacto en el punto de venta, permitiendo que la marca controle el dato y el soporte de punta a punta.
+2. El ciclo agéntico consta de:  Crear  (ejecutado por Pixeria para generar piezas),  Operar  (gestionado por XpaceOS para decidir cuándo y dónde emitir),  Emitir  (realizado por admira.tv para poner la pieza en antena) y  Medir  (centralizado en clearchannel.tv para contar impresiones reales y cerrar el círculo).
+3. ADcelerate funciona  sin cookies  y sin depender de  data lakes  alquilados o SDKs de terceros. La analítica se realiza en el propio punto mediante sensores en la pantalla que detectan la audiencia en tiempo real, generando datos "First-party" propios del circuito.
+4. En Xtanco, el  Gemelo Digital  permite replicar la tienda física en tiempo real para orquestar elementos como la megafonía por voz (TTS), el hilo musical y el contenido de las pantallas. Este modelo reacciona al contexto (como el clima) y a la audiencia detectada por cámara para segmentar la publicidad y los servicios.
+5. El  Proof-of-play  es el registro fehaciente de cada emisión realizada por un soporte. Es fundamental porque alimenta el informe de emisión con datos reales (no estimados), permitiendo que cada hueco publicitario sea subastado por impresión real bajo modelos RTB/CPM.
+6. El panel  Status  muestra una "constelación" de la flota de agentes en órbita con datos en vivo. Incluye indicadores de "naves de actividad", etiquetas de proyectos y alertas sonoras como la "marcha invader" (que suena ante dudas de los agentes) y el "latido ambiente" que sigue el BPM medio de la flota.
+7. Xpace OS integra asistentes de inteligencia artificial como  Metahuman  y agentes que utilizan  Grok  para responder preguntas operacionales. El sistema permite la interacción por voz y comandos de texto para gestionar la tienda y la atención al cliente de forma automatizada.
+8. CanalKiosk  es un modelo de DOOH (Digital Out Of Home) que se programa de forma autónoma. Utiliza el  Stock de Pixeria  para obtener piezas gráficas listas para emitir, las cuales un agente selecciona y segmenta en tiempo real según el género y la edad de la audiencia que se encuentra frente al quiosco.
+9. El contexto actúa como un disparador de  decisiones programáticas reales . Por ejemplo, datos como el clima, calendarios festivos o eventos locales (como la Fiesta Mayor) cambian la composición de la audiencia, lo que permite al sistema ajustar automáticamente la parrilla de contenidos para mostrar productos relevantes (ej. botas de agua si llueve).
+10. AdmiraNeXT  se define como el laboratorio de I+D donde se incuban las soluciones tecnológicas y agénticas. Sin embargo, para efectos contractuales, de soporte y contacto comercial, el interlocutor oficial es siempre  Admira .
+III. Temas de Ensayo Sugeridos
+1. La evolución del CMS al sistema agéntico:  Analice cómo la transición de una gestión manual por personas a una flota de agentes autónomos transforma la eficiencia en el llenado de inventario DOOH y RetailMedia.
+2. Soberanía del dato y el modelo Inside-Out:  Discuta las ventajas estratégicas para una marca de poseer su propia red de medición y datos first-party en comparación con el uso de paneles de movilidad externos y datos de terceros.
+3. El Gemelo Digital como herramienta de gestión comercial:  Explore cómo la integración de audio, vídeo y sensores en un entorno replicado digitalmente (como Xtanco) redefine la experiencia del cliente y la monetización del punto de venta físico.
+4. Estrategias de Retargeting y Drive-to-Store:  Evalúe el flujo de conversión descrito en el funnel de ADcelerate, desde el alcance inicial en la calle hasta la retención, utilizando la misma señal geo-contextual del circuito.
+5. Impacto de la IA Generativa y el Stock de Pixeria en la Creatividad Publicitaria:  Reflexione sobre cómo la capacidad de los agentes para generar y ajustar piezas en tiempo real elimina la dependencia de agencias creativas externas para cada campaña.
+IV. Glosario de Términos Clave
+Término,Definición
+Agéntica,"Sistema donde las tareas de creación, operación, emisión y medición son ejecutadas por una flota de agentes de software autónomos en lugar de operadores humanos."
+CPM,Coste por mil impresiones; métrica utilizada para valorar el inventario publicitario basado en el impacto real medido por el sistema.
+DOOH,"Digital Out Of Home . Publicidad digital en soportes exteriores, como quioscos o MUPIs."
+Drive-to-Store,Estrategia y lógica de medición que busca dirigir a la audiencia detectada en soportes digitales hacia el punto de venta físico.
+First-party data,"Datos recogidos directamente por el propietario del soporte (en este caso, a través de la propia pantalla) sin intermediarios ni cookies."
+Grok,Modelo de inteligencia artificial integrado en el ecosistema Admira XP para funciones de asistencia y operaciones.
+MUPI,Soporte publicitario instalado en elementos de mobiliario urbano que emite la señal del circuito.
+Pixeria,"Herramienta del stack encargada de la generación de piezas creativas (fase ""Crear"") a partir de un stock de materiales."
+RetailMedia,Publicidad y comunicación digital personalizada que ocurre dentro del propio punto de venta físico.
+RTB,Real-Time Bidding . Subasta en tiempo real de cada impresión publicitaria basada en la audiencia detectada en ese instante.
+XpaceOS,Sistema operativo diseñado por Admira para la gestión integral de espacios físicos y gemelos digitales.
+Xtanco,Caso de uso específico de RetailMedia que aplica un gemelo digital para controlar una tienda física de forma automatizada.
