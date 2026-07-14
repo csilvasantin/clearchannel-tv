@@ -1025,8 +1025,8 @@ window.OMNIP_LOCATIONS_DEFAULT = [
     segmentation:{ required:false, schedule:{ start:'08:00', end:'22:00' }, typologies:['exterior'], genders:['hombre','mujer'], ages:['joven','adulto','senior'], timeSlots:['manana','mediodia','tarde','noche'] },
   },
   {
-    id:'xtanco-bcn', name:'Xtanco Barcelona', kind:'Estanco · Retail físico · Gemelo digital',
-    addr:'Portal de l\'Àngel 20 · Barcelona 08002', coords:[2.1730, 41.3863],
+    id:'xtanco-barcelona', name:'Xtanco Barcelona', kind:'Estanco · Retail físico · Gemelo digital · Xpacio 3D',
+    addr:'Carrer Gran de Gràcia 186 · Barcelona · 08012 · Spain', coords:[2.1524248, 41.4030064],
     employees:[
       { name:'Marta', role:'cajero',    since:'2024-09-02T09:00:00.000Z' },
       { name:'Jordi', role:'repositor', since:'2025-03-15T10:30:00.000Z' },
@@ -1034,23 +1034,26 @@ window.OMNIP_LOCATIONS_DEFAULT = [
       { name:'Pau',   role:'manager',   since:'2026-01-10T08:30:00.000Z' },
     ],
     music:'lounge', cameras:true,
+    twin:'https://www.pixeria.com/xpacios/xtanco-barcelona/',
+    twinOnClick:true,
     surfaces:[
-      { name:'LED Frontal',       desc:'Pantalla principal sobre el mostrador · 1920×1080',  status:'live', impr:680, cpm:'€8', surface:'pantalla' },
-      { name:'LED Vertical',      desc:'Display lateral del producto destacado · 1080×1920',  status:'live', impr:410, cpm:'€7', surface:'pantalla' },
-      { name:'Escaparate Gràcia', desc:'Visible desde Passeig de Gràcia · alto tráfico',      status:'live', impr:520, cpm:'€9', surface:'escaparate' },
-      { name:'Mostrador panel',   desc:'Panel táctil del mostrador · interacción cliente',    status:'live', impr:120, cpm:'€4', surface:'mostrador' },
+      { name:'LED Frontal',       desc:'Pantalla principal sobre el mostrador · 1920×1080',  status:'live', impr:680, cpm:'€8', surface:'pantalla',  screen:'xtanco-barcelona-led-frontal' },
+      { name:'LED Vertical',      desc:'Display lateral del producto destacado · 1080×1920', status:'live', impr:410, cpm:'€7', surface:'pantalla',  screen:'xtanco-barcelona-led-vertical' },
+      { name:'Escaparate Gràcia', desc:'Visible desde Gran de Gràcia · alto tráfico',         status:'live', impr:520, cpm:'€9', surface:'escaparate', screen:'xtanco-barcelona-escaparate' },
+      { name:'Mostrador panel',   desc:'Panel táctil del mostrador · interacción cliente',    status:'live', impr:120, cpm:'€4', surface:'mostrador',  screen:'xtanco-barcelona-mostrador' },
       { name:'PWA Xtanco Club',   desc:'Notificaciones push a socios cercanos',               status:'live', impr:160, cpm:'€2', surface:'pwa' },
     ],
   },
   {
-    id:'xtanco', name:'Xtanco', kind:'Estanco · Retail físico',
-    addr:'Calle de Santa Rosa 4 · Madrid', coords:[-3.7283, 40.4036],
+    id:'xtanco', name:'Xtanco Madrid', kind:'Estanco · Retail físico',
+    addr:'Calle de Cea Bermúdez 73 · Madrid · 28003 · Spain', coords:[-3.7134676, 40.4391221],
+    music:'lounge', cameras:true,
     surfaces:[
-      { name:'LED Frontal',          desc:'Pantalla principal sobre el mostrador · 1920×1080 · 24h', status:'live',  impr:540, cpm:'€8',  surface:'pantalla', pixerScreens:['xtore-lg8qao','xtore-07313n'] },
-      { name:'LED Vertical',         desc:'Display lateral del producto destacado · 1080×1920',      status:'live',  impr:380, cpm:'€6',  surface:'pantalla' },
-      { name:'Escaparate exterior',  desc:'LED en la fachada visible desde la calle · noche',        status:'sched', impr:210, cpm:'€5',  surface:'escaparate' },
-      { name:'Mostrador panel',      desc:'Panel táctil del mostrador · interacción cliente',        status:'live',  impr:90,  cpm:'€4',  surface:'mostrador' },
-      { name:'Vending / cigarreras', desc:'Display digital del vending · loop comercial',            status:'idle',  impr:60,  cpm:'€3',  surface:'vending' },
+      { name:'LED Frontal',          desc:'Pantalla principal sobre el mostrador · 1920×1080 · 24h', status:'live',  impr:540, cpm:'€8', surface:'pantalla',  screen:'xtanco-led-frontal', pixerScreens:['xtore-lg8qao','xtore-07313n'] },
+      { name:'LED Vertical',         desc:'Display lateral del producto destacado · 1080×1920',      status:'live',  impr:380, cpm:'€6', surface:'pantalla',  screen:'xtanco-led-vertical' },
+      { name:'Escaparate exterior',  desc:'LED en la fachada visible desde la calle · noche',        status:'sched', impr:210, cpm:'€5', surface:'escaparate', screen:'xtanco-escaparate-exterior' },
+      { name:'Mostrador panel',      desc:'Panel táctil del mostrador · interacción cliente',        status:'live',  impr:90,  cpm:'€4', surface:'mostrador',  screen:'xtanco-mostrador-panel' },
+      { name:'Vending / cigarreras', desc:'Display digital del vending · loop comercial',            status:'idle',  impr:60,  cpm:'€3', surface:'vending',    screen:'xtanco-vending-cigarreras' },
       { name:'PWA Xtanco Club',      desc:'Notificaciones push y cards en la app del Club',          status:'live',  impr:140, cpm:'€2',  surface:'pwa' },
     ],
   },
@@ -1127,7 +1130,7 @@ window.OMNIP_LOCATIONS_EXTRA = [
     // Xtanco Valencia — Xpacio 3D (XpaceOS Locations). Buscable en clearchannel.tv;
     // al pulsar el punto o el botón "Gemelo" abre el Xpacio isométrico en pixeria.com.
     id:'xtanco-valencia', name:'Xtanco Valencia', kind:'Estanco · Retail físico · Gemelo digital · Xpacio 3D',
-    addr:'Valencia · 46002 · València · Spain', coords:[-0.3753, 39.4699],
+    addr:'Carrer de Colón 22 · València · 46004 · Spain', coords:[-0.3739, 39.4685],
     music:'lounge', cameras:true,
     twin:'https://www.pixeria.com/xpacios/xtanco-valencia/',
     // InstoreMedia · gemelo digital: el botón «Ver Gemelo Digital» (sin flyLabel, mantiene
@@ -1135,28 +1138,12 @@ window.OMNIP_LOCATIONS_EXTRA = [
     fly:'https://www.xpaceos.com/admira-xp/?play=1',
     twinOnClick:true,
     surfaces:[
-      { name:'Pantalla A · Lotería',      desc:'Mural zona A · 322×500 cm · 16 m² · h 280',  status:'live', impr:480, cpm:'€8', surface:'pantalla', screen:'xtanco-valencia-a' },
-      { name:'Pantalla B · Vapeo/Tabaco', desc:'Mural zona B · 491×337 cm · 16 m² · h 280',  status:'live', impr:520, cpm:'€8', surface:'pantalla', screen:'xtanco-valencia-b' },
-      { name:'Pantalla C · Bebidas',      desc:'Mural zona C · 405×400 cm · 16 m² · h 280',  status:'live', impr:460, cpm:'€7', surface:'pantalla', screen:'xtanco-valencia-c' },
-      { name:'Pantalla D · Ofertas',      desc:'Mural zona D · 398×409 cm · 16 m² · h 280',  status:'live', impr:440, cpm:'€7', surface:'pantalla', screen:'xtanco-valencia-d' },
-    ],
-  },
-  {
-    // Xtanco Barcelona (Gran de Gràcia) — Xpacio 3D duplicado de Valencia, estilo flagship
-    // Desigual (como el de Ginza). Sandbox de innovación: walkable + decorable.
-    id:'xtanco-bcn-gracia', name:'Xtanco Barcelona', kind:'Flagship Desigual-style · Retail físico · Gemelo digital · Xpacio 3D',
-    addr:'Carrer Gran de Gràcia · Gràcia · Barcelona · 08012 · Spain', coords:[2.1539, 41.4015],
-    music:'fashion', cameras:true,
-    twin:'https://www.pixeria.com/xpacios/xtanco-barcelona/',
-    // InstoreMedia · gemelo digital: el botón «Ver Gemelo Digital» (sin flyLabel, mantiene
-    // su rótulo) vuela al visor isométrico del gemelo XpaceOS de este Xpacio.
-    fly:'https://www.xpaceos.com/scan/visor',
-    twinOnClick:true,
-    surfaces:[
-      { name:'Pantalla A · Escaparate flagship', desc:'Mural zona A · 322×500 cm · 16 m² · h 280', status:'live', impr:720, cpm:'€9', surface:'escaparate', screen:'xtanco-bcn-gracia-a' },
-      { name:'Pantalla B · Colecciones',         desc:'Mural zona B · 491×337 cm · 17 m² · h 280', status:'live', impr:520, cpm:'€8', surface:'pantalla',   screen:'xtanco-bcn-gracia-b' },
-      { name:'Pantalla C · Probadores',          desc:'Mural zona C · 405×400 cm · 16 m² · h 280', status:'live', impr:460, cpm:'€7', surface:'pantalla',   screen:'xtanco-bcn-gracia-c' },
-      { name:'Pantalla D · Desigual Club',       desc:'Mural zona D · 398×409 cm · 16 m² · h 280', status:'live', impr:440, cpm:'€7', surface:'pantalla',   screen:'xtanco-bcn-gracia-d' },
+      { name:'LED Frontal',          desc:'Pantalla principal · 1920×1080',                            status:'live',  impr:480, cpm:'€8', surface:'pantalla',  screen:'xtanco-valencia-led-frontal' },
+      { name:'LED Vertical',         desc:'Display vertical · promoción Fallas · 1080×1920',           status:'live',  impr:520, cpm:'€7', surface:'pantalla',  screen:'xtanco-valencia-led-vertical' },
+      { name:'Escaparate Colón',     desc:'Visible desde Carrer de Colón · player físico online',      status:'live',  impr:460, cpm:'€9', surface:'escaparate', screen:'xtore-escaparate-pn1w', pixerScreens:['xtore-escaparate-pn1w'] },
+      { name:'Mostrador trilingüe',  desc:'Panel táctil · valenciano, castellano e inglés',            status:'live',  impr:160, cpm:'€4', surface:'mostrador',  screen:'xtanco-valencia-mostrador' },
+      { name:'Vending / cigarreras', desc:'Display digital del vending · programación por franjas',   status:'sched', impr:80,  cpm:'€3', surface:'vending',    screen:'xtanco-valencia-vending' },
+      { name:'PWA Xtanco Club',      desc:'Notificaciones push y cards para clientes de proximidad',  status:'live',  impr:140, cpm:'€2', surface:'pwa' },
     ],
   },
   {
