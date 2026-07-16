@@ -3227,9 +3227,22 @@ function tourToggle(btn) {
 function wireTour() {
   const b = document.getElementById('p-tour');
   if (b) b.onclick = (e) => { e.preventDefault(); tourToggle(b); };
+  // Enlace directo para demo: ?circuit=<id>&tour=1 → selecciona circuito y arranca
+  // el recorrido solo. Ej: /?circuit=caixabank&tour=1 (las 49 oficinas, una a una).
+  try {
+    const q = new URLSearchParams(location.search || '');
+    const c = q.get('circuit');
+    if (c) {
+      const sel = document.getElementById('circuit-select');
+      if (sel && [...sel.options].some(o => o.value === c)) {
+        sel.value = c; sel.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
+    if (q.get('tour') === '1' && b) setTimeout(() => { if (!tourTimer) tourToggle(b); }, 1200);
+  } catch (_) {}
 }
-if (document.readyState !== 'loading') wireTour();
-else document.addEventListener('DOMContentLoaded', wireTour);
+if (document.readyState !== 'loading') setTimeout(wireTour, 600);
+else document.addEventListener('DOMContentLoaded', () => setTimeout(wireTour, 600));
 
 // ─── Búsqueda ──────────────────────────────────────────────────────
 async function geocodeNominatim(q) {
