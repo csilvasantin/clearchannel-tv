@@ -3173,6 +3173,12 @@ setInterval(pollPixerFeed, 5000);
 // ─── flyTo + abrir panel ──────────────────────────────────────────
 function flyToLocation(loc) {
   splash.classList.add('hidden');
+  // Parar la autorrotación ANTES de despegar. tickRotate hace un easeTo por frame
+  // mientras el zoom < 6, y un easeTo CANCELA el vuelo en curso: desde la vista de
+  // globo el flyTo no llegaba a moverse. La rotación solo se pausaba con gestos del
+  // usuario (mousedown/wheel/dragstart), así que un vuelo programático se la comía.
+  rotating = false;
+  if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
   const ac = document.getElementById('addr-card'); if (ac) ac.hidden = true;
   setStatus(t('status_landing') + loc.addr);
   pushRecent(loc.id);
