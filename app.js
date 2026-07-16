@@ -323,6 +323,7 @@ const I18N = {
     wish_ok:'Pedido ✨', make_wish:'Pide un deseo',
     surfaces_available:'Surfaces disponibles', live_bids:'Pujas en vivo', create_campaign:'➕ Crear campaña', ecosystem:'ecosistema',
     how_auction:'Cómo funciona la subasta', view_twin:'Ver Gemelo Digital ↗', twin_hd:'🎥 Gemelo Hiperrealista ↗',
+    tour_start:'▶ Recorrer la red', tour_stop:'⏸ Parar recorrido',
     meta_surfaces:'surfaces', meta_imprday:'impr/día', meta_cpm:'CPM rango',
     waiting_bid:'// motor RTB conectado · esperando demanda…',
     recent:'Recientes', addresses:'Direcciones', searching_addr:'buscando direcciones…', no_addr:'sin direcciones',
@@ -443,6 +444,7 @@ const I18N = {
     wish_ok:'Wished ✨', make_wish:'Make a wish',
     surfaces_available:'Available surfaces', live_bids:'Live bids', create_campaign:'➕ Create campaign', ecosystem:'ecosystem',
     how_auction:'How the auction works', view_twin:'View Digital Twin ↗', twin_hd:'🎥 Hyperrealistic Twin ↗',
+    tour_start:'▶ Tour the network', tour_stop:'⏸ Stop tour',
     meta_surfaces:'surfaces', meta_imprday:'impr/day', meta_cpm:'CPM range',
     waiting_bid:'// RTB engine connected · waiting for demand…',
     recent:'Recent', addresses:'Addresses', searching_addr:'searching addresses…', no_addr:'no addresses',
@@ -3180,6 +3182,48 @@ function flyToLocation(loc) {
     panel.classList.add('open');
   }, 4600);
 }
+
+// ─── Recorrido por la red (vuelo de punto en punto) ────────────────
+// Ocupa el sitio del antiguo enlace «Cómo funciona la subasta». Va de punto en
+// punto de la red DADA DE ALTA en la plataforma: recorre las ubicaciones visibles,
+// o sea las del circuito y el target que estén seleccionados (con «La Caixa /
+// CaixaBank» → sus oficinas). Reutiliza flyToLocation, que ya vuela y abre la ficha
+// al aterrizar. Da la vuelta al llegar al final.
+const TOUR_PAUSA = 7000;   // 4,5 s de vuelo + ~2,5 s para leer la ficha
+let tourTimer = null, tourIdx = 0;
+function tourItems() {
+  try { const v = mapVisibleLocations(); return Array.isArray(v) ? v.filter(l => Array.isArray(l.coords)) : []; }
+  catch (_) { return []; }
+}
+function tourStop(btn) {
+  if (tourTimer) { clearTimeout(tourTimer); tourTimer = null; }
+  if (btn) { btn.textContent = t('tour_start'); btn.classList.remove('on'); btn.setAttribute('data-i18n', 'tour_start'); }
+}
+function tourStep(btn) {
+  const items = tourItems();
+  if (!items.length) { setStatus('· no hay puntos en el circuito seleccionado'); tourStop(btn); return; }
+  const loc = items[tourIdx % items.length];
+  const n = (tourIdx % items.length) + 1;
+  tourIdx++;
+  flyToLocation(loc);
+  // flyToLocation pisa el status al aterrizar; el contador se repone después.
+  setTimeout(() => { if (tourTimer) setStatus('✈ ' + n + '/' + items.length + ' · ' + loc.name); }, 4700);
+  tourTimer = setTimeout(() => tourStep(btn), TOUR_PAUSA);
+}
+function tourToggle(btn) {
+  if (tourTimer) { tourStop(btn); return; }
+  const items = tourItems();
+  if (!items.length) { setStatus('· no hay puntos en el circuito seleccionado'); return; }
+  btn.textContent = t('tour_stop'); btn.classList.add('on'); btn.setAttribute('data-i18n', 'tour_stop');
+  tourIdx = 0;
+  tourStep(btn);
+}
+function wireTour() {
+  const b = document.getElementById('p-tour');
+  if (b) b.onclick = (e) => { e.preventDefault(); tourToggle(b); };
+}
+if (document.readyState !== 'loading') wireTour();
+else document.addEventListener('DOMContentLoaded', wireTour);
 
 // ─── Búsqueda ──────────────────────────────────────────────────────
 async function geocodeNominatim(q) {
