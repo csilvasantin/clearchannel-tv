@@ -1114,5 +1114,53 @@
 <script defer src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script defer src="locations.js?v=caixabank-20260716b"></script>
 <script defer src="app.js?v=tour-20260717c"></script>
+
+<!-- ═══ Neo · host MetaHuman en vivo (widget flotante opt-in, reversible) — digitalavatar.ai ═══ -->
+<div id="neoDock">
+  <button id="neoFab" type="button" aria-label="Habla con Neo, host digital en vivo">
+    <span class="neo-dot"></span><span class="neo-lbl">Habla con <b>Neo</b></span>
+  </button>
+  <div id="neoPanel" hidden aria-label="Neo, host MetaHuman en vivo">
+    <div class="neo-head">
+      <span class="neo-hlive"><span class="neo-dot"></span>Neo · host en vivo</span>
+      <button id="neoClose" type="button" aria-label="Cerrar">&times;</button>
+    </div>
+    <div class="neo-body"><iframe id="neoFrame" title="Neo · MetaHuman en vivo" allow="autoplay; fullscreen; microphone" referrerpolicy="no-referrer"></iframe></div>
+    <div class="neo-foot">Humano digital en Unreal Engine 5 · <a href="https://digitalavatar.ai/metahuman.html" target="_blank" rel="noopener">digitalavatar.ai ↗</a></div>
+  </div>
+</div>
+<style>
+  #neoDock{ position:fixed; right:18px; bottom:18px; z-index:9000; font-family:ui-sans-serif,-apple-system,system-ui,sans-serif }
+  #neoFab{ display:inline-flex; align-items:center; gap:9px; padding:12px 17px; border-radius:999px; cursor:pointer;
+    background:linear-gradient(180deg,#0e3550,#0a2335); color:#bfe9ff; border:1px solid #2a7fa6; font-weight:700; font-size:.9rem;
+    box-shadow:0 10px 30px rgba(0,0,0,.45); transition:transform .15s, border-color .15s }
+  #neoFab:hover{ transform:translateY(-2px); border-color:#5fd0ff }
+  #neoFab .neo-lbl b{ color:#5fd0ff }
+  .neo-dot{ width:9px; height:9px; border-radius:50%; background:#6ce6a2; box-shadow:0 0 9px #6ce6a2; animation:neoP 1.3s infinite; flex:0 0 auto }
+  @keyframes neoP{ 50%{opacity:.3} }
+  #neoDock.open #neoFab{ display:none }
+  #neoPanel{ width:min(360px,calc(100vw - 28px)); background:rgba(6,12,20,.94); border:1px solid #1b3346; border-radius:18px;
+    overflow:hidden; box-shadow:0 22px 60px rgba(0,0,0,.6); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px) }
+  .neo-head{ display:flex; align-items:center; gap:8px; padding:11px 14px; border-bottom:1px solid #1b3346; color:#86a6bd; font-size:.78rem }
+  .neo-hlive{ display:inline-flex; align-items:center; gap:7px; color:#6ce6a2; font-weight:700 }
+  .neo-head #neoClose{ margin-left:auto; background:transparent; border:0; color:#86a6bd; font-size:1.4rem; line-height:1; cursor:pointer; padding:0 4px }
+  .neo-head #neoClose:hover{ color:#eaf6ff }
+  .neo-body{ background:#000 } #neoFrame{ display:block; width:100%; aspect-ratio:9/16; border:0; background:#000 }
+  .neo-foot{ padding:9px 14px; font-size:.7rem; color:#86a6bd } .neo-foot a{ color:#5fd0ff; text-decoration:none; font-weight:600 }
+  @media(max-width:520px){ #neoDock{ right:12px; bottom:12px } }
+</style>
+<script>
+  (function(){
+    var dock=document.getElementById('neoDock'), fab=document.getElementById('neoFab'),
+        panel=document.getElementById('neoPanel'), close=document.getElementById('neoClose'),
+        frame=document.getElementById('neoFrame');
+    var SRC='https://digitalavatar.ai/embed-mh.html?ask=1';   // facade: no conecta el stream hasta pulsar dentro
+    function open(){ if(!frame.getAttribute('src')) frame.setAttribute('src',SRC); panel.hidden=false; dock.classList.add('open'); }
+    function shut(){ panel.hidden=true; dock.classList.remove('open'); }
+    fab.addEventListener('click', function(){ panel.hidden ? open() : shut(); });
+    close.addEventListener('click', shut);
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !panel.hidden) shut(); });
+  })();
+</script>
 </body>
 </html>
