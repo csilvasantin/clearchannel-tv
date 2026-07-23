@@ -1118,6 +1118,7 @@
 <!-- ═══ Neo · host MetaHuman en vivo (widget flotante opt-in, reversible) — digitalavatar.ai ═══ -->
 <div id="neoDock">
   <button id="neoFab" type="button" aria-label="Habla con Neo, host digital en vivo">
+    <img class="neo-face" src="https://digitalavatar.ai/assets/neo-poster-1x1.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
     <span class="neo-dot"></span><span class="neo-lbl">Habla con <b>Neo</b></span>
   </button>
   <div id="neoPanel" hidden aria-label="Neo, host MetaHuman en vivo">
@@ -1131,7 +1132,9 @@
 </div>
 <style>
   #neoDock{ position:fixed; left:18px; bottom:18px; z-index:9000; font-family:ui-sans-serif,-apple-system,system-ui,sans-serif } /* izq: la dcha la ocupa BROADCAST ROOM */
-  #neoFab{ display:inline-flex; align-items:center; gap:9px; padding:12px 17px; border-radius:999px; cursor:pointer;
+  #neoFab .neo-face{ width:30px; height:30px; border-radius:50%; object-fit:cover; object-position:center 26%; flex:0 0 auto;
+    border:1px solid #2a7fa6; display:block; margin-left:-6px }
+  #neoFab{ display:inline-flex; align-items:center; gap:9px; padding:10px 17px 10px 12px; border-radius:999px; cursor:pointer;
     background:linear-gradient(180deg,#0e3550,#0a2335); color:#bfe9ff; border:1px solid #2a7fa6; font-weight:700; font-size:.9rem;
     box-shadow:0 10px 30px rgba(0,0,0,.45); transition:transform .15s, border-color .15s }
   #neoFab:hover{ transform:translateY(-2px); border-color:#5fd0ff }
