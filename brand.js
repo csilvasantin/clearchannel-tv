@@ -29,11 +29,11 @@
   function replaceBrand(value) {
     if (!isAdmira || !value) return value;
     return String(value)
+      .replace(/www\.clearchannel\.tv/gi, 'www.admira.app')
+      .replace(/clearchannel\.tv/gi, 'admira.app')
       .replace(/CLEAR(?:\s*<[^>]+>\s*)?·(?:\s*<[^>]+>\s*)?CHANNEL/g, 'ADMIRA·APP')
       .replace(/CLEAR·CHANNEL/g, 'ADMIRA·APP')
-      .replace(/Clear Channel/g, 'Admira App')
-      .replace(/clearchannel\.tv/g, 'admira.app')
-      .replace(/www\.clearchannel\.tv/g, 'www.admira.app');
+      .replace(/Clear\s+Channel/gi, 'Admira App');
   }
 
   function rewriteElement(element) {
