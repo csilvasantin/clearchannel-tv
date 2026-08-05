@@ -1,0 +1,8 @@
+/brand.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/brand.css
+  Cache-Control: public, max-age=0, must-revalidate
+
+/version.json
+  Cache-Control: no-store
