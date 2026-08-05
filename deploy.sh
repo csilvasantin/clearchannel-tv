@@ -26,6 +26,12 @@ fi
 VERSION="v.${DAY}.r${RELEASE}.${HOUR}"
 
 echo "→ GitHub (push de código, backup)…"
+# PRODUCCION ES LA RAMA PRINCIPAL. El 5-ago-2026 yokup.com estuvo horas
+# sirviendo una rama de trabajo y nadie se entero. Este guarda lo impide:
+# aborta si lo que tienes delante no es exactamente origin/main.
+echo "→ Rama…"
+source ~/Claude/admira-vault/guarda-rama.sh
+
 git push origin main 2>&1 | tail -1
 echo "→ Cloudflare Pages…"
 export CLOUDFLARE_API_TOKEN="$(bash ~/Claude/admira-vault/vault-get.sh CLOUDFLARE_API_TOKEN)"
