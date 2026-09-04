@@ -552,7 +552,8 @@ function ensureCircuitMatchesScope() {
 }
 
 // ─── Workers (mismos que xpace-os) ────────────────────────────────
-const PIXER = 'https://pixer-eleven.csilvasantin.workers.dev';
+// Dominio propio: LaLiga bloquea workers.dev/r2.dev en horas de fútbol (FLT-1633).
+const PIXER = 'https://api.admira.store';
 // Motor RTB real (subasta de segundo precio) — pixer-worker en api.admira.store.
 // GET /rtb/feed?limit=N y POST /rtb/decide. CORS habilitado para clearchannel.tv.
 const RTB_BASE = 'https://api.admira.store';
@@ -3486,7 +3487,8 @@ consumePixeriaDraftFromUrl();
 // dejando fuera los equipos dados de alta solos. Se traen aparte con ?selfreg=1
 // (payload mínimo) y se fusionan SOBRE lo ya cargado (aditivo, sin reemplazar),
 // así aparecen siempre y rápido. Refresca cada 60s para captar nuevas altas.
-const SELFREG_URL = 'https://omnipublicity-api.csilvasantin.workers.dev/locations?selfreg=1';
+// Dominio propio: LaLiga bloquea workers.dev/r2.dev en horas de fútbol (FLT-1633).
+const SELFREG_URL = 'https://brain.digitalavatar.ai/locations?selfreg=1';
 async function mergeSelfRegDevices(){
   try{
     const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), 6000);
@@ -3946,7 +3948,8 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
 // segmento que reporta el gemelo al cerrar/registrar el día, y los muestra con su
 // CPM (RTB). Misma tabla CPM que el gemelo (la pauta vive en clearchannel.tv).
 (function(){
-  const PIXER='https://pixer-eleven.csilvasantin.workers.dev';
+  // Dominio propio: LaLiga bloquea workers.dev/r2.dev en horas de fútbol (FLT-1633).
+  const PIXER='https://api.admira.store';
   const SEG_CPM={ joven_m:9, joven_f:9, adulto_m:8, adulto_f:8.5, senior_m:5, senior_f:5, nino_m:3.5, nino_f:3.5 };
   const AGEL={nino:'Niño',joven:'Joven',adulto:'Adulto',senior:'Senior'};
   function todayStr(){ const d=new Date(); return ''+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0'); }

@@ -53,7 +53,8 @@
 </div>
 
 <script>
-const WORKER='https://pixer-eleven.csilvasantin.workers.dev';
+// Dominio propio: LaLiga bloquea workers.dev/r2.dev en horas de fútbol (FLT-1633).
+const WORKER='https://api.admira.store';
 const $=(s)=>document.querySelector(s);
 const state={stores:[],store:null,screens:[],screen:null,date:'',cal:null,auto:false,autoTimer:null};
 function slug(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}

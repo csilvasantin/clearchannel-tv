@@ -9,13 +9,15 @@ SEED="${1:-}"
 [ -f "$SEED" ] || { echo "uso: merge-circuit-kv.sh <seed.json>"; exit 2; }
 
 GRID="$(cat "$HOME/.agents-comms/.synckey" 2>/dev/null || true)"
-export ADMIN_TOKEN="$(curl -fsS -m 12 "https://admira-vault.csilvasantin.workers.dev/secret/ADMIN_TOKEN?key=$GRID" -H 'User-Agent: Mozilla/5.0' 2>/dev/null | python3 -c 'import sys,json;print(json.load(sys.stdin)["value"])' 2>/dev/null || true)"
+# Dominio propio: LaLiga bloquea workers.dev/r2.dev en horas de fútbol (FLT-1633).
+export ADMIN_TOKEN="$(curl -fsS -m 12 "https://vault.yokup.com/secret/ADMIN_TOKEN?key=$GRID" -H 'User-Agent: Mozilla/5.0' 2>/dev/null | python3 -c 'import sys,json;print(json.load(sys.stdin)["value"])' 2>/dev/null || true)"
 [ -n "$ADMIN_TOKEN" ] || export ADMIN_TOKEN="$(security find-generic-password -s omnipublicity-admin-token -w 2>/dev/null)"
 [ -n "$ADMIN_TOKEN" ] || { echo "✗ sin ADMIN_TOKEN (ni bóveda ni Llavero)"; exit 1; }
 
 SEED="$SEED" python3 - <<'PY'
 import os, json, urllib.request, urllib.error
-API="https://omnipublicity-api.csilvasantin.workers.dev/locations"
+# Dominio propio: LaLiga bloquea workers.dev/r2.dev en horas de fútbol (FLT-1633).
+API="https://brain.digitalavatar.ai/locations"
 UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 tok=os.environ["ADMIN_TOKEN"]; seed=json.load(open(os.environ["SEED"]))
 d=json.load(urllib.request.urlopen(urllib.request.Request(API, headers={"User-Agent":UA,"Accept":"application/json"}), timeout=25))

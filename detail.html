@@ -263,7 +263,8 @@ renderDetail();
 })();
 
 // ── Consumo de CPM EN VIVO del Xpacio (lee el día parcial que el gemelo empuja) ──
-const PIXER='https://pixer-eleven.csilvasantin.workers.dev';
+// Dominio propio: LaLiga bloquea workers.dev/r2.dev en horas de fútbol (FLT-1633).
+const PIXER='https://api.admira.store';
 const LC_SEG={nino_m:'♂ Niño',nino_f:'♀ Niña',joven_m:'♂ Joven',joven_f:'♀ Joven',adulto_m:'♂ Adulto',adulto_f:'♀ Adulta',senior_m:'♂ Senior',senior_f:'♀ Senior'};
 function lcToday(){const d=new Date();return ''+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
 async function renderLive(){

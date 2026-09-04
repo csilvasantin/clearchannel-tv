@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-const OMNIP_API = process.env.OMNIP_API || 'https://omnipublicity-api.csilvasantin.workers.dev';
+// Dominio propio: LaLiga bloquea workers.dev/r2.dev en horas de fútbol (FLT-1633).
+const OMNIP_API = process.env.OMNIP_API || 'https://brain.digitalavatar.ai';
 const ADMIN_TOKEN = process.env.OMNIP_ADMIN_TOKEN || '';
 const DEFAULT_RADIUS_KM = Number(process.env.DESIGUAL_RADIUS_KM || 75);
 const SHOULD_PUBLISH = process.argv.includes('--publish');
