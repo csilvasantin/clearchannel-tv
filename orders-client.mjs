@@ -1,4 +1,4 @@
-import { normalizeOrder } from './order-model.mjs';
+import { normalizeOrder } from './order-model.mjs?v=20260905-2';
 // Idempotency is derived from the request, so retry/reload/another tab is safe.
 export class OrdersClient {
   constructor(fetcher = (...args) => fetch(...args)) { this.fetcher = fetcher; }

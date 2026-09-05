@@ -80,3 +80,11 @@ test('idempotency survives cosmetic labels and draft timestamp changes',async()=
  const second=await new OrdersClient(fetcher).create({...payload(),circuitScope:{value:'local',label:'Localized label'},createdAt:'later'});
  assert.equal(first.id,second.id);
 });
+
+test('planner budget survives storage and participates in idempotency',async()=>{
+ const env={ORDERS_DB:database()},cookie=await session(env);
+ const r=await handleOrders(request('POST',{...payload(),budget:500},cookie),env);assert.equal(r.status,201);
+ const stored=(await (await handleOrders(request('GET',null,cookie),env)).json()).orders[0];assert.equal(stored.budget,500);
+ assert.equal((await handleOrders(request('POST',{...payload(),budget:600},cookie),env)).status,409);
+ for(const budget of [-1,0,1e13,'500'])assert.equal((await handleOrders(request('POST',{...payload(),budget},cookie),env)).status,400);
+});

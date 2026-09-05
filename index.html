@@ -328,6 +328,16 @@
   .saved-order{padding:12px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
   .saved-order small{display:block;color:var(--mut);margin-top:4px}.saved-order p{margin:4px 0}
   .buy-submit:disabled{opacity:.6;cursor:wait}
+  .planner-card{width:min(1100px,calc(100vw - 28px))}.planner-content{padding:18px 20px}.planner-content>p{font-size:13px;line-height:1.5;color:var(--mut)}
+  .plan-inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.plan-inputs label{display:grid;gap:6px;font-size:12px}
+  .plan-inputs input,.plan-inputs select,.plan-checkout input{min-width:0;max-width:100%;width:100%;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--card2);color:var(--ink);padding:0 10px;box-sizing:border-box}
+  .plan-target-row{display:flex;align-items:center;gap:12px;margin:12px 0}.plan-target-row p{flex:1;font-size:11px;color:var(--mut);line-height:1.5}
+  .plan-table-scroll{overflow:auto;max-height:360px;border:1px solid var(--line);border-radius:10px}.plan-table{width:100%;border-collapse:collapse;font-size:12px;min-width:620px}
+  .plan-table th,.plan-table td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line)}.plan-table th{position:sticky;top:0;background:var(--card2);z-index:1}.plan-table label{cursor:pointer;display:flex;align-items:center;gap:8px}.plan-table tr.chosen{background:rgba(120,243,255,.1)}.plan-table small{display:block;margin-top:6px}
+  .plan-fit{color:var(--good)}.plan-warning{color:var(--accent)}.plan-actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .planner-content button,.plan-checkout button{border:1px solid var(--line);background:var(--card2);color:var(--ink);padding:10px 14px;border-radius:8px;cursor:pointer}.planner-content button:disabled{opacity:.5;cursor:default}.planner-content .plan-primary{background:var(--brand);color:var(--bg);font-weight:700}
+  .planner-content small{font-size:11px;color:var(--mut);line-height:1.5}.plan-checkout{border:1px solid var(--line);padding:12px;border-radius:8px;margin-bottom:14px}.plan-checkout label,.plan-checkout p{font-size:12px}.plan-checkout p{color:var(--accent)}
+  @media(max-width:640px){.plan-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}.planner-content{padding:14px}.plan-actions{flex-direction:column}.plan-actions button{width:100%}}
   .buy-submit:hover{filter:brightness(1.07)}
   .buy-legal{margin:10px 0 0;color:var(--mut);font-size:11px;line-height:1.35}
   .buy-error{margin-top:10px;color:var(--warn);font-size:12px;line-height:1.35}
@@ -654,6 +664,7 @@
       <div id="suggest" class="suggest" hidden></div>
     </div>
     <nav>
+      <button type="button" class="header-circuit-btn" id="header-planner-btn" data-pl-es="Planificar campaña" data-pl-en="Plan campaign">Planificar campaña</button>
       <button type="button" class="header-circuit-btn" id="header-circuit-btn" data-i18n="select_circuit">Seleccionar circuito</button>
       <button type="button" class="header-circuit-btn" id="header-target-btn" data-i18n="select_target">Seleccionar target</button>
       <button type="button" class="header-circuit-btn" id="header-orders-btn" data-i18n="orders_title">Mis solicitudes</button>
@@ -815,6 +826,7 @@
         <summary id="circuit-list-title" data-i18n="circuit_points_title">Puntos del circuito</summary>
         <div class="circuit-list" id="circuit-list"></div>
       </details>
+      <button type="button" class="circuit-demo" id="circuit-planner-btn" data-pl-es="Comparar circuitos" data-pl-en="Compare circuits">Comparar circuitos</button>
       <div class="circuit-demo-row">
         <button class="circuit-demo" type="button" id="circuit-demo" data-i18n="demo_circuit">Demo circuito</button>
         <div class="circuit-demo-progress" id="circuit-demo-progress"></div>
@@ -980,6 +992,13 @@
 
       </div>
       <aside class="buy-summary">
+        <section id="buy-plan" hidden class="plan-checkout">
+          <h4 data-pl-es="Tu plan de campaña" data-pl-en="Your campaign plan">Tu plan de campaña</h4>
+          <label for="buy-plan-budget" data-pl-es="Presupuesto orientativo (€)" data-pl-en="Planning budget (€)">Presupuesto orientativo (€)</label>
+          <input id="buy-plan-budget" type="number" min="0.01" max="1000000000000" step="0.01">
+          <p id="buy-plan-status" role="status"></p>
+          <button type="button" id="buy-edit-selection" data-pl-es="Editar puntos seleccionados" data-pl-en="Edit selected locations">Editar puntos seleccionados</button>
+        </section>
         <h4 data-i18n="buy_summary">Resumen</h4>
         <div class="buy-line"><span data-i18n="buy_points">Puntos</span><b id="buy-points">—</b></div>
         <div class="buy-line"><span data-i18n="buy_dates">Fechas</span><b id="buy-days">—</b></div>
@@ -1000,6 +1019,29 @@
       </aside>
     </div>
   </div>
+</div>
+
+
+<div class="buy-modal" id="planner-modal" hidden>
+ <div class="buy-card planner-card" role="dialog" aria-modal="true" aria-labelledby="plan-title">
+  <div class="buy-head"><div><div class="buy-kicker" data-pl-es="De la comparación a la solicitud" data-pl-en="From comparison to request">De la comparación a la solicitud</div><h3 id="plan-title" data-pl-es="Planificar campaña" data-pl-en="Plan campaign">Planificar campaña</h3></div><button type="button" class="buy-close" id="plan-close" aria-label="Cerrar planificador">×</button></div>
+  <div class="planner-content">
+   <p data-pl-es="Compara circuitos con las mismas fechas y pases. Las impresiones y los precios son estimaciones, no audiencia única ni disponibilidad confirmada." data-pl-en="Compare circuits with the same dates and passes. Impressions and prices are estimates, not unique reach or confirmed availability.">Compara circuitos con las mismas fechas y pases. Las impresiones y los precios son estimaciones, no audiencia única ni disponibilidad confirmada.</p>
+   <div class="plan-inputs" id="plan-inputs">
+    <label><span data-pl-es="Alcance" data-pl-en="Scope">Alcance</span><select id="plan-scope"><option value="all" data-pl-es="Todos" data-pl-en="All">Todos</option><option value="global">Global</option><option value="national" data-pl-es="Nacional" data-pl-en="National">Nacional</option><option value="city" data-pl-es="Ciudad" data-pl-en="City">Ciudad</option><option value="local">Local</option></select></label>
+    <label><span data-pl-es="Inicio" data-pl-en="Start">Inicio</span><input id="plan-start" type="date"></label>
+    <label><span data-pl-es="Fin" data-pl-en="End">Fin</span><input id="plan-end" type="date"></label>
+    <label><span data-pl-es="Pases al día" data-pl-en="Daily passes">Pases al día</span><select id="plan-passes"><option value="250">250</option><option value="500">500</option><option value="1000">1.000</option><option value="2500">2.500</option></select></label>
+    <label><span data-pl-es="Duración" data-pl-en="Duration">Duración</span><select id="plan-duration"><option value="15">15 s</option><option value="30">30 s</option><option value="45">45 s</option><option value="60">60 s</option></select></label>
+    <label><span data-pl-es="Presupuesto (€)" data-pl-en="Budget (€)">Presupuesto (€)</span><input id="plan-budget" type="number" min="0.01" max="1000000000000" step="0.01"></label>
+   </div>
+   <div class="plan-target-row"><p id="plan-target"></p><button type="button" id="plan-target-edit" data-pl-es="Editar target" data-pl-en="Edit target">Editar target</button></div>
+   <div class="plan-table-scroll" tabindex="0" role="region" aria-label="Comparación de circuitos"><table class="plan-table"><thead><tr><th data-pl-es="Circuito" data-pl-en="Circuit">Circuito</th><th data-pl-es="Puntos" data-pl-en="Locations">Puntos</th><th data-pl-es="Impresiones estimadas" data-pl-en="Estimated impressions">Impresiones estimadas</th><th data-pl-es="Total estimado" data-pl-en="Estimated total">Total estimado</th><th data-pl-es="Presupuesto" data-pl-en="Budget">Presupuesto</th></tr></thead><tbody id="plan-table-body"></tbody></table></div>
+   <p id="plan-summary" role="status"></p><p id="plan-status" role="status"></p>
+   <div class="plan-actions"><button type="button" id="plan-new" data-pl-es="Comparar catálogo actual" data-pl-en="Compare current catalogue">Comparar catálogo actual</button><button type="button" id="plan-save" data-pl-es="Guardar plan" data-pl-en="Save plan">Guardar plan</button><button type="button" class="plan-primary" id="plan-use" data-pl-es="Preparar solicitud" data-pl-en="Prepare request">Preparar solicitud</button></div>
+   <small data-pl-es="Se guarda en este navegador. Puedes editar fechas, presupuesto y puntos antes de enviar la solicitud. No se reserva ni se cobra al planificar." data-pl-en="Saved in this browser. Edit dates, budget and locations before sending your request. Planning does not reserve inventory or take payment.">Se guarda en este navegador. Puedes editar fechas, presupuesto y puntos antes de enviar la solicitud. No se reserva ni se cobra al planificar.</small>
+  </div>
+ </div>
 </div>
 
 <div class="splash hidden" id="splash">
@@ -1116,7 +1158,9 @@
 <!-- Cargados aquí (no en <head>) para que el chrome de la UI pinte antes; preload los anticipa -->
 <script defer src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script defer src="locations.js?v=caixabank-20260716b"></script>
-<script defer src="app.js?v=orders-20260905-1"></script>
+<script defer src="planner-core.js?v=20260905-1"></script>
+<script defer src="app.js?v=planner-20260905-1"></script>
+<script defer src="planner-ui.js?v=20260905-1"></script>
 <script type="module" src="walk-launch.mjs?v=20260905-1"></script>
 
 <!-- ═══ Neo · host MetaHuman en vivo (widget flotante opt-in, reversible) — digitalavatar.ai ═══ -->

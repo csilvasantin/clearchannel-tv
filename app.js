@@ -4,6 +4,7 @@
 // omnipublicity-api (KV) y, si trae algo distinto, re-renderizamos sources +
 // counters. Primer load = instantáneo; segundo paint = autoritativo.
 let LOCATIONS = window.loadOmnipLocations();
+let plannerCatalogReady = false;
 let LOC_BY_ID = new Map(LOCATIONS.map(l => [l.id, l]));
 let locationsGeoJSONCache = null;
 let locationsGeoJSONCacheKey = '';
@@ -519,6 +520,7 @@ function setLang(lang){
   try { renderCircuitScope(); } catch(_){}
   try { renderCircuitSelector(); } catch(_){}
   try { renderSavedOrders(); } catch(_){}
+  if (typeof translatePlanner === 'function') translatePlanner();
   try { renderCircuitTarget(); } catch(_){}
   try { updateBuyQuote(); } catch(_){}
   try { const title = document.getElementById('buy-title'); if (title && !document.getElementById('buy-modal')?.hidden) title.textContent = `${t('buy_title_base')} · ${currentCircuit().label}`; } catch(_){}
@@ -884,7 +886,7 @@ function currentCircuitItems() {
   const items = selectedCircuitId !== 'metro_bcn' || selectedMetroLine === 'all'
     ? circuit.items
     : circuit.items.filter(loc => metroLinesForLocation(loc).includes(selectedMetroLine));
-  return items.filter(locationMatchesCircuitTarget);
+  return items.filter(loc => locationMatchesCircuitTarget(loc));
 }
 
 function currentCircuitLabel() {
@@ -962,10 +964,10 @@ function hasTargetIntersection(selected, available) {
   return selected.some(value => allowed.has(value));
 }
 
-function locationMatchesCircuitTarget(loc) {
+function locationMatchesCircuitTarget(loc, target = circuitTarget) {
   const seg = locationSegmentation(loc);
   return Object.entries(CIRCUIT_TARGET_SEGMENT_FIELDS).every(([targetGroup, segField]) => {
-    const selected = Array.isArray(circuitTarget[targetGroup]) ? circuitTarget[targetGroup] : [];
+    const selected = Array.isArray(target[targetGroup]) ? target[targetGroup] : [];
     const available = Array.isArray(seg[segField]) ? seg[segField] : [];
     return hasTargetIntersection(selected, available);
   });
@@ -1146,6 +1148,7 @@ function bindCircuitTargetControls() {
     circuitMapFilterActive = true;        // el target filtra el mapa al aplicarlo
     refreshSelectedMapSource();
     updateBiddingLiveCounters();
+    if (typeof persistCheckoutPlan === 'function') persistCheckoutPlan();
   });
 }
 
@@ -1339,6 +1342,7 @@ function selectWholeCircuit() {
   circuitAutoSelect = true;
   selectedLocationIds = new Set(currentCircuitItems().map(l => l.id));
   renderCircuitSelector();
+  if (typeof persistCheckoutPlan === 'function') persistCheckoutPlan();
 }
 
 function clearCircuitSelection() {
@@ -1459,13 +1463,11 @@ function calculateBuyQuote() {
   const passesDay = Number(document.getElementById('buy-passes')?.value || 0);
   const durationSec = Math.max(0, Number(document.getElementById('buy-duration')?.value || 15));
   const durationFactor = Math.max(1, durationSec / 15);
-  const dailyImpr = locs.reduce((a, loc) => a + locationDailyImpr(loc), 0);
-  const surfaces = locs.reduce((a, loc) => a + locationSurfaceCount(loc), 0);
-  const cpm = selectedWeightedCpm(locs);
-  const demand = dateDemandMultiplier(start, end);
-  const passFactor = Math.max(0.15, Math.min(1.5, passesDay / 1000));
-  const estimatedImpr = Math.round(dailyImpr * days * passFactor);
-  const price = Math.max(0, Math.round((estimatedImpr / 1000) * cpm * demand * durationFactor));
+  const metrics = CampaignPlanner.quote(locs.map(loc => {
+    const cpms = locationCpmValues(loc);
+    return {id:loc.id, impr:locationDailyImpr(loc), surfaces:locationSurfaceCount(loc), cpm:cpms.length ? cpms.reduce((a,b)=>a+b,0)/cpms.length : 5};
+  }), {start:document.getElementById('buy-start')?.value, end:document.getElementById('buy-end')?.value, passesDay, durationSec});
+  const {dailyImpr,surfaces,cpm,demand,passFactor,estimatedImpr,price} = metrics;
   const passDateInRange = !!(start && end && passDate && passDate >= start && passDate <= end);
   return {locs, start, end, passDate, passTime, passDateInRange, days, passesDay, durationSec, durationFactor, dailyImpr, surfaces, cpm, demand, passFactor, estimatedImpr, price};
 }
@@ -1687,6 +1689,7 @@ function openBuyCheckout() {
   const state = document.getElementById('buy-state');
   if (state) state.textContent = t('order_draft');
   loadSavedOrders();
+  if (typeof renderPlannerBudget === 'function') renderPlannerBudget();
 }
 
 function closeBuyCheckout() {
@@ -1700,6 +1703,10 @@ function validateBuyForm() {
   const email = document.getElementById('buy-email')?.value.trim();
   const campaign = document.getElementById('buy-campaign')?.value.trim();
   const errors = [];
+  if (typeof plannerBudget === 'number') {
+    const budget = Number(document.getElementById('buy-plan-budget').value);
+    if (!Number.isFinite(budget) || budget < 0.01 || budget > 1e12) errors.push(LANG === 'en' ? 'Enter a valid budget.' : 'Introduce un presupuesto válido.');
+  }
   if (!q.locs.length) errors.push(t('err_select_point'));
   if (!q.days) errors.push(t('err_dates'));
   if (!q.passDateInRange || !validTimeValue(q.passTime)) errors.push(t('err_pass_moment'));
@@ -1714,7 +1721,7 @@ let orderSubmitting = false;
 let ordersClientPromise;
 let savedOrders = [];
 function ordersClient() {
-  if (!ordersClientPromise) ordersClientPromise = import('./orders-client.mjs?v=20260905-1').then(({OrdersClient}) => new OrdersClient()).catch(error => { ordersClientPromise = null; throw error; });
+  if (!ordersClientPromise) ordersClientPromise = import('./orders-client.mjs?v=20260905-2').then(({OrdersClient}) => new OrdersClient()).catch(error => { ordersClientPromise = null; throw error; });
   return ordersClientPromise;
 }
 function renderSavedOrders() {
@@ -1729,7 +1736,7 @@ function renderSavedOrders() {
       <p>${escHtml(reservation ? t(reservation) : '—')} · ${escHtml(payment ? t(payment) : '—')}</p>
       <p>${escHtml(order.brand)} · ${escHtml(order.start)} → ${escHtml(order.end)} · ${order.ids.length} ${escHtml(t('buy_points'))}</p>
       <p>${escHtml(order.passDate)} ${escHtml(order.passTime)} · ${order.durationSec}s · ${order.passesDay} ${escHtml(t('buy_passes'))}</p>
-      <p>${escHtml(t('buy_total'))}: ${escHtml(formatMoney(order.estimatedPrice))}</p></article>`;
+      <p>${escHtml(t('buy_total'))}: ${escHtml(formatMoney(order.estimatedPrice))}</p>${typeof order.budget === 'number' ? `<p>${LANG === 'en' ? 'Planning budget' : 'Presupuesto orientativo'}: ${escHtml(formatMoney(order.budget))}</p>` : ''}</article>`;
   }).join('');
 }
 async function loadSavedOrders() {
@@ -1763,6 +1770,7 @@ async function submitBuyCheckout() {
     passTime: document.getElementById('buy-pass-time').value,
     passesDay: res.q.passesDay, durationSec: res.q.durationSec,
     target: circuitTargetPayload(), creative: pixeriaDraftCreativePayload(),
+    ...(typeof plannerBudget === 'number' ? {budget:plannerBudget} : {}),
     price: res.q.price, brand: res.brand, email: res.email, campaign: res.campaign
   };
   orderSubmitting = true;
@@ -1812,6 +1820,7 @@ function bindBuyCheckout() {
         if (passDate.value && end.value && passDate.value > end.value) passDate.value = end.value;
       }
       updateBuyQuote();
+      if (typeof persistCheckoutPlan === 'function') persistCheckoutPlan();
     });
   });
   modal.addEventListener('input', () => {
@@ -1941,8 +1950,6 @@ function bindCircuitSelector() {
         panelEl.classList.remove('collapsed');
         if (toggle) toggle.textContent = '−';
         setCircuitTargetMode(false);
-        circuitAutoSelect = false;
-        selectedLocationIds = new Set();
         renderCircuitSelector();
       } else {
         stopCircuitDemo(false);
@@ -2006,6 +2013,7 @@ function bindCircuitSelector() {
     if (box.checked) selectedLocationIds.add(box.value);
     else selectedLocationIds.delete(box.value);
     updateCircuitSummary();
+    if (typeof persistCheckoutPlan === 'function') persistCheckoutPlan();
     refreshSelectedMapSource();
   });
   bindCircuitTargetControls();
@@ -3517,8 +3525,14 @@ restoreWalkReturn();
       const el = document.getElementById('p-cpm'); if (el) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
     }
     renderCircuitSelector();
+    if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();
     updateLocationsSource();
   } catch {}
+  finally {
+    plannerCatalogReady = true;
+    if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();
+    if (!document.getElementById('buy-modal').hidden) updateBuyQuote();
+  }
 })();
 
 // ─── Equipos auto-registrados (admira.tv/alta) → merge ligero ──────

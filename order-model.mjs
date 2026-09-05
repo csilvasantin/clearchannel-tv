@@ -14,6 +14,7 @@ export function normalizeOrder(input) {
   const brand = text(input.brand), campaign = text(input.campaign), email = text(input.email, 254).toLowerCase();
   if (!brand || !campaign || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw Error('invalid_contact');
   if (!number(input.price, 0, 1e12)) throw Error('invalid_estimate');
+  if (input.budget != null && !number(input.budget, 0.01, 1e12)) throw Error('invalid_budget');
   const target = {};
   for (const key of ['placements','genders','ages','timeSlots']) {
     const values = input.target?.[key] || [];
@@ -30,5 +31,6 @@ export function normalizeOrder(input) {
     start: input.start, end: input.end, passDate: input.passDate, passTime: input.passTime,
     passesDay: input.passesDay, durationSec: input.durationSec, brand, campaign, email, target, creative,
     // The browser quote is indicative. It cannot confirm inventory or charge money.
-    estimatedPrice: Math.round(input.price * 100) / 100, currency: 'EUR' };
+    estimatedPrice: Math.round(input.price * 100) / 100, currency: 'EUR',
+    ...(input.budget != null ? {budget:Math.round(input.budget*100)/100} : {}) };
 }
