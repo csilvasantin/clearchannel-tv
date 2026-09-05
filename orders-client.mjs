@@ -1,7 +1,7 @@
 import { normalizeOrder } from './order-model.mjs';
 // Idempotency is derived from the request, so retry/reload/another tab is safe.
 export class OrdersClient {
-  constructor(fetcher = (...args) => fetch(...args)) { this.fetcher = fetcher; this.session = null; }
+  constructor(fetcher = (...args) => fetch(...args)) { this.fetcher = fetcher; }
   async request(options = {}) {
     const response = await this.fetcher('/api/orders', { credentials: 'same-origin', cache: 'no-store',
       signal: AbortSignal.timeout(15000), ...options });
@@ -10,13 +10,14 @@ export class OrdersClient {
     return data;
   }
   async list() {
-    const data = await this.request();
-    this.session = Promise.resolve();
+    // Serialize first cookie issuance across tabs; subsequent reads use the same owner.
+    const read = () => this.request();
+    const data = typeof navigator !== 'undefined' && navigator.locks
+      ? await navigator.locks.request('cc-orders-session', read) : await read();
     return data.orders;
   }
   async create(payload) {
-    if (!this.session) this.session = this.list().catch(error => { this.session = null; throw error; });
-    await this.session;
+    await this.list();
     const body = JSON.stringify(payload);
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(normalizeOrder(payload))));
     const key = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
