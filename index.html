@@ -285,10 +285,10 @@
   .target-actions .target-apply:disabled{opacity:.45;cursor:default;filter:saturate(.4)}
 
   /* Checkout de compra de circuito */
-  .buy-modal{position:fixed;inset:0;z-index:24;background:rgba(2,8,13,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:18px}
+  .buy-modal{position:fixed;inset:0;z-index:11000;background:rgba(2,8,13,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:18px}
   .buy-modal[hidden]{display:none}
   .buy-card{position:relative;width:min(880px,calc(100vw - 28px));max-height:calc(100vh - 36px);overflow:auto;background:rgba(10,22,32,.97);border:1px solid var(--line);border-radius:14px;box-shadow:0 24px 80px rgba(0,0,0,.58),inset 0 1px 0 rgba(120,243,255,.12)}
-  .buy-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:18px 20px;border-bottom:1px solid var(--line)}
+  .buy-head{position:sticky;top:0;z-index:2;background:var(--card);display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:18px 20px;border-bottom:1px solid var(--line)}
   .buy-kicker{font-family:monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
   .buy-head h3{margin:0;color:var(--ink);font-size:21px;letter-spacing:-.01em}
   .buy-close{width:32px;height:32px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--mut);font-size:22px;line-height:1;cursor:pointer;flex-shrink:0}
@@ -320,6 +320,14 @@
   .buy-total span{font-family:monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
   .buy-total b{font-size:30px;color:var(--good);letter-spacing:-.02em}
   .buy-submit{width:100%;height:42px;margin-top:14px;border:0;border-radius:9px;background:var(--brand);color:#001620;font-family:monospace;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+  .saved-orders{margin:0 18px 12px;padding:14px;border:1px solid var(--line);border-radius:10px}
+  .saved-orders-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .saved-orders h3{margin:0;font-size:15px}.saved-orders p{font-size:12px;color:var(--mut);line-height:1.5}
+  .saved-orders button{background:var(--card2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;cursor:pointer}
+  #saved-orders-list{max-height:250px;overflow:auto;font-size:13px}
+  .saved-order{padding:12px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
+  .saved-order small{display:block;color:var(--mut);margin-top:4px}.saved-order p{margin:4px 0}
+  .buy-submit:disabled{opacity:.6;cursor:wait}
   .buy-submit:hover{filter:brightness(1.07)}
   .buy-legal{margin:10px 0 0;color:var(--mut);font-size:11px;line-height:1.35}
   .buy-error{margin-top:10px;color:var(--warn);font-size:12px;line-height:1.35}
@@ -648,6 +656,7 @@
     <nav>
       <button type="button" class="header-circuit-btn" id="header-circuit-btn" data-i18n="select_circuit">Seleccionar circuito</button>
       <button type="button" class="header-circuit-btn" id="header-target-btn" data-i18n="select_target">Seleccionar target</button>
+      <button type="button" class="header-circuit-btn" id="header-orders-btn" data-i18n="orders_title">Mis solicitudes</button>
       <a href="backoffice.html" data-i18n="login">Login</a>
       <div class="lang-switch" id="lang-switch" role="group" aria-label="Idioma / Language">
         <button type="button" class="lang-btn" id="lang-toggle" data-lang-target="en" aria-label="Switch to English">ENG</button>
@@ -885,6 +894,12 @@
       </div>
       <button class="buy-close" id="buy-close" type="button" data-i18n-aria="close" aria-label="Cerrar">×</button>
     </div>
+    <section class="saved-orders" id="saved-orders" aria-labelledby="saved-orders-title">
+      <div class="saved-orders-heading"><h3 id="saved-orders-title" data-i18n="orders_title">Mis solicitudes</h3>
+        <button type="button" id="saved-orders-refresh" data-i18n="orders_refresh">Actualizar</button></div>
+      <p data-i18n="orders_note">Últimas 20 solicitudes de este navegador. Si borras sus cookies o usas otro dispositivo, no podrás recuperarlas aquí.</p>
+      <div id="saved-orders-list" aria-live="polite"></div>
+    </section>
     <div class="buy-body">
       <div class="buy-main">
         <section class="pixeria-draft" id="pixeria-draft" hidden>
@@ -962,23 +977,7 @@
             </div>
           </div>
         </section>
-        <section class="buy-step">
-          <h4 data-i18n="buy_credit_card">Tarjeta de crédito</h4>
-          <div class="buy-pay-grid">
-            <div class="buy-field">
-              <label for="buy-card" data-i18n="buy_card_number">Número</label>
-              <input id="buy-card" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242">
-            </div>
-            <div class="buy-field">
-              <label for="buy-exp" data-i18n="buy_exp">Caduca</label>
-              <input id="buy-exp" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA">
-            </div>
-            <div class="buy-field">
-              <label for="buy-cvc">CVC</label>
-              <input id="buy-cvc" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="123">
-            </div>
-          </div>
-        </section>
+
       </div>
       <aside class="buy-summary">
         <h4 data-i18n="buy_summary">Resumen</h4>
@@ -992,11 +991,12 @@
         <div class="buy-line"><span data-i18n="buy_date_demand">Demanda fecha</span><b id="buy-demand">—</b></div>
         <div class="buy-line"><span data-i18n="buy_scope">Ámbito</span><b id="buy-scope">Local</b></div>
         <div class="buy-line"><span data-i18n="buy_target">Target</span><b id="buy-target">—</b></div>
-        <div class="buy-total"><span data-i18n="buy_total">Total</span><b id="buy-total">—</b></div>
-        <button class="buy-submit" id="buy-submit" type="button" data-i18n="buy_submit">Pagar y reservar</button>
-        <p class="buy-legal" data-i18n="buy_legal">La web valida la tarjeta y prepara la orden sin guardar el número completo. El cargo real queda listo para enlazar con la la pasarela de pago.</p>
-        <div class="buy-error" id="buy-error" hidden></div>
-        <div class="buy-ok" id="buy-ok" hidden></div>
+        <div class="buy-total"><span data-i18n="buy_total">Total estimado</span><b id="buy-total">—</b></div>
+        <p id="buy-state" role="status" data-i18n="order_draft">Borrador · todavía sin enviar</p>
+        <button class="buy-submit" id="buy-submit" type="button" data-i18n="buy_submit">Enviar solicitud</button>
+        <p class="buy-legal" data-i18n="buy_legal">Guardaremos tu solicitud. La disponibilidad y el precio están pendientes de confirmación; no se realiza ningún cargo ni se inicia la emisión.</p>
+        <div class="buy-error" id="buy-error" role="alert" hidden></div>
+        <div class="buy-ok" id="buy-ok" role="status" hidden></div>
       </aside>
     </div>
   </div>
@@ -1116,7 +1116,7 @@
 <!-- Cargados aquí (no en <head>) para que el chrome de la UI pinte antes; preload los anticipa -->
 <script defer src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script defer src="locations.js?v=caixabank-20260716b"></script>
-<script defer src="app.js?v=walk-20260905-1"></script>
+<script defer src="app.js?v=orders-20260905-1"></script>
 <script type="module" src="walk-launch.mjs?v=20260905-1"></script>
 
 <!-- ═══ Neo · host MetaHuman en vivo (widget flotante opt-in, reversible) — digitalavatar.ai ═══ -->

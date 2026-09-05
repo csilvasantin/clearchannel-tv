@@ -1,3 +1,5 @@
+import { handleOrders } from './server/orders.mjs';
+
 const ADMIRA_HOST = /(^|\.)admira\.app$/i;
 
 function replaceBrand(value) {
@@ -39,6 +41,7 @@ function admiraRewriter(pathname) {
 
 export default {
   async fetch(request, env) {
+    if (new URL(request.url).pathname.startsWith('/api/orders')) return handleOrders(request, env);
     var response = await env.ASSETS.fetch(request);
     var url = new URL(request.url);
     var contentType = response.headers.get('content-type') || '';

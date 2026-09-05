@@ -1,0 +1,13 @@
+name = "clearchannel-tv"
+compatibility_date = "2026-07-02"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "ORDERS_DB"
+database_name = "clearchannel-orders"
+database_id = "bea676cb-4c37-41fe-a903-16750c11c2b1"
+migrations_dir = "migrations"
+
+# Preview deployments must not write to production orders.
+[env.preview]
+d1_databases = []

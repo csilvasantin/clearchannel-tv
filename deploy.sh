@@ -34,7 +34,11 @@ source ~/Claude/admira-vault/guarda-rama.sh
 
 git push origin main 2>&1 | tail -1
 echo "→ Cloudflare Pages…"
-export CLOUDFLARE_API_TOKEN="$(bash ~/Claude/admira-vault/vault-get.sh CLOUDFLARE_API_TOKEN)"
+# The existing Wrangler session can manage D1 bindings; the legacy Pages token
+# remains available for machines that deploy with the vault credential.
+if [ "${ADMIRANEXT_USE_WRANGLER_SESSION:-0}" != "1" ]; then
+  export CLOUDFLARE_API_TOKEN="$(bash ~/Claude/admira-vault/vault-get.sh CLOUDFLARE_API_TOKEN)"
+fi
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 git archive main | tar -x -C "$TMP"

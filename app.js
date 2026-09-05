@@ -273,8 +273,16 @@ const I18N = {
     summary_all_ages:'todas las edades', summary_all_day:'todo el día', summary_undefined:'sin definir',
     status_selection:'Selección · {points} puntos', status_target_campaign:'Completa el target de campaña',
     status_purchase_ready:'Compra preparada · {points} puntos seleccionados',
-    status_reserved:'Compra reservada · {orderId}',
-    checkout_kicker:'Checkout programático', buy_title_base:'Comprar selección',
+    status_reserved:'Solicitud recibida · {orderId}',
+    orders_title:'Mis solicitudes', orders_empty:'Todavía no hay solicitudes guardadas.',
+    orders_note:'Últimas 20 solicitudes de este navegador. Si borras sus cookies o usas otro dispositivo, no podrás recuperarlas aquí.',
+    orders_loading:'Consultando solicitudes…', orders_refresh:'Actualizar', order_received:'Solicitud recibida',
+    order_pending:'Reserva pendiente de confirmación', order_confirmed:'Reserva confirmada', order_rejected:'Reserva rechazada',
+    payment_not_started:'Pago no iniciado', payment_paid:'Pagado', payment_failed:'Pago fallido', payment_refunded:'Reembolsado',
+    order_cancelled:'Solicitud cancelada', order_draft:'Borrador · todavía sin enviar', order_sending:'Guardando solicitud…',
+    orders_error:'No podemos consultar las solicitudes. Vuelve a intentarlo.',
+    order_save_error:'No se ha podido confirmar el guardado. Reintenta con los mismos datos: no se duplicará la solicitud.',
+    checkout_kicker:'Solicitud de campaña', buy_title_base:'Preparar solicitud',
     buy_dates_passes:'Fechas y pases', buy_start:'Inicio', buy_end:'Fin',
     buy_pass_date:'Fecha del pase', buy_pass_time:'Hora del pase',
     buy_passes_day:'Pases/día', passes_250:'250 pases/día', passes_500:'500 pases/día',
@@ -289,8 +297,8 @@ const I18N = {
     buy_points:'Puntos', buy_dates:'Fechas', buy_moment:'Momento',
     buy_duration_summary:'Duración', buy_passes:'Pases',
     buy_est_impr:'Impresiones estimadas', buy_base_cpm:'CPM base',
-    buy_date_demand:'Demanda fecha', buy_scope:'Ámbito', buy_target:'Target', buy_total:'Total', buy_submit:'Pagar y reservar',
-    buy_legal:'La web valida la tarjeta y prepara la orden sin guardar el número completo. El cargo real queda listo para enlazar con la la pasarela de pago.',
+    buy_date_demand:'Demanda fecha', buy_scope:'Ámbito', buy_target:'Target', buy_total:'Total estimado', buy_submit:'Enviar solicitud',
+    buy_legal:'Guardaremos tu solicitud. La disponibilidad y el precio están pendientes de confirmación; no se realiza ningún cargo ni se inicia la emisión.',
     buy_points_line:'{points} puntos · {surfaces} surfaces', buy_days_line:'{days} días',
     buy_select_dates:'Selecciona fechas', buy_per_day:'{passes} / día',
     buy_moment_line:'{date} · {time}', buy_select_moment:'Selecciona fecha y hora',
@@ -301,7 +309,7 @@ const I18N = {
     err_brand:'Indica la marca anunciante.', err_email:'Indica un email de facturación válido.',
     err_campaign:'Pon un nombre de campaña.', err_card:'El número de tarjeta no es válido.',
     err_exp:'La fecha de caducidad no es válida.', err_cvc:'El CVC debe tener 3 o 4 dígitos.',
-    order_ok:'Reserva <b>{orderId}</b> creada por <b>{price}</b> con tarjeta terminada en <b>{cardLast4}</b>.',
+    order_ok:'Solicitud <b>{orderId}</b> guardada. Importe estimado: <b>{price}</b>. ',
     hero_eyebrow:'Clear Channel · Programática en el mundo real',
     hero_h1a:'Retail Media', hero_h1b:'in the real world',
     hero_p:'Cada hueco visible — pantalla LED, escaparate, vending, panel del mostrador, push de la PWA — es <span class="tag">inventario subastable</span> en tiempo real. Busca un Xpace y aterriza en su ficha de surfaces.',
@@ -394,8 +402,16 @@ const I18N = {
     summary_all_ages:'all ages', summary_all_day:'all day', summary_undefined:'undefined',
     status_selection:'Selection · {points} points', status_target_campaign:'Complete the campaign target',
     status_purchase_ready:'Purchase prepared · {points} selected points',
-    status_reserved:'Purchase reserved · {orderId}',
-    checkout_kicker:'Programmatic checkout', buy_title_base:'Buy selection',
+    status_reserved:'Request received · {orderId}',
+    orders_title:'My requests', orders_empty:'No saved requests yet.',
+    orders_note:'Latest 20 requests from this browser. Clearing its cookies or using another device prevents recovery here.',
+    orders_loading:'Loading requests…', orders_refresh:'Refresh', order_received:'Request received',
+    order_pending:'Reservation awaiting confirmation', order_confirmed:'Reservation confirmed', order_rejected:'Reservation rejected',
+    payment_not_started:'Payment not started', payment_paid:'Paid', payment_failed:'Payment failed', payment_refunded:'Refunded',
+    order_cancelled:'Request cancelled', order_draft:'Draft · not yet sent', order_sending:'Saving request…',
+    orders_error:'Requests could not be loaded. Please try again.',
+    order_save_error:'We could not confirm that the request was saved. Retry with the same details: it will not be duplicated.',
+    checkout_kicker:'Campaign request', buy_title_base:'Prepare request',
     buy_dates_passes:'Dates and passes', buy_start:'Start', buy_end:'End',
     buy_pass_date:'Pass date', buy_pass_time:'Pass time',
     buy_passes_day:'Passes/day', passes_250:'250 passes/day', passes_500:'500 passes/day',
@@ -410,8 +426,8 @@ const I18N = {
     buy_points:'Points', buy_dates:'Dates', buy_moment:'Moment',
     buy_duration_summary:'Duration', buy_passes:'Passes',
     buy_est_impr:'Estimated impressions', buy_base_cpm:'Base CPM',
-    buy_date_demand:'Date demand', buy_scope:'Scope', buy_target:'Target', buy_total:'Total', buy_submit:'Pay and reserve',
-    buy_legal:'The website validates the card and prepares the order without storing the full number. The real charge is ready to be connected to the payment gateway.',
+    buy_date_demand:'Date demand', buy_scope:'Scope', buy_target:'Target', buy_total:'Estimated total', buy_submit:'Send request',
+    buy_legal:'We will save your request. Availability and price await confirmation; no payment is taken and no broadcast starts.',
     buy_points_line:'{points} points · {surfaces} surfaces', buy_days_line:'{days} days',
     buy_select_dates:'Select dates', buy_per_day:'{passes} / day',
     buy_moment_line:'{date} · {time}', buy_select_moment:'Select date and time',
@@ -422,7 +438,7 @@ const I18N = {
     err_brand:'Enter the advertiser brand.', err_email:'Enter a valid billing email.',
     err_campaign:'Add a campaign name.', err_card:'The card number is not valid.',
     err_exp:'The expiration date is not valid.', err_cvc:'The CVC must have 3 or 4 digits.',
-    order_ok:'Reservation <b>{orderId}</b> created for <b>{price}</b> with card ending in <b>{cardLast4}</b>.',
+    order_ok:'Request <b>{orderId}</b> saved. Estimated amount: <b>{price}</b>. ',
     hero_eyebrow:'Clear Channel · Programmatic in the real world',
     hero_h1a:'Retail Media', hero_h1b:'in the real world',
     hero_p:'Every visible spot — LED screen, shop window, vending, counter panel, PWA push — is <span class="tag">auctionable inventory</span> in real time. Search an Xpace and land on its surfaces.',
@@ -502,6 +518,7 @@ function setLang(lang){
   // Refresca UI dinámica ya pintada
   try { renderCircuitScope(); } catch(_){}
   try { renderCircuitSelector(); } catch(_){}
+  try { renderSavedOrders(); } catch(_){}
   try { renderCircuitTarget(); } catch(_){}
   try { updateBuyQuote(); } catch(_){}
   try { const title = document.getElementById('buy-title'); if (title && !document.getElementById('buy-modal')?.hidden) title.textContent = `${t('buy_title_base')} · ${currentCircuit().label}`; } catch(_){}
@@ -1667,6 +1684,9 @@ function openBuyCheckout() {
   fillPixeriaDraftInCheckout(pendingPixeriaDraft);
   if (modal) modal.hidden = false;
   updateBuyQuote();
+  const state = document.getElementById('buy-state');
+  if (state) state.textContent = t('order_draft');
+  loadSavedOrders();
 }
 
 function closeBuyCheckout() {
@@ -1674,39 +1694,11 @@ function closeBuyCheckout() {
   if (modal) modal.hidden = true;
 }
 
-function normalizeCard(s) {
-  return String(s || '').replace(/\D/g, '');
-}
-
-function luhnOk(num) {
-  let sum = 0, dbl = false;
-  for (let i = num.length - 1; i >= 0; i--) {
-    let n = Number(num[i]);
-    if (dbl) { n *= 2; if (n > 9) n -= 9; }
-    sum += n;
-    dbl = !dbl;
-  }
-  return num.length >= 13 && num.length <= 19 && sum % 10 === 0;
-}
-
-function expiryOk(value) {
-  const m = String(value || '').match(/^\s*(\d{2})\s*\/?\s*(\d{2,4})\s*$/);
-  if (!m) return false;
-  const month = Number(m[1]);
-  const year = Number(m[2].length === 2 ? '20' + m[2] : m[2]);
-  if (month < 1 || month > 12) return false;
-  const lastDay = new Date(year, month, 0, 23, 59, 59);
-  return lastDay >= new Date();
-}
-
 function validateBuyForm() {
   const q = updateBuyQuote();
   const brand = document.getElementById('buy-brand')?.value.trim();
   const email = document.getElementById('buy-email')?.value.trim();
   const campaign = document.getElementById('buy-campaign')?.value.trim();
-  const card = normalizeCard(document.getElementById('buy-card')?.value);
-  const exp = document.getElementById('buy-exp')?.value.trim();
-  const cvc = normalizeCard(document.getElementById('buy-cvc')?.value);
   const errors = [];
   if (!q.locs.length) errors.push(t('err_select_point'));
   if (!q.days) errors.push(t('err_dates'));
@@ -1715,67 +1707,87 @@ function validateBuyForm() {
   if (!brand) errors.push(t('err_brand'));
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || '')) errors.push(t('err_email'));
   if (!campaign) errors.push(t('err_campaign'));
-  if (!luhnOk(card)) errors.push(t('err_card'));
-  if (!expiryOk(exp)) errors.push(t('err_exp'));
-  if (cvc.length < 3 || cvc.length > 4) errors.push(t('err_cvc'));
-  return {q, brand, email, campaign, cardLast4: card.slice(-4), exp, errors};
+  return {q, brand, email, campaign, errors};
 }
 
+let orderSubmitting = false;
+let ordersClientPromise;
+let savedOrders = [];
+function ordersClient() {
+  if (!ordersClientPromise) ordersClientPromise = import('./orders-client.mjs?v=20260905-1').then(({OrdersClient}) => new OrdersClient()).catch(error => { ordersClientPromise = null; throw error; });
+  return ordersClientPromise;
+}
+function renderSavedOrders() {
+  const list = document.getElementById('saved-orders-list');
+  if (!list) return;
+  if (!savedOrders.length) { list.textContent = t('orders_empty'); return; }
+  list.innerHTML = savedOrders.map(order => {
+    const reservation = {pending:'order_pending',confirmed:'order_confirmed',rejected:'order_rejected'}[order.reservationStatus];
+    const payment = {not_started:'payment_not_started',paid:'payment_paid',failed:'payment_failed',refunded:'payment_refunded'}[order.paymentStatus];
+    return `<article class="saved-order"><b>${escHtml(order.campaign)}</b><small>${escHtml(order.id)}</small>
+      <p>${escHtml(t(order.status === 'cancelled' ? 'order_cancelled' : 'order_received'))}</p>
+      <p>${escHtml(reservation ? t(reservation) : '—')} · ${escHtml(payment ? t(payment) : '—')}</p>
+      <p>${escHtml(order.brand)} · ${escHtml(order.start)} → ${escHtml(order.end)} · ${order.ids.length} ${escHtml(t('buy_points'))}</p>
+      <p>${escHtml(order.passDate)} ${escHtml(order.passTime)} · ${order.durationSec}s · ${order.passesDay} ${escHtml(t('buy_passes'))}</p>
+      <p>${escHtml(t('buy_total'))}: ${escHtml(formatMoney(order.estimatedPrice))}</p></article>`;
+  }).join('');
+}
+async function loadSavedOrders() {
+  const list = document.getElementById('saved-orders-list');
+  const refresh = document.getElementById('saved-orders-refresh');
+  if (refresh) refresh.disabled = true;
+  if (list) list.textContent = t('orders_loading');
+  try { savedOrders = await (await ordersClient()).list(); renderSavedOrders(); }
+  catch { if (list) list.textContent = t('orders_error'); }
+  finally { if (refresh) refresh.disabled = false; }
+}
 async function submitBuyCheckout() {
+  if (orderSubmitting) return;
   const err = document.getElementById('buy-error');
   const ok = document.getElementById('buy-ok');
+  const button = document.getElementById('buy-submit');
+  const state = document.getElementById('buy-state');
   const res = validateBuyForm();
   if (err) err.hidden = true;
   if (ok) ok.hidden = true;
   if (res.errors.length) {
-    if (err) {
-      err.innerHTML = res.errors.map(escHtml).join('<br>');
-      err.hidden = false;
-    }
+    if (err) { err.textContent = res.errors.join(' · '); err.hidden = false; }
     return;
   }
-  const orderId = 'ADM-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.random().toString(36).slice(2, 7).toUpperCase();
-  const scope = circuitScopePayload();
   const order = {
-    orderId,
-    circuit: selectedCircuitId,
-    circuitScope: scope,
-    requiredConditions: {
-      circuitScope: scope,
-    },
-    ids: res.q.locs.map(l => l.id),
-    points: res.q.locs.length,
+    circuit: selectedCircuitId, circuitScope: circuitScopePayload(),
+    ids: res.q.locs.map(l => l.id).sort(),
     start: document.getElementById('buy-start').value,
     end: document.getElementById('buy-end').value,
     passDate: document.getElementById('buy-pass-date').value,
     passTime: document.getElementById('buy-pass-time').value,
-    days: res.q.days,
-    passesDay: res.q.passesDay,
-    durationSec: res.q.durationSec,
-    durationFactor: Number(res.q.durationFactor.toFixed(2)),
-    estimatedImpr: res.q.estimatedImpr,
-    cpm: Number(res.q.cpm.toFixed(2)),
-    demand: Number(res.q.demand.toFixed(2)),
-    target: circuitTargetPayload(),
-    creative: pixeriaDraftCreativePayload(),
-    price: res.q.price,
-    brand: res.brand,
-    email: res.email,
-    campaign: res.campaign,
-    cardLast4: res.cardLast4,
-    createdAt: new Date().toISOString(),
+    passesDay: res.q.passesDay, durationSec: res.q.durationSec,
+    target: circuitTargetPayload(), creative: pixeriaDraftCreativePayload(),
+    price: res.q.price, brand: res.brand, email: res.email, campaign: res.campaign
   };
-  try { sessionStorage.setItem('omnip-last-order', JSON.stringify(order)); } catch (_) {}
-  if (ok) {
-    ok.innerHTML = tf('order_ok', {orderId: escHtml(orderId), price: formatMoney(order.price), cardLast4: escHtml(order.cardLast4)});
-    ok.hidden = false;
-  }
+  orderSubmitting = true;
+  document.querySelector('#buy-modal .buy-body')?.setAttribute('inert', '');
+  if (button) { button.disabled = true; button.textContent = t('order_sending'); }
+  if (state) state.textContent = t('order_sending');
   try {
-    await pushPixeriaDraftToXpace(order, ok);
-  } catch (e) {
-    if (ok) ok.innerHTML += '<br>No se pudo emitir automaticamente en XpaceOS. La reserva queda guardada para reintento.';
+    const saved = await (await ordersClient()).create(order);
+    if (ok) {
+      const reserve = {pending:'order_pending',confirmed:'order_confirmed',rejected:'order_rejected'}[saved.reservationStatus];
+      const payment = {not_started:'payment_not_started',paid:'payment_paid',failed:'payment_failed',refunded:'payment_refunded'}[saved.paymentStatus];
+      ok.innerHTML = tf('order_ok', {orderId:escHtml(saved.id), price:formatMoney(saved.estimatedPrice)}) + '<br>' + escHtml(reserve ? t(reserve) : '—') + ' · ' + escHtml(payment ? t(payment) : '—');
+      ok.hidden = false;
+    }
+    if (state) state.textContent = t('order_received');
+    setStatus(tf('status_reserved', {orderId:saved.id}));
+    await loadSavedOrders();
+  } catch {
+    if (err) { err.textContent = t('order_save_error'); err.hidden = false; }
+    if (state) state.textContent = t('order_save_error');
+  } finally {
+    orderSubmitting = false;
+    document.querySelector('#buy-modal .buy-body')?.removeAttribute('inert');
+    if (button) { button.disabled = false; button.textContent = t('buy_submit'); }
   }
-  setStatus(tf('status_reserved', {orderId}));
 }
 
 function bindBuyCheckout() {
@@ -1802,17 +1814,18 @@ function bindBuyCheckout() {
       updateBuyQuote();
     });
   });
-  const card = document.getElementById('buy-card');
-  const exp = document.getElementById('buy-exp');
-  if (card) card.addEventListener('input', () => {
-    const raw = normalizeCard(card.value).slice(0, 19);
-    card.value = raw.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
-  });
-  if (exp) exp.addEventListener('input', () => {
-    const raw = normalizeCard(exp.value).slice(0, 4);
-    exp.value = raw.length > 2 ? raw.slice(0,2) + '/' + raw.slice(2) : raw;
+  modal.addEventListener('input', () => {
+    if (orderSubmitting) return;
+    const state = document.getElementById('buy-state');
+    if (state) state.textContent = t('order_draft');
+    const ok = document.getElementById('buy-ok'); if (ok) ok.hidden = true;
   });
   document.getElementById('buy-submit')?.addEventListener('click', submitBuyCheckout);
+  document.getElementById('header-orders-btn')?.addEventListener('click', () => {
+    openBuyCheckout();
+    document.querySelector('#buy-modal .buy-card')?.scrollTo({top:0});
+  });
+  document.getElementById('saved-orders-refresh')?.addEventListener('click', loadSavedOrders);
   if (close) close.addEventListener('click', closeBuyCheckout);
   modal.addEventListener('click', e => { if (e.target === modal) closeBuyCheckout(); });
 }
