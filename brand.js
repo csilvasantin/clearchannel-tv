@@ -84,7 +84,7 @@
         meta.setAttribute('content', release.version);
         var badge = document.createElement('div');
         badge.className = 'release-signature';
-        badge.setAttribute('aria-label', 'Versión ' + release.version + ', publicada por ' + release.signature);
+        badge.setAttribute('aria-label', (document.documentElement.lang === 'en' ? 'Version ' : 'Versión ') + release.version + ' · ' + release.signature);
         badge.textContent = release.version + ' · ' + release.signature;
         document.body.appendChild(badge);
       })

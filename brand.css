@@ -1,4 +1,7 @@
 /* Una sola aplicación, dos identidades visuales. El dominio elige el tema. */
+.walk-preview{display:block;width:100%;margin-top:9px;padding:9px 8px;border:1px solid var(--brand);border-radius:6px;background:transparent;color:var(--brand);font:600 11px/1.4 Arial,sans-serif;cursor:pointer;text-align:center}
+.walk-preview:hover{background:var(--card2)}
+.walk-preview:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
 :root[data-brand="clearchannel"] {
   color-scheme: dark;
 }

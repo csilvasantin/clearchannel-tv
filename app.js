@@ -467,7 +467,14 @@ const I18N = {
     sub_neptune:'The priciest CPM in the galaxy: the signal takes 4 hours to arrive.',
   },
 };
-let LANG = (function(){ try { return localStorage.getItem('omnip-lang') === 'es' ? 'es' : 'en'; } catch(_) { return 'en'; } })();
+let LANG = (function(){
+  const explicit = new URLSearchParams(location.search).get('lang');
+  if (['en', 'es'].includes(explicit)) return explicit;
+  try { const saved = localStorage.getItem('omnip-lang'); if (['en', 'es'].includes(saved)) return saved; } catch(_) {}
+  return window.ADMIRA_SITE_BRAND?.id === 'admira' ? 'es' : 'en';
+})();
+I18N.en.walk_preview = 'Preview campaign ↗';
+I18N.es.walk_preview = 'Previsualizar campaña ↗';
 function t(key){ return (I18N[LANG] && I18N[LANG][key] != null) ? I18N[LANG][key] : (I18N.es[key] != null ? I18N.es[key] : key); }
 function tf(key, vars = {}) {
   return t(key).replace(/\{(\w+)\}/g, (_, name) => vars[name] == null ? '' : String(vars[name]));
@@ -2753,6 +2760,10 @@ function thumbFor(kind, status) {
 
 // ─── Renderiza panel para una location ────────────────────────────
 let activeLocation = null;
+window.getWalkPlacement = function(index) {
+  if (!activeLocation || !activeLocation.surfaces[index]) return null;
+  return { location: activeLocation, surface: activeLocation.surfaces[index], index, draft: pendingPixeriaDraft };
+};
 function renderPanel(loc) {
   activeLocation = loc;
   document.getElementById('p-name').textContent = loc.name;
@@ -2780,6 +2791,7 @@ function renderPanel(loc) {
         <div class="desc">${escHtml(s.desc)}</div>
         <div class="stats"><span>${s.impr}</span> ${t('meta_imprday')} · <span>${escHtml(s.cpm)}</span> CPM · <span>${escHtml(s.surface)}</span></div>
         ${s.screen ? `<div class="surf-seg" hidden></div>` : ''}
+        <button type="button" class="walk-preview" data-walk-preview="${i}">${t('walk_preview')}</button>
         ${hasTwin ? `<button class="twin-launch" data-surf-idx="${i}">${t('twin_launch')}</button>` : ''}
       </div>
     </div>`;
@@ -3462,6 +3474,19 @@ bindCircuitSelector();
 bindBuyCheckout();
 consumePixeriaDraftFromUrl();
 
+// Return from the campaign preview to the exact catalogue place, in either language.
+let walkReturnRestored = false;
+function restoreWalkReturn() {
+  if (walkReturnRestored || new URLSearchParams(location.search).get('draft')) return;
+  const id = new URLSearchParams(location.search).get('locationId');
+  const loc = id && LOCATIONS.find(item => String(item.id) === id);
+  if (!loc) return;
+  walkReturnRestored = true;
+  if (map.loaded()) flyToLocation(loc);
+  else map.once('load', () => flyToLocation(loc));
+}
+restoreWalkReturn();
+
 // ─── Refresh asincrónico desde el worker (KV) ─────────────────────
 // El sync arrancó con localStorage/default. Si la KV trae algo nuevo,
 // reescribimos LOCATIONS, refrescamos el source del mapa y los counters.
@@ -3471,6 +3496,7 @@ consumePixeriaDraftFromUrl();
     if (!res || !Array.isArray(res.locations) || !res.locations.length) return;
     if (locationsSignature(res.locations, res.updatedAt) === locationsSignature(LOCATIONS, res.updatedAt)) return;
     setLocations(res.locations);
+    restoreWalkReturn();
     updateBiddingLiveCounters();
     const cpms = LOCATIONS.flatMap(l => (Array.isArray(l.surfaces) ? l.surfaces : []).map(s => parseFloat(String(s.cpm).replace(/[^\d.]/g,'')))).filter(Boolean);
     if (cpms.length) {

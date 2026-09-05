@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Walk the campaign · Clear Channel</title>
+  <meta name="description" content="Preview your Pixeria creative on a selected retail surface and explore its registered digital twin.">
+  <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
+  <link rel="canonical" href="https://www.clearchannel.tv/walk.html">
+  <link rel="stylesheet" href="walk.css?v=20260905-1">
+  <link rel="stylesheet" href="brand.css">
+  <script src="brand.js"></script>
+  <script defer src="locations.js?v=20260905-1"></script>
+  <script type="module" src="walk.mjs?v=20260905-1"></script>
+</head>
+<body>
+  <header class="walk-header"><a class="wordmark" href="/" data-brand-wordmark>CLEAR·CHANNEL</a><span class="header-caption" data-copy="previewOnly">Campaign preview · no live delivery</span><button id="language" type="button">ESP</button></header>
+  <main>
+    <div class="intro"><div><a id="back" class="back" href="/" data-copy="back">← Back to the network</a><p class="eyebrow">01 / <span data-copy="eyebrow">Walk the campaign</span></p><h1 data-copy="headline">See it where<br>it matters.</h1></div><div class="campaign-name"><label for="campaign" data-copy="campaign">Your campaign</label><input id="campaign" maxlength="100" autocomplete="off"><span id="saved" role="status"></span></div></div>
+    <p id="page-status" role="status" class="page-status">Loading the space…</p>
+    <div id="workspace" hidden>
+      <div class="workspace">
+        <section class="stage-wrap" aria-labelledby="scene-title">
+          <div class="stage-toolbar"><div><h2 id="scene-title"></h2><span id="scene-address"></span></div><button type="button" id="view-angle" aria-pressed="false" data-copy="perspective">Perspective</button></div>
+          <div class="stage" id="stage">
+            <span class="scene-disclaimer" data-copy="illustration">Illustrative placement · not a measured digital twin</span>
+            <div class="room" aria-hidden="true"><div class="wall-grid"></div><div class="shelves"></div><div class="counter"></div><div class="floor"></div></div>
+            <div class="screen-placement" id="screen-placement"><div class="screen" id="screen"><div id="media"></div><div id="empty-media"><span class="empty-mark">↗</span><strong data-copy="yourCreative">Your creative,<br>in context.</strong><span data-copy="chooseBelow">Choose a piece from Pixeria below</span></div></div><div class="screen-caption" id="screen-caption"></div></div>
+            <div class="stage-bottom"><span id="format-label"></span><label for="lighting"><span data-copy="light">Preview lighting</span> <output id="hour">12:00</output><input id="lighting" type="range" min="8" max="22" value="12"></label></div>
+          </div>
+          <p class="media-note" id="media-status" role="status"></p>
+        </section>
+        <aside class="inspector">
+          <span class="eyebrow" data-copy="placement">Your placement</span>
+          <label for="surface" data-copy="surface">Surface</label><select id="surface"></select>
+          <p id="surface-description"></p>
+          <div class="selection-detail"><span data-copy="format">Format</span><strong id="format-detail"></strong></div>
+          <div class="selection-detail"><span data-copy="creative">Creative</span><strong id="asset-title" data-copy="none">Not selected</strong></div>
+          <div class="selection-detail"><span data-copy="version">Asset version</span><strong id="asset-version">—</strong></div>
+          <div class="connected"><span class="eyebrow" data-copy="connected">Connected workspace</span><a id="twin" class="action" target="_blank" rel="noopener noreferrer" hidden data-copy="openTwin">Explore the registered twin ↗</a><p id="twin-note"></p><a id="studio" class="action secondary" target="_blank" rel="noopener noreferrer" data-copy="openStudio">Create in Pixeria ↗</a><p data-copy="keepHere">Your selection stays here while you work in the other tab. Choose the finished asset from the shared library when you return.</p><a id="spaces" class="text-link" target="_blank" rel="noopener noreferrer"></a></div>
+          <button id="clear" type="button" class="clear" data-copy="clear">Remove creative from this surface</button>
+        </aside>
+      </div>
+      <section class="library" aria-labelledby="library-title"><div class="library-head"><div><span class="eyebrow" data-copy="libraryKicker">Pixeria / Shared creative library</span><h2 id="library-title" data-copy="libraryTitle">Find your next impression.</h2></div><button id="refresh" type="button" data-copy="refresh">Refresh library</button></div><label class="search-label" for="asset-search" data-copy="search">Search creatives</label><input type="search" id="asset-search" autocomplete="off"><p id="library-status" role="status"></p><div id="assets" class="assets"></div>
+        <details class="import"><summary data-copy="importTitle">Already have a published creative URL?</summary><form id="import-form"><label for="asset-url" data-copy="assetUrl">HTTPS image or video URL</label><input id="asset-url" type="url" required placeholder="https://…"><label for="asset-kind" data-copy="mediaType">Media type</label><select id="asset-kind"><option value="image" data-copy="image">Image</option><option value="video" data-copy="video">Video</option></select><button type="submit" data-copy="previewAsset">Preview on this surface</button><p id="import-error" role="alert"></p></form></details>
+      </section>
+    </div>
+  </main>
+  <footer><span id="ecosystem"></span><span data-copy="footer">Preview and planning. Nothing is purchased or sent to a player.</span></footer>
+  <div class="release-signature" data-release-signature>__ADMIRANEXT_VERSION__</div>
+</body>
+</html>
