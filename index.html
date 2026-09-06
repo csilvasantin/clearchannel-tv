@@ -455,6 +455,9 @@
   /* status pill al estilo "buscando..." abajo */
   .status-pill{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(10,22,32,.95);border:1px solid var(--line);border-radius:999px;padding:10px 18px;font-family:monospace;font-size:12px;color:var(--mut);letter-spacing:.06em;z-index:8;display:none}
   .status-pill.show{display:block}
+  .map-tour-stop{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);z-index:70;border:1px solid var(--brand);border-radius:999px;padding:10px 18px;background:rgba(10,22,32,.96);color:var(--brand);font:inherit;font-size:12px;cursor:pointer}
+  .map-tour-stop[hidden]{display:none}
+  .map-tour-stop:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
   .status-pill b{color:var(--brand)}
 
   /* Controles derecha estilo Google Maps */
@@ -1082,6 +1085,7 @@
   </div>
 </div>
 
+<button type="button" class="map-tour-stop" id="map-tour-stop" data-i18n="tour_stop" hidden>⏸ Parar recorrido</button>
 <div class="status-pill" id="status">
   <b data-i18n="searching">Buscando…</b> <span id="status-msg"></span>
 </div>
@@ -1159,7 +1163,8 @@
 <script defer src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script defer src="locations.js?v=caixabank-20260716b"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
-<script defer src="app.js?v=planner-20260905-1"></script>
+<script defer src="tour-map.js?v=20260906-1"></script>
+<script defer src="app.js?v=tour-loading-20260906-1"></script>
 <script defer src="planner-ui.js?v=20260905-1"></script>
 <script type="module" src="walk-launch.mjs?v=20260905-1"></script>
 

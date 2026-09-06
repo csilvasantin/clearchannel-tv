@@ -14,8 +14,7 @@ let selectedLocationIds = new Set();
 let circuitAutoSelect = true;
 let circuitMapFilterActive = false;
 let pendingPixeriaDraft = null;
-const CIRCUIT_DEMO_STEP_MS = 5600;
-const CIRCUIT_DEMO_FLY_MS = 3600;
+const TOUR_DWELL_MS = 2500; // Reading time starts after the destination has rendered.
 const MAX_CIRCUIT_LIST_RENDER = 350;
 let circuitDemo = { running:false, items:[], index:0, timer:null };
 const DEFAULT_CIRCUIT_SCOPE = 'all';
@@ -333,6 +332,8 @@ const I18N = {
     surfaces_available:'Surfaces disponibles', live_bids:'Pujas en vivo', create_campaign:'➕ Crear campaña', ecosystem:'ecosistema',
     how_auction:'Cómo funciona la subasta', view_twin:'Ver Gemelo Digital ↗', twin_hd:'🎥 Gemelo Hiperrealista ↗',
     tour_start:'▶ Recorrer la red', tour_stop:'⏸ Parar recorrido',
+    map_preparing:'Preparando mapa · ', map_loading:'Cargando detalle · ',
+    map_incomplete:'Mapa incompleto. Recorrido pausado; vuelve a iniciarlo para reintentar.',
     meta_surfaces:'surfaces', meta_imprday:'impr/día', meta_cpm:'CPM rango',
     waiting_bid:'// motor RTB conectado · esperando demanda…',
     recent:'Recientes', addresses:'Direcciones', searching_addr:'buscando direcciones…', no_addr:'sin direcciones',
@@ -462,6 +463,8 @@ const I18N = {
     surfaces_available:'Available surfaces', live_bids:'Live bids', create_campaign:'➕ Create campaign', ecosystem:'ecosystem',
     how_auction:'How the auction works', view_twin:'View Digital Twin ↗', twin_hd:'🎥 Hyperrealistic Twin ↗',
     tour_start:'▶ Tour the network', tour_stop:'⏸ Stop tour',
+    map_preparing:'Preparing map · ', map_loading:'Loading detail · ',
+    map_incomplete:'Map incomplete. Tour paused; start it again to retry.',
     meta_surfaces:'surfaces', meta_imprday:'impr/day', meta_cpm:'CPM range',
     waiting_bid:'// RTB engine connected · waiting for demand…',
     recent:'Recent', addresses:'Addresses', searching_addr:'searching addresses…', no_addr:'no addresses',
@@ -1123,6 +1126,7 @@ function setCircuitTargetMode(open) {
 }
 
 function resetCircuitTarget() {
+  stopMapNavigation();
   circuitTarget = defaultCircuitTarget();
   renderCircuitTarget();
   renderCircuitSelector();
@@ -1131,6 +1135,7 @@ function resetCircuitTarget() {
 function bindCircuitTargetControls() {
   document.querySelectorAll('[data-target-group]').forEach(input => {
     input.addEventListener('change', () => {
+      stopMapNavigation();
       const group = input.dataset.targetGroup;
       circuitTarget[group] = [...document.querySelectorAll(`[data-target-group="${group}"]:checked`)].map(el => el.value);
       renderCircuitTarget();
@@ -1144,6 +1149,7 @@ function bindCircuitTargetControls() {
     updateBiddingLiveCounters();
   });
   document.getElementById('target-apply')?.addEventListener('click', () => {
+    stopMapNavigation();
     setCircuitTargetMode(false);
     circuitMapFilterActive = true;        // el target filtra el mapa al aplicarlo
     refreshSelectedMapSource();
@@ -1264,52 +1270,35 @@ function updateCircuitDemoUi() {
 }
 
 function stopCircuitDemo(done = false) {
+  if (circuitDemo.running) { tourCamera.cancel(); document.getElementById('status')?.classList.remove('show'); }
   if (circuitDemo.timer) clearTimeout(circuitDemo.timer);
   const total = circuitDemo.items.length;
   circuitDemo = { running:false, items:[], index:0, timer:null };
   updateCircuitDemoUi();
   updateCircuitSummary();
+  updateMapTourStop();
   if (done && total) setStatus(tf('demo_done', {points: total}));
 }
 
-function showCircuitDemoPoint() {
-  if (!circuitDemo.running) return;
-  if (circuitDemo.index >= circuitDemo.items.length) {
-    stopCircuitDemo(true);
-    return;
-  }
-  const loc = circuitDemo.items[circuitDemo.index];
-  if (!loc) {
-    circuitDemo.index += 1;
-    showCircuitDemoPoint();
-    return;
-  }
-  splash.classList.add('hidden');
-  const ac = document.getElementById('addr-card'); if (ac) ac.hidden = true;
+async function showCircuitDemoPoint() {
+  const run = circuitDemo;
+  if (!run.running) return;
+  if (run.index >= run.items.length) { stopCircuitDemo(true); return; }
+  const loc = run.items[run.index];
+  if (!loc) { run.index++; showCircuitDemoPoint(); return; }
   circuitMapFilterActive = true;
   updateCircuitDemoUi();
-  setStatus(tf('demo_progress', {current: circuitDemo.index + 1, total: circuitDemo.items.length, name: loc.name}));
-  pushRecent(loc.id);
-  map.flyTo({
-    center: loc.coords,
-    zoom: 16.8,
-    pitch: currentView === '3d' ? 60 : 0,
-    bearing: (circuitDemo.index * 29) % 360,
-    duration: CIRCUIT_DEMO_FLY_MS,
-    essential: true,
-  });
-  setTimeout(() => {
-    if (!circuitDemo.running || !circuitDemo.items[circuitDemo.index] || circuitDemo.items[circuitDemo.index].id !== loc.id) return;
-    renderPanel(loc);
-    panel.classList.add('open');
-  }, Math.min(1200, CIRCUIT_DEMO_FLY_MS));
-  circuitDemo.timer = setTimeout(() => {
-    circuitDemo.index += 1;
-    showCircuitDemoPoint();
-  }, CIRCUIT_DEMO_STEP_MS);
+  const arrived = await flyToLocation(loc, {automatic:true, bearing:(run.index * 29) % 360});
+  if (circuitDemo !== run || !run.running) return;
+  if (!arrived) { stopCircuitDemo(false); setStatus(t('map_incomplete')); return; }
+  setStatus(tf('demo_progress', {current:run.index + 1, total:run.items.length, name:loc.name}));
+  const next = run.items[run.index + 1];
+  if (next) tourCamera.prepare(locationCamera(next, ((run.index + 1) * 29) % 360));
+  run.timer = setTimeout(() => { run.index++; showCircuitDemoPoint(); }, TOUR_DWELL_MS);
 }
 
 function startCircuitDemo() {
+  stopMapNavigation();
   const items = circuitDemoItems();
   if (!items.length) {
     setStatus(t('demo_empty'));
@@ -1329,6 +1318,7 @@ function startCircuitDemo() {
   setCircuitTargetMode(false);
   circuitMapFilterActive = true;
   circuitDemo = { running:true, items, index:0, timer:null };
+  updateMapTourStop();
   renderCircuitSelector();
   showCircuitDemoPoint();
 }
@@ -1352,6 +1342,7 @@ function clearCircuitSelection() {
 }
 
 function zoomToSelectedCircuit() {
+  stopMapNavigation();
   const locs = selectedLocations();
   if (!locs.length) return;
   splash.classList.add('hidden');
@@ -1952,7 +1943,7 @@ function bindCircuitSelector() {
         setCircuitTargetMode(false);
         renderCircuitSelector();
       } else {
-        stopCircuitDemo(false);
+        stopMapNavigation();
         refreshSelectedMapSource();
       }
       headerBtn.classList.toggle('active', !panelEl.hidden);
@@ -1964,7 +1955,7 @@ function bindCircuitSelector() {
   });
   if (scopeSelect) {
     scopeSelect.addEventListener('change', () => {
-      stopCircuitDemo(false);
+      stopMapNavigation();
       selectedCircuitScope = sanitizeCircuitScope(scopeSelect.value);
       selectedCircuitId = defaultCircuitIdForScope();
       selectedMetroLine = 'all';
@@ -1977,7 +1968,7 @@ function bindCircuitSelector() {
     });
   }
   select.addEventListener('change', () => {
-    stopCircuitDemo(false);
+    stopMapNavigation();
     selectedCircuitId = select.value;
     selectedMetroLine = 'all';
     circuitAutoSelect = false;
@@ -1988,7 +1979,7 @@ function bindCircuitSelector() {
   });
   if (subselect) {
     subselect.addEventListener('change', () => {
-      stopCircuitDemo(false);
+      stopMapNavigation();
       selectedMetroLine = subselect.value || 'all';
       circuitAutoSelect = false;
       selectedLocationIds = new Set();
@@ -2082,8 +2073,12 @@ const map = new maplibregl.Map({
   center: HOME_VIEW.center, zoom: HOME_VIEW.zoom, pitch: HOME_VIEW.pitch,
   attributionControl: false,
   renderWorldCopies: false,
+  // Keep lower-resolution parents while detailed imagery is arriving.
+  cancelPendingTileRequestsWhileZooming: false,
+  maxTileCacheSize: 384,
 });
 map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-left');
+const tourCamera = TourMap.createTourCamera(map);
 
 let currentLayer = 'tierra';
 let currentView = '3d';
@@ -2457,6 +2452,7 @@ function addLocationsLayer() {
 
 function setLayer(name) {
   if (name === currentLayer) return;
+  stopMapNavigation();
   currentLayer = name;
   document.querySelectorAll('.layer-btn').forEach(b => b.classList.toggle('active', b.dataset.layer === name));
   if (name === 'tierra') {
@@ -2470,6 +2466,7 @@ function setLayer(name) {
 
 function setView(mode) {
   if (mode === currentView) return;
+  stopMapNavigation();
   currentView = mode;
   const btn = document.getElementById('btn-3d');
   if (mode === '3d') {
@@ -2541,11 +2538,11 @@ const statusMsg = document.getElementById('status-msg');
 const searchInput = document.getElementById('search');
 const suggest = document.getElementById('suggest');
 
-function setStatus(msg) {
+function setStatus(msg, persistent = false) {
   statusMsg.textContent = msg;
   statusEl.classList.add('show');
   clearTimeout(setStatus._t);
-  setStatus._t = setTimeout(() => statusEl.classList.remove('show'), 3000);
+  if (!persistent) setStatus._t = setTimeout(() => statusEl.classList.remove('show'), 3000);
 }
 panelClose.addEventListener('click', () => {
   panel.classList.remove('open');
@@ -3204,60 +3201,92 @@ async function pollPixerFeed() {
 pollPixerFeed();
 setInterval(pollPixerFeed, 5000);
 
-// ─── flyTo + abrir panel ──────────────────────────────────────────
-function flyToLocation(loc) {
+// ─── Destinations: prepare, approach, render, then open the panel ──
+function locationCamera(loc, bearing = -20) {
+  return {center:loc.coords, zoom:16.8, pitch:currentView === '3d' ? 45 : 0, bearing};
+}
+
+function updateMapTourStop() {
+  const button = document.getElementById('map-tour-stop');
+  if (button) { button.hidden = !tourRun && !circuitDemo.running; button.textContent = t('tour_stop'); }
+}
+
+function stopMapNavigation() {
+  tourStop(document.getElementById('p-tour'));
+  stopCircuitDemo(false);
+  tourCamera.cancel();
+  document.getElementById('status')?.classList.remove('show');
+}
+
+async function flyToLocation(loc, {automatic = false, bearing = -20} = {}) {
+  if (!automatic) stopMapNavigation();
+  panel.classList.remove('open');
   splash.classList.add('hidden');
-  // Parar la autorrotación ANTES de despegar. tickRotate hace un easeTo por frame
-  // mientras el zoom < 6, y un easeTo CANCELA el vuelo en curso: desde la vista de
-  // globo el flyTo no llegaba a moverse. La rotación solo se pausaba con gestos del
-  // usuario (mousedown/wheel/dragstart), así que un vuelo programático se la comía.
   rotating = false;
   if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
   const ac = document.getElementById('addr-card'); if (ac) ac.hidden = true;
-  setStatus(t('status_landing') + loc.addr);
   pushRecent(loc.id);
-  map.flyTo({center: loc.coords, zoom: 17.5, pitch: currentView==='3d'?60:0, bearing: -20, duration: 4500, essential: true});
-  setTimeout(() => {
-    renderPanel(loc);
-    panel.classList.add('open');
-  }, 4600);
+  const result = await tourCamera.navigate(locationCamera(loc, bearing), phase => {
+    const key = phase === 'preparing' ? 'map_preparing' : phase === 'loading' ? 'map_loading' : 'status_landing';
+    setStatus(t(key) + loc.name, true);
+  });
+  if (result === 'cancelled') return false;
+  if (result !== 'ready') { setStatus(t('map_incomplete')); return false; }
+  renderPanel(loc);
+  panel.classList.add('open');
+  setStatus(loc.name);
+  return true;
 }
 
-// ─── Recorrido por la red (vuelo de punto en punto) ────────────────
-// Ocupa el sitio del antiguo enlace «Cómo funciona la subasta». Va de punto en
-// punto de la red DADA DE ALTA en la plataforma: recorre las ubicaciones visibles,
-// o sea las del circuito y el target que estén seleccionados (con «La Caixa /
-// CaixaBank» → sus oficinas). Reutiliza flyToLocation, que ya vuela y abre la ficha
-// al aterrizar. Da la vuelta al llegar al final.
-const TOUR_PAUSA = 7000;   // 4,5 s de vuelo + ~2,5 s para leer la ficha
-let tourTimer = null, tourIdx = 0;
+// ─── Network tour: advance only after a loaded destination + dwell ──
+let tourTimer = null, tourIdx = 0, tourRun = null;
 function tourItems() {
-  try { const v = mapVisibleLocations(); return Array.isArray(v) ? v.filter(l => Array.isArray(l.coords)) : []; }
+  try { const v = mapVisibleLocations(); return Array.isArray(v) ? v.filter(l => Array.isArray(l.coords) && l.coords.length >= 2 && l.coords.every(Number.isFinite)) : []; }
   catch (_) { return []; }
 }
 function tourStop(btn) {
+  const wasRunning = !!tourRun;
+  tourRun = null;
   if (tourTimer) { clearTimeout(tourTimer); tourTimer = null; }
+  if (wasRunning) { tourCamera.cancel(); document.getElementById('status')?.classList.remove('show'); }
   if (btn) { btn.textContent = t('tour_start'); btn.classList.remove('on'); btn.setAttribute('data-i18n', 'tour_start'); }
+  updateMapTourStop();
 }
-function tourStep(btn) {
+async function tourStep(btn) {
+  const run = tourRun;
+  if (!run) return;
   const items = tourItems();
-  if (!items.length) { setStatus('· no hay puntos en el circuito seleccionado'); tourStop(btn); return; }
-  const loc = items[tourIdx % items.length];
-  const n = (tourIdx % items.length) + 1;
+  if (!items.length) { setStatus(t('demo_empty')); tourStop(btn); return; }
+  const index = tourIdx % items.length;
+  const loc = items[index];
+  const arrived = await flyToLocation(loc, {automatic:true});
+  if (tourRun !== run) return;
+  if (!arrived) { tourStop(btn); setStatus(t('map_incomplete')); return; }
+  setStatus('✈ ' + (index + 1) + '/' + items.length + ' · ' + loc.name);
   tourIdx++;
-  flyToLocation(loc);
-  // flyToLocation pisa el status al aterrizar; el contador se repone después.
-  setTimeout(() => { if (tourTimer) setStatus('✈ ' + n + '/' + items.length + ' · ' + loc.name); }, 4700);
-  tourTimer = setTimeout(() => tourStep(btn), TOUR_PAUSA);
+  tourCamera.prepare(locationCamera(items[tourIdx % items.length]));
+  tourTimer = setTimeout(() => tourStep(btn), TOUR_DWELL_MS);
 }
 function tourToggle(btn) {
-  if (tourTimer) { tourStop(btn); return; }
+  if (tourRun) { tourStop(btn); return; }
+  stopMapNavigation();
   const items = tourItems();
-  if (!items.length) { setStatus('· no hay puntos en el circuito seleccionado'); return; }
+  if (!items.length) { setStatus(t('demo_empty')); return; }
   btn.textContent = t('tour_stop'); btn.classList.add('on'); btn.setAttribute('data-i18n', 'tour_stop');
   tourIdx = 0;
+  tourRun = {};
+  updateMapTourStop();
   tourStep(btn);
 }
+document.getElementById('map-tour-stop')?.addEventListener('click', stopMapNavigation);
+// Manual map input cancels pending camera/panel callbacks and speculative loads.
+['btn-zin', 'btn-zout', 'btn-compass', 'btn-loc', 'btn-iso', 'panel-close'].forEach(id => {
+  document.getElementById(id)?.addEventListener('click', stopMapNavigation, {capture:true});
+});
+document.getElementById('pegman')?.addEventListener('pointerdown', stopMapNavigation, {capture:true});
+['pointerdown', 'wheel', 'keydown'].forEach(type => {
+  map.getCanvas().addEventListener(type, stopMapNavigation, {passive:true});
+});
 function wireTour() {
   const b = document.getElementById('p-tour');
   if (b) b.onclick = (e) => { e.preventDefault(); tourToggle(b); };
@@ -3272,7 +3301,7 @@ function wireTour() {
         sel.value = c; sel.dispatchEvent(new Event('change', { bubbles: true }));
       }
     }
-    if (q.get('tour') === '1' && b) setTimeout(() => { if (!tourTimer) tourToggle(b); }, 1200);
+    if (q.get('tour') === '1' && b) setTimeout(() => { if (!tourRun) tourToggle(b); }, 1200);
   } catch (_) {}
 }
 if (document.readyState !== 'loading') setTimeout(wireTour, 600);
@@ -3311,6 +3340,7 @@ async function geocodeSuggest(q, limit = 5) {
 // ─── Vuelo a una dirección geocodificada (sin panel; deja un pin) ──
 let addrMarker = null;
 function flyToAddress(lon, lat, label) {
+  stopMapNavigation();
   splash.classList.add('hidden');
   if (label) setStatus(t('status_landing') + label.split(',').slice(0,2).join(','));
   if (addrMarker) addrMarker.remove();
@@ -3599,7 +3629,7 @@ function tickRotate(ts) {
 }
 requestAnimationFrame(tickRotate);
 // Garantiza el arranque girando en cuanto el estilo del mapa esté listo
-map.on('load', () => { rotating = true; lastTs = 0; });
+map.on('load', () => { if (!tourRun && !circuitDemo.running && !tourCamera.isNavigating()) rotating = true; lastTs = 0; });
 // Arranque limpio: el contador "Bidding Live" se oculta hasta el primer gesto del usuario
 const bootTicker = document.getElementById('ticker');
 if (bootTicker) bootTicker.style.display = 'none';
@@ -3614,7 +3644,7 @@ function pauseAndScheduleResume() {
   revealTicker();
   rotating = false;
   if (resumeTimer) clearTimeout(resumeTimer);
-  resumeTimer = setTimeout(() => { if (map.getZoom() < 6) rotating = true; }, ROTATE_RESUME_MS);
+  resumeTimer = setTimeout(() => { if (map.getZoom() < 6 && !tourRun && !circuitDemo.running && !tourCamera.isNavigating()) rotating = true; }, ROTATE_RESUME_MS);
 }
 ['mousedown','wheel','touchstart','keydown'].forEach(ev => {
   document.addEventListener(ev, pauseAndScheduleResume, {passive:true});
@@ -3642,6 +3672,7 @@ requestAnimationFrame(animatePulse);
 
 // ─── Logo Clear Channel → volver al inicio ("posición 0") ─────────
 function resetToHome() {
+  stopMapNavigation();
   // Cierra todo lo abierto
   panel.classList.remove('open');
   stopBidFeed();
@@ -3660,7 +3691,9 @@ function resetToHome() {
   splash.classList.remove('hidden');
   rotating = false; // no rotar durante el vuelo de vuelta
   map.flyTo({...HOME_VIEW, duration: 2200, essential: true});
-  map.once('moveend', () => { rotating = true; }); // reanuda la autorrotación al llegar
+  map.once('moveend', () => {
+    if (!tourRun && !circuitDemo.running && !tourCamera.isNavigating() && map.getZoom() < 6) rotating = true;
+  }); // Resume only if a new destination has not superseded the home flight.
 }
 // ─── Vida en el cielo: estrellas que titilan + fugaces ocasionales ─
 (function starfieldLife(){
