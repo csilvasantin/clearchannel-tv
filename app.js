@@ -2823,7 +2823,7 @@ function renderPanel(loc) {
       </div>
     </div>`;
   }).join('');
-  if (isAdmiraXperienceLocation(loc) && !loc.surfaces.length) list.innerHTML = '<p class="office-interior-note">Pantallas interiores pendientes de vincular. Abre «Recorrer AdmiraXperience» para llegar a la oficina y acceder al interior.</p>';
+  if (isAdmiraXperienceLocation(loc) && !loc.surfaces.length) list.innerHTML = '<p class="office-interior-note">'+(loc.interiorStatus==='external-manual'?'Interior disponible en IEU, con selección manual de oficina y acceso mediante tu cuenta autorizada.':'Pantallas interiores pendientes de vincular.')+' Abre «Recorrer AdmiraXperience» para llegar al destino y acceder al interior.</p>';
   try{ startSurfMirrors(); }catch(_){}
   // El feed de pujas es REAL y global (poller RTB): al abrir un panel NO lo
   // vaciamos, solo re-pintamos las decisiones reales ya recibidas (o el estado

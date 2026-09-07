@@ -1308,12 +1308,13 @@ window.OMNIP_LOCATIONS_EXTRA = [
 // AdmiraXperience · offices requested by Carlos, 07-09-2026.
 // OSM entrance nodes 6163444335 and 10788870066; no invented audience or live screens.
 window.OMNIP_LOCATIONS_EXTRA.push(...[
+{"id": "admiraxperience-store", "name": "AdmiraXperience · Store · Santa Rosa 19", "kind": "Tienda · AdmiraXperience", "addr": "Carrer de Santa Rosa 19 bajos, 08012 Barcelona", "coords": [2.1537097, 41.4034658], "experienceId": "admiraxperience", "fly": "https://admira.tv/admiraxperience/?site=store", "flyLabel": "Recorrer AdmiraXperience ↗", "surfaces": [], "segmentation": {"typologies": ["interior"]}, "external": {"brand": "AdmiraXperience", "source": "https://www.openstreetmap.org/node/6170010026"}, "interiorStatus": "external-manual", "interiorName": "Store", "interiorUrl": "https://digitaltwin.ieu.ai/"},
   {id:'admiraxperience-santa-rosa',name:'AdmiraXperience · Santa Rosa 4',kind:'Oficina · AdmiraXperience',addr:'Carrer de Santa Rosa 4, 08012 Barcelona',coords:[2.1527412,41.4031596],experienceId:'admiraxperience',
    fly:'https://admira.tv/admiraxperience/?site=santa-rosa',flyLabel:'Recorrer AdmiraXperience ↗',
    surfaces:[],segmentation:{typologies:['interior']},external:{brand:'AdmiraXperience',source:'Carlos / OSM entrance 6163444335'},interiorStatus:'pending'},
-  {id:'admiraxperience-planeta',name:'AdmiraXperience · Planeta 7',kind:'Oficina · AdmiraXperience',addr:'Carrer del Planeta 7, 08012 Barcelona',coords:[2.1558441,41.4013338],experienceId:'admiraxperience',
+  {id:'admiraxperience-planeta',name:'AdmiraXperience · Planeta 7',kind:'Oficina · AdmiraXperience',addr:'Carrer del Planeta 7 bajos, 08012 Barcelona',coords:[2.1558441,41.4013338],experienceId:'admiraxperience',
    fly:'https://admira.tv/admiraxperience/?site=planeta',flyLabel:'Recorrer AdmiraXperience ↗',
-   surfaces:[],segmentation:{typologies:['interior']},external:{brand:'AdmiraXperience',source:'Carlos / OSM entrance 10788870066'},interiorStatus:'pending'},
+   surfaces:[],segmentation:{typologies:['interior']},external:{brand:'AdmiraXperience',source:'Carlos / OSM entrance 10788870066'},interiorStatus:'external-manual',interiorName:'Planeta Terminator',interiorUrl:'https://digitaltwin.ieu.ai/'},
 {"id": "admiraxperience-breton", "name": "AdmiraXperience · Bretón de los Herreros 9", "kind": "Oficina · AdmiraXperience", "addr": "Bretón de los Herreros 9, Barcelona", "coords": [2.1519882, 41.4023751], "experienceId": "admiraxperience", "fly": "https://admira.tv/admiraxperience/?site=breton", "flyLabel": "Recorrer AdmiraXperience ↗", "surfaces": [], "segmentation": {"typologies": ["interior"]}, "external": {"brand": "AdmiraXperience", "source": "https://www.openstreetmap.org/node/11684340991"}, "interiorStatus": "pending"},
 {"id": "admiraxperience-aulestia", "name": "AdmiraXperience · Aulèstia i Pijoan 23", "kind": "Oficina · AdmiraXperience", "addr": "Aulèstia i Pijoan 23, Barcelona", "coords": [2.1508739, 41.4031086], "experienceId": "admiraxperience", "fly": "https://admira.tv/admiraxperience/?site=aulestia", "flyLabel": "Recorrer AdmiraXperience ↗", "surfaces": [], "segmentation": {"typologies": ["interior"]}, "external": {"brand": "AdmiraXperience", "source": "https://www.openstreetmap.org/node/6165564010"}, "interiorStatus": "pending"}
 ]);
@@ -1334,12 +1335,12 @@ window.mergeOmnipLocations = function(base, extra) {
     const flyById = new Map();
     [window.OMNIP_LOCATIONS_DEFAULT, window.OMNIP_LOCATIONS_EXTRA].forEach(src => {
       (src || []).forEach(l => {
-        if (l && l.id && l.fly) flyById.set(l.id, { fly: l.fly, flyLabel: l.flyLabel });
+        if (l && l.id && l.fly) flyById.set(l.id, { fly: l.fly, flyLabel: l.flyLabel, interiorStatus:l.interiorStatus, interiorName:l.interiorName, interiorUrl:l.interiorUrl });
       });
     });
     if (flyById.size) out.forEach(l => {
       const f = l && l.id && flyById.get(l.id);
-      if (f) { l.fly = f.fly; if (f.flyLabel != null) l.flyLabel = f.flyLabel; }
+      if (f) { if(f.interiorStatus){l.interiorStatus=f.interiorStatus;l.interiorName=f.interiorName;l.interiorUrl=f.interiorUrl;} l.fly = f.fly; if (f.flyLabel != null) l.flyLabel = f.flyLabel; }
     });
   } catch (e) {}
   return out;
