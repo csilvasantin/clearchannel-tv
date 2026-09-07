@@ -32,7 +32,9 @@ function admiraRewriter(pathname) {
     .on('title', {
       text(text) {
         var branded = replaceBrand(text.text);
-        if (branded !== text.text) text.replace(branded);
+        // text.text llega tal cual está en el HTML (entidades incluidas): se devuelve como
+        // HTML para no escaparlo dos veces (el <title> salía con &amp;amp;).
+        if (branded !== text.text) text.replace(branded, { html: true });
       }
     })
     .on('meta[content]', {
@@ -54,7 +56,9 @@ function admiraRewriter(pathname) {
       .on('body *', {
         text(text) {
           var branded = replaceBrand(text.text);
-          if (branded !== text.text) text.replace(branded);
+          // text.text llega tal cual está en el HTML (entidades incluidas): se devuelve como
+        // HTML para no escaparlo dos veces (el <title> salía con &amp;amp;).
+        if (branded !== text.text) text.replace(branded, { html: true });
         }
       })
       .on('a[href]', {
