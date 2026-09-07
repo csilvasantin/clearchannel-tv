@@ -1,6 +1,6 @@
 /* One north-up overview for all catalogue filters and tours. No second render loop. */
 window.CircuitOverview={create({map,getData,style}){
- const host=document.createElement('div');host.className='cenital-floating';host.style.bottom='85px';map.getContainer().append(host);
+ const host=document.createElement('div');host.className='cenital-floating';host.style.cssText='position:fixed;bottom:85px;right:80px;z-index:13';document.body.append(host);host.addEventListener('click',event=>event.stopPropagation());
  const canvas=document.createElement('div');canvas.setAttribute('aria-label','Plano cenital del circuito');
  let mini=null,panel=null,frame=null,loaded=false;
  function refresh(){if(!mini||!loaded||!panel?.visible)return;mini.getSource('circuit-points')?.setData(getData());mini.jumpTo({center:map.getCenter(),zoom:Math.max(1,map.getZoom()-2),bearing:0,pitch:0});}
