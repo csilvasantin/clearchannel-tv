@@ -1,0 +1,105 @@
+{
+  "name": "admira-app-audience",
+  "title": "Admira App · admira.app — Audiencia y emisión verificada",
+  "description": "Hub MCP de admira.app, la plataforma agéntica de Admira para audiencia y emisión verificada de pantallas retail-media. Cruza el proof-of-play de admira.tv (QUÉ se emitió) con la cámara on-device del gemelo XpaceOS (QUIÉN lo vio: presencia, género, edad, franja horaria) y lo abre a agentes (silicio) y personas (carbono) por MCP y por API.",
+  "version": "__ADMIRANEXT_VERSION__",
+  "site": "https://www.admira.app",
+  "hub": "https://www.admira.app/mcp/",
+  "llms_txt": "https://www.admira.app/mcp/llms.txt",
+  "repo": "https://github.com/csilvasantin/clearchannel-tv",
+  "contact": {
+    "telegram_group": "AdmiraXP",
+    "signature": "Admira IA"
+  },
+  "http_api": {
+    "base_url": "https://api.admira.store",
+    "notes": "Worker pixer-eleven (Cloudflare). Lecturas (/…/range) abiertas, CORS refleja el origen del solicitante. Escrituras (/emit, /audience) son telemetría de pantallas/cámara, sin credencial. SIN PII: la cámara procesa on-device y solo envía conteos agregados.",
+    "read": [
+      {
+        "method": "GET",
+        "path": "/emit/range",
+        "desc": "Proof-of-play por circuito: pases, segundos en pantalla, byType (image/video/animation), top creatividades, desglose por pantalla y día.",
+        "query": [
+          "loc"
+        ],
+        "example": "https://api.admira.store/emit/range?loc=xtanco-demo"
+      },
+      {
+        "method": "GET",
+        "path": "/audience/range",
+        "desc": "Audiencia por circuito: muestras, presencia, pico de personas, género {male,female}, edad {nino,joven,adulto,senior}, franja horaria {0..23}, por pantalla y día.",
+        "query": [
+          "loc"
+        ],
+        "example": "https://api.admira.store/audience/range?loc=xtanco-demo"
+      }
+    ],
+    "interact": [
+      {
+        "method": "POST",
+        "path": "/emit",
+        "desc": "Registra un pase (proof-of-play). admira.tv (canal) lo emite por pantalla cada ~12 s.",
+        "body": {
+          "loc": "string",
+          "screen": "string",
+          "type": "image|video|animation",
+          "title": "string",
+          "secs": "number",
+          "num": "number?"
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/audience",
+        "desc": "Registra una muestra de cámara (audiencia). El gemelo XpaceOS la envía ~cada 20 s.",
+        "body": {
+          "loc": "string",
+          "screen": "string",
+          "faces": "number",
+          "gender": "male|female|''",
+          "genderScore": "number (0..1, ≥0.6 cuenta)",
+          "ageBucket": "nino|joven|adulto|senior|''",
+          "emotion": "string?"
+        }
+      }
+    ]
+  },
+  "mcp_server": {
+    "endpoint": "https://mcp.admira.store/mcp",
+    "transport": "streamable-http",
+    "auth": "none",
+    "tools": [
+      "fleet_status",
+      "list_screens",
+      "screen_now",
+      "emission_report",
+      "register_device"
+    ],
+    "docs": "https://www.xpaceos.com/mcp/",
+    "note": "Servidor MCP real del ecosistema XpaceOS (cubre flota, emisión y audiencia). Conéctalo desde tu cliente MCP: {\"mcpServers\":{\"xpaceos\":{\"url\":\"https://mcp.admira.store/mcp\"}}}."
+  },
+  "report": {
+    "human": "https://www.admira.app/detail.html?loc={loc}",
+    "cross": "QUÉ se emitió (admira.tv /emit) × QUIÉN lo vio (cámara /audience: presencia + género + edad + franja horaria).",
+    "export": "Botón '🔬 Exportar informe' → Informe de Audiencia Verificada (HTML imprimible a PDF) con gráficos SVG (donut género, barras edad/hora/tipo), KPIs, desglose por pantalla, metodología y privacidad."
+  },
+  "privacy": {
+    "on_device": true,
+    "engine": "@vladmandic/human (TensorFlow.js)",
+    "stored": "solo conteos agregados (presencia, género, edad, hora)",
+    "note": "No se almacenan imágenes ni datos personales. Género y edad son estimaciones estadísticas, no identificación de personas."
+  },
+  "federation": {
+    "note": "Misma convención /mcp/ en cada pata del ecosistema AdmiraNeXT; viceversa, admira.app también consulta a las demás.",
+    "clearchannel": "https://www.clearchannel.tv/mcp/",
+    "admira_tv": "https://admira.tv/mcp/",
+    "consejo": "https://www.admira.live/mcp/",
+    "xpaceos": "https://www.xpaceos.com/mcp/",
+    "directorio": "https://www.admiranext.com/mcp/#directorio"
+  },
+  "conventions": {
+    "versioning": "v.AA.MM.DD.rN",
+    "changes": "Telegram grupo AdmiraXP, firmado 'Admira IA'"
+  },
+  "twin": "admira.app y clearchannel.tv se sirven desde el mismo proyecto Cloudflare Pages (clearchannel-tv); este manifest es el de admira.app, con la misma API y el mismo servidor MCP."
+}

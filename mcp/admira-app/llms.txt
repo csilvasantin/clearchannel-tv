@@ -1,0 +1,74 @@
+# Admira App · admira.app — Audiencia y emisión verificada (MCP)
+
+> Hub MCP de admira.app, la plataforma agéntica de Admira para audiencia y emisión
+> verificada de pantallas retail-media. Punto de entrada para que cualquier agente
+> (Claude, Codex, OpenCode, ChatGPT, bots de Telegram u otra IA) y cualquier humano
+> puedan CONSULTAR e INTERACTUAR con los datos verificados de Emisión × Audiencia —
+> y viceversa, para que nosotros consultemos a otros. Para silicio (bots) y carbono (humanos).
+
+Sitio público: https://www.admira.app
+Hub MCP: https://www.admira.app/mcp/
+Manifest máquina: https://www.admira.app/mcp/manifest.json
+Versión: __ADMIRANEXT_VERSION__
+Repo: https://github.com/csilvasantin/clearchannel-tv (admira.app y clearchannel.tv se sirven
+desde el mismo proyecto Cloudflare Pages; este es el llms.txt de admira.app)
+
+## Qué es
+
+admira.app mide el retail-media de forma verificable: cruza QUÉ se emitió en cada pantalla
+(proof-of-play de admira.tv) con QUIÉN lo vio (cámara on-device del gemelo XpaceOS:
+presencia sí/no, género hombre/mujer, edad y franja horaria). El resultado es un
+"Informe de Audiencia Verificada" por circuito, exportable a PDF. Los agentes lo consultan
+por MCP y por API; las personas, en la web.
+
+## API en vivo (base: https://api.admira.store)
+
+Lecturas (abiertas; CORS refleja el origen):
+- GET /emit/range?loc={loc} — proof-of-play del circuito: pases, segundos, byType
+  (image/video/animation), top creatividades, por pantalla y día.
+- GET /audience/range?loc={loc} — audiencia del circuito: muestras, presencia, pico,
+  género {male,female}, edad {nino,joven,adulto,senior}, franja horaria {0..23}.
+
+Escrituras (telemetría, sin credencial):
+- POST /emit — registra un pase. body: {loc, screen, type, title, secs, num?}.
+  La emite admira.tv (canal) por pantalla cada ~12 s.
+- POST /audience — registra una muestra de cámara. body: {loc, screen, faces,
+  gender, genderScore, ageBucket, emotion?}. La envía el gemelo XpaceOS cada ~20 s.
+
+Ejemplo: https://api.admira.store/audience/range?loc=xtanco-demo
+
+## Informe (humano)
+
+- Informe por circuito: https://www.admira.app/detail.html?loc={loc}
+- Botón "Exportar informe" → Informe de Audiencia Verificada (HTML imprimible a PDF):
+  resumen ejecutivo, KPIs, donut de género, barras de edad/hora/tipo, top creatividades,
+  desglose por pantalla, metodología y privacidad.
+
+## Privacidad
+
+Detección on-device (@vladmandic/human, TensorFlow.js). No se almacenan imágenes ni
+datos personales: solo conteos agregados (presencia, género, edad, hora). Género y edad
+son estimaciones estadísticas, no identificación de personas.
+
+## Servidor MCP (conectar de verdad)
+
+Además de la API REST, el ecosistema expone un servidor MCP real:
+- Endpoint: https://mcp.admira.store/mcp (transporte streamable-http; lectura abierta,
+  escrituras con la clave de flota AdmiraNeXT)
+- Tools: fleet_status, list_screens, screen_now, emission_report, register_device
+- Config de cliente: {"mcpServers":{"xpaceos":{"url":"https://mcp.admira.store/mcp"}}}
+- Docs: https://www.xpaceos.com/mcp/
+
+## Federación (viceversa)
+
+Misma convención /mcp/ en cada pata del ecosistema AdmiraNeXT (y nosotros las consultamos):
+- Clear Channel (gemelo de este sitio): https://www.clearchannel.tv/mcp/
+- El canal (emitir): https://admira.tv/mcp/
+- Consejo de Silicio: https://www.admira.live/mcp/
+- XpaceOS (el OS retail): https://www.xpaceos.com/mcp/
+- Directorio canónico de los MCP de la suite: https://www.admiranext.com/mcp/#directorio
+
+## Convenciones
+
+- Sello único por publicación: v.DD.MM.AAAA.rN.HH:MM (normativa 07 y 09).
+- Avisos de cambios: Telegram grupo AdmiraXP, firmados "Admira IA".

@@ -43,7 +43,8 @@ TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 git archive main | tar -x -C "$TMP"
 
-find "$TMP" -type f -name '*.html' -exec sed -i '' "s/__ADMIRANEXT_VERSION__/$VERSION/g" {} +
+# El sello también va en la puerta MCP propia de admira.app (mcp/admira-app/*).
+find "$TMP" -type f \( -name '*.html' -o -path '*/mcp/admira-app/*' \) -exec sed -i '' "s/__ADMIRANEXT_VERSION__/$VERSION/g" {} +
 jq -n \
   --arg version "$VERSION" \
   --arg agent "$AGENT" \
