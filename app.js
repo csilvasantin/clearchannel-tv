@@ -26,11 +26,11 @@ const CIRCUIT_SCOPE_OPTIONS = [
   {value:'local', labelKey:'scope_local'},
 ];
 const CIRCUIT_IDS_BY_SCOPE = {
-  all: ['all', 'metro_bcn', 'kioskos', 'estancos', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
+  all: ['all', 'admiraxperience', 'metro_bcn', 'kioskos', 'estancos', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
   global: ['desigual', 'mango'],
   national: ['estancos', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx'],
-  city: ['metro_bcn', 'kioskos'],
-  local: ['all'],
+  city: ['metro_bcn', 'kioskos', 'admiraxperience'],
+  local: ['all', 'admiraxperience'],
 };
 const CIRCUIT_TARGET_OPTIONS = {
   placements: [
@@ -736,7 +736,10 @@ function isMultiopticasLocation(loc) {
 }
 
 // Etiqueta de circuito de un Xpacio (para el tooltip del globo y filtros).
+function isAdmiraXperienceLocation(loc) { return loc.experienceId === 'admiraxperience' || loc.external?.brand === 'AdmiraXperience'; }
+
 function circuitLabel(loc) {
+  if (isAdmiraXperienceLocation(loc)) return 'AdmiraXperience';
   if (isDesigualLocation(loc)) return 'Desigual';
   if (isMetroBarcelonaLocation(loc)) {
     const lines = metroLinesForLocation(loc);
@@ -795,8 +798,9 @@ function circuitDefinitions() {
   const elcorteinglesItems = LOCATIONS.filter(isElCorteInglesLocation);
   const correosItems = LOCATIONS.filter(isCorreosLocation);
   const multiopticasItems = LOCATIONS.filter(isMultiopticasLocation);
-  const retailItems = LOCATIONS.filter(l => !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l));
+  const retailItems = LOCATIONS.filter(l => !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l));
   return {
+    admiraxperience: {label:'AdmiraXperience',items:LOCATIONS.filter(isAdmiraXperienceLocation),segmentation:circuitSegmentationForItems(LOCATIONS.filter(isAdmiraXperienceLocation))},
     metro_bcn: {
       label: t('circuit_metro_bcn'),
       items: metroItems,
@@ -937,7 +941,7 @@ function locationMatchesTargetSoft(loc) {
 
 function mapScopeForLocation(loc) {
   if (isDesigualLocation(loc) || isMangoLocation(loc)) return 'global';
-  if (isMetroBarcelonaLocation(loc) || isKioskoLocation(loc)) return 'local';
+  if (isAdmiraXperienceLocation(loc) || isMetroBarcelonaLocation(loc) || isKioskoLocation(loc)) return 'local';
   return 'national';
 }
 
@@ -993,6 +997,7 @@ function locationCpmValues(loc) {
 }
 
 function locationSurfaceCount(loc) {
+  if (isAdmiraXperienceLocation(loc)) return loc.surfaces.length;
   return loc.surfaces.filter(s => s.status !== 'idle').length || loc.surfaces.length || 1;
 }
 
@@ -2791,7 +2796,8 @@ function renderPanel(loc) {
   document.getElementById('p-kind').textContent = loc.kind;
   document.getElementById('p-surfaces').textContent = loc.surfaces.length;
   const totalImpr = loc.surfaces.reduce((a,s)=>a+s.impr, 0);
-  document.getElementById('p-impr').textContent = '~' + (totalImpr/1000).toFixed(1) + 'K';
+  document.getElementById('p-impr').textContent = loc.surfaces.length ? '~' + (totalImpr/1000).toFixed(1) + 'K' : '—';
+  document.getElementById('p-cpm').textContent = '—';
   const cpms = loc.surfaces.map(s => parseFloat(String(s.cpm).replace(/[^\d.]/g,''))).filter(Boolean);
   if (cpms.length) {
     const lo = Math.min(...cpms), hi = Math.max(...cpms);
@@ -2816,6 +2822,7 @@ function renderPanel(loc) {
       </div>
     </div>`;
   }).join('');
+  if (isAdmiraXperienceLocation(loc) && !loc.surfaces.length) list.innerHTML = '<p class="office-interior-note">Pantallas interiores pendientes de vincular. Abre «Recorrer AdmiraXperience» para llegar a la oficina y acceder al interior.</p>';
   try{ startSurfMirrors(); }catch(_){}
   // El feed de pujas es REAL y global (poller RTB): al abrir un panel NO lo
   // vaciamos, solo re-pintamos las decisiones reales ya recibidas (o el estado
@@ -3554,7 +3561,7 @@ restoreWalkReturn();
     const cpms = LOCATIONS.flatMap(l => (Array.isArray(l.surfaces) ? l.surfaces : []).map(s => parseFloat(String(s.cpm).replace(/[^\d.]/g,'')))).filter(Boolean);
     if (cpms.length) {
       const lo = Math.min(...cpms), hi = Math.max(...cpms);
-      const el = document.getElementById('p-cpm'); if (el) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
+      const el = document.getElementById('p-cpm'); if (el && !isAdmiraXperienceLocation(activeLocation || {})) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
     }
     renderCircuitSelector();
     if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();

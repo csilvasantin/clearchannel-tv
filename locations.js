@@ -1305,6 +1305,17 @@ window.OMNIP_LOCATIONS_EXTRA = [
   {"id": "caixabank-0050-passeig-de-manuel-girona", "name": "CaixaBank Passeig de Manuel Girona", "kind": "La Caixa / CaixaBank · Banca · Retail físico", "addr": "Caixabank · 54 · Passeig de Manuel Girona · Pedralbes · les Corts · Barcelona · Barcelonès", "coords": [2.125222, 41.3912703], "twin": "https://www.xpaceos.com/Xcaixa/?loc=caixabank-0050-passeig-de-manuel-girona", "surfaces": [{"name": "Fachada / escaparate financiero", "desc": "Pantalla en fachada bancaria · alto trafico peatonal y confianza de marca", "status": "live", "impr": 620, "cpm": "€7", "surface": "escaparate"}, {"name": "Interior zona cajeros", "desc": "Pantallas de autoservicio y oficina · educacion financiera, servicios y campañas locales", "status": "live", "impr": 240, "cpm": "€5", "surface": "pantalla"}, {"name": "Turno / atencion al cliente", "desc": "Microimpactos en espera y mesa de atencion · productos, seguridad y acompanamiento", "status": "live", "impr": 150, "cpm": "€4", "surface": "mostrador"}], "segmentation": {"required": false, "schedule": {"start": "08:30", "end": "19:00"}, "typologies": ["exterior", "interior"], "genders": ["hombre", "mujer"], "ages": ["joven", "adulto", "senior"], "timeSlots": ["manana", "mediodia", "tarde"]}, "osm": {"brand": "CaixaBank", "brand:wikidata": "Q847865", "id": "node/8375493988"}, "external": {"brand": "CaixaBank", "network": "La Caixa", "source": "nominatim-osm", "testCircuit": true}}
 ];
 
+// AdmiraXperience · offices requested by Carlos, 07-09-2026.
+// OSM entrance nodes 6163444335 and 10788870066; no invented audience or live screens.
+window.OMNIP_LOCATIONS_EXTRA.push(...[
+  {id:'admiraxperience-santa-rosa',name:'AdmiraXperience · Santa Rosa 4',kind:'Oficina · AdmiraXperience',addr:'Carrer de Santa Rosa 4, 08012 Barcelona',coords:[2.1527412,41.4031596],experienceId:'admiraxperience',
+   fly:'https://admira.tv/admiraxperience/?site=santa-rosa',flyLabel:'Recorrer AdmiraXperience ↗',
+   surfaces:[],segmentation:{typologies:['interior']},external:{brand:'AdmiraXperience',source:'Carlos / OSM entrance 6163444335'},interiorStatus:'pending'},
+  {id:'admiraxperience-planeta',name:'AdmiraXperience · Planeta 7',kind:'Oficina · AdmiraXperience',addr:'Carrer del Planeta 7, 08012 Barcelona',coords:[2.1558441,41.4013338],experienceId:'admiraxperience',
+   fly:'https://admira.tv/admiraxperience/?site=planeta',flyLabel:'Recorrer AdmiraXperience ↗',
+   surfaces:[],segmentation:{typologies:['interior']},external:{brand:'AdmiraXperience',source:'Carlos / OSM entrance 10788870066'},interiorStatus:'pending'}
+]);
+
 window.mergeOmnipLocations = function(base, extra) {
   const out = window.normalizeOmnipLocations(base);
   const seen = new Set(out.map(l => l && l.id).filter(Boolean));
