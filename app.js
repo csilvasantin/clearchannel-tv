@@ -653,7 +653,6 @@ function updateLocationsSource() {
   invalidateLocationsGeoJSON();
   const src = map && map.getSource && map.getSource('locs');
   if (src) src.setData(locationsGeoJSON());
-  circuitOverview?.refresh();
 }
 
 function locationsSignature(list, updatedAt = '') {
@@ -2088,7 +2087,6 @@ const map = new maplibregl.Map({
 map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-left');
 const tourCamera = TourMap.createTourCamera(map);
 let circuitOverview=null;
-map.once('load',()=>{circuitOverview=CircuitOverview.create({map,getData:locationsGeoJSON,style:STYLE_TIERRA});});
 
 let currentLayer = 'tierra';
 let currentView = '3d';
@@ -3218,7 +3216,16 @@ function locationCamera(loc, bearing = -20) {
   return {center:loc.coords, zoom:16.8, pitch:currentView === '3d' ? 45 : 0, bearing};
 }
 
+function syncCircuitOverview(){
+ const meta={kioskos:{name:'CanalKiosk',theme:'kiosk'},admiraxperience:{name:'AdmiraXperience',theme:'admira'},estancos:{name:'Xtanco',theme:'xtanco'}}[selectedCircuitId];
+ const active=!!(tourRun||circuitDemo.running);
+ if(!active||!meta){circuitOverview?.destroy();circuitOverview=null;return;}
+ if(circuitOverview?.key===selectedCircuitId)return;
+ circuitOverview?.destroy();const data={type:'FeatureCollection',features:currentCircuitItems().map(l=>({type:'Feature',geometry:{type:'Point',coordinates:l.coords},properties:{name:l.name,color:meta.theme==='xtanco'?'#ff4da6':meta.theme==='kiosk'?'#50c8ff':'#376c42'}}))};
+ circuitOverview=CircuitOverview.create({map,getData:()=>data,style:STYLE_TIERRA,key:selectedCircuitId,...meta});
+}
 function updateMapTourStop() {
+  syncCircuitOverview();
   const button = document.getElementById('map-tour-stop');
   if (button) { button.hidden = !tourRun && !circuitDemo.running; button.textContent = t('tour_stop'); }
 }
