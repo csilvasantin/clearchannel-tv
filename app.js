@@ -653,6 +653,7 @@ function updateLocationsSource() {
   invalidateLocationsGeoJSON();
   const src = map && map.getSource && map.getSource('locs');
   if (src) src.setData(locationsGeoJSON());
+  circuitOverview?.refresh();
 }
 
 function locationsSignature(list, updatedAt = '') {
@@ -2086,6 +2087,8 @@ const map = new maplibregl.Map({
 });
 map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-left');
 const tourCamera = TourMap.createTourCamera(map);
+let circuitOverview=null;
+map.once('load',()=>{circuitOverview=CircuitOverview.create({map,getData:locationsGeoJSON,style:STYLE_TIERRA});});
 
 let currentLayer = 'tierra';
 let currentView = '3d';

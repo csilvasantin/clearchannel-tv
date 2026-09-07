@@ -1313,7 +1313,9 @@ window.OMNIP_LOCATIONS_EXTRA.push(...[
    surfaces:[],segmentation:{typologies:['interior']},external:{brand:'AdmiraXperience',source:'Carlos / OSM entrance 6163444335'},interiorStatus:'pending'},
   {id:'admiraxperience-planeta',name:'AdmiraXperience · Planeta 7',kind:'Oficina · AdmiraXperience',addr:'Carrer del Planeta 7, 08012 Barcelona',coords:[2.1558441,41.4013338],experienceId:'admiraxperience',
    fly:'https://admira.tv/admiraxperience/?site=planeta',flyLabel:'Recorrer AdmiraXperience ↗',
-   surfaces:[],segmentation:{typologies:['interior']},external:{brand:'AdmiraXperience',source:'Carlos / OSM entrance 10788870066'},interiorStatus:'pending'}
+   surfaces:[],segmentation:{typologies:['interior']},external:{brand:'AdmiraXperience',source:'Carlos / OSM entrance 10788870066'},interiorStatus:'pending'},
+{"id": "admiraxperience-breton", "name": "AdmiraXperience · Bretón de los Herreros 9", "kind": "Oficina · AdmiraXperience", "addr": "Bretón de los Herreros 9, Barcelona", "coords": [2.1519882, 41.4023751], "experienceId": "admiraxperience", "fly": "https://admira.tv/admiraxperience/?site=breton", "flyLabel": "Recorrer AdmiraXperience ↗", "surfaces": [], "segmentation": {"typologies": ["interior"]}, "external": {"brand": "AdmiraXperience", "source": "https://www.openstreetmap.org/node/11684340991"}, "interiorStatus": "pending"},
+{"id": "admiraxperience-aulestia", "name": "AdmiraXperience · Aulèstia i Pijoan 23", "kind": "Oficina · AdmiraXperience", "addr": "Aulèstia i Pijoan 23, Barcelona", "coords": [2.1508739, 41.4031086], "experienceId": "admiraxperience", "fly": "https://admira.tv/admiraxperience/?site=aulestia", "flyLabel": "Recorrer AdmiraXperience ↗", "surfaces": [], "segmentation": {"typologies": ["interior"]}, "external": {"brand": "AdmiraXperience", "source": "https://www.openstreetmap.org/node/6165564010"}, "interiorStatus": "pending"}
 ]);
 
 window.mergeOmnipLocations = function(base, extra) {
