@@ -354,6 +354,8 @@
   aside.panel .ph{padding:20px 22px;border-bottom:1px solid var(--line);position:relative}
   aside.panel .ph .kind{font-family:monospace;font-size:10px;color:var(--accent);letter-spacing:.18em;text-transform:uppercase}
   aside.panel .ph h2{margin:6px 0 4px;font-size:24px;letter-spacing:-.01em}
+  aside.panel .ph .conf-chip{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:999px;font-family:monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;border:1px solid #ffb030;color:#ffb030;background:rgba(255,176,48,.12)}
+  aside.panel .ph .conf-chip.baja{border-color:#ff6b6b;color:#ff6b6b;background:rgba(255,107,107,.12)}
   aside.panel .ph .addr{color:var(--mut);font-size:13px}
   aside.panel .ph .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;font-family:monospace;font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em}
   aside.panel .ph .meta b{color:var(--brand);display:block;font-size:18px;letter-spacing:0;text-transform:none;margin-bottom:1px}
@@ -767,6 +769,7 @@
       <option value="kioskos" data-i18n="circuit_kioskos">Kioskos de prensa</option>
       <option value="all" data-i18n="circuit_all">Toda la red Clear Channel</option>
       <option value="estancos" data-i18n="circuit_estancos">Estancos</option>
+      <option value="alcampo" data-i18n="circuit_alcampo">Alcampo · Supermercados (39)</option>
       <option value="decathlon" data-i18n="circuit_decathlon">Decathlon España</option>
       <option value="palacio" data-i18n="circuit_palacio">El Palacio de Hierro · México</option>
       <option value="liverpool_mx" data-i18n="circuit_liverpool_mx">Liverpool · México</option>
@@ -1128,6 +1131,7 @@
   <div class="ph">
     <button class="close" id="panel-close" data-i18n-aria="close" aria-label="Cerrar">×</button>
     <div class="kind" id="p-kind">Estanco · Retail físico</div>
+    <div class="conf-chip" id="p-conf" hidden></div>
     <h2 id="p-name">Xtanco</h2>
     <div class="addr" id="p-addr">Calle de Santa Rosa 4 · Madrid</div>
     <div class="meta">

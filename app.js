@@ -26,9 +26,9 @@ const CIRCUIT_SCOPE_OPTIONS = [
   {value:'local', labelKey:'scope_local'},
 ];
 const CIRCUIT_IDS_BY_SCOPE = {
-  all: ['all', 'admiraxperience', 'metro_bcn', 'kioskos', 'estancos', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
+  all: ['all', 'admiraxperience', 'metro_bcn', 'kioskos', 'estancos', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
   global: ['desigual', 'mango'],
-  national: ['estancos', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx'],
+  national: ['estancos', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx'],
   city: ['metro_bcn', 'kioskos', 'admiraxperience'],
   local: ['all', 'admiraxperience'],
 };
@@ -242,7 +242,7 @@ const I18N = {
     circuit_panel_title:'Seleccionar circuito', target_panel_title:'Seleccionar target', target_panel_hint:'Estos criterios segmentan la creación de contenidos.',
     circuit_metro_bcn:'Metro Barcelona Ciudad', circuit_desigual:'Desigual Global', circuit_mango:'Mango Global',
     circuit_kioskos:'Kioskos de prensa', circuit_all:'Todos los puntos locales',
-    circuit_estancos:'Xtanco Nacional', circuit_decathlon:'Decathlon España', circuit_palacio:'El Palacio de Hierro · México', circuit_liverpool_mx:'Liverpool · México', circuit_bbva:'BBVA · España', circuit_banorte_mx:'Banorte · México', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · España', circuit_correos:'Correos · España', circuit_multiopticas:'MultiÓpticas · España', circuit_retail:'Otros retail físicos',
+    circuit_estancos:'Xtanco Nacional', circuit_alcampo:'Alcampo · Supermercados (39)', circuit_decathlon:'Decathlon España', circuit_palacio:'El Palacio de Hierro · México', circuit_liverpool_mx:'Liverpool · México', circuit_bbva:'BBVA · España', circuit_banorte_mx:'Banorte · México', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · España', circuit_correos:'Correos · España', circuit_multiopticas:'MultiÓpticas · España', circuit_retail:'Otros retail físicos',
     all_lines:'Todas las líneas', whole_line:'Toda línea', whole_circuit:'Todo circuito',
     points_label:'puntos', point_label:'punto', impr_day_compact:'impr/día', cpm_label:'CPM',
     circuit_points_title:'Puntos del circuito', view_map:'Ver en mapa', buy_selection:'Comprar selección',
@@ -344,6 +344,7 @@ const I18N = {
     status_searching:'Buscando', status_no_results:'Sin resultados · prueba "Xtanco", "BCN" o una dirección completa',
     status_sv_landing:'Bajando a Street View · ', status_sv_opening:'Abriendo Street View en Google Maps…',
     surf_live:'● LIVE', surf_sched:'PROG', surf_idle:'IDLE',
+    conf_media:'confianza media · confirmar ubicación', conf_baja:'confianza baja · confirmar ubicación',
     twin_launch:'🔨 Lanzar ganador → pantalla', live_tag:'live',
     mars_hint:'Todavía no vendemos publi en Marte 🔴',
     pl_mercury:'Mercurio', pl_venus:'Venus', pl_mars:'Marte', pl_jupiter:'Júpiter', pl_saturn:'Saturno', pl_uranus:'Urano', pl_neptune:'Neptuno',
@@ -374,7 +375,7 @@ const I18N = {
     circuit_panel_title:'Select circuit', target_panel_title:'Select target', target_panel_hint:'These criteria segment content creation.',
     circuit_metro_bcn:'Barcelona Metro City', circuit_desigual:'Global Desigual', circuit_mango:'Mango Global',
     circuit_kioskos:'Press kiosk', circuit_all:'All local registered points',
-    circuit_estancos:'National Xtanco', circuit_decathlon:'Decathlon Spain', circuit_palacio:'El Palacio de Hierro · Mexico', circuit_liverpool_mx:'Liverpool · Mexico', circuit_bbva:'BBVA · Spain', circuit_banorte_mx:'Banorte · Mexico', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · Spain', circuit_correos:'Correos · Spain', circuit_multiopticas:'MultiÓpticas · Spain', circuit_retail:'Other physical retail',
+    circuit_estancos:'National Xtanco', circuit_alcampo:'Alcampo · Supermarkets (39)', circuit_decathlon:'Decathlon Spain', circuit_palacio:'El Palacio de Hierro · Mexico', circuit_liverpool_mx:'Liverpool · Mexico', circuit_bbva:'BBVA · Spain', circuit_banorte_mx:'Banorte · Mexico', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · Spain', circuit_correos:'Correos · Spain', circuit_multiopticas:'MultiÓpticas · Spain', circuit_retail:'Other physical retail',
     all_lines:'All lines', whole_line:'Whole line', whole_circuit:'Whole circuit',
     points_label:'points', point_label:'point', impr_day_compact:'impr/day', cpm_label:'CPM',
     circuit_points_title:'Circuit points', view_map:'View on map', buy_selection:'Buy selection',
@@ -476,6 +477,7 @@ const I18N = {
     status_searching:'Searching', status_no_results:'No results · try "Xtanco", "BCN" or a full address',
     status_sv_landing:'Descending to Street View · ', status_sv_opening:'Opening Street View in Google Maps…',
     surf_live:'● LIVE', surf_sched:'SCHED', surf_idle:'IDLE',
+    conf_media:'medium confidence · confirm location', conf_baja:'low confidence · confirm location',
     twin_launch:'🔨 Launch winner → screen', live_tag:'live',
     mars_hint:'We don’t sell ads on Mars yet 🔴',
     pl_mercury:'Mercury', pl_venus:'Venus', pl_mars:'Mars', pl_jupiter:'Jupiter', pl_saturn:'Saturn', pl_uranus:'Uranus', pl_neptune:'Neptune',
@@ -735,12 +737,34 @@ function isMultiopticasLocation(loc) {
   return brand === 'multiopticas' || extBrand === 'multiopticas' || hay.includes('multiopticas');
 }
 
+// Alcampo (FLT-100351): 36 supermercados + 3 hipermercados. Semilla: tools/import-alcampo-circuit.mjs.
+function isAlcampoLocation(loc) {
+  if (/^alcampo-/i.test(String(loc.id || ''))) return true;
+  const hay = normText([loc.name, loc.kind].join(' '));
+  return hay.includes('alcampo') || (loc.external && normText(loc.external.brand) === 'alcampo');
+}
+// Recorrido DOOH coherente: Zaragoza → Logroño → Burgos → Madrid → resto (por ciudad y nombre).
+const ALCAMPO_TOUR_CITIES = ['zaragoza', 'logrono', 'burgos', 'madrid'];
+function alcampoCity(loc) {
+  if (loc.city) return normText(loc.city);
+  const parts = String(loc.addr || '').split(' · ');
+  return normText(parts.length > 1 ? parts[1] : '');
+}
+function alcampoTourOrder(items) {
+  const rank = c => { const i = ALCAMPO_TOUR_CITIES.indexOf(c); return i >= 0 ? i : ALCAMPO_TOUR_CITIES.length; };
+  return items.slice().sort((a, b) => {
+    const ca = alcampoCity(a), cb = alcampoCity(b);
+    return (rank(ca) - rank(cb)) || ca.localeCompare(cb, 'es') || String(a.name).localeCompare(String(b.name), 'es');
+  });
+}
+
 // Etiqueta de circuito de un Xpacio (para el tooltip del globo y filtros).
 function isAdmiraXperienceLocation(loc) { return loc.experienceId === 'admiraxperience' || loc.external?.brand === 'AdmiraXperience'; }
 
 function circuitLabel(loc) {
   if (isAdmiraXperienceLocation(loc)) return 'AdmiraXperience';
   if (isDesigualLocation(loc)) return 'Desigual';
+  if (isAlcampoLocation(loc)) return 'Alcampo';
   if (isMetroBarcelonaLocation(loc)) {
     const lines = metroLinesForLocation(loc);
     return lines.length ? 'Metro Barcelona · ' + lines.join(' ') : 'Metro Barcelona';
@@ -789,6 +813,7 @@ function circuitDefinitions() {
   const allItems = LOCATIONS.slice();
   const estancoItems = LOCATIONS.filter(isEstancoLocation);
   const mangoItems = LOCATIONS.filter(isMangoLocation);
+  const alcampoItems = alcampoTourOrder(LOCATIONS.filter(isAlcampoLocation));
   const decathlonItems = LOCATIONS.filter(isDecathlonLocation);
   const palacioItems = LOCATIONS.filter(isPalacioLocation);
   const liverpoolItems = LOCATIONS.filter(isLiverpoolLocation);
@@ -798,7 +823,7 @@ function circuitDefinitions() {
   const elcorteinglesItems = LOCATIONS.filter(isElCorteInglesLocation);
   const correosItems = LOCATIONS.filter(isCorreosLocation);
   const multiopticasItems = LOCATIONS.filter(isMultiopticasLocation);
-  const retailItems = LOCATIONS.filter(l => !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l));
+  const retailItems = LOCATIONS.filter(l => !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l));
   return {
     admiraxperience: {label:'AdmiraXperience',items:LOCATIONS.filter(isAdmiraXperienceLocation),segmentation:circuitSegmentationForItems(LOCATIONS.filter(isAdmiraXperienceLocation))},
     metro_bcn: {
@@ -815,6 +840,11 @@ function circuitDefinitions() {
       label: t('circuit_mango'),
       items: mangoItems,
       segmentation: circuitSegmentationForItems(mangoItems),
+    },
+    alcampo: {
+      label: t('circuit_alcampo'),
+      items: alcampoItems,
+      segmentation: circuitSegmentationForItems(alcampoItems),
     },
     decathlon: {
       label: t('circuit_decathlon'),
@@ -2269,11 +2299,11 @@ function locationsGeoJSON() {
 // ── COLOR POR CIRCUITO (Carlos 2026-06-11) ──────────────────────────────
 // Cada circuito (Desigual, Mango, Estancos, Metro BCN…) con su propio color en
 // las burbujas del mapa, para distinguirlos al segmentar. Antes todo era rosa.
-const CIRCUIT_PALETTE = ['#ff4fd8','#ffb030','#88ffaa','#78f3ff','#3a86ff','#c9a8ff','#ff6b6b','#06d6a0','#ffd23f','#9b5de5','#00f5d4','#f72585','#4cc9f0','#fee440','#39d98a'];
+const CIRCUIT_PALETTE = ['#ff4fd8','#ffb030','#88ffaa','#78f3ff','#3a86ff','#c9a8ff','#ff6b6b','#06d6a0','#ffd23f','#9b5de5','#00f5d4','#f72585','#4cc9f0','#fee440','#39d98a','#e3001b'];
 const CIRCUIT_COLOR_IDX = {
   'Desigual':0, 'Mango':1, 'Estancos':2, 'Kioscos':3, 'Decathlon':4, 'El Palacio de Hierro':5,
   'Liverpool':6, 'El Corte Inglés':7, 'Correos':8, 'MultiÓpticas':9, 'Metro Barcelona':10,
-  'Banorte':11, 'BBVA':12, 'La Caixa / CaixaBank':13, 'Admira':14,
+  'Banorte':11, 'BBVA':12, 'La Caixa / CaixaBank':13, 'Admira':14, 'Alcampo':15,
 };
 function circuitBaseName(label) { return String(label || '').split(' · ')[0]; }  // sin las líneas de metro
 function circuitColorIdx(label) {
@@ -2795,6 +2825,15 @@ function renderPanel(loc) {
   document.getElementById('p-name').textContent = loc.name;
   document.getElementById('p-addr').textContent = loc.addr;
   document.getElementById('p-kind').textContent = loc.kind;
+  const confChip = document.getElementById('p-conf');
+  if (confChip) {
+    const conf = String(loc.alcampo?.confianza || '').toLowerCase();
+    const show = conf === 'media' || conf === 'baja';
+    confChip.hidden = !show;
+    confChip.className = 'conf-chip' + (show ? ' ' + conf : '');
+    confChip.textContent = show ? t('conf_' + conf) : '';
+    confChip.title = show ? String(loc.alcampo?.motivo || '') : '';
+  }
   document.getElementById('p-surfaces').textContent = loc.surfaces.length;
   const totalImpr = loc.surfaces.reduce((a,s)=>a+s.impr, 0);
   document.getElementById('p-impr').textContent = loc.surfaces.length ? '~' + (totalImpr/1000).toFixed(1) + 'K' : '—';
