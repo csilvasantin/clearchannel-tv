@@ -688,7 +688,10 @@ function updateLocationsSource() {
 
 function locationsSignature(list, updatedAt = '') {
   const items = Array.isArray(list) ? list : [];
-  return [updatedAt || '', items.length, items[0] && items[0].id, items[items.length - 1] && items[items.length - 1].id].join('|');
+  // El KV puede cambiar por dentro (p.ej. `previo` en una tienda) sin variar
+  // cuenta ni extremos ni updatedAt: el tamaño serializado lo delata.
+  let size = 0; try { size = JSON.stringify(items).length; } catch (_) {}
+  return [updatedAt || '', items.length, items[0] && items[0].id, items[items.length - 1] && items[items.length - 1].id, size].join('|');
 }
 
 function isKioskoLocation(loc) {
@@ -3660,12 +3663,13 @@ function wireTour() {
     if (pv === '1' && c) {
       setTimeout(() => { if (!circuitDemo.running) { previoTourMode = true; startCircuitDemo(); } }, 1400);
     } else if (pv) {
-      // El catálogo puede llegar del KV unos segundos después del arranque: reintentamos.
+      // El catálogo fresco (con `previo`) llega del KV unos segundos después del
+      // arranque: esperamos a que termine el refresco (o 12 s) antes de abrir.
       let tries = 0;
       const tryOpen = () => {
         const loc = LOC_BY_ID.get(pv);
-        if (loc) { showPointPrevio(loc); return; }
-        if (++tries < 12) setTimeout(tryOpen, 1000);
+        if (loc && (plannerCatalogReady || tries >= 12)) { showPointPrevio(loc); return; }
+        if (++tries < 15) setTimeout(tryOpen, 1000);
       };
       setTimeout(tryOpen, 600);
     }
