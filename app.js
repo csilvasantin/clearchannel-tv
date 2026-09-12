@@ -513,6 +513,7 @@ Object.assign(I18N.es, {
   pv_hint_invalid:'Las esquinas se cruzan o la pantalla es demasiado pequeña. Repite en sentido horario desde arriba a la izquierda.',
   pv_saved:'Ajuste guardado en este navegador', pv_copied:'JSON copiado · pásaselo a Neo para subirlo al KV', pv_copy_fail:'No se pudo copiar · el JSON está en la consola',
   pv_reset_done:'Ajuste local eliminado · vuelve el del KV',
+  pv_tab_fachada:'Fachada', pv_tab_detalle:'Detalle', pv_tab_interior:'Interior {n}',
 });
 Object.assign(I18N.en, {
   previo_circuit:'DooH Preview', previo_stop:'Stop DooH preview', previo_tour_toggle:'Tour with DooH preview',
@@ -527,6 +528,7 @@ Object.assign(I18N.en, {
   pv_hint_invalid:'The corners cross or the screen is too small. Repeat clockwise from the top-left.',
   pv_saved:'Adjustment saved in this browser', pv_copied:'JSON copied · hand it to Neo to upload it to the KV', pv_copy_fail:'Could not copy · the JSON is in the console',
   pv_reset_done:'Local adjustment removed · back to the KV one',
+  pv_tab_fachada:'Storefront', pv_tab_detalle:'Close-up', pv_tab_interior:'Interior {n}',
 });
 function t(key){ return (I18N[LANG] && I18N[LANG][key] != null) ? I18N[LANG][key] : (I18N.es[key] != null ? I18N.es[key] : key); }
 function tf(key, vars = {}) {
@@ -1367,8 +1369,10 @@ async function showCircuitDemoPoint() {
   if (!loc) { run.index++; showCircuitDemoPoint(); return; }
   circuitMapFilterActive = true;
   updateCircuitDemoUi();
-  // Tour con previo: las paradas con previo se ven a zoom 18 y abren el overlay 8 s.
-  const withPrevio = previoTourMode && locationHasPrevio(loc);
+  // Tour con previo: las paradas con previo se ven a zoom 18 y abren el overlay
+  // (8 s solo fachada; 4 s por vista con Fachada → Detalle → Interior 1).
+  const stopViews = previoTourMode ? previoViews(loc) : [];
+  const withPrevio = stopViews.length > 0;
   const arrived = await flyToLocation(loc, {automatic:true, bearing:(run.index * 29) % 360, zoom: withPrevio ? PREVIO_ZOOM : undefined});
   if (circuitDemo !== run || !run.running) return;
   if (!arrived) { stopCircuitDemo(false); setStatus(t('map_incomplete')); return; }
@@ -1380,7 +1384,7 @@ async function showCircuitDemoPoint() {
     if (circuitDemo !== run || !run.running) return;
     if (withPrevio) closePrevio({stopTour:false});
     run.index++; showCircuitDemoPoint();
-  }, withPrevio ? PREVIO_DWELL_MS : TOUR_DWELL_MS);
+  }, withPrevio ? PV().tourDwell(stopViews) : TOUR_DWELL_MS);
 }
 
 function toggleCircuitPrevio() {
@@ -2737,64 +2741,114 @@ document.getElementById('sv-close').addEventListener('click', () => {
 });
 
 // ─── PREVIO DooH (FLT-100364) ──────────────────────────────────────
-// La pantalla emitiendo sobre la foto de fachada: overlay #previo-dooh con la
-// foto (object-fit: contain) y el player canal.html deformado a las 4 esquinas
-// (homografía → matrix3d, previo.js; patrón CanalKiosk/Xtore). El ajuste manual
-// de esquinas vive en localStorage (admira.previo.quad.<id>) y manda sobre el KV.
-const PREVIO_DWELL_MS = 8000;
+// La pantalla emitiendo sobre la foto: overlay #previo-dooh con la foto de la
+// vista activa (object-fit: contain) y el player canal.html deformado a sus 4
+// esquinas (homografía → matrix3d, previo.js; patrón CanalKiosk/Xtore). Vistas:
+// Fachada · Detalle · Interior n (cada una con su imagen y su quad; el iframe es
+// el mismo y solo cambia el matrix3d). El ajuste manual de esquinas vive en
+// localStorage (admira.previo.quad.<id>[.<vista>]) y manda sobre el KV.
 const PREVIO_ZOOM = 18;
 const PV = () => window.AdmiraPrevio;
 let previoTourMode = false;
-let previoState = { loc:null, previo:null, open:false, fromTour:false, calib:null, draft:null };
+let previoState = { loc:null, views:[], view:null, previo:null, open:false, fromTour:false, calib:null, draft:null, viewTimers:[] };
 const pvEl = id => document.getElementById(id);
 const pvClamp = v => Math.max(0, Math.min(1, v));
 
-function previoFor(loc) {
-  const P = PV(); if (!P || !loc) return null;
+function previoViews(loc) {
+  const P = PV(); if (!P || !loc) return [];
   const fresh = LOC_BY_ID.get(loc.id) || loc;          // el KV puede haber llegado después
-  return P.effectivePrevio(fresh, P.readLocal(fresh.id));
+  return P.previoViews(fresh, (id, view) => P.readLocal(id, view));
 }
-function locationHasPrevio(loc) { return !!previoFor(loc); }
+function locationHasPrevio(loc) { return previoViews(loc).length > 0; }
 function previoEligible(loc) { return !!loc && (!!loc.previo || (typeof isAlcampoLocation === 'function' && isAlcampoLocation(loc))); }
+function previoViewLabel(key) {
+  if (key === 'fachada') return t('pv_tab_fachada');
+  if (key === 'detalle') return t('pv_tab_detalle');
+  const m = /^interior-(\d+)$/.exec(String(key || ''));
+  return m ? tf('pv_tab_interior', {n: m[1]}) : String(key || '');
+}
 
 function pvToast(msg) {
   const el = pvEl('pv-toast'); if (!el) return;
   el.textContent = msg; el.classList.add('show');
   clearTimeout(pvToast._t); pvToast._t = setTimeout(() => el.classList.remove('show'), 2400);
 }
+function clearPrevioViewTimers() {
+  (previoState.viewTimers || []).forEach(clearTimeout);
+  previoState.viewTimers = [];
+}
 
-function openPrevio(loc, {fromTour = false} = {}) {
+function openPrevio(loc, {fromTour = false, view = null} = {}) {
   const ov = pvEl('previo-dooh'); const P = PV();
   if (!ov || !loc || !P) return;
-  const previo = previoFor(loc);
-  if (previoState.open) exitPrevioCalibration();
-  previoState = { loc, previo, open:true, fromTour, calib:null, draft:null };
+  if (previoState.open) { exitPrevioCalibration(); clearPrevioViewTimers(); }
+  const views = previoViews(loc);
+  previoState = { loc, views, view:null, previo:null, open:true, fromTour, calib:null, draft:null, viewTimers:[] };
   pvEl('pv-name').textContent = loc.name || loc.id;
   pvEl('pv-addr').textContent = loc.addr || '';
   pvEl('pv-stop').hidden = !fromTour;
   pvEl('pv-progress').textContent = (fromTour && circuitDemo.running)
     ? tf('previo_progress', {current:circuitDemo.index + 1, total:circuitDemo.items.length, name:loc.name}) : '';
   pvEl('pv-playlist').href = P.playerUrl(loc.id, {stream:false});
-  renderPrevioChips();
-  pvEl('pv-empty').hidden = !!previo;
-  pvEl('pv-canvas').hidden = !previo;
-  pvEl('pv-adjust').hidden = !previo;
+  pvEl('pv-empty').hidden = !!views.length;
+  pvEl('pv-canvas').hidden = !views.length;
+  pvEl('pv-adjust').hidden = !views.length;
   pvEl('pv-tools').hidden = true;
   ov.classList.remove('calibrating');
   ov.hidden = false; ov.setAttribute('aria-hidden', 'false');
   document.addEventListener('keydown', previoEsc, true);
   window.addEventListener('resize', layoutPrevio);
-  const frame = pvEl('pv-player'), img = pvEl('pv-photo');
-  if (previo) {
+  const frame = pvEl('pv-player');
+  renderPrevioTabs();
+  if (views.length) {
+    // El iframe del canal es único: se carga una vez por tienda y solo cambia su matrix3d por vista.
     const url = P.playerUrl(loc.id);
     if (frame.getAttribute('src') !== url) frame.src = url;
-    img.onload = layoutPrevio;
-    if (img.getAttribute('src') !== previo.imagen) img.src = previo.imagen;
-    layoutPrevio();
+    const wanted = view && views.some(v => v.key === view) ? view : views[0].key;
+    selectPrevioView(wanted);
+    if (fromTour) schedulePrevioTourViews();
   } else {
-    frame.removeAttribute('src'); pvEl('pv-screen').hidden = true;
+    frame.removeAttribute('src'); pvEl('pv-screen').hidden = true; renderPrevioChips();
   }
   try { pvEl('pv-close').focus({preventScroll:true}); } catch (_) {}
+}
+
+// Tour: Fachada 4 s → Detalle 4 s → Interior 1 4 s (las que existan).
+function schedulePrevioTourViews() {
+  const P = PV(); const st = previoState;
+  clearPrevioViewTimers();
+  const tv = P.tourViews(st.views);
+  tv.slice(1).forEach((v, i) => {
+    st.viewTimers.push(setTimeout(() => { if (previoState === st && st.open) selectPrevioView(v.key); }, P.PREVIO_VIEW_MS * (i + 1)));
+  });
+}
+
+function renderPrevioTabs() {
+  const st = previoState; const tabs = pvEl('pv-tabs'); if (!tabs) return;
+  tabs.replaceChildren();
+  tabs.hidden = st.views.length < 2;
+  st.views.forEach(v => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'pv-tab' + (v.key === st.view ? ' on' : ''); b.dataset.view = v.key;
+    b.textContent = previoViewLabel(v.key);
+    if (v.previo.local) b.classList.add('local');
+    b.addEventListener('click', () => { clearPrevioViewTimers(); selectPrevioView(v.key); });
+    tabs.append(b);
+  });
+}
+
+function selectPrevioView(key) {
+  const st = previoState; if (!st.open) return;
+  const v = st.views.find(x => x.key === key) || st.views[0];
+  if (!v) return;
+  if (st.calib) exitPrevioCalibration();
+  st.view = v.key; st.previo = v.previo;
+  [...(pvEl('pv-tabs')?.children || [])].forEach(b => b.classList.toggle('on', b.dataset.view === v.key));
+  const img = pvEl('pv-photo');
+  img.onload = layoutPrevio;
+  if (img.getAttribute('src') !== v.previo.imagen) img.src = v.previo.imagen;
+  renderPrevioChips();
+  layoutPrevio();
 }
 
 function renderPrevioChips() {
@@ -2814,7 +2868,7 @@ function renderPrevioChips() {
   local.hidden = !(p.local || (previoState.draft && previoState.draft.quad));
 }
 
-// Coloca la foto (letterbox) y deforma el player a las 4 esquinas. Se repite en resize.
+// Coloca la foto (letterbox) y deforma el player a las 4 esquinas de la vista. Se repite en resize.
 function layoutPrevio() {
   const st = previoState; const P = PV();
   if (!st.open || !st.previo || !P) return;
@@ -2837,13 +2891,14 @@ function closePrevio({stopTour = true} = {}) {
   if (!ov || ov.hidden) return;
   const wasTour = previoState.fromTour;
   exitPrevioCalibration();
+  clearPrevioViewTimers();
   ov.hidden = true; ov.setAttribute('aria-hidden', 'true');
   pvEl('pv-player').removeAttribute('src');
   pvEl('pv-photo').removeAttribute('src');
   pvEl('pv-screen').hidden = true;
   document.removeEventListener('keydown', previoEsc, true);
   window.removeEventListener('resize', layoutPrevio);
-  previoState = { loc:null, previo:null, open:false, fromTour:false, calib:null, draft:null };
+  previoState = { loc:null, views:[], view:null, previo:null, open:false, fromTour:false, calib:null, draft:null, viewTimers:[] };
   if (wasTour && stopTour && circuitDemo.running) stopCircuitDemo(false);
 }
 function previoEsc(e) {
@@ -2853,17 +2908,18 @@ function previoEsc(e) {
 }
 
 // Botón del panel de un punto: vuelo a zoom 18 y, al aterrizar, el previo.
-async function showPointPrevio(loc) {
+async function showPointPrevio(loc, view = null) {
   if (!loc) return;
   closePrevio();
   const arrived = await flyToLocation(loc, {zoom: PREVIO_ZOOM});
   if (!arrived) return;
-  openPrevio(loc, {fromTour:false});
+  openPrevio(loc, {fromTour:false, view});
 }
 
-// ── Ajustar pantalla: 4 clics TL → TR → BR → BL sobre la foto ──
+// ── Ajustar pantalla: 4 clics TL → TR → BR → BL sobre la foto de la vista activa ──
 function enterPrevioCalibration() {
   const st = previoState; if (!st.open || !st.previo) return;
+  clearPrevioViewTimers();
   st.draft = st.draft || { quad: st.previo.quad.map(p => [...p]), orientacion: st.previo.orientacion };
   st.calib = { points: [], marking: true };
   pvEl('previo-dooh').classList.add('calibrating');
@@ -2883,12 +2939,12 @@ function exitPrevioCalibration() {
 function updatePrevioTools() {
   const st = previoState; if (!st.calib) return;
   const hint = pvEl('pv-hint');
-  hint.textContent = st.calib.marking ? tf('pv_hint_mark', {n: st.calib.points.length}) : t('pv_hint_ready');
+  hint.textContent = (st.calib.marking ? tf('pv_hint_mark', {n: st.calib.points.length}) : t('pv_hint_ready')) + ' · ' + previoViewLabel(st.view);
   const orient = pvEl('pv-orient');
   const key = st.draft.orientacion === 'horizontal' ? 'pv_horizontal' : 'pv_vertical';
   orient.setAttribute('data-i18n', key); orient.textContent = t(key);
   pvEl('pv-remark').classList.toggle('on', st.calib.marking);
-  pvEl('pv-reset').disabled = !(PV().readLocal(st.loc.id));
+  pvEl('pv-reset').disabled = !(PV().readLocal(st.loc.id, st.view));
   renderPrevioChips();
 }
 function renderPrevioMarkers() {
@@ -2910,10 +2966,20 @@ function renderPrevioMarkers() {
     m.style.left = (x * 100) + '%'; m.style.top = (y * 100) + '%'; mk.append(m);
   });
 }
+// Vuelve a leer KV + ajustes locales y deja seleccionada la vista `key` (o la primera).
+function reloadPrevioViews(key) {
+  const st = previoState; if (!st.open) return;
+  st.views = previoViews(st.loc);
+  renderPrevioTabs();
+  if (!st.views.length) { const loc = st.loc; closePrevio({stopTour:false}); openPrevio(loc); return; }
+  const wanted = st.views.some(v => v.key === key) ? key : st.views[0].key;
+  st.view = null; selectPrevioView(wanted);
+}
 function previoExportJson() {
   const st = previoState; const P = PV();
-  const eff = st.draft ? Object.assign({}, st.previo, st.draft) : st.previo;
-  return P.exportPrevio(st.loc, Object.assign({}, eff, {fuente: (st.draft && st.draft.quad) || st.previo.local ? 'ajuste-manual' : eff.fuente}));
+  const fresh = LOC_BY_ID.get(st.loc.id) || st.loc;
+  const views = st.views.map(v => v.key === st.view && st.draft ? { key: v.key, previo: Object.assign({}, v.previo, st.draft, {local:true}) } : v);
+  return P.exportPrevio(fresh, fresh.previo, views);
 }
 (function wirePrevio() {
   const ov = pvEl('previo-dooh'); if (!ov) return;
@@ -2945,11 +3011,15 @@ function previoExportJson() {
   });
   pvEl('pv-save').addEventListener('click', () => {
     const st = previoState; const P = PV(); if (!st.calib) return;
-    const prev = P.readLocal(st.loc.id) || {};
-    P.writeLocal(st.loc.id, Object.assign({}, prev, { quad: st.draft.quad.map(p => [...p]), orientacion: st.draft.orientacion, guardado: new Date().toISOString() }));
-    st.previo = previoFor(st.loc);
+    const view = st.view;
+    const prev = P.readLocal(st.loc.id, view) || {};
+    P.writeLocal(st.loc.id, view, Object.assign({}, prev, { quad: st.draft.quad.map(p => [...p]), orientacion: st.draft.orientacion, guardado: new Date().toISOString() }));
+    const draftOrient = st.draft.orientacion;
+    st.calib = null; st.draft = null;
+    reloadPrevioViews(view);
     st.calib = { points: [], marking: false };
-    st.draft = { quad: st.previo.quad.map(p => [...p]), orientacion: st.previo.orientacion };
+    st.draft = { quad: st.previo.quad.map(p => [...p]), orientacion: draftOrient };
+    pvEl('previo-dooh').classList.add('calibrating'); pvEl('pv-tools').hidden = false; pvEl('pv-adjust').classList.add('on');
     updatePrevioTools(); layoutPrevio(); pvToast(t('pv_saved'));
   });
   pvEl('pv-copy').addEventListener('click', async () => {
@@ -2960,12 +3030,18 @@ function previoExportJson() {
   });
   pvEl('pv-reset').addEventListener('click', () => {
     const st = previoState; const P = PV(); if (!st.open) return;
-    P.writeLocal(st.loc.id, null);
-    st.previo = previoFor(st.loc);
-    if (!st.previo) { closePrevio({stopTour:false}); openPrevio(st.loc); return; }
-    if (st.calib) { st.calib = { points: [], marking: false }; st.draft = { quad: st.previo.quad.map(p => [...p]), orientacion: st.previo.orientacion }; }
-    else st.draft = null;
-    updatePrevioTools(); renderPrevioChips(); layoutPrevio(); pvToast(t('pv_reset_done'));
+    const view = st.view, wasCalib = !!st.calib;
+    P.writeLocal(st.loc.id, view, null);
+    st.calib = null; st.draft = null;
+    reloadPrevioViews(view);
+    if (wasCalib && previoState.open && previoState.previo) {
+      const s2 = previoState;
+      s2.calib = { points: [], marking: false };
+      s2.draft = { quad: s2.previo.quad.map(p => [...p]), orientacion: s2.previo.orientacion };
+      pvEl('previo-dooh').classList.add('calibrating'); pvEl('pv-tools').hidden = false; pvEl('pv-adjust').classList.add('on');
+      updatePrevioTools(); layoutPrevio();
+    }
+    pvToast(t('pv_reset_done'));
   });
   pvEl('pv-done').addEventListener('click', () => exitPrevioCalibration());
 })();
@@ -3658,7 +3734,7 @@ function wireTour() {
       }
     }
     if (q.get('tour') === '1' && b) setTimeout(() => { if (!tourRun) tourToggle(b); }, 1200);
-    // Previo DooH: ?circuit=alcampo&previo=1 → tour con previo; ?previo=<id> → previo de una tienda.
+    // Previo DooH: ?circuit=alcampo&previo=1 → tour con previo; ?previo=<id>[&vista=detalle|interior-1] → previo de una tienda.
     const pv = q.get('previo');
     if (pv === '1' && c) {
       setTimeout(() => { if (!circuitDemo.running) { previoTourMode = true; startCircuitDemo(); } }, 1400);
@@ -3668,7 +3744,7 @@ function wireTour() {
       let tries = 0;
       const tryOpen = () => {
         const loc = LOC_BY_ID.get(pv);
-        if (loc && (plannerCatalogReady || tries >= 12)) { showPointPrevio(loc); return; }
+        if (loc && (plannerCatalogReady || tries >= 12)) { showPointPrevio(loc, q.get('vista') || null); return; }
         if (++tries < 15) setTimeout(tryOpen, 1000);
       };
       setTimeout(tryOpen, 600);

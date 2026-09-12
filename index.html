@@ -659,6 +659,12 @@
   .pv-titles{min-width:0;flex:1 1 240px}
   .pv-name{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .pv-addr{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pv-tabs{display:flex;gap:4px;padding:3px;border:1px solid var(--line);border-radius:999px;background:rgba(2,8,13,.6)}
+  .pv-tabs[hidden]{display:none}
+  .pv-tab{font-family:monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border:0;border-radius:999px;background:transparent;color:var(--mut);cursor:pointer;white-space:nowrap}
+  .pv-tab:hover{color:var(--ink)}
+  .pv-tab.on{background:var(--brand);color:#001620;font-weight:700}
+  .pv-tab.local:not(.on){color:var(--accent)}
   .pv-chips{display:flex;gap:6px;flex-wrap:wrap}
   .pv-chip{font-family:monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut);white-space:nowrap}
   .pv-chip.real{border-color:rgba(136,255,170,.5);color:var(--good)}
@@ -1231,6 +1237,7 @@
 <div class="previo-dooh" id="previo-dooh" hidden role="dialog" aria-modal="true" aria-label="Previo DooH">
   <div class="pv-head">
     <div class="pv-titles"><div class="pv-name" id="pv-name">—</div><div class="pv-addr" id="pv-addr"></div></div>
+    <div class="pv-tabs" id="pv-tabs" hidden></div>
     <div class="pv-chips">
       <span class="pv-chip" id="pv-type" hidden></span>
       <span class="pv-chip" id="pv-conf" hidden></span>
@@ -1275,7 +1282,7 @@
 <script defer src="locations.js?v=interiores-20260907-2"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-1"></script><script defer src="app.js?v=previo-20260912-2"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="app.js?v=previo-20260912-3"></script>
 <script defer src="planner-ui.js?v=20260905-1"></script>
 <script type="module" src="walk-launch.mjs?v=20260905-1"></script>
 

@@ -1,4 +1,5 @@
-/* previo.js — Previo DooH: la pantalla emitiendo sobre la foto de fachada.
+/* previo.js — Previo DooH: la pantalla emitiendo sobre la foto de fachada,
+ * el plano de detalle y las fotoesferas interiores (vistas con quad propio).
  * Homografía de 4 esquinas → matrix3d (patrón CanalKiosk / Xtore core.mjs),
  * sin dependencias. Mismo módulo para el navegador (window.AdmiraPrevio) y
  * para node:test (require). FLT-100364. */
@@ -52,27 +53,40 @@
     const m = quadMatrix(pw, ph, quad.map(([x, y]) => [x * rendered.w, y * rendered.h]));
     return 'matrix3d(' + m.map(v => Number(v.toFixed(6))).join(',') + ')';
   }
-  function storageKey(id) { return STORAGE_PREFIX + String(id || ''); }
-  function readLocal(id, storage) {
+  // Vistas: 'fachada' (previo raíz), 'detalle' (previo.detalle) e 'interior-n' (previo.interior[n-1]).
+  const VIEW_FACHADA = 'fachada';
+  const PREVIO_VIEW_MS = 4000;      // tour: segundos por vista cuando hay más de una
+  const PREVIO_SINGLE_MS = 8000;    // tour: solo fachada
+  function viewOrder(key) {
+    if (key === VIEW_FACHADA) return 0;
+    if (key === 'detalle') return 1;
+    const m = /^interior-(\d+)$/.exec(String(key || ''));
+    return m ? 10 + Number(m[1]) : 99;
+  }
+  function storageKey(id, view) {
+    return STORAGE_PREFIX + String(id || '') + (view && view !== VIEW_FACHADA ? '.' + String(view) : '');
+  }
+  function readLocal(id, view, storage) {
     try {
-      const raw = (storage || root.localStorage).getItem(storageKey(id));
+      const raw = (storage || root.localStorage).getItem(storageKey(id, view));
       const o = raw ? JSON.parse(raw) : null;
       return o && typeof o === 'object' ? o : null;
     } catch (_) { return null; }
   }
-  function writeLocal(id, data, storage) {
+  function writeLocal(id, view, data, storage) {
     try {
       const st = storage || root.localStorage;
-      if (!data) st.removeItem(storageKey(id)); else st.setItem(storageKey(id), JSON.stringify(data));
+      if (!data) st.removeItem(storageKey(id, view)); else st.setItem(storageKey(id, view), JSON.stringify(data));
       return true;
     } catch (_) { return false; }
   }
-  // Previo efectivo: el del KV con el ajuste local (quad/orientación) por encima.
+  // Previo efectivo de UNA vista: el del KV con el ajuste local (quad/orientación) por encima.
   function effectivePrevio(loc, local) {
     const kv = loc && loc.previo && typeof loc.previo === 'object' ? loc.previo : null;
     const ov = local && typeof local === 'object' ? local : null;
     if (!kv && !(ov && ov.imagen)) return null;
     const out = Object.assign({}, kv || {}, ov || {});
+    delete out.detalle; delete out.interior; delete out.interior_disponible;
     if (!validQuad(out.quad)) out.quad = validQuad(kv && kv.quad) ? kv.quad : [[.3, .3], [.7, .3], [.7, .7], [.3, .7]];
     out.orientacion = out.orientacion === 'horizontal' ? 'horizontal' : 'vertical';
     out.tipo = out.tipo === 'real' ? 'real' : 'virtual';
@@ -80,18 +94,72 @@
     out.local = !!(ov && ov.quad);
     return out;
   }
+  // Fuentes del KV por vista. Detalle e interiores heredan tipo/orientación/confianza de la fachada si no traen.
+  function viewSources(loc) {
+    const kv = loc && loc.previo && typeof loc.previo === 'object' ? loc.previo : null;
+    const out = [{ key: VIEW_FACHADA, kv }];
+    if (!kv) return out;
+    const inherit = { tipo: kv.tipo, orientacion: kv.orientacion, confianza: kv.confianza };
+    if (kv.detalle && typeof kv.detalle === 'object' && kv.detalle.imagen) out.push({ key: 'detalle', kv: Object.assign({}, inherit, kv.detalle) });
+    (Array.isArray(kv.interior) ? kv.interior : []).forEach((it, i) => {
+      if (it && typeof it === 'object' && it.imagen) out.push({ key: 'interior-' + (i + 1), kv: Object.assign({}, inherit, it) });
+    });
+    return out;
+  }
+  // Vistas efectivas de una ubicación: [{key, previo}], en orden fachada · detalle · interior-n.
+  // Un ajuste local con `imagen` crea la vista aunque el KV no la tenga (mock/pruebas).
+  function previoViews(loc, readLocalFn) {
+    if (!loc) return [];
+    const read = typeof readLocalFn === 'function' ? readLocalFn : (id, view) => readLocal(id, view);
+    const views = [];
+    viewSources(loc).forEach(src => {
+      const eff = effectivePrevio({ id: loc.id, previo: src.kv }, read(loc.id, src.key));
+      if (eff) views.push({ key: src.key, previo: eff });
+    });
+    ['detalle', 'interior-1', 'interior-2', 'interior-3'].forEach(key => {
+      if (views.some(v => v.key === key)) return;
+      const local = read(loc.id, key);
+      if (local && local.imagen) { const eff = effectivePrevio({ id: loc.id, previo: null }, local); if (eff) views.push({ key, previo: eff }); }
+    });
+    return views.sort((a, b) => viewOrder(a.key) - viewOrder(b.key));
+  }
+  // Vistas que recorre el tour: fachada → detalle → interior-1 (las que existan).
+  function tourViews(views) {
+    return (views || []).filter(v => v && (v.key === VIEW_FACHADA || v.key === 'detalle' || v.key === 'interior-1'));
+  }
+  function tourDwell(views) {
+    const n = tourViews(views).length;
+    return n <= 1 ? PREVIO_SINGLE_MS : PREVIO_VIEW_MS * n;
+  }
   function playerUrl(id, { circuit = 'alcampo', stream = true } = {}) {
     const p = new URLSearchParams({ clean: '1', screen: String(id || ''), circuit, muted: '1' });
     if (stream) { p.set('playerType', 'virtual'); p.set('stream', '1'); }
     return PLAYER_BASE + '?' + p.toString();
   }
-  // JSON del previo para subir al KV (sin campos de sesión).
-  function exportPrevio(loc, previo) {
-    const p = Object.assign({}, previo || {});
-    delete p.local;
+  // JSON del previo para subir al KV: el del KV con el quad/orientación efectivos de cada vista.
+  function exportPrevio(loc, kvPrevio, views) {
+    let p = {};
+    try { p = JSON.parse(JSON.stringify(kvPrevio && typeof kvPrevio === 'object' ? kvPrevio : {})); } catch (_) { p = {}; }
+    (views || []).forEach(v => {
+      if (!v || !v.previo) return;
+      const patch = { quad: v.previo.quad, orientacion: v.previo.orientacion };
+      if (v.previo.local) patch.fuente = 'ajuste-manual';
+      if (v.key === VIEW_FACHADA) {
+        Object.assign(p, patch);
+        ['imagen', 'w', 'h', 'tipo', 'confianza', 'pano', 'capturado', 'nota'].forEach(k => { if (p[k] == null && v.previo[k] != null) p[k] = v.previo[k]; });
+      } else if (v.key === 'detalle') {
+        p.detalle = Object.assign({}, p.detalle || {}, p.detalle ? {} : { imagen: v.previo.imagen, w: v.previo.w, h: v.previo.h }, patch);
+      } else {
+        const m = /^interior-(\d+)$/.exec(v.key);
+        if (!m) return;
+        p.interior = Array.isArray(p.interior) ? p.interior : [];
+        const i = Number(m[1]) - 1;
+        p.interior[i] = Object.assign({}, p.interior[i] || { imagen: v.previo.imagen, w: v.previo.w, h: v.previo.h }, patch);
+      }
+    });
     return JSON.stringify({ id: loc && loc.id, previo: p }, null, 2);
   }
-  const api = { validQuad, quadMatrix, applyMatrix, playerSize, fitRect, screenTransform, storageKey, readLocal, writeLocal, effectivePrevio, playerUrl, exportPrevio, PLAYER_SIZE, STORAGE_PREFIX, PLAYER_BASE };
+  const api = { validQuad, quadMatrix, applyMatrix, playerSize, fitRect, screenTransform, storageKey, readLocal, writeLocal, effectivePrevio, viewSources, previoViews, tourViews, tourDwell, viewOrder, playerUrl, exportPrevio, PLAYER_SIZE, STORAGE_PREFIX, PLAYER_BASE, VIEW_FACHADA, PREVIO_VIEW_MS, PREVIO_SINGLE_MS };
   root.AdmiraPrevio = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window === 'undefined' ? globalThis : window);

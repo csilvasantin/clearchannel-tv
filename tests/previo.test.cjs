@@ -73,17 +73,81 @@ test('local adjustment overrides the KV quad and orientation but keeps the KV im
   assert.equal(P.validQuad(bad.quad), true);                                       // quad de respaldo
 });
 
-test('localStorage round trip and export JSON', () => {
+test('localStorage keys are per view; round trip works', () => {
   const store = new Map();
   const storage = { getItem: k => store.has(k) ? store.get(k) : null, setItem: (k, v) => store.set(k, v), removeItem: k => store.delete(k) };
   assert.equal(P.storageKey('alcampo-breton'), 'admira.previo.quad.alcampo-breton');
-  assert.equal(P.readLocal('alcampo-breton', storage), null);
-  P.writeLocal('alcampo-breton', { quad: [[0,0],[1,0],[1,1],[0,1]], orientacion: 'vertical' }, storage);
-  assert.equal(P.readLocal('alcampo-breton', storage).orientacion, 'vertical');
-  P.writeLocal('alcampo-breton', null, storage);
-  assert.equal(P.readLocal('alcampo-breton', storage), null);
-  const json = JSON.parse(P.exportPrevio({ id: 'alcampo-breton' }, { quad: [[0,0],[1,0],[1,1],[0,1]], local: true }));
+  assert.equal(P.storageKey('alcampo-breton', 'fachada'), 'admira.previo.quad.alcampo-breton');
+  assert.equal(P.storageKey('alcampo-breton', 'detalle'), 'admira.previo.quad.alcampo-breton.detalle');
+  assert.equal(P.storageKey('alcampo-breton', 'interior-1'), 'admira.previo.quad.alcampo-breton.interior-1');
+  assert.equal(P.readLocal('alcampo-breton', 'fachada', storage), null);
+  P.writeLocal('alcampo-breton', 'fachada', { quad: [[0,0],[1,0],[1,1],[0,1]], orientacion: 'vertical' }, storage);
+  P.writeLocal('alcampo-breton', 'detalle', { quad: [[.1,.1],[.9,.1],[.9,.9],[.1,.9]], orientacion: 'horizontal' }, storage);
+  assert.equal(P.readLocal('alcampo-breton', 'fachada', storage).orientacion, 'vertical');
+  assert.equal(P.readLocal('alcampo-breton', 'detalle', storage).orientacion, 'horizontal');
+  P.writeLocal('alcampo-breton', 'fachada', null, storage);
+  assert.equal(P.readLocal('alcampo-breton', 'fachada', storage), null);
+  assert.equal(P.readLocal('alcampo-breton', 'detalle', storage).orientacion, 'horizontal');
+});
+
+const KV = { id: 'alcampo-breton', previo: {
+  imagen: 'https://admira.tv/api/previo/alcampo-breton.jpg', w: 1600, h: 900, quad: [[.4,.5],[.5,.5],[.5,.8],[.4,.8]], tipo: 'virtual', orientacion: 'vertical', confianza: 'media', fuente: 'streetview',
+  detalle: { imagen: 'https://admira.tv/api/previo/alcampo-breton-detalle.jpg', w: 1200, h: 900, quad: [[.2,.1],[.8,.1],[.8,.9],[.2,.9]], pano: { fecha: 'mar 2023' } },
+  interior: [
+    { imagen: 'https://admira.tv/api/previo/alcampo-breton-int1.jpg', w: 2000, h: 1000, quad: [[.6,.3],[.7,.3],[.7,.6],[.6,.6]], tipo: 'real', orientacion: 'horizontal', confianza: 'alta', nota: 'cajas' },
+    { imagen: 'https://admira.tv/api/previo/alcampo-breton-int2.jpg', w: 2000, h: 1000, quad: [[.1,.3],[.2,.3],[.2,.6],[.1,.6]] },
+  ],
+} };
+
+test('previoViews lists fachada, detalle and interiors in order, inheriting type/orientation from the storefront', () => {
+  const views = P.previoViews(KV, () => null);
+  assert.deepEqual(views.map(v => v.key), ['fachada', 'detalle', 'interior-1', 'interior-2']);
+  const [f, d, i1, i2] = views;
+  assert.equal(f.previo.imagen, KV.previo.imagen);
+  assert.equal('detalle' in f.previo, false);
+  assert.equal(d.previo.orientacion, 'vertical');          // heredada
+  assert.equal(d.previo.confianza, 'media');
+  assert.deepEqual(d.previo.quad, KV.previo.detalle.quad);
+  assert.equal(i1.previo.tipo, 'real');
+  assert.equal(i1.previo.orientacion, 'horizontal');
+  assert.equal(i2.previo.orientacion, 'vertical');
+  assert.deepEqual(P.previoViews({ id: 'x' }, () => null), []);
+  assert.deepEqual(P.previoViews({ id: 'x', previo: { imagen: 'https://a/b.jpg', quad: KV.previo.quad } }, () => null).map(v => v.key), ['fachada']);
+});
+
+test('a local adjustment applies only to its own view and a local mock can add a view', () => {
+  const locals = { 'detalle': { quad: [[.3,.3],[.7,.3],[.7,.7],[.3,.7]], orientacion: 'horizontal' } };
+  const views = P.previoViews(KV, (id, view) => locals[view] || null);
+  assert.equal(views[0].previo.local, false);
+  assert.equal(views[1].previo.local, true);
+  assert.equal(views[1].previo.orientacion, 'horizontal');
+  assert.deepEqual(views[1].previo.quad, locals.detalle.quad);
+  const mock = { 'interior-1': { imagen: 'https://mock/int.jpg', w: 10, h: 10, quad: [[.1,.1],[.9,.1],[.9,.9],[.1,.9]] } };
+  const only = P.previoViews({ id: 'x', previo: { imagen: 'https://a/b.jpg', quad: KV.previo.quad } }, (id, view) => mock[view] || null);
+  assert.deepEqual(only.map(v => v.key), ['fachada', 'interior-1']);
+});
+
+test('the tour walks fachada → detalle → interior-1 at 4 s each, or 8 s when there is only the storefront', () => {
+  const views = P.previoViews(KV, () => null);
+  assert.deepEqual(P.tourViews(views).map(v => v.key), ['fachada', 'detalle', 'interior-1']);
+  assert.equal(P.tourDwell(views), 12000);
+  assert.equal(P.tourDwell(views.slice(0, 2)), 8000);
+  assert.equal(P.tourDwell(views.slice(0, 1)), 8000);
+  assert.equal(P.tourDwell([]), 8000);
+});
+
+test('export JSON puts each view adjustment back in its place of the KV previo', () => {
+  const locals = { 'fachada': { quad: [[.41,.51],[.49,.51],[.49,.79],[.41,.79]] }, 'interior-2': { quad: [[.15,.3],[.25,.3],[.25,.6],[.15,.6]], orientacion: 'horizontal' } };
+  const views = P.previoViews(KV, (id, view) => locals[view] || null);
+  const json = JSON.parse(P.exportPrevio(KV, KV.previo, views));
   assert.equal(json.id, 'alcampo-breton');
+  assert.deepEqual(json.previo.quad, locals.fachada.quad);
+  assert.equal(json.previo.fuente, 'ajuste-manual');
+  assert.deepEqual(json.previo.detalle.quad, KV.previo.detalle.quad);
+  assert.equal(json.previo.detalle.imagen, KV.previo.detalle.imagen);
+  assert.deepEqual(json.previo.interior[1].quad, locals['interior-2'].quad);
+  assert.equal(json.previo.interior[1].orientacion, 'horizontal');
+  assert.equal(json.previo.interior[0].nota, 'cajas');
   assert.equal('local' in json.previo, false);
 });
 
