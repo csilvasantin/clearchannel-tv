@@ -151,7 +151,15 @@ test('export JSON puts each view adjustment back in its place of the KV previo',
   assert.equal('local' in json.previo, false);
 });
 
-test('player URL carries the stream flags only for the embedded player', () => {
-  assert.equal(P.playerUrl('alcampo-breton'), 'https://admira.tv/canal.html?clean=1&screen=alcampo-breton&circuit=alcampo&muted=1&playerType=virtual&stream=1');
-  assert.equal(P.playerUrl('alcampo-breton', { stream: false }), 'https://admira.tv/canal.html?clean=1&screen=alcampo-breton&circuit=alcampo&muted=1');
+test('player URL: pseudostreaming (disco-primero, sin stream=1) y hashtag del circuito', () => {
+  assert.equal(P.playerUrl('alcampo-breton'), 'https://admira.tv/canal.html?clean=1&screen=alcampo-breton&circuit=alcampo&muted=1&tag=alcampo');
+  assert.equal(P.playerUrl('alcampo-breton', { stream: true }), 'https://admira.tv/canal.html?clean=1&screen=alcampo-breton&circuit=alcampo&muted=1&tag=alcampo&stream=1');
+  assert.equal(P.playerUrl('x', { circuit: 'otro', tag: '' }), 'https://admira.tv/canal.html?clean=1&screen=x&circuit=otro&muted=1');
+});
+
+test('póster del Stock: primera pieza del hashtag con imagen https', () => {
+  assert.equal(P.stockPosterUrl('alcampo'), 'https://api.admira.store/stock/list?tag=alcampo&type=video');
+  assert.equal(P.firstPoster({ items: [{ id: 'a' }, { id: 'b', thumbnail: 'https://stock.admira.store/stock/b/poster.jpg' }] }), 'https://stock.admira.store/stock/b/poster.jpg');
+  assert.equal(P.firstPoster({ items: [{ thumbnail: 'data:image/png;base64,x' }] }), '');
+  assert.equal(P.firstPoster(null), '');
 });

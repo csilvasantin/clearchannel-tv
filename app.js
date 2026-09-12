@@ -2777,6 +2777,30 @@ function clearPrevioViewTimers() {
   (previoState.viewTimers || []).forEach(clearTimeout);
   previoState.viewTimers = [];
 }
+// Circuito (= hashtag del Stock) de una tienda del previo: su campo circuit o el prefijo del id.
+function previoCircuitOf(loc) {
+  const c = loc && (loc.circuit || loc.circuito || (typeof loc.id === 'string' ? loc.id.split('-')[0] : ''));
+  return String(c || 'alcampo');
+}
+// Póster de la primera pieza del hashtag (se pide una vez por circuito; CORS * en el Stock).
+const previoPosterCache = new Map();
+let previoRevealTimer = 0;
+function previoPoster(circuit) {
+  const P = PV(); if (!P) return Promise.resolve('');
+  if (previoPosterCache.has(circuit)) return previoPosterCache.get(circuit);
+  const p = fetch(P.stockPosterUrl(circuit), {headers:{accept:'application/json'}}).then(r => r.ok ? r.json() : null).then(d => P.firstPoster(d)).catch(() => '');
+  previoPosterCache.set(circuit, p);
+  return p;
+}
+// El canal avisa al padre cuando emite una pieza (media-state): entonces se destapa el iframe.
+window.addEventListener('message', e => {
+  const d = e && e.data;
+  if (!d || d.source !== 'admira-tv-canal' || d.event !== 'media-state') return;
+  if (!/^https:\/\/(www\.)?admira\.tv$/.test(String(e.origin))) return;
+  const screen = pvEl('pv-screen'); if (!screen) return;
+  clearTimeout(previoRevealTimer);
+  screen.classList.remove('loading');
+});
 
 function openPrevio(loc, {fromTour = false, view = null} = {}) {
   const ov = pvEl('previo-dooh'); const P = PV();
@@ -2802,8 +2826,18 @@ function openPrevio(loc, {fromTour = false, view = null} = {}) {
   renderPrevioTabs();
   if (views.length) {
     // El iframe del canal es único: se carga una vez por tienda y solo cambia su matrix3d por vista.
-    const url = P.playerUrl(loc.id);
-    if (frame.getAttribute('src') !== url) frame.src = url;
+    // Disco-primero + hashtag del circuito (FLT-100384): el canal baja las piezas del catálogo
+    // (#alcampo) y emite lo descargado; mientras baja, bajo el iframe va el póster de la primera
+    // pieza del Stock (nunca negro) y el iframe se enseña en cuanto el canal avisa que emite.
+    const url = P.playerUrl(loc.id, {circuit: previoCircuitOf(loc)});
+    const screen = pvEl('pv-screen');
+    if (frame.getAttribute('src') !== url) {
+      screen.classList.add('loading');
+      frame.src = url;
+      clearTimeout(previoRevealTimer);
+      previoRevealTimer = setTimeout(() => screen.classList.remove('loading'), 12000);
+    }
+    void previoPoster(previoCircuitOf(loc)).then(u => { if (previoState.loc === loc && u) screen.style.backgroundImage = 'url("' + u + '")'; });
     const wanted = view && views.some(v => v.key === view) ? view : views[0].key;
     selectPrevioView(wanted);
     if (fromTour) schedulePrevioTourViews();
@@ -2896,6 +2930,9 @@ function closePrevio({stopTour = true} = {}) {
   pvEl('pv-player').removeAttribute('src');
   pvEl('pv-photo').removeAttribute('src');
   pvEl('pv-screen').hidden = true;
+  pvEl('pv-screen').classList.remove('loading');
+  pvEl('pv-screen').style.backgroundImage = '';
+  clearTimeout(previoRevealTimer);
   document.removeEventListener('keydown', previoEsc, true);
   window.removeEventListener('resize', layoutPrevio);
   previoState = { loc:null, views:[], view:null, previo:null, open:false, fromTour:false, calib:null, draft:null, viewTimers:[] };

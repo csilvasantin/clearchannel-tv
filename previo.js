@@ -131,10 +131,30 @@
     const n = tourViews(views).length;
     return n <= 1 ? PREVIO_SINGLE_MS : PREVIO_VIEW_MS * n;
   }
-  function playerUrl(id, { circuit = 'alcampo', stream = true } = {}) {
+  // URL del canal para el previo (FLT-100384, Carlos 12-sep-2026: «no está emitiendo
+  // la playlist de los contenidos generados en el catálogo con el hashtag alcampo en
+  // pseudostreaming»). El canal emite DISCO-PRIMERO por defecto (pre-descarga a la
+  // Cache API y reproduce lo bajado); ?stream=1 lo desactivaba y aquí iba puesto.
+  // Ahora: sin stream (pseudostreaming), y ?tag=<circuito> = las piezas del Stock
+  // con el hashtag del circuito (las del catálogo llevan «alcampo»), en modo local,
+  // sin depender de que cada una de las 102 pantallas tenga playlist asignada.
+  function playerUrl(id, { circuit = 'alcampo', stream = false, tag = circuit } = {}) {
     const p = new URLSearchParams({ clean: '1', screen: String(id || ''), circuit, muted: '1' });
-    if (stream) { p.set('playerType', 'virtual'); p.set('stream', '1'); }
+    if (tag) p.set('tag', String(tag));
+    if (stream) p.set('stream', '1');
     return PLAYER_BASE + '?' + p.toString();
+  }
+  // Póster de la primera pieza del hashtag (Stock, CORS *): se pinta bajo el iframe
+  // para que la pantalla NUNCA esté negra mientras el canal descarga.
+  const STOCK_LIST = 'https://api.admira.store/stock/list';
+  function stockPosterUrl(tag) { return STOCK_LIST + '?tag=' + encodeURIComponent(String(tag || '')) + '&type=video'; }
+  function firstPoster(payload) {
+    const items = !payload ? [] : Array.isArray(payload.items) ? payload.items : Array.isArray(payload.assets) ? payload.assets : Array.isArray(payload) ? payload : [];
+    for (const it of items) {
+      const u = it && (it.poster || it.thumbnail || it.thumb);
+      if (typeof u === 'string' && /^https:\/\//.test(u)) return u;
+    }
+    return '';
   }
   // JSON del previo para subir al KV: el del KV con el quad/orientación efectivos de cada vista.
   function exportPrevio(loc, kvPrevio, views) {
@@ -159,7 +179,7 @@
     });
     return JSON.stringify({ id: loc && loc.id, previo: p }, null, 2);
   }
-  const api = { validQuad, quadMatrix, applyMatrix, playerSize, fitRect, screenTransform, storageKey, readLocal, writeLocal, effectivePrevio, viewSources, previoViews, tourViews, tourDwell, viewOrder, playerUrl, exportPrevio, PLAYER_SIZE, STORAGE_PREFIX, PLAYER_BASE, VIEW_FACHADA, PREVIO_VIEW_MS, PREVIO_SINGLE_MS };
+  const api = { validQuad, quadMatrix, applyMatrix, playerSize, fitRect, screenTransform, storageKey, readLocal, writeLocal, effectivePrevio, viewSources, previoViews, tourViews, tourDwell, viewOrder, playerUrl, stockPosterUrl, firstPoster, exportPrevio, PLAYER_SIZE, STORAGE_PREFIX, PLAYER_BASE, STOCK_LIST, VIEW_FACHADA, PREVIO_VIEW_MS, PREVIO_SINGLE_MS };
   root.AdmiraPrevio = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window === 'undefined' ? globalThis : window);
