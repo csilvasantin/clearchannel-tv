@@ -13,6 +13,7 @@ import os, json, urllib.request
 UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"  # Cloudflare devuelve 403 al UA de urllib
 API="https://api.admira.store/grid"
 key=os.environ["GRID_KEY"]; seed=json.load(open(os.environ["SEED"]))
+seed=seed if isinstance(seed,list) else seed["locations"]  # seed v2: {locations, pendientes}
 def get(u):
     return json.load(urllib.request.urlopen(urllib.request.Request(u, headers={"Accept":"application/json","User-Agent":UA}), timeout=30))
 existing={s["screen"] for s in get(API+"/screens").get("screens",[])}

@@ -1,12 +1,13 @@
 #!/usr/bin/env node
-// Circuito Alcampo (FLT-100351 · misión Yokup #3192): 36 supermercados geolocalizados
-// (Zaragoza, Logroño, Burgos, Madrid…) + los 3 hipermercados catalanes que ya tenían
-// pantalla en la parrilla (alcampo-esplugues, alcampo-vilanova, alcampo-salt).
+// Circuito Alcampo (FLT-100351 · misión Yokup #3192 y FLT-100356 · #3200): supermercados
+// geolocalizados (tanda 1: 1-36, tanda 2: 37-100; Zaragoza, Logroño, Burgos, Madrid…) + los
+// 3 hipermercados catalanes que ya tenían pantalla en la parrilla (esplugues, vilanova, salt).
+// Las tiendas sin lat/lng NO entran en el plano ni en la parrilla: van a `pendientes` del seed.
 //
 // Uso:
 //   node tools/import-alcampo-circuit.mjs               → escribe la semilla y resume
 //   node tools/import-alcampo-circuit.mjs --json        → imprime las 39 ubicaciones
-//   OMNIP_ADMIN_TOKEN=… node tools/import-alcampo-circuit.mjs --publish
+//   OMNIP_ADMIN_TOKEN=… node tools/import-alcampo-circuit.mjs --publish [--backup-suffix=b]
 //        → GET /locations (copia previa en ALCAMPO_DIR/kv-locations-backup-<fecha>.json)
 //          → unión por id (sustituye alcampo-*, conserva todo lo demás) → PUT /locations
 //
@@ -19,7 +20,8 @@ import path from 'node:path';
 const OMNIP_API = process.env.OMNIP_API || 'https://brain.digitalavatar.ai';
 const ADMIN_TOKEN = process.env.OMNIP_ADMIN_TOKEN || '';
 const ALCAMPO_DIR = process.env.ALCAMPO_DIR || '/Users/Carlos/Claude/alcampo';
-const GEO_FILE = process.env.ALCAMPO_GEO || path.join(ALCAMPO_DIR, 'alcampo-36-geo.json');
+const GEO_FILES = (process.env.ALCAMPO_GEO || ['alcampo-36-geo.json', 'alcampo-37-100-geo.json'].map(f => path.join(ALCAMPO_DIR, f)).join(',')).split(',');
+const BACKUP_SUFFIX = (process.argv.find(a => a.startsWith('--backup-suffix=')) || '').split('=')[1] || '';
 const OFICIAL_FILE = process.env.ALCAMPO_OFICIAL || path.join(ALCAMPO_DIR, 'alcampo-tiendas-oficial.json');
 const SEED_FILE = process.env.ALCAMPO_SEED || path.join(ALCAMPO_DIR, 'alcampo-circuit-seed.json');
 const SHOULD_PUBLISH = process.argv.includes('--publish');
@@ -39,6 +41,23 @@ const PRETTY_NAMES = {
   'MENDEZ ALVARO 2': 'Méndez Álvaro', 'EDGAR NEVILLE': 'Edgar Neville', 'JUAN PABLO BONET': 'Juan Pablo Bonet',
   'CIGUEÑA': 'Cigüeña', 'LORCA': 'Lorca', 'TORRERO': 'Torrero', 'VALCUERNA': 'Valcuerna', 'BRETON': 'Bretón',
   'SAMBIL 2': 'Sambil', 'PROGRESO': 'Progreso', 'AVILA': 'Ávila', 'LIBERTAD': 'Libertad',
+  // Tanda 2 (37-100)
+  'ATOCHA 80': 'Atocha', 'URBANO BARBASTRO': 'Barbastro Urbano', 'BENITO CASTRO': 'Benito Castro', 'DURANGO': 'Durango',
+  'SALOU 2': 'Salou Logronyo', 'SERVILLAS': 'Servillas', 'MONTECARMELO': 'Montecarmelo', 'UNCETA': 'Unceta',
+  'BERNARDO ROBLES': 'Bernardo Robles', 'DUQUE DE MEDINACELI': 'Duque de Medinaceli', 'ALEGRIA': 'Alegría',
+  'MAQUEDA ALUCHE': 'Maqueda Aluche', 'CALLE TARRAGONA': 'Calle Tarragona', 'MANUEL CEBAS': 'Manuel Cebas', 'CHILE': 'Chile',
+  'LAS ROZAS': 'Las Rozas', 'MENENDEZ PELAYO': 'Menéndez Pelayo', 'MUNGUIA': 'Mungia', 'S S DE LOS REYES': 'San Sebastián de los Reyes',
+  'JUAN BRAVO': 'Juan Bravo', 'ORENSE 2': 'Orense', 'ALCALA MADRID': 'Alcalá', 'ARZOBISPO APAOLAZA': 'Arzobispo Apaolaza',
+  'ARENAL': 'Arenal', 'LA BOZADA': 'La Bozada', 'FRAGA II': 'Fraga', 'PARLA ESTE 2': 'Parla Este', 'PEREZ GALDOS': 'Pérez Galdós',
+  'DOCTOR CASTELO': 'Doctor Castelo', 'PLAZA LA FUENTE': 'Plaza de la Fuente', 'AV FEDERICO ANAYA': 'Federico Anaya', 'ARANA': 'Arana',
+  'FÁTIMA': 'Fátima', 'CLUB DEPORTIVO': 'Club Deportivo', 'BARBASTRO': 'Barbastro', 'ARROYOMOLINOS': 'Arroyomolinos',
+  'PSEO DAMAS': 'Paseo de las Damas', 'SALOU': 'Salou', 'ZARAGOZA LA VIEJA': 'Zaragoza la Vieja', 'DAROCA': 'Daroca',
+  'NUÑEZ DE BALBOA': 'Núñez de Balboa', 'LA JOTA': 'La Jota', 'VICENTE DE FUENTE': 'San Vicente Mártir', 'LA VIA': 'La Vía',
+  'FLORIDA': 'Florida', 'LAS CAMARETAS': 'Las Camaretas', 'PASEO MARIA AGUSTIN': 'Paseo María Agustín', 'VALDEPEÑAS': 'Valdepeñas',
+  'AVDA PORTUGAL SAL': 'Avenida de Portugal', 'SALVADOR ALLENDE': 'Salvador Allende', 'PRINCIPADO DE MOREA': 'Principado de Morea',
+  'SOBRARBE': 'Sobrarbe', 'CESAREO ALIERTA': 'Cesáreo Alierta', 'LAKUABIZCARRA': 'Lakuabizkarra', 'TORTOSA': 'Tortosa',
+  'HUESCA': 'Huesca', 'PRINCESA': 'Princesa', 'MONTECARMELO 3': 'Montecarmelo Escorial', 'HERNAN CORTES': 'Hernán Cortés',
+  'CLUNIA': 'Clunia', 'SOMORROSTRO': 'Somorrostro', 'EMBARCADERO': 'Embarcadero', 'VALLEHERMOSO': 'Vallehermoso', 'TARAZONA': 'Tarazona',
 };
 
 // Hipermercados catalanes ya presentes en api.admira.store/grid/screens (circuit:"alcampo").
@@ -154,10 +173,12 @@ function sortForTour(items) {
 }
 
 function buildAlcampoLocations() {
-  const geo = JSON.parse(fs.readFileSync(GEO_FILE, 'utf8'));
+  const stores = GEO_FILES.flatMap(f => { const geo = JSON.parse(fs.readFileSync(f, 'utf8')); return Array.isArray(geo) ? geo : geo.tiendas; });
   const oficial = JSON.parse(fs.readFileSync(OFICIAL_FILE, 'utf8'));
-  const stores = Array.isArray(geo) ? geo : geo.tiendas;
-  const supers = stores.map(toOmniLocation).filter(Boolean);
+  const pendientes = stores
+    .filter(st => !Number.isFinite(Number(st.lat)) || !Number.isFinite(Number(st.lng)) || st.lat == null || st.lng == null)
+    .map(st => ({ n: st.n, slug: st.slug, nombre_excel: st.nombre_excel, confianza: st.confianza || 'baja', motivo: 'no existe en la red oficial, probable cierre', motivo_geo: st.motivo || '' }));
+  const supers = stores.filter(st => st.lat != null && st.lng != null).map(toOmniLocation).filter(Boolean);
   const hypers = HYPERS.map(def => hyperLocation(def, findHyperFeature(oficial.features, def)));
   const all = sortForTour(supers.concat(hypers));
   const seen = new Set();
@@ -166,7 +187,7 @@ function buildAlcampoLocations() {
     if (seen.has(loc.id)) throw new Error(`id duplicado: ${loc.id}`);
     seen.add(loc.id);
   }
-  return all;
+  return { locations: all, pendientes };
 }
 
 async function loadCurrentOmniCatalog() {
@@ -188,11 +209,12 @@ async function publishCatalog(locations) {
   return data;
 }
 
-const alcampoLocations = buildAlcampoLocations();
-fs.writeFileSync(SEED_FILE, JSON.stringify(alcampoLocations, null, 1));
+const { locations: alcampoLocations, pendientes } = buildAlcampoLocations();
+fs.writeFileSync(SEED_FILE, JSON.stringify({ generado: new Date().toISOString(), fuentes: GEO_FILES, locations: alcampoLocations, pendientes }, null, 1));
 
 const summary = {
   alcampoLocations: alcampoLocations.length,
+  pendientes: pendientes.map(p => p.slug),
   supermercados: alcampoLocations.filter(l => l.alcampo.formato !== 'hiper').length,
   hipermercados: alcampoLocations.filter(l => l.alcampo.formato === 'hiper').length,
   confianza: alcampoLocations.reduce((acc, l) => { acc[l.alcampo.confianza] = (acc[l.alcampo.confianza] || 0) + 1; return acc; }, {}),
@@ -204,7 +226,7 @@ if (SHOULD_PUBLISH) {
   const current = await loadCurrentOmniCatalog();
   if (current.length < 1000) throw new Error(`El catálogo actual solo tiene ${current.length} ubicaciones: no se publica (¿KV vacío o respuesta parcial?)`);
   const stamp = new Date().toISOString().slice(0, 10);
-  const backupFile = path.join(ALCAMPO_DIR, `kv-locations-backup-${stamp}.json`);
+  const backupFile = path.join(ALCAMPO_DIR, `kv-locations-backup-${stamp}${BACKUP_SUFFIX}.json`);
   fs.writeFileSync(backupFile, JSON.stringify({ locations: current }));
   const withoutAlcampo = current.filter(loc => !/^alcampo-/i.test(String(loc.id || '')));
   const merged = withoutAlcampo.concat(alcampoLocations);
