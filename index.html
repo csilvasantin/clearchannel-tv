@@ -539,7 +539,7 @@
   .pegman-ghost svg{width:34px;height:34px}
 
   /* Tarjeta de respaldo Street View (popup bloqueado) */
-  .streetview{position:fixed;inset:0;z-index:20;background:rgba(2,8,13,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center}
+  .streetview{position:fixed;inset:0;z-index:9600;background:rgba(2,8,13,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center}
   .streetview[hidden]{display:none}
   .streetview .sv-card{position:relative;width:min(380px,calc(100vw - 32px));background:rgba(10,22,32,.97);border:1px solid var(--line);border-radius:16px;padding:24px 24px 22px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.55)}
   .streetview .sv-close{position:absolute;top:10px;right:14px;background:transparent;border:0;color:var(--mut);font-size:22px;cursor:pointer;line-height:1}
@@ -652,6 +652,67 @@
   .tg-pill.on{background:var(--brand);border-color:var(--brand);color:#001620;font-weight:700}
   .tg-extras{display:flex;gap:12px;flex-wrap:wrap;font-size:10.5px;color:var(--mut);align-items:center}
   .tg-extras input{background:rgba(2,8,13,.6);border:1px solid var(--line);border-radius:6px;color:var(--ink);padding:3px 6px;font-family:inherit;font-size:11px;margin-left:4px}
+  /* ═══ Previo DooH (FLT-100364): la pantalla emitiendo sobre la foto de fachada ═══ */
+  .previo-dooh{position:fixed;inset:0;z-index:9500;background:#000;display:flex;flex-direction:column;color:var(--ink)}
+  .previo-dooh[hidden]{display:none}
+  .pv-head{display:flex;align-items:center;gap:14px;padding:10px 56px 10px 16px;background:linear-gradient(to bottom,rgba(2,8,13,.98),rgba(2,8,13,.86));border-bottom:1px solid var(--line);flex-wrap:wrap;min-height:56px}
+  .pv-titles{min-width:0;flex:1 1 240px}
+  .pv-name{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pv-addr{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pv-chips{display:flex;gap:6px;flex-wrap:wrap}
+  .pv-chip{font-family:monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut);white-space:nowrap}
+  .pv-chip.real{border-color:rgba(136,255,170,.5);color:var(--good)}
+  .pv-chip.virtual{border-color:rgba(120,243,255,.5);color:var(--brand)}
+  .pv-chip.local{border-color:rgba(255,216,102,.5);color:var(--accent)}
+  .pv-chip[hidden]{display:none}
+  .pv-links{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .pv-links a,.pv-links button{font-family:monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;border:1px solid var(--line);border-radius:6px;color:var(--brand);background:transparent;cursor:pointer;white-space:nowrap;font-weight:normal}
+  .pv-links a:hover,.pv-links button:hover{border-color:var(--brand);text-decoration:none}
+  .pv-links button.on{background:var(--accent);border-color:var(--accent);color:#1a0e00}
+  .pv-links button[hidden],.pv-links a[hidden]{display:none}
+  .pv-links .pv-stop{border-color:rgba(255,136,102,.5);color:var(--warn)}
+  .pv-progress{font-family:monospace;font-size:10px;letter-spacing:.06em;color:var(--accent);white-space:nowrap}
+  .pv-progress:empty{display:none}
+  .pv-close{position:absolute;top:8px;right:14px;z-index:2;background:transparent;border:0;color:var(--mut);font-size:30px;cursor:pointer;line-height:1}
+  .pv-close:hover{color:var(--ink)}
+  .pv-stage{position:relative;flex:1;min-height:0;overflow:hidden}
+  .pv-canvas{position:absolute;overflow:visible}
+  .pv-canvas[hidden]{display:none}
+  .pv-canvas img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+  .pv-screen{position:absolute;left:0;top:0;transform-origin:0 0;background:#000;border:2px solid rgba(255,255,255,.55);box-shadow:0 0 18px rgba(120,243,255,.45),0 0 60px rgba(120,243,255,.18),inset 0 0 12px rgba(0,0,0,.6);overflow:hidden;box-sizing:content-box;margin:-2px 0 0 -2px}
+  .pv-screen iframe{width:100%;height:100%;border:0;display:block;background:#000}
+  .pv-screen::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.03) 28%,transparent 55%)}
+  .pv-screen[hidden]{display:none}
+  .previo-dooh.calibrating .pv-canvas{cursor:crosshair}
+  .previo-dooh.calibrating .pv-screen{pointer-events:none;opacity:.45}
+  .pv-markers{position:absolute;inset:0;pointer-events:none}
+  .pv-markers span{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:var(--accent);color:#1a0e00;font:700 11px/22px monospace;text-align:center;box-shadow:0 0 0 2px #000,0 0 12px rgba(255,216,102,.8)}
+  .pv-markers svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .pv-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}
+  .pv-empty[hidden]{display:none}
+  .pv-empty h3{margin:0;font-size:20px}
+  .pv-empty p{margin:0;color:var(--mut);max-width:440px;font-size:13px;line-height:1.5}
+  .pv-empty button{font-family:monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:10px 16px;border:1px solid var(--brand);border-radius:6px;color:var(--brand);background:transparent;cursor:pointer}
+  .pv-empty button:hover{background:var(--brand);color:#001620}
+  .pv-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;background:rgba(10,22,32,.98);border-top:1px solid var(--line);font-size:12px}
+  .pv-tools[hidden]{display:none}
+  .pv-tools .pv-hint{flex:1 1 260px;color:var(--mut);font-size:11.5px;line-height:1.4}
+  .pv-tools button{font-family:monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;border:1px solid var(--line);border-radius:6px;color:var(--brand);background:transparent;cursor:pointer}
+  .pv-tools button:hover:not(:disabled){border-color:var(--brand)}
+  .pv-tools button:disabled{opacity:.45;cursor:default}
+  .pv-tools button.primary{background:var(--brand);border-color:var(--brand);color:#001620;font-weight:700}
+  .pv-tools button.on{background:var(--accent);border-color:var(--accent);color:#1a0e00}
+  .pv-toast{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(10,22,32,.96);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:12px;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis}
+  .pv-toast.show{opacity:1}
+  aside.panel .actions.previo-row{margin-top:10px;padding-top:0;border-top:0}
+  aside.panel .actions.previo-row a{border-color:var(--accent);color:var(--accent)}
+  aside.panel .actions.previo-row a:hover{background:var(--accent);color:#1a0e00}
+  aside.panel .actions.previo-row[hidden]{display:none}
+  .circuit-previo-toggle{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mut);cursor:pointer;user-select:none;padding:2px 0}
+  .circuit-previo-toggle input{accent-color:var(--accent);margin:0}
+  .circuit-demo.previo{border-color:rgba(120,243,255,.5);color:var(--brand);background:rgba(120,243,255,.06)}
+  .circuit-demo.previo:hover,.circuit-demo.previo.active{background:var(--brand);border-color:var(--brand);color:#001620}
+  @media (max-width:640px){ .pv-head{padding-right:48px;gap:8px} .pv-titles{flex-basis:100%} }
 </style>
 <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
 <link rel="stylesheet" href="cenital-panel.css?v=destinations-2"></head>
@@ -835,6 +896,8 @@
       <button type="button" class="circuit-demo" id="circuit-planner-btn" data-pl-es="Comparar circuitos" data-pl-en="Compare circuits">Comparar circuitos</button>
       <div class="circuit-demo-row">
         <button class="circuit-demo" type="button" id="circuit-demo" data-i18n="demo_circuit">Tour DooH</button>
+        <button class="circuit-demo previo" type="button" id="circuit-previo" data-i18n="previo_circuit" title="Previo DooH: recorre el circuito y muestra cada pantalla emitiendo sobre su fachada.">Previo DooH</button>
+        <label class="circuit-previo-toggle"><input type="checkbox" id="circuit-previo-toggle"> <span data-i18n="previo_tour_toggle">Tour con previo DooH</span></label>
         <div class="circuit-demo-progress" id="circuit-demo-progress"></div>
       </div>
       <div class="circuit-foot">
@@ -1160,15 +1223,59 @@
       <a id="p-twin" href="https://www.xpaceos.com" target="_blank" rel="noopener" data-i18n="view_twin">Ver Gemelo Digital ↗</a>
       <a id="p-twin-hd" href="#" target="_blank" rel="noopener" style="display:none" data-i18n="twin_hd">🎥 Gemelo Hiperrealista ↗</a>
     </div>
+    <div class="actions previo-row" id="p-previo-row" hidden><a href="#" id="p-previo" data-i18n="previo_point" data-i18n-title="previo_point_hint" title="Vuela a la tienda y muestra la pantalla emitiendo sobre la foto de fachada.">📺 Previo DooH · ver la pantalla emitiendo</a></div>
   </div>
 </aside>
+
+<!-- Previo DooH (FLT-100364): la pantalla emitiendo sobre la foto de fachada. Homografía 4 esquinas → matrix3d (previo.js). -->
+<div class="previo-dooh" id="previo-dooh" hidden role="dialog" aria-modal="true" aria-label="Previo DooH">
+  <div class="pv-head">
+    <div class="pv-titles"><div class="pv-name" id="pv-name">—</div><div class="pv-addr" id="pv-addr"></div></div>
+    <div class="pv-chips">
+      <span class="pv-chip" id="pv-type" hidden></span>
+      <span class="pv-chip" id="pv-conf" hidden></span>
+      <span class="pv-chip" id="pv-date" hidden></span>
+      <span class="pv-chip local" id="pv-local" hidden data-i18n="pv_local">ajuste local</span>
+    </div>
+    <div class="pv-links">
+      <a href="#" id="pv-sv" data-i18n="pv_streetview">Abrir en Street View ↗</a>
+      <a href="#" id="pv-playlist" target="_blank" rel="noopener" data-i18n="pv_playlist">Ver playlist ↗</a>
+      <button type="button" id="pv-adjust" data-i18n="pv_adjust">Ajustar pantalla</button>
+      <button type="button" id="pv-stop" class="pv-stop" hidden data-i18n="tour_stop">⏸ Parar Tour DooH</button>
+    </div>
+    <div class="pv-progress" id="pv-progress"></div>
+  </div>
+  <button class="pv-close" id="pv-close" type="button" data-i18n-aria="close" aria-label="Cerrar">×</button>
+  <div class="pv-stage" id="pv-stage">
+    <div class="pv-canvas" id="pv-canvas" hidden>
+      <img id="pv-photo" alt="" draggable="false">
+      <div class="pv-screen" id="pv-screen" hidden><iframe id="pv-player" title="Previo DooH" allow="autoplay" referrerpolicy="no-referrer"></iframe></div>
+      <div class="pv-markers" id="pv-markers"></div>
+    </div>
+    <div class="pv-empty" id="pv-empty" hidden>
+      <h3 data-i18n="pv_none_title">Sin previo todavía</h3>
+      <p data-i18n="pv_none_msg">Esta tienda aún no tiene foto de fachada con la pantalla marcada. Mientras tanto, mírala en Street View.</p>
+      <button type="button" id="pv-empty-sv" data-i18n="pv_streetview">Abrir en Street View ↗</button>
+    </div>
+    <div class="pv-toast" id="pv-toast"></div>
+  </div>
+  <div class="pv-tools" id="pv-tools" hidden>
+    <div class="pv-hint" id="pv-hint"></div>
+    <button type="button" id="pv-orient" data-i18n="pv_vertical">Vertical</button>
+    <button type="button" id="pv-remark" data-i18n="pv_remark">Marcar esquinas</button>
+    <button type="button" id="pv-save" class="primary" data-i18n="pv_save">Guardar</button>
+    <button type="button" id="pv-copy" data-i18n="pv_copy">Copiar JSON</button>
+    <button type="button" id="pv-reset" data-i18n="pv_reset">Restablecer</button>
+    <button type="button" id="pv-done" data-i18n="pv_done">Listo</button>
+  </div>
+</div>
 
 <!-- Cargados aquí (no en <head>) para que el chrome de la UI pinte antes; preload los anticipa -->
 <script defer src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script defer src="locations.js?v=interiores-20260907-2"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="app.js?v=interiores-20260907-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-1"></script><script defer src="app.js?v=previo-20260912-1"></script>
 <script defer src="planner-ui.js?v=20260905-1"></script>
 <script type="module" src="walk-launch.mjs?v=20260905-1"></script>
 

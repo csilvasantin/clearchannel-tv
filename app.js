@@ -499,6 +499,35 @@ let LANG = (function(){
 })();
 I18N.en.walk_preview = 'Preview campaign ↗';
 I18N.es.walk_preview = 'Previsualizar campaña ↗';
+// Previo DooH (FLT-100364): la pantalla emitiendo sobre la foto de fachada.
+Object.assign(I18N.es, {
+  previo_circuit:'Previo DooH', previo_stop:'Parar previo DooH', previo_tour_toggle:'Tour con previo DooH',
+  previo_point:'📺 Previo DooH · ver la pantalla emitiendo', previo_point_hint:'Vuela a la tienda y muestra la pantalla emitiendo sobre la foto de fachada.',
+  previo_progress:'Previo {current}/{total} · {name}',
+  pv_streetview:'Abrir en Street View ↗', pv_playlist:'Ver playlist ↗', pv_adjust:'Ajustar pantalla', pv_local:'ajuste local',
+  pv_real:'pantalla real', pv_virtual:'player virtual', pv_conf:'confianza {value}', pv_date:'Fecha Street View {value}',
+  pv_none_title:'Sin previo todavía', pv_none_msg:'Esta tienda aún no tiene foto de fachada con la pantalla marcada. Mientras tanto, mírala en Street View.',
+  pv_vertical:'Vertical', pv_horizontal:'Horizontal', pv_remark:'Marcar esquinas', pv_save:'Guardar', pv_copy:'Copiar JSON', pv_reset:'Restablecer', pv_done:'Listo',
+  pv_hint_mark:'Marca las 4 esquinas de la pantalla sobre la foto ({n}/4): superior izq. → superior der. → inferior der. → inferior izq.',
+  pv_hint_ready:'Esquinas marcadas. Elige la orientación y pulsa Guardar (queda en este navegador) o Copiar JSON para subirlo al KV.',
+  pv_hint_invalid:'Las esquinas se cruzan o la pantalla es demasiado pequeña. Repite en sentido horario desde arriba a la izquierda.',
+  pv_saved:'Ajuste guardado en este navegador', pv_copied:'JSON copiado · pásaselo a Neo para subirlo al KV', pv_copy_fail:'No se pudo copiar · el JSON está en la consola',
+  pv_reset_done:'Ajuste local eliminado · vuelve el del KV',
+});
+Object.assign(I18N.en, {
+  previo_circuit:'DooH Preview', previo_stop:'Stop DooH preview', previo_tour_toggle:'Tour with DooH preview',
+  previo_point:'📺 DooH Preview · see the screen on air', previo_point_hint:'Fly to the store and show the screen playing on the storefront photo.',
+  previo_progress:'Preview {current}/{total} · {name}',
+  pv_streetview:'Open in Street View ↗', pv_playlist:'View playlist ↗', pv_adjust:'Adjust screen', pv_local:'local adjustment',
+  pv_real:'real screen', pv_virtual:'virtual player', pv_conf:'confidence {value}', pv_date:'Street View date {value}',
+  pv_none_title:'No preview yet', pv_none_msg:'This store has no storefront photo with the screen marked yet. Meanwhile, look at it in Street View.',
+  pv_vertical:'Vertical', pv_horizontal:'Horizontal', pv_remark:'Mark corners', pv_save:'Save', pv_copy:'Copy JSON', pv_reset:'Reset', pv_done:'Done',
+  pv_hint_mark:'Click the 4 corners of the screen on the photo ({n}/4): top-left → top-right → bottom-right → bottom-left.',
+  pv_hint_ready:'Corners marked. Pick the orientation and press Save (kept in this browser) or Copy JSON to upload it to the KV.',
+  pv_hint_invalid:'The corners cross or the screen is too small. Repeat clockwise from the top-left.',
+  pv_saved:'Adjustment saved in this browser', pv_copied:'JSON copied · hand it to Neo to upload it to the KV', pv_copy_fail:'Could not copy · the JSON is in the console',
+  pv_reset_done:'Local adjustment removed · back to the KV one',
+});
 function t(key){ return (I18N[LANG] && I18N[LANG][key] != null) ? I18N[LANG][key] : (I18N.es[key] != null ? I18N.es[key] : key); }
 function tf(key, vars = {}) {
   return t(key).replace(/\{(\w+)\}/g, (_, name) => vars[name] == null ? '' : String(vars[name]));
@@ -1290,9 +1319,18 @@ function updateCircuitDemoUi() {
     btn.classList.toggle('active', circuitDemo.running);
     btn.textContent = circuitDemo.running ? t('demo_stop') : t('demo_circuit');
   }
+  const pbtn = document.getElementById('circuit-previo');
+  if (pbtn) {
+    pbtn.disabled = !count;
+    const on = circuitDemo.running && previoTourMode;
+    pbtn.classList.toggle('active', on);
+    pbtn.textContent = on ? t('previo_stop') : t('previo_circuit');
+  }
+  const ptoggle = document.getElementById('circuit-previo-toggle');
+  if (ptoggle && ptoggle.checked !== previoTourMode) ptoggle.checked = previoTourMode;
   if (progress) {
     const loc = circuitDemo.running ? circuitDemo.items[circuitDemo.index] : null;
-    progress.textContent = loc ? tf('demo_progress', {
+    progress.textContent = loc ? tf(previoTourMode ? 'previo_progress' : 'demo_progress', {
       current: circuitDemo.index + 1,
       total: circuitDemo.items.length,
       name: loc.name,
@@ -1307,6 +1345,7 @@ function updateCircuitDemoUi() {
 }
 
 function stopCircuitDemo(done = false) {
+  if (previoState.open && previoState.fromTour) closePrevio({stopTour:false});
   if (circuitDemo.running) { tourCamera.cancel(); document.getElementById('status')?.classList.remove('show'); }
   if (circuitDemo.timer) clearTimeout(circuitDemo.timer);
   const total = circuitDemo.items.length;
@@ -1325,13 +1364,26 @@ async function showCircuitDemoPoint() {
   if (!loc) { run.index++; showCircuitDemoPoint(); return; }
   circuitMapFilterActive = true;
   updateCircuitDemoUi();
-  const arrived = await flyToLocation(loc, {automatic:true, bearing:(run.index * 29) % 360});
+  // Tour con previo: las paradas con previo se ven a zoom 18 y abren el overlay 8 s.
+  const withPrevio = previoTourMode && locationHasPrevio(loc);
+  const arrived = await flyToLocation(loc, {automatic:true, bearing:(run.index * 29) % 360, zoom: withPrevio ? PREVIO_ZOOM : undefined});
   if (circuitDemo !== run || !run.running) return;
   if (!arrived) { stopCircuitDemo(false); setStatus(t('map_incomplete')); return; }
-  setStatus(tf('demo_progress', {current:run.index + 1, total:run.items.length, name:loc.name}));
+  setStatus(tf(previoTourMode ? 'previo_progress' : 'demo_progress', {current:run.index + 1, total:run.items.length, name:loc.name}));
+  if (withPrevio) openPrevio(loc, {fromTour:true});
   const next = run.items[run.index + 1];
-  if (next) tourCamera.prepare(locationCamera(next, ((run.index + 1) * 29) % 360));
-  run.timer = setTimeout(() => { run.index++; showCircuitDemoPoint(); }, TOUR_DWELL_MS);
+  if (next) tourCamera.prepare(locationCamera(next, ((run.index + 1) * 29) % 360, previoTourMode && locationHasPrevio(next) ? PREVIO_ZOOM : undefined));
+  run.timer = setTimeout(() => {
+    if (circuitDemo !== run || !run.running) return;
+    if (withPrevio) closePrevio({stopTour:false});
+    run.index++; showCircuitDemoPoint();
+  }, withPrevio ? PREVIO_DWELL_MS : TOUR_DWELL_MS);
+}
+
+function toggleCircuitPrevio() {
+  if (circuitDemo.running) { stopCircuitDemo(false); return; }
+  previoTourMode = true;
+  startCircuitDemo();
 }
 
 function startCircuitDemo() {
@@ -2033,6 +2085,8 @@ function bindCircuitSelector() {
   document.getElementById('circuit-campaign-btn')?.addEventListener('click', openCampaignModal);
   document.getElementById('circuit-zoom').addEventListener('click', zoomToSelectedCircuit);
   document.getElementById('circuit-demo')?.addEventListener('click', toggleCircuitDemo);
+  document.getElementById('circuit-previo')?.addEventListener('click', toggleCircuitPrevio);
+  document.getElementById('circuit-previo-toggle')?.addEventListener('change', e => { previoTourMode = !!e.target.checked; updateCircuitDemoUi(); });
   document.getElementById('circuit-buy').addEventListener('click', openCircuitPurchase);
   list.addEventListener('change', e => {
     const box = e.target.closest('input[type="checkbox"]');
@@ -2679,6 +2733,240 @@ document.getElementById('sv-close').addEventListener('click', () => {
   document.getElementById('streetview').hidden = true;
 });
 
+// ─── PREVIO DooH (FLT-100364) ──────────────────────────────────────
+// La pantalla emitiendo sobre la foto de fachada: overlay #previo-dooh con la
+// foto (object-fit: contain) y el player canal.html deformado a las 4 esquinas
+// (homografía → matrix3d, previo.js; patrón CanalKiosk/Xtore). El ajuste manual
+// de esquinas vive en localStorage (admira.previo.quad.<id>) y manda sobre el KV.
+const PREVIO_DWELL_MS = 8000;
+const PREVIO_ZOOM = 18;
+const PV = () => window.AdmiraPrevio;
+let previoTourMode = false;
+let previoState = { loc:null, previo:null, open:false, fromTour:false, calib:null, draft:null };
+const pvEl = id => document.getElementById(id);
+const pvClamp = v => Math.max(0, Math.min(1, v));
+
+function previoFor(loc) {
+  const P = PV(); if (!P || !loc) return null;
+  const fresh = LOC_BY_ID.get(loc.id) || loc;          // el KV puede haber llegado después
+  return P.effectivePrevio(fresh, P.readLocal(fresh.id));
+}
+function locationHasPrevio(loc) { return !!previoFor(loc); }
+function previoEligible(loc) { return !!loc && (!!loc.previo || (typeof isAlcampoLocation === 'function' && isAlcampoLocation(loc))); }
+
+function pvToast(msg) {
+  const el = pvEl('pv-toast'); if (!el) return;
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(pvToast._t); pvToast._t = setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+function openPrevio(loc, {fromTour = false} = {}) {
+  const ov = pvEl('previo-dooh'); const P = PV();
+  if (!ov || !loc || !P) return;
+  const previo = previoFor(loc);
+  if (previoState.open) exitPrevioCalibration();
+  previoState = { loc, previo, open:true, fromTour, calib:null, draft:null };
+  pvEl('pv-name').textContent = loc.name || loc.id;
+  pvEl('pv-addr').textContent = loc.addr || '';
+  pvEl('pv-stop').hidden = !fromTour;
+  pvEl('pv-progress').textContent = (fromTour && circuitDemo.running)
+    ? tf('previo_progress', {current:circuitDemo.index + 1, total:circuitDemo.items.length, name:loc.name}) : '';
+  pvEl('pv-playlist').href = P.playerUrl(loc.id, {stream:false});
+  renderPrevioChips();
+  pvEl('pv-empty').hidden = !!previo;
+  pvEl('pv-canvas').hidden = !previo;
+  pvEl('pv-adjust').hidden = !previo;
+  pvEl('pv-tools').hidden = true;
+  ov.classList.remove('calibrating');
+  ov.hidden = false; ov.setAttribute('aria-hidden', 'false');
+  document.addEventListener('keydown', previoEsc, true);
+  window.addEventListener('resize', layoutPrevio);
+  const frame = pvEl('pv-player'), img = pvEl('pv-photo');
+  if (previo) {
+    const url = P.playerUrl(loc.id);
+    if (frame.getAttribute('src') !== url) frame.src = url;
+    img.onload = layoutPrevio;
+    if (img.getAttribute('src') !== previo.imagen) img.src = previo.imagen;
+    layoutPrevio();
+  } else {
+    frame.removeAttribute('src'); pvEl('pv-screen').hidden = true;
+  }
+  try { pvEl('pv-close').focus({preventScroll:true}); } catch (_) {}
+}
+
+function renderPrevioChips() {
+  const p = previoState.previo;
+  const type = pvEl('pv-type'), conf = pvEl('pv-conf'), date = pvEl('pv-date'), local = pvEl('pv-local');
+  if (!p) { [type, conf, date, local].forEach(el => { el.hidden = true; }); return; }
+  const eff = previoState.draft ? Object.assign({}, p, previoState.draft) : p;
+  type.hidden = false; type.className = 'pv-chip ' + eff.tipo; type.textContent = t(eff.tipo === 'real' ? 'pv_real' : 'pv_virtual');
+  // confianza: número (0..1 o 0..100) o texto ('alta' | 'media' | 'baja').
+  const c = Number(p.confianza);
+  const confText = Number.isFinite(c) ? (c <= 1 ? Math.round(c * 100) + '%' : String(c)) : String(p.confianza || '').trim();
+  conf.hidden = !confText;
+  if (confText) { conf.textContent = tf('pv_conf', {value: confText}); conf.title = String(p.nota || ''); }
+  const d = (p.pano && (p.pano.fecha || p.pano.date || p.pano.captured)) || p.capturado || '';
+  date.hidden = !d;
+  if (d) date.textContent = tf('pv_date', {value: String(d).slice(0, 10)});
+  local.hidden = !(p.local || (previoState.draft && previoState.draft.quad));
+}
+
+// Coloca la foto (letterbox) y deforma el player a las 4 esquinas. Se repite en resize.
+function layoutPrevio() {
+  const st = previoState; const P = PV();
+  if (!st.open || !st.previo || !P) return;
+  const stage = pvEl('pv-stage'), canvas = pvEl('pv-canvas'), img = pvEl('pv-photo'), screen = pvEl('pv-screen');
+  const w = Number(st.previo.w) || img.naturalWidth || 1600, h = Number(st.previo.h) || img.naturalHeight || 900;
+  const r = P.fitRect(stage.clientWidth, stage.clientHeight, w, h);
+  Object.assign(canvas.style, {left:r.x + 'px', top:r.y + 'px', width:r.w + 'px', height:r.h + 'px'});
+  const eff = st.draft ? Object.assign({}, st.previo, st.draft) : st.previo;
+  const [pw, ph] = P.playerSize(eff.orientacion);
+  screen.style.width = pw + 'px'; screen.style.height = ph + 'px';
+  const tr = P.screenTransform(eff, r);
+  screen.style.transform = tr;
+  // Mientras se marcan las esquinas la pantalla se oculta: la foto queda limpia para los 4 clics.
+  screen.hidden = !tr || !!(st.calib && st.calib.marking);
+  renderPrevioMarkers();
+}
+
+function closePrevio({stopTour = true} = {}) {
+  const ov = pvEl('previo-dooh');
+  if (!ov || ov.hidden) return;
+  const wasTour = previoState.fromTour;
+  exitPrevioCalibration();
+  ov.hidden = true; ov.setAttribute('aria-hidden', 'true');
+  pvEl('pv-player').removeAttribute('src');
+  pvEl('pv-photo').removeAttribute('src');
+  pvEl('pv-screen').hidden = true;
+  document.removeEventListener('keydown', previoEsc, true);
+  window.removeEventListener('resize', layoutPrevio);
+  previoState = { loc:null, previo:null, open:false, fromTour:false, calib:null, draft:null };
+  if (wasTour && stopTour && circuitDemo.running) stopCircuitDemo(false);
+}
+function previoEsc(e) {
+  if (e.key !== 'Escape') return;
+  e.stopPropagation();
+  if (previoState.calib) exitPrevioCalibration(); else closePrevio();
+}
+
+// Botón del panel de un punto: vuelo a zoom 18 y, al aterrizar, el previo.
+async function showPointPrevio(loc) {
+  if (!loc) return;
+  closePrevio();
+  const arrived = await flyToLocation(loc, {zoom: PREVIO_ZOOM});
+  if (!arrived) return;
+  openPrevio(loc, {fromTour:false});
+}
+
+// ── Ajustar pantalla: 4 clics TL → TR → BR → BL sobre la foto ──
+function enterPrevioCalibration() {
+  const st = previoState; if (!st.open || !st.previo) return;
+  st.draft = st.draft || { quad: st.previo.quad.map(p => [...p]), orientacion: st.previo.orientacion };
+  st.calib = { points: [], marking: true };
+  pvEl('previo-dooh').classList.add('calibrating');
+  pvEl('pv-tools').hidden = false;
+  pvEl('pv-adjust').classList.add('on');
+  updatePrevioTools(); layoutPrevio();
+}
+function exitPrevioCalibration() {
+  const st = previoState;
+  st.calib = null; st.draft = null;
+  const ov = pvEl('previo-dooh'); if (ov) ov.classList.remove('calibrating');
+  const tools = pvEl('pv-tools'); if (tools) tools.hidden = true;
+  const adj = pvEl('pv-adjust'); if (adj) adj.classList.remove('on');
+  const mk = pvEl('pv-markers'); if (mk) mk.replaceChildren();
+  if (st.open) { renderPrevioChips(); layoutPrevio(); }
+}
+function updatePrevioTools() {
+  const st = previoState; if (!st.calib) return;
+  const hint = pvEl('pv-hint');
+  hint.textContent = st.calib.marking ? tf('pv_hint_mark', {n: st.calib.points.length}) : t('pv_hint_ready');
+  const orient = pvEl('pv-orient');
+  const key = st.draft.orientacion === 'horizontal' ? 'pv_horizontal' : 'pv_vertical';
+  orient.setAttribute('data-i18n', key); orient.textContent = t(key);
+  pvEl('pv-remark').classList.toggle('on', st.calib.marking);
+  pvEl('pv-reset').disabled = !(PV().readLocal(st.loc.id));
+  renderPrevioChips();
+}
+function renderPrevioMarkers() {
+  const st = previoState; const mk = pvEl('pv-markers'); if (!mk) return;
+  mk.replaceChildren();
+  if (!st.calib) return;
+  const pts = st.calib.marking ? st.calib.points : st.draft.quad;
+  if (pts.length > 1) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 100 100'); svg.setAttribute('preserveAspectRatio', 'none');
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', st.calib.marking ? 'polyline' : 'polygon');
+    poly.setAttribute('points', pts.map(([x, y]) => (x * 100) + ',' + (y * 100)).join(' '));
+    poly.setAttribute('fill', st.calib.marking ? 'none' : 'rgba(255,216,102,.12)');
+    poly.setAttribute('stroke', '#ffd866'); poly.setAttribute('stroke-width', '.35'); poly.setAttribute('vector-effect', 'non-scaling-stroke');
+    svg.append(poly); mk.append(svg);
+  }
+  pts.forEach(([x, y], i) => {
+    const m = document.createElement('span'); m.textContent = i + 1;
+    m.style.left = (x * 100) + '%'; m.style.top = (y * 100) + '%'; mk.append(m);
+  });
+}
+function previoExportJson() {
+  const st = previoState; const P = PV();
+  const eff = st.draft ? Object.assign({}, st.previo, st.draft) : st.previo;
+  return P.exportPrevio(st.loc, Object.assign({}, eff, {fuente: (st.draft && st.draft.quad) || st.previo.local ? 'ajuste-manual' : eff.fuente}));
+}
+(function wirePrevio() {
+  const ov = pvEl('previo-dooh'); if (!ov) return;
+  pvEl('pv-close').addEventListener('click', () => closePrevio());
+  pvEl('pv-stop').addEventListener('click', () => closePrevio({stopTour:true}));
+  const sv = () => { const l = previoState.loc; if (l && Array.isArray(l.coords)) openStreetView(l.coords[0], l.coords[1]); };
+  pvEl('pv-sv').addEventListener('click', e => { e.preventDefault(); sv(); });
+  pvEl('pv-empty-sv').addEventListener('click', sv);
+  pvEl('pv-adjust').addEventListener('click', () => { if (previoState.calib) exitPrevioCalibration(); else enterPrevioCalibration(); });
+  pvEl('pv-canvas').addEventListener('click', e => {
+    const st = previoState; if (!st.calib || !st.calib.marking) return;
+    const box = pvEl('pv-canvas').getBoundingClientRect();
+    if (!box.width || !box.height) return;
+    st.calib.points.push([pvClamp((e.clientX - box.left) / box.width), pvClamp((e.clientY - box.top) / box.height)]);
+    if (st.calib.points.length === 4) {
+      if (!PV().validQuad(st.calib.points)) { st.calib.points = []; pvToast(t('pv_hint_invalid')); }
+      else { st.draft.quad = st.calib.points.map(p => [...p]); st.calib.marking = false; }
+    }
+    updatePrevioTools(); layoutPrevio();
+  });
+  pvEl('pv-orient').addEventListener('click', () => {
+    const st = previoState; if (!st.calib) return;
+    st.draft.orientacion = st.draft.orientacion === 'horizontal' ? 'vertical' : 'horizontal';
+    updatePrevioTools(); layoutPrevio();
+  });
+  pvEl('pv-remark').addEventListener('click', () => {
+    const st = previoState; if (!st.calib) return;
+    st.calib = { points: [], marking: true }; updatePrevioTools(); layoutPrevio();
+  });
+  pvEl('pv-save').addEventListener('click', () => {
+    const st = previoState; const P = PV(); if (!st.calib) return;
+    const prev = P.readLocal(st.loc.id) || {};
+    P.writeLocal(st.loc.id, Object.assign({}, prev, { quad: st.draft.quad.map(p => [...p]), orientacion: st.draft.orientacion, guardado: new Date().toISOString() }));
+    st.previo = previoFor(st.loc);
+    st.calib = { points: [], marking: false };
+    st.draft = { quad: st.previo.quad.map(p => [...p]), orientacion: st.previo.orientacion };
+    updatePrevioTools(); layoutPrevio(); pvToast(t('pv_saved'));
+  });
+  pvEl('pv-copy').addEventListener('click', async () => {
+    if (!previoState.open || !previoState.previo) return;
+    const json = previoExportJson();
+    try { await navigator.clipboard.writeText(json); pvToast(t('pv_copied')); }
+    catch (_) { console.log(json); pvToast(t('pv_copy_fail')); }
+  });
+  pvEl('pv-reset').addEventListener('click', () => {
+    const st = previoState; const P = PV(); if (!st.open) return;
+    P.writeLocal(st.loc.id, null);
+    st.previo = previoFor(st.loc);
+    if (!st.previo) { closePrevio({stopTour:false}); openPrevio(st.loc); return; }
+    if (st.calib) { st.calib = { points: [], marking: false }; st.draft = { quad: st.previo.quad.map(p => [...p]), orientacion: st.previo.orientacion }; }
+    else st.draft = null;
+    updatePrevioTools(); renderPrevioChips(); layoutPrevio(); pvToast(t('pv_reset_done'));
+  });
+  pvEl('pv-done').addEventListener('click', () => exitPrevioCalibration());
+})();
+
 // ─── ESPEJO EN VIVO de la pantalla en "available surfaces" ──────────
 // Lee /signage/now?screen= (lo que publica el canal del dispositivo REAL,
 // el MacBookAir) y pinta el asset que se emite AHORA. Espejo real, sin iframe,
@@ -2875,6 +3163,13 @@ function renderPanel(loc) {
   //   · loc.flyLabel→ rótulo propio del botón (p.ej. 'AI HARNESS ↗'); sin él se
   //                   mantiene el rótulo por defecto traducible ('Ver Gemelo Digital').
   // Sin loc.fly → comportamiento ACTUAL intacto (loc.twin embebido / xpaceos.com).
+  // Previo DooH (FLT-100364): solo en puntos con previo o del circuito Alcampo.
+  const previoRow = document.getElementById('p-previo-row');
+  if (previoRow) {
+    previoRow.hidden = !previoEligible(loc);
+    const pPrevio = document.getElementById('p-previo');
+    if (pPrevio) pPrevio.onclick = e => { e.preventDefault(); showPointPrevio(loc); };
+  }
   const pTwin = document.getElementById('p-twin');
   const panelEl = document.getElementById('panel');
   pTwin.classList.remove('launch');
@@ -3251,8 +3546,8 @@ pollPixerFeed();
 setInterval(pollPixerFeed, 5000);
 
 // ─── Destinations: prepare, approach, render, then open the panel ──
-function locationCamera(loc, bearing = -20) {
-  return {center:loc.coords, zoom:16.8, pitch:currentView === '3d' ? 45 : 0, bearing};
+function locationCamera(loc, bearing = -20, zoom) {
+  return {center:loc.coords, zoom:Number.isFinite(zoom) ? zoom : 16.8, pitch:currentView === '3d' ? 45 : 0, bearing};
 }
 
 function syncCircuitOverview(){
@@ -3276,7 +3571,7 @@ function stopMapNavigation() {
   document.getElementById('status')?.classList.remove('show');
 }
 
-async function flyToLocation(loc, {automatic = false, bearing = -20} = {}) {
+async function flyToLocation(loc, {automatic = false, bearing = -20, zoom} = {}) {
   if (!automatic) stopMapNavigation();
   panel.classList.remove('open');
   splash.classList.add('hidden');
@@ -3284,7 +3579,7 @@ async function flyToLocation(loc, {automatic = false, bearing = -20} = {}) {
   if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
   const ac = document.getElementById('addr-card'); if (ac) ac.hidden = true;
   pushRecent(loc.id);
-  const result = await tourCamera.navigate(locationCamera(loc, bearing), phase => {
+  const result = await tourCamera.navigate(locationCamera(loc, bearing, zoom), phase => {
     const key = phase === 'preparing' ? 'map_preparing' : phase === 'loading' ? 'map_loading' : 'status_landing';
     setStatus(t(key) + loc.name, true);
   });
@@ -3360,6 +3655,20 @@ function wireTour() {
       }
     }
     if (q.get('tour') === '1' && b) setTimeout(() => { if (!tourRun) tourToggle(b); }, 1200);
+    // Previo DooH: ?circuit=alcampo&previo=1 → tour con previo; ?previo=<id> → previo de una tienda.
+    const pv = q.get('previo');
+    if (pv === '1' && c) {
+      setTimeout(() => { if (!circuitDemo.running) { previoTourMode = true; startCircuitDemo(); } }, 1400);
+    } else if (pv) {
+      // El catálogo puede llegar del KV unos segundos después del arranque: reintentamos.
+      let tries = 0;
+      const tryOpen = () => {
+        const loc = LOC_BY_ID.get(pv);
+        if (loc) { showPointPrevio(loc); return; }
+        if (++tries < 12) setTimeout(tryOpen, 1000);
+      };
+      setTimeout(tryOpen, 600);
+    }
   } catch (_) {}
 }
 if (document.readyState !== 'loading') setTimeout(wireTour, 600);
