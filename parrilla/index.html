@@ -94,7 +94,7 @@ async function selectScreen(id){
   const opts={workerBase:WORKER,role:'sell',screen:state.screen.id,date:state.date,screenName:state.screen.name,storeName:state.store.name,getKey:()=>localStorage.getItem('grid_key')||'',onData:updateFoot};
   if(!state.cal)state.cal=EmissionCalendar.mount($('#cal'),opts); else state.cal.setContext({screen:state.screen.id,date:state.date,screenName:state.screen.name,storeName:state.store.name});
 }
-function updateFoot(d){$('#foot').textContent=`${state.store.name} · ${state.screen.name} · ${d.date} · ${d.config.pixerScreens&&d.config.pixerScreens.length?('→ '+d.config.pixerScreens.join(', ')):'sin pixerScreen'} · slot ${d.config.slotSeconds}s`;}
+function updateFoot(d){$('#foot').textContent=`${state.store.name} · ${state.screen.name} · ${d.date} · ${d.config.pixerScreens&&d.config.pixerScreens.length?('→ '+d.config.pixerScreens.join(', ')):'sin player real asociado'} · slot ${d.config.slotSeconds}s`;}
 
 function emitNow(){if(state.cal)state.cal.emit();}
 function toggleAuto(){state.auto=!state.auto;const b=$('#autoBtn');b.classList.toggle('on',state.auto);b.textContent=state.auto?'■ Emitir auto':'▶ Emitir auto';if(state.auto){emitNow();state.autoTimer=setInterval(emitNow,30000);}else clearInterval(state.autoTimer);}
