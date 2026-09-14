@@ -4023,9 +4023,36 @@ function restoreWalkReturn() {
 restoreWalkReturn();
 
 // ─── Refresh asincrónico desde el worker (KV) ─────────────────────
-// El sync arrancó con localStorage/default. Si la KV trae algo nuevo,
-// reescribimos LOCATIONS, refrescamos el source del mapa y los counters.
+// El sync arrancó con localStorage/default. Dos fases (Jobs #3238 · Woz #3236 · FLT-100442, 14-sep-2026):
+// FASE 1 · pins rápidos: /locations?slim=1 (markers: id, nombre, tipo, coords, ~136-156 KB gzip)
+//   refresca los puntos del mapa nada más pintar, sin tocar contadores ni panel.
+// FASE 2 · catálogo completo (9,9 MB de JSON, 362 KB gzip, surfaces y segmentación) DIFERIDO a
+//   requestIdleCallback (tope 8 s): ya no compite con el first paint ni con el LCP en móvil.
+//   Antes se lanzaba en el arranque y en 4G frenaba la portada de admira.app y clearchannel.tv.
 (async () => {
+  try {
+    const slim = await window.loadOmnipLocationsSlimAsync(3500);
+    if (slim && Array.isArray(slim.locations) && slim.locations.length) {
+      let changed = false;
+      const next = LOCATIONS.slice();
+      const byId = new Map(next.map(l => [l && l.id, l]));
+      slim.locations.forEach(m => {
+        if (!m || !m.id) return;
+        const cur = byId.get(m.id);
+        if (cur) {
+          if (Array.isArray(m.coords) && m.coords.length === 2 && (!Array.isArray(cur.coords) || cur.coords[0] !== m.coords[0] || cur.coords[1] !== m.coords[1])) { cur.coords = m.coords.slice(0, 2); changed = true; }
+          if (m.name && cur.name !== m.name) { cur.name = m.name; changed = true; }
+          if (m.kind && cur.kind !== m.kind) { cur.kind = m.kind; changed = true; }
+        } else {
+          const fresh = window.normalizeOmnipLocations([{ id: m.id, name: m.name || m.id, kind: m.kind || '', addr: '', coords: Array.isArray(m.coords) ? m.coords.slice(0, 2) : null, surfaces: [] }])[0];
+          if (fresh) { if (!Array.isArray(fresh.surfaces)) fresh.surfaces = []; fresh._slim = true; next.push(fresh); byId.set(m.id, fresh); changed = true; }
+        }
+      });
+      if (changed) { setLocations(next); updateLocationsSource(); }
+    }
+  } catch {}
+  const whenIdle = (cb) => (typeof window.requestIdleCallback === 'function' ? window.requestIdleCallback(cb, { timeout: 8000 }) : setTimeout(cb, 3000));
+  whenIdle(async () => {
   try {
     const res = await window.loadOmnipLocationsAsync(4500);
     if (!res || !Array.isArray(res.locations) || !res.locations.length) return;
@@ -4047,6 +4074,7 @@ restoreWalkReturn();
     if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();
     if (!document.getElementById('buy-modal').hidden) updateBuyQuote();
   }
+  });
 })();
 
 // ─── Equipos auto-registrados (admira.tv/alta) → merge ligero ──────
