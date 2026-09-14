@@ -1377,6 +1377,37 @@ window.loadOmnipLocationsAsync = async function(timeoutMs = 4000) {
   return { locations: window.loadOmnipLocations(), source: 'local', updatedAt: null };
 };
 
+// ── Catálogo SLIM y detalle por id (P0 CARGA · Wozniak CTO #3236 · Jobs FLT-100377, 14-sep-2026) ──
+// El worker sirve GET /locations?slim=1 (alias /locations/slim): {count, locations:[{id,name,coords,kind,n}]}
+// sin addr/surfaces/twin/fly, ~156 KB gzip frente a 362 KB del catálogo completo, cacheable 120 s;
+// y GET /locations/:id con la localización entera (max-age=60). Son AYUDAS ADITIVAS: el pintado
+// actual sigue usando el catálogo completo porque app.js lee l.surfaces en contadores, ticker y
+// panel; adoptar slim en el primer pintado (puntos del mapa) e hidratar al clic es el paso siguiente.
+window.loadOmnipLocationsSlimAsync = async function(timeoutMs = 3000) {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeoutMs);
+    const r = await fetch(window.OMNIP_API + '/locations?slim=1', {signal: ctrl.signal});
+    clearTimeout(t);
+    if (!r.ok) throw new Error('http ' + r.status);
+    const d = await r.json();
+    if (d && Array.isArray(d.locations)) return { locations: d.locations, count: d.count || d.locations.length, updatedAt: d.updatedAt || null, source: 'slim' };
+  } catch (e) { /* offline / worker dormido / timeout */ }
+  return { locations: [], count: 0, updatedAt: null, source: 'none' };
+};
+window.loadOmnipLocationDetail = async function(id, timeoutMs = 3000) {
+  if (!id) return null;
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeoutMs);
+    const r = await fetch(window.OMNIP_API + '/locations/' + encodeURIComponent(String(id)), {signal: ctrl.signal});
+    clearTimeout(t);
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d && d.location ? window.normalizeOmnipLocations([d.location])[0] || null : null;
+  } catch (e) { return null; }
+};
+
 // Guarda en localStorage (cache local del backoffice). NO publica.
 window.saveOmnipLocations = function(arr) {
   try {
