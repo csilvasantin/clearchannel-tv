@@ -1430,3 +1430,13 @@ window.publishOmnipLocations = async function(arr, token) {
   if (!r.ok) throw new Error((d && d.error) || ('http ' + r.status));
   return d;
 };
+
+// Retailer imports are a lightweight part of the same canonical catalogue.
+window.loadYokupLocationsAsync = async function(timeoutMs=5000) {
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),timeoutMs);
+  try {
+    const r=await fetch(window.OMNIP_API+'/locations?source=yokup',{signal:ctrl.signal,cache:'no-store'});
+    if(!r.ok)throw Error('catalog '+r.status);
+    const d=await r.json();return window.normalizeOmnipLocations(Array.isArray(d.locations)?d.locations:[]);
+  } finally {clearTimeout(timer);}
+};

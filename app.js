@@ -3266,6 +3266,7 @@ function renderPanel(loc) {
       </div>
     </div>`;
   }).join('');
+  if(loc.source==='yokup-retailer'&&!loc.surfaces.length)list.innerHTML='<p class="office-interior-note">'+(document.documentElement.lang==='en'?'Establishment registered from Yokup. Equipment and advertising availability have not been confirmed.':'Establecimiento registrado desde Yokup. Equipos y disponibilidad publicitaria pendientes de confirmar.')+'</p>';
   if (isAdmiraXperienceLocation(loc) && !loc.surfaces.length) list.innerHTML = '<p class="office-interior-note">'+(loc.interiorStatus==='external-manual'?'Interior disponible en IEU, con selección manual de oficina y acceso mediante tu cuenta autorizada.':'Pantallas interiores pendientes de vincular.')+' Abre «Recorrer AdmiraXperience» para llegar al destino y acceder al interior.</p>';
   try{ startSurfMirrors(); }catch(_){}
   // El feed de pujas es REAL y global (poller RTB): al abrir un panel NO lo
@@ -4010,17 +4011,32 @@ bindBuyCheckout();
 consumePixeriaDraftFromUrl();
 
 // Return from the campaign preview to the exact catalogue place, in either language.
-let walkReturnRestored = false;
+let walkReturnRestored = false, walkReturnLookup = false;
 function restoreWalkReturn() {
   if (walkReturnRestored || new URLSearchParams(location.search).get('draft')) return;
   const id = new URLSearchParams(location.search).get('locationId');
   const loc = id && LOCATIONS.find(item => String(item.id) === id);
-  if (!loc) return;
+  if (!loc) {
+    if(id&&!walkReturnLookup&&window.loadOmnipLocationDetail){walkReturnLookup=true;window.loadOmnipLocationDetail(id,5000).then(found=>{if(found){setLocations([...LOCATIONS.filter(l=>l.id!==found.id),found]);updateLocationsSource();restoreWalkReturn();}}).catch(()=>{});}
+    return;
+  }
   walkReturnRestored = true;
   if (map.loaded()) flyToLocation(loc);
   else map.once('load', () => flyToLocation(loc));
 }
 restoreWalkReturn();
+
+// Newly imported establishments must appear even if the large legacy catalogue times out.
+async function mergeRetailerLocations(){
+  try {
+    const incoming=await window.loadYokupLocationsAsync();if(!incoming.length)return;
+    const ids=new Set(incoming.map(l=>l.id));
+    setLocations([...LOCATIONS.filter(l=>!ids.has(l.id)),...incoming]);
+    updateLocationsSource();renderCircuitSelector();restoreWalkReturn();
+  } catch { /* The next refresh retries; retain the currently displayed catalogue. */ }
+}
+mergeRetailerLocations();
+setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
 
 // ─── Refresh asincrónico desde el worker (KV) ─────────────────────
 // El sync arrancó con localStorage/default. Dos fases (Jobs #3238 · Woz #3236 · FLT-100442, 14-sep-2026):
@@ -4057,13 +4073,14 @@ restoreWalkReturn();
     const res = await window.loadOmnipLocationsAsync(4500);
     if (!res || !Array.isArray(res.locations) || !res.locations.length) return;
     if (locationsSignature(res.locations, res.updatedAt) === locationsSignature(LOCATIONS, res.updatedAt)) return;
-    setLocations(res.locations);
+    const freshIds=new Set(res.locations.map(l=>l.id));
+    setLocations([...res.locations,...LOCATIONS.filter(l=>l.source==='yokup-retailer'&&!freshIds.has(l.id))]);
     restoreWalkReturn();
     updateBiddingLiveCounters();
     const cpms = LOCATIONS.flatMap(l => (Array.isArray(l.surfaces) ? l.surfaces : []).map(s => parseFloat(String(s.cpm).replace(/[^\d.]/g,'')))).filter(Boolean);
     if (cpms.length) {
       const lo = Math.min(...cpms), hi = Math.max(...cpms);
-      const el = document.getElementById('p-cpm'); if (el && !isAdmiraXperienceLocation(activeLocation || {})) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
+      const el = document.getElementById('p-cpm'); if (el && activeLocation?.source!=='yokup-retailer' && !isAdmiraXperienceLocation(activeLocation || {})) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
     }
     renderCircuitSelector();
     if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();
