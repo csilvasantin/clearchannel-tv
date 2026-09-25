@@ -1,0 +1,7702 @@
+[
+ {
+  "id": "jti-xtanco-001",
+  "name": "Estanco Juan Florez",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Rúa Juan Flórez 40 · A Coruña · 15004",
+  "coords": [
+   -8.408523,
+   43.365151
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "A Coruña",
+  "osm": {
+   "id": "node/6406908470",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "A Coruña",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-001",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-002",
+  "name": "Estanco La Fortaleza",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Costa da Tapia 26 · Cambre · 15679",
+  "coords": [
+   -8.356167,
+   43.318085
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Cambre",
+  "osm": {
+   "id": "node/13525361503",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "A Coruña",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-002",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-003",
+  "name": "Tabacos Lerri",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Rúa Rosalía de Castro 9 · Cee · 15270",
+  "coords": [
+   -9.188358,
+   42.954207
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Cee",
+  "osm": {
+   "id": "node/12625657157",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "A Coruña",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-003",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-004",
+  "name": "San Pablo",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Calatrava 21 · Albacete · 02006",
+  "coords": [
+   -1.873593,
+   38.995628
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Albacete",
+  "osm": {
+   "id": "node/13661267325",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Albacete",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-004",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-005",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Plaça de l’Església · San Juan de Alicante · 03550",
+  "coords": [
+   -0.435833,
+   38.401578
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "San Juan de Alicante",
+  "osm": {
+   "id": "node/6278542697",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Alicante",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-005",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-006",
+  "name": "Estanco Expendidura 25",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avinguda d'Aguilera 33 · Alicante · 03007",
+  "coords": [
+   -0.497797,
+   38.342997
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Alicante",
+  "osm": {
+   "id": "node/4697672755",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Alicante",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-006",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-007",
+  "name": "Expendeduría Les Rotes",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carretera de Dénia a Xàbia 20 · Dénia · 03700",
+  "coords": [
+   0.117498,
+   38.836458
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Dénia",
+  "osm": {
+   "id": "node/8507396221",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Alicante",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-007",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-008",
+  "name": "Estanco Mercedes",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida Diecinueve de Abril 49A · San Miguel de Salinas · 03193",
+  "coords": [
+   -0.789331,
+   37.981204
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "San Miguel de Salinas",
+  "osm": {
+   "id": "node/1946027827",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Alicante",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-008",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-009",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Paseo de Almería 12 · Almería · 04001",
+  "coords": [
+   -2.463812,
+   36.840364
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Almería",
+  "osm": {
+   "id": "node/3421357873",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Almería",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-009",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-010",
+  "name": "Tabacos",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "C. Agua 3 · María, Almería · 04838",
+  "coords": [
+   -2.165458,
+   37.710903
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "María, Almería",
+  "osm": {
+   "id": "way/1426428274",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Almería",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-010",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-011",
+  "name": "Tabacos cabañaquinta",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Doctor Fleming 10 · Cabanaquinta · 33686",
+  "coords": [
+   -5.623876,
+   43.161408
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Cabanaquinta",
+  "osm": {
+   "id": "node/13510349519",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Asturias",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-011",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-012",
+  "name": "Tabacos",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Uría / Cai Uría 62 · Oviedo · 33003",
+  "coords": [
+   -5.852805,
+   43.365155
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Oviedo",
+  "osm": {
+   "id": "node/10117016346",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Asturias",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-012",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-013",
+  "name": "Expendedora 35",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida de Europa 6C · Badajoz · 06004",
+  "coords": [
+   -6.97288,
+   38.874373
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Badajoz",
+  "osm": {
+   "id": "node/2516188972",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Badajoz",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-013",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-014",
+  "name": "l'Estanc de La Salut",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer de Pau Piferrer 1 · Badalona · 08914",
+  "coords": [
+   2.224136,
+   41.442931
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Badalona",
+  "osm": {
+   "id": "node/3561003494",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-014",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-015",
+  "name": "Paloma",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer del Clot 63 · Barcelona · 08018",
+  "coords": [
+   2.188271,
+   41.408154
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Barcelona",
+  "osm": {
+   "id": "node/3049395440",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-015",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-016",
+  "name": "Estanco nº 376",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer de Getsemaní 6 · Barcelona · 08035",
+  "coords": [
+   2.14025,
+   41.425142
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Barcelona",
+  "osm": {
+   "id": "node/11327789166",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-016",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-017",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer de Rocafort 23 · Barcelona · 08029",
+  "coords": [
+   2.142114,
+   41.382471
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Barcelona",
+  "osm": {
+   "id": "node/9851051917",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-017",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-018",
+  "name": "Tabacs",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer dels Alts Forns 70 · Barcelona · 08038",
+  "coords": [
+   2.141339,
+   41.358975
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Barcelona",
+  "osm": {
+   "id": "node/7411177579",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-018",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-019",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer de la Mare de Déu de Lorda · Barcelona · 08033",
+  "coords": [
+   2.191544,
+   41.450836
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Barcelona",
+  "osm": {
+   "id": "node/2339780141",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-019",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-020",
+  "name": "Estanc Girona",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer de Girona 183 · Barcelona · 08037",
+  "coords": [
+   2.164262,
+   41.399855
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Barcelona",
+  "osm": {
+   "id": "node/6338540516",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-020",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-021",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer de la Mare de Déu del Socós 34 · Centelles · 08540",
+  "coords": [
+   2.218873,
+   41.796282
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Centelles",
+  "osm": {
+   "id": "node/3226267566",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-021",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-022",
+  "name": "L'estanc",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avinguda Catalunya 31 · Gironella · 08680",
+  "coords": [
+   1.880226,
+   42.032114
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Gironella",
+  "osm": {
+   "id": "node/4353294610",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-022",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-023",
+  "name": "Estanc, moda i complements Anna",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Passatge Parés 38 · Sant Hipòlit de Voltregà · 08512",
+  "coords": [
+   2.23767,
+   42.016231
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Sant Hipòlit de Voltregà",
+  "osm": {
+   "id": "node/13269965450",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-023",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-024",
+  "name": "Tabacs Exp. nº2",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carretera de Valls 66 · Santa Margarida de Montbui · 08710",
+  "coords": [
+   1.608674,
+   41.572908
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Santa Margarida de Montbui",
+  "osm": {
+   "id": "node/441947254",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-024",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-025",
+  "name": "Estanc. Expenduria 6",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avinguda de Francesc Macià 120 · Vilanova i la Geltrú · 08800",
+  "coords": [
+   1.71616,
+   41.221136
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Vilanova i la Geltrú",
+  "osm": {
+   "id": "node/10989574920",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-025",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-026",
+  "name": "Pàmies",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer Major 11 · l'Hospitalet de Llobregat · 08901",
+  "coords": [
+   2.100985,
+   41.359665
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "l'Hospitalet de Llobregat",
+  "osm": {
+   "id": "node/10278544624",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-026",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-027",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Altamira 24 · Bilbao · 48013",
+  "coords": [
+   -2.962774,
+   43.262128
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Bilbao",
+  "osm": {
+   "id": "node/11812821553",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Bizkaia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-027",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-028",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Juan de la Cosa kalea · Bilbao · 48004",
+  "coords": [
+   -2.914448,
+   43.251707
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Bilbao",
+  "osm": {
+   "id": "node/4232084609",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Bizkaia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-028",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-029",
+  "name": "Tabako denda",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Paskual Abaroa etorbidea · Lekeitio · 48280",
+  "coords": [
+   -2.503423,
+   43.36534
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Lekeitio",
+  "osm": {
+   "id": "node/11645057374",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Bizkaia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-029",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-030",
+  "name": "Estanco Sancho",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Pablo Casals 17 · Burgos · 09007",
+  "coords": [
+   -3.664677,
+   42.353718
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Burgos",
+  "osm": {
+   "id": "node/6775395956",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Burgos",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-030",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-031",
+  "name": "Cava de Puros Eduardo",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle del Marqués de la Hermida 64 · Santander · 39009",
+  "coords": [
+   -3.822915,
+   43.452977
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Santander",
+  "osm": {
+   "id": "node/2592647612",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Cantabria",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-031",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-032",
+  "name": "Estanco Castellón Nº 6",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avinguda de la Mare de Déu del Lledó 2 · Castellón de la Plana · 12003",
+  "coords": [
+   -0.033917,
+   39.989009
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Castellón de la Plana",
+  "osm": {
+   "id": "node/1967679740",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Castellón",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-032",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-033",
+  "name": "Expendeduría número 5",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Francisco García Pavón 116 · Tomelloso · 13700",
+  "coords": [
+   -3.029553,
+   39.154764
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Tomelloso",
+  "osm": {
+   "id": "node/5344507491",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Ciudad Real",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-033",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-034",
+  "name": "Estanco Tabacalera - Encabo Martín Paula",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Plaza de España 1 · Losar de la Vera · 10460",
+  "coords": [
+   -5.603709,
+   40.121073
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Losar de la Vera",
+  "osm": {
+   "id": "node/10709221471",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Cáceres",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-034",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-035",
+  "name": "Estanco Avda de Huelva",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida de Huelva 92 · Sanlúcar de Barrameda · 11540",
+  "coords": [
+   -6.336905,
+   36.792773
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Sanlúcar de Barrameda",
+  "osm": {
+   "id": "node/14137024601",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Cádiz",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-035",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-036",
+  "name": "TABACOS",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Plaza de San Francisco 1 · Cádiz · 11004",
+  "coords": [
+   -6.295924,
+   36.534344
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Cádiz",
+  "osm": {
+   "id": "node/7993343421",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Cádiz",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-036",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-037",
+  "name": "Estanco San Bernardo",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida Menéndez Pelayo 43 · La Línea de la Concepción · 11300",
+  "coords": [
+   -5.342433,
+   36.166581
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "La Línea de la Concepción",
+  "osm": {
+   "id": "node/12880547936",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Cádiz",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-037",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-038",
+  "name": "Espejo Blancas",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Espejo Blancas, 14006 1 · Córdoba · 14006",
+  "coords": [
+   -4.779174,
+   37.898221
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Córdoba",
+  "osm": {
+   "id": "node/9792283013",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Córdoba",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-038",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-039",
+  "name": "Estanco La Habana",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Mercado 4 · Hinojosa del Duque · 14270",
+  "coords": [
+   -5.144703,
+   38.499908
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Hinojosa del Duque",
+  "osm": {
+   "id": "node/12964554739",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Córdoba",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-039",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-040",
+  "name": "Exp. N. 3",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Isasi kalea 20 · Eibar · 20600",
+  "coords": [
+   -2.474994,
+   43.183819
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Eibar",
+  "osm": {
+   "id": "node/11219403044",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Gipuzkoa",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-040",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-041",
+  "name": "Pagola Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Txirrita kalea 10 · Hernani · 20120",
+  "coords": [
+   -1.975892,
+   43.267452
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Hernani",
+  "osm": {
+   "id": "node/1506183566",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Gipuzkoa",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-041",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-042",
+  "name": "Estanc Santa Eugènia",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer de Santa Eugènia 169 · Girona · 17006",
+  "coords": [
+   2.803492,
+   41.976752
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Girona",
+  "osm": {
+   "id": "node/4737138222",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Girona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-042",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-043",
+  "name": "Tabacs",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "GI-522 Carretera d'Olot a Castellfollit 45 · Sant Joan les Fonts · 17857",
+  "coords": [
+   2.512097,
+   42.212354
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Sant Joan les Fonts",
+  "osm": {
+   "id": "node/14142770193",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Girona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-043",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-044",
+  "name": "El Estanco de Ramiro",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Granada · Albolote · 18220",
+  "coords": [
+   -3.655349,
+   37.229284
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Albolote",
+  "osm": {
+   "id": "node/5983896392",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Granada",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-044",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-045",
+  "name": "Estanco Sebastián Pinteño",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida de Don Nicasio Tomás · Galera · 18840",
+  "coords": [
+   -2.551325,
+   37.743804
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Galera",
+  "osm": {
+   "id": "node/4903705500",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Granada",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-045",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-046",
+  "name": "Estanco Los Milagros",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Barriada de los Milagros · Palos de la Frontera · 21810",
+  "coords": [
+   -6.890555,
+   37.221701
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Palos de la Frontera",
+  "osm": {
+   "id": "node/6919853005",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Huelva",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-046",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-047",
+  "name": "Tabacos",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avinguda de Bartomeu Riutort · Can Pastilla · 07610",
+  "coords": [
+   2.720388,
+   39.535138
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Can Pastilla",
+  "osm": {
+   "id": "node/5022178430",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Illes Balears",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-047",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-048",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer de Sa Rovellada de Dalt 27 · Maó · 07701",
+  "coords": [
+   4.260804,
+   39.888171
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Maó",
+  "osm": {
+   "id": "node/4294513867",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Illes Balears",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-048",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-049",
+  "name": "Tabacos Sta. Gertrudis",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Passeig de Santa Gertrudis 1 · Santa Gertrudis de Fruitera · 07814",
+  "coords": [
+   1.428233,
+   38.997901
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Santa Gertrudis de Fruitera",
+  "osm": {
+   "id": "node/11463578557",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Illes Balears",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-049",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-050",
+  "name": "Tabaco Cava de Puros",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida de Andalucía 20 · Jaén · 23006",
+  "coords": [
+   -3.794142,
+   37.777518
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Jaén",
+  "osm": {
+   "id": "node/2283255102",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Jaén",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-050",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-051",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida Autonomía de La Rioja 6 · Logroño · 26004",
+  "coords": [
+   -2.432469,
+   42.462834
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Logroño",
+  "osm": {
+   "id": "node/3095792005",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "La Rioja",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-051",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-052",
+  "name": "Estanco n.º 3",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Glorieta de Carlos Pinilla 3 · León · 24010",
+  "coords": [
+   -5.588989,
+   42.602108
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "León",
+  "osm": {
+   "id": "node/6651063869",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "León",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-052",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-053",
+  "name": "l'Estanc de la Rambla",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer de la Doctora Castells 7 · Lleida · 25001",
+  "coords": [
+   0.631068,
+   41.611377
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Lleida",
+  "osm": {
+   "id": "node/1587148973",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Lleida",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-053",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-054",
+  "name": "Estanco Número 2",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Ronda Xosé Castiñeira 28 · Lugo · 27002",
+  "coords": [
+   -7.548915,
+   42.998926
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Lugo",
+  "osm": {
+   "id": "node/846439986",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Lugo",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-054",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-055",
+  "name": "Tabacos",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle de Juan José Martínez Seco 76 · Madrid · 28021",
+  "coords": [
+   -3.68505,
+   40.352206
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Madrid",
+  "osm": {
+   "id": "node/13926902986",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-055",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-056",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida Lope de Figueroa 31 · Alcalá de Henares · 28804",
+  "coords": [
+   -3.351487,
+   40.486117
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Alcalá de Henares",
+  "osm": {
+   "id": "node/3858673017",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-056",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-057",
+  "name": "Expendeduría nº 001",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Plaza Mayor 24 · Colmenar de Oreja · 28380",
+  "coords": [
+   -3.387629,
+   40.107213
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Colmenar de Oreja",
+  "osm": {
+   "id": "node/5046068709",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-057",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-058",
+  "name": "Estanco nº 2",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida de España 48 · El Molar · 28710",
+  "coords": [
+   -3.582715,
+   40.734523
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "El Molar",
+  "osm": {
+   "id": "node/13111097790",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-058",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-059",
+  "name": "Estanco en Ps Alemanes, 3",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Paseo de los Alemanes 3 · Las Rozas de Madrid · 28290",
+  "coords": [
+   -3.89599,
+   40.552686
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Las Rozas de Madrid",
+  "osm": {
+   "id": "node/8883054735",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-059",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-060",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Juan Martín 6 · Lozoya · 28742",
+  "coords": [
+   -3.792135,
+   40.951312
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Lozoya",
+  "osm": {
+   "id": "node/8879590991",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-060",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-061",
+  "name": "Exp. nº 161",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle del Pez 40 · Madrid · 28004",
+  "coords": [
+   -3.707012,
+   40.424363
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Madrid",
+  "osm": {
+   "id": "node/2632609525",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-061",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-062",
+  "name": "Estanco - Exp. nº 210",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle de las Alpujarras 2 · Madrid · 28032",
+  "coords": [
+   -3.622511,
+   40.396763
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Madrid",
+  "osm": {
+   "id": "node/2807147665",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-062",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-063",
+  "name": "Expendeduría n. 648",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle de Escalona 12 · Madrid · 28024",
+  "coords": [
+   -3.761624,
+   40.397475
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Madrid",
+  "osm": {
+   "id": "node/9822052480",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-063",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-064",
+  "name": "Estanco 840",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle de la Condesa de Venadito 16 · Madrid · 28027",
+  "coords": [
+   -3.653611,
+   40.444344
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Madrid",
+  "osm": {
+   "id": "node/8449175614",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-064",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-065",
+  "name": "Exp. nº 865",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle del Conde de Serrallo 6 · Madrid · 28020",
+  "coords": [
+   -3.691448,
+   40.466605
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Madrid",
+  "osm": {
+   "id": "node/3770605560",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-065",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-066",
+  "name": "Expenduría 293",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle de Carlos Martín Álvarez 81 · Madrid · 28018",
+  "coords": [
+   -3.666476,
+   40.38567
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Madrid",
+  "osm": {
+   "id": "node/10137954472",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-066",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-067",
+  "name": "Exp. nº 127",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle del Camino de los Vinateros 99 · Madrid · 28030",
+  "coords": [
+   -3.648356,
+   40.409334
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Madrid",
+  "osm": {
+   "id": "node/6582123719",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-067",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-068",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Glorieta Marqués de Vadillo 5 · Madrid · 28019",
+  "coords": [
+   -3.716306,
+   40.397238
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Madrid",
+  "osm": {
+   "id": "node/3997458278",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-068",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-069",
+  "name": "Cava de Puros Tabacos",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle de Hernani 17 · Madrid · 28020",
+  "coords": [
+   -3.702108,
+   40.448374
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Madrid",
+  "osm": {
+   "id": "node/11203246343",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-069",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-070",
+  "name": "Tabacos",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Plaza de la Constitución 11 · Moralzarzal · 28411",
+  "coords": [
+   -3.972188,
+   40.679328
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Moralzarzal",
+  "osm": {
+   "id": "node/14020768472",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-070",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-071",
+  "name": "Estanco Jesús del Kiosko",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida de Murcia 27 · Bullas · 30180",
+  "coords": [
+   -1.668757,
+   38.050221
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Bullas",
+  "osm": {
+   "id": "node/10737239904",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Murcia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-071",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-072",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Pintor Almela Costa 12 · Murcia · 30011",
+  "coords": [
+   -1.120453,
+   37.975266
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Murcia",
+  "osm": {
+   "id": "node/5284467895",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Murcia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-072",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-073",
+  "name": "Estanco Marqués de los Vélez",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida Marqués de los Vélez 4 · Murcia · 30008",
+  "coords": [
+   -1.128407,
+   37.992492
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Murcia",
+  "osm": {
+   "id": "node/11491182123",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Murcia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-073",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-074",
+  "name": "Estanco La Paz",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida de Velázquez 61 · Málaga · 29004",
+  "coords": [
+   -4.450539,
+   36.695713
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Málaga",
+  "osm": {
+   "id": "node/12390142209",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Málaga",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-074",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-075",
+  "name": "Boquerón de Oro",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Lagunillas 66 · Málaga · 29012",
+  "coords": [
+   -4.415009,
+   36.726344
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Málaga",
+  "osm": {
+   "id": "node/5186363523",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Málaga",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-075",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-076",
+  "name": "Estanco nº 1",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Plaza de la Constitución · San Martín del Tesorillo · 11340",
+  "coords": [
+   -5.320145,
+   36.341839
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "San Martín del Tesorillo",
+  "osm": {
+   "id": "node/12470276708",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Málaga",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-076",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-077",
+  "name": "Estanco Cerezo",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida de Andalucía 15 · Torrox-Costa · 29793",
+  "coords": [
+   -3.960552,
+   36.730051
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Torrox-Costa",
+  "osm": {
+   "id": "node/11377436548",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Málaga",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-077",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-078",
+  "name": "Estanco N° 12",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Benjamín de Tudela 26 trasera · Pamplona/Iruña · 31008",
+  "coords": [
+   -1.673637,
+   42.808907
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Pamplona/Iruña",
+  "osm": {
+   "id": "node/11473506669",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Navarra",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-078",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-079",
+  "name": "Estanco Casa Rafael",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida de Ourense · O Castro de Caldelas · 32760",
+  "coords": [
+   -7.416163,
+   42.374579
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "O Castro de Caldelas",
+  "osm": {
+   "id": "node/4728201277",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Ourense",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-079",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-080",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Rúa Manuel de Castro 1 · Vigo · 36210",
+  "coords": [
+   -8.741515,
+   42.214393
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Vigo",
+  "osm": {
+   "id": "node/4947159493",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Pontevedra",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-080",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-081",
+  "name": "Estanco Lasiete",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida Cambados 9 · Vilagarcía de Arousa · 36600",
+  "coords": [
+   -8.772179,
+   42.589019
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Vilagarcía de Arousa",
+  "osm": {
+   "id": "node/12430347827",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Pontevedra",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-081",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-082",
+  "name": "Estanco 6",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Rúa Mayor 12 · Salamanca · 37002",
+  "coords": [
+   -5.664923,
+   40.963697
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Salamanca",
+  "osm": {
+   "id": "node/2730739195",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Salamanca",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-082",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-083",
+  "name": "Estanco Expenduría N°1",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Real 13 · Burguillos · 41220",
+  "coords": [
+   -5.967954,
+   37.584648
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Burguillos",
+  "osm": {
+   "id": "node/11992667365",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Sevilla",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-083",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-084",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Nuestra Señora de Valme · Dos Hermanas · 41701",
+  "coords": [
+   -5.92221,
+   37.28407
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Dos Hermanas",
+  "osm": {
+   "id": "node/4068293528",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Sevilla",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-084",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-085",
+  "name": "La Cava de Betis",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Betis 39 · Sevilla · 41010",
+  "coords": [
+   -5.99981,
+   37.383273
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Sevilla",
+  "osm": {
+   "id": "node/5845851209",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Sevilla",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-085",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-086",
+  "name": "Tabacos",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Asencio y Toledo 28 · Sevilla · 41014",
+  "coords": [
+   -5.967533,
+   37.32488
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Sevilla",
+  "osm": {
+   "id": "node/12967212486",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Sevilla",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-086",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-087",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer Pere Martell 14 · Tarragona · 43005",
+  "coords": [
+   1.244515,
+   41.116641
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Tarragona",
+  "osm": {
+   "id": "node/988124781",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Tarragona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-087",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-088",
+  "name": "Estanc la Sénia",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer de Jaume I 5 · la Sénia · 43560",
+  "coords": [
+   0.279883,
+   40.635035
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "la Sénia",
+  "osm": {
+   "id": "node/13936803125",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Tarragona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-088",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-089",
+  "name": "Estanco",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Real 92 · Illescas · 45200",
+  "coords": [
+   -3.847643,
+   40.126245
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Illescas",
+  "osm": {
+   "id": "node/1486122094",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Toledo",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-089",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-090",
+  "name": "Estanco nº10",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Calle Cardenal Tavera 10 · Toledo · 45003",
+  "coords": [
+   -4.023654,
+   39.865191
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Toledo",
+  "osm": {
+   "id": "node/2630142519",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Toledo",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-090",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-091",
+  "name": "Estanco patacona",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avinguda Mare Nostrum 1 · Alboraia / Alboraya · 46120",
+  "coords": [
+   -0.326505,
+   39.485015
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Alboraia / Alboraya",
+  "osm": {
+   "id": "node/2700020670",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Valencia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-091",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-092",
+  "name": "Estanco Nº 1",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer Arquebisbe Fabià Fuero 24 · Godella · 46110",
+  "coords": [
+   -0.414501,
+   39.521253
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Godella",
+  "osm": {
+   "id": "node/13896137853",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Valencia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-092",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-093",
+  "name": "Tabacos Exp. N2",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer de la Preciosíssima Sang 21 · Picanya · 46210",
+  "coords": [
+   -0.435039,
+   39.43384
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Picanya",
+  "osm": {
+   "id": "node/11748341002",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Valencia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-093",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-094",
+  "name": "Tabacs EXP. NÚM 7",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Gran Via de les Germanies 84 · Tavernes de la Valldigna · 46760",
+  "coords": [
+   -0.261871,
+   39.073802
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Tavernes de la Valldigna",
+  "osm": {
+   "id": "node/13754856389",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Valencia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-094",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-095",
+  "name": "Estanco Santa Catalina",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Plaça de Santa Catalina 9 · València · 46001",
+  "coords": [
+   -0.376157,
+   39.473968
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "València",
+  "osm": {
+   "id": "node/850179222",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Valencia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-095",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-096",
+  "name": "Estanc Ruiz",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Carrer dels Maulets 6 · Xàtiva · 46800",
+  "coords": [
+   -0.518613,
+   38.991514
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Xàtiva",
+  "osm": {
+   "id": "node/13620604572",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Valencia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-096",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-097",
+  "name": "Estanco Mini Market",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Paseo de Zorrilla 158 · Valladolid · 47006",
+  "coords": [
+   -4.740248,
+   41.633512
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Valladolid",
+  "osm": {
+   "id": "node/9241068550",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Valladolid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-097",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-098",
+  "name": "Estanco 103",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Paseo de Fernando el Católico 56 · Zaragoza · 50006",
+  "coords": [
+   -0.896786,
+   41.639262
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Zaragoza",
+  "osm": {
+   "id": "node/4985405613",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Zaragoza",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-098",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-099",
+  "name": "Expendeduría Ateca 3",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Avenida Goya 2 · Ateca · 50200",
+  "coords": [
+   -1.791531,
+   41.330321
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Ateca",
+  "osm": {
+   "id": "node/13428366339",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Zaragoza",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-099",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "jti-xtanco-100",
+  "name": "Tabacos Lakua",
+  "kind": "Estanco · Xtanco · Circuito DOOH JTI",
+  "addr": "Donostia kalea 64 · Vitoria · 01010",
+  "coords": [
+   -2.691393,
+   42.866247
+  ],
+  "music": "retail",
+  "cameras": false,
+  "city": "Vitoria",
+  "osm": {
+   "id": "node/7154667096",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Xtanco",
+   "sponsor": "JTI",
+   "network": "xtanco jti espana",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24)"
+  },
+  "circuit": "jti_xtanco",
+  "province": "Álava",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=jti-xtanco-100",
+  "surfaces": [
+   {
+    "name": "LED Frontal",
+    "desc": "Pantalla principal sobre el mostrador · 1920×1080",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate exterior",
+    "desc": "Pantalla en fachada visible desde la calle",
+    "status": "idle",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate"
+   },
+   {
+    "name": "Mostrador panel",
+    "desc": "Panel del mostrador · interacción cliente",
+    "status": "idle",
+    "impr": 90,
+    "cpm": "€4",
+    "surface": "mostrador"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ }
+]

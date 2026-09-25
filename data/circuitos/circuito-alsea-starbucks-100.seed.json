@@ -1,0 +1,7730 @@
+[
+ {
+  "id": "alsea-sbux-001",
+  "name": "Starbucks A Coruna C.C. Marineda City",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Est Banos de Arteixo 43 15008 A Coruna · A Coruña · 15008",
+  "coords": [
+   -8.42767,
+   43.34461
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "A Coruña",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "87954-316093",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/87954-316093/a-coruna-cc-marineda-city"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "A Coruña",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-001",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-002",
+  "name": "Starbucks El Corte Inglés Ramon y Cajal",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "El Corte Ingles Ramoon y Cajal, 57 Ramon y Cajal Street · A Coruña · 15006",
+  "coords": [
+   -8.4029,
+   43.35493
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "A Coruña",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "50302-265969",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/50302-265969/eci-ramon-y-cajal"
+  },
+  "osm": {
+   "id": "node/4558558627",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "A Coruña",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-002",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-003",
+  "name": "Starbucks Santiago C.C. As Cancellas",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Avenida del camino frances 3 Santiago de Compostela 15703 La Coruna · Santiago de Compostela · 15703",
+  "coords": [
+   -8.52644,
+   42.88944
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Santiago de Compostela",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "83705-313406",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/83705-313406/santiago-cc-as-cancellas"
+  },
+  "osm": {
+   "id": "node/14101468211",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "A Coruña",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-003",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-004",
+  "name": "Starbucks Alicante-Elche Departures Land",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "L Altet Alicante Spain · Alicante · 03195",
+  "coords": [
+   -0.55269,
+   38.28808
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Alicante",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "68901-304092",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/68901-304092/alicante-elche-departures-land"
+  },
+  "osm": {
+   "id": "node/13597598058",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Alicante",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-004",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-005",
+  "name": "Starbucks C.C. La Zenia",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "La Zenia Shopping Center, 2 Jade Street. Orihuela. · Alicante · 03189",
+  "coords": [
+   -0.73634,
+   37.93051
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Alicante",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "55169-288965",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/55169-288965/c.c.-la-zenia"
+  },
+  "osm": {
+   "id": "node/10665631812",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Alicante",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-005",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-006",
+  "name": "Starbucks El Corte Inglés Alicante Federico Soto",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "El Corte Ingles Alicante · Alicante · 03003",
+  "coords": [
+   -0.48935,
+   38.34382
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Alicante",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "26658-244208",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/26658-244208/eci-alicante-federico-soto"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Alicante",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-006",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-007",
+  "name": "Starbucks C.C. Habaneras",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Habaneras Shopping Center, 7 Rosa Mazon Valero Avenue · Torrevieja · 03184",
+  "coords": [
+   -0.68619,
+   37.98977
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Torrevieja",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "50313-267224",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/50313-267224/cc-habaneras"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Alicante",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-007",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-008",
+  "name": "Starbucks Almeria C.C. Torrecardenas",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Calle Medico Francisco Perez Company 44 · Almería · 04009",
+  "coords": [
+   -2.43461,
+   36.86156
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Almería",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "85261-313887",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/85261-313887/almeria-cc-torrecardenas"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Almería",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-008",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-009",
+  "name": "Starbucks Roquetas de Mar Pc Gran Plaza",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Ctra. de Alicun, s/n, 04740 Roquetas de Mar, Almeria · Roquetas de Mar · 04740",
+  "coords": [
+   -2.60693,
+   36.78575
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Roquetas de Mar",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "86329-315511",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/86329-315511/roquetas-de-mar-pc-gran-plaza"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Almería",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-009",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-010",
+  "name": "Starbucks Gijon San Bernardo 70",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Calle San Bernardo 70 Gijon 33201 · Gijón · 33201",
+  "coords": [
+   -5.66058,
+   43.53926
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Gijón",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "85295-314773",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/85295-314773/gijon-san-bernardo-70"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Asturias",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-010",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-011",
+  "name": "Starbucks Plaza Escandalera",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Plaza Escandalera 1 · Oviedo · 33003",
+  "coords": [
+   -5.84821,
+   43.36257
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Oviedo",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "51507-276860",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/51507-276860/sbux-plaza-escandalera"
+  },
+  "osm": {
+   "id": "node/5711739282",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Asturias",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-011",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-012",
+  "name": "Starbucks Paredes-Siero Parque Principad",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Autovia A 66 Km 4 5 Paredes Siero 33429Asturias · Paredes-Siero · 33429",
+  "coords": [
+   -5.79916,
+   43.40026
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Paredes-Siero",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "89380-319671",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/89380-319671/paredes-siero-parque-principad"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Asturias",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-012",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-013",
+  "name": "Starbucks B Hotel",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "389 Gran Via les Corts Catalanes Street · Barcelona · 08015",
+  "coords": [
+   2.15051,
+   41.37672
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "53270-284625",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/53270-284625/b-hotel"
+  },
+  "osm": {
+   "id": "node/12197376653",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-013",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-014",
+  "name": "Starbucks Barcelona L'Illa Diagonal",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Avinguda Diagonal 557 08029 Barcelona · Barcelona · 08029",
+  "coords": [
+   2.13382,
+   41.38915
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "71009-306001",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/71009-306001/barcelona-l'illa-diagonal"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-014",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-015",
+  "name": "Starbucks Barcelona Pau Claris 169",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Calle Pau Claris 169 08037 Barcelona · Barcelona · 08037",
+  "coords": [
+   2.16303,
+   41.39559
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "82560-312085",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/82560-312085/barcelona-pau-claris-169"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-015",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-016",
+  "name": "Starbucks C.C. Gran Via 2",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Avenida Gran Via 75 · Barcelona · 08908",
+  "coords": [
+   2.12986,
+   41.35959
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "55493-289134",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/55493-289134/c.c.-gran-via-2"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-016",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-017",
+  "name": "Starbucks C.C. Splau Barcelona",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Splau Shopping Center, Baix Llobregat Ave. Cornella Llobregat · Barcelona · 08940",
+  "coords": [
+   2.07773,
+   41.3477
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "56829-290812",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/56829-290812/c.c.-splau-barcelona"
+  },
+  "osm": {
+   "id": "way/1526542504",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-017",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-018",
+  "name": "Starbucks La Maquinista",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "La Maquinista Shopping Center · Barcelona · 08030",
+  "coords": [
+   2.19851,
+   41.4419
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "3139-138613",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/3139-138613/la-maquinista"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-018",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-019",
+  "name": "Starbucks Laietana 32",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "32 Via Laietana · Barcelona · 08003",
+  "coords": [
+   2.17735,
+   41.38507
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "40429-96876",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/40429-96876/laietana-32"
+  },
+  "osm": {
+   "id": "node/1072761322",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-019",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-020",
+  "name": "Starbucks Maremagnum",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "C C Maremagnum Moll d Espanya 7 · Barcelona · 08039",
+  "coords": [
+   2.18278,
+   41.37478
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "30616-99539",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/30616-99539/maremagnum"
+  },
+  "osm": {
+   "id": "node/9429021627",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-020",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-021",
+  "name": "Starbucks Paseo de Gracia",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Paseo de Gracia 103 · Barcelona · 08008",
+  "coords": [
+   2.15979,
+   41.39574
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "67943-302838",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/67943-302838/sbux-paseo-de-gracia"
+  },
+  "osm": {
+   "id": "node/10761667289",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-022",
+  "name": "Starbucks Rambla Cataluna",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "10 Rambla Catalunya, Eixample Esquerre · Barcelona · 08007",
+  "coords": [
+   2.16809,
+   41.38807
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "40416-90706",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/40416-90706/rambla-cataluna"
+  },
+  "osm": {
+   "id": "node/704051187",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-022",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-023",
+  "name": "Starbucks Ronda Sant Pere",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "17 Ronda Sant Pere · Barcelona · 08026",
+  "coords": [
+   2.17194,
+   41.38868
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "31390-103782",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/31390-103782/ronda-sant-pere"
+  },
+  "osm": {
+   "id": "node/704042058",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-023",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-024",
+  "name": "Starbucks Room Mate Anna 2",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Carrer d Arago 271 · Barcelona · 08007",
+  "coords": [
+   2.16557,
+   41.39287
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "54044-286301",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/54044-286301/room-mate-anna-2"
+  },
+  "osm": {
+   "id": "node/5641945821",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-024",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-025",
+  "name": "Starbucks Sagrada Familia",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "19 Sagrada Familia Square · Barcelona · 08013",
+  "coords": [
+   2.17389,
+   41.40229
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Barcelona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "40418-88743",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/40418-88743/sagrada-familia"
+  },
+  "osm": {
+   "id": "node/3749438191",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-025",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-026",
+  "name": "Starbucks Viladecans The Style Outlets",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Ctra Variant 245 90 · Viladecans · 08840",
+  "coords": [
+   2.02515,
+   41.3061
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Viladecans",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "70824-305779",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/70824-305779/viladecans-the-style-outlets"
+  },
+  "osm": {
+   "id": "node/11309347311",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Barcelona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-026",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-027",
+  "name": "Starbucks Bilbao El Corte Inglés",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Gran Via de Don Diego Lopez de Haro, 20, Centro Comercial, 48001 Bilbao · Bilbao · 48001",
+  "coords": [
+   -2.93108,
+   43.2636
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Bilbao",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "24373-306872",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/24373-306872/bilbao-eci"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Bizkaia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-027",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-028",
+  "name": "Starbucks Bilbao Pl. Moyua",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Pl. de Don Federico Moyua, Bilbao, Vizcaya · Bilbao · 48009",
+  "coords": [
+   -2.93512,
+   43.26265
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Bilbao",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "71022-306005",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/71022-306005/bilbao-pl.-moyua"
+  },
+  "osm": {
+   "id": "node/10068170716",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Bizkaia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-028",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-029",
+  "name": "Starbucks C. Navarra",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Calle Navarra 8 · Bilbao · 48001",
+  "coords": [
+   -2.92628,
+   43.26094
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Bilbao",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "53273-284626",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/53273-284626/c.-navarra"
+  },
+  "osm": {
+   "id": "node/5602670168",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Bizkaia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-029",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-030",
+  "name": "Starbucks El Corte Inglés Santander",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "El Corte Ingles Santander, Nueva Montana · Santander · 39001",
+  "coords": [
+   -3.84013,
+   43.43787
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Santander",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "51468-266028",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/51468-266028/eci-santander"
+  },
+  "osm": {
+   "id": "node/11462196549",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Cantabria",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-030",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-031",
+  "name": "Starbucks Santander Paseo Pereda 10",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "P. de Pereda, 10, 39004 Santander, Cantabria · Santander · 39004",
+  "coords": [
+   -3.80357,
+   43.46198
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Santander",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "77061-306907",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/77061-306907/santander-paseo-pereda-10"
+  },
+  "osm": {
+   "id": "node/11861824408",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Cantabria",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-031",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-032",
+  "name": "Starbucks Castellon C.C. Salera",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Av. Enrique Gimeno, 82, 12006 Castellon de la Plana, Castellon · Castellón · 12006",
+  "coords": [
+   -0.06091,
+   39.97926
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Castellón",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "85162-310637",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/85162-310637/castellon-cc-salera"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Castellón",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-032",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-033",
+  "name": "Starbucks Cordoba-Mezquita",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "C Torrijos corner Medina y Corella · Córdoba · 14003",
+  "coords": [
+   -4.77891,
+   37.87987
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Córdoba",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "57969-291638",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/57969-291638/cordoba-mezquita"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Córdoba",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-033",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-034",
+  "name": "Starbucks Plaza de Las Tendillas",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "2 Las Tendillas Square, Esquina Street Malaga · Córdoba · 14002",
+  "coords": [
+   -4.78005,
+   37.88434
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Córdoba",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "53384-285007",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/53384-285007/plaza-de-las-tendillas"
+  },
+  "osm": {
+   "id": "node/3678099002",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Córdoba",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-034",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-035",
+  "name": "Starbucks C.C. Garbera",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "C.C. Garbera Garbera Zeharbidea, Garberako, 1 · San Sebastián · 20017",
+  "coords": [
+   -1.94542,
+   43.30854
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "San Sebastián",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "66990-300861",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/66990-300861/cc-garbera"
+  },
+  "osm": {
+   "id": "way/1249865311",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Gipuzkoa",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-035",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-036",
+  "name": "Starbucks Libertad San Sebastian",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "40 la Libertad Avenue, 58 Ramon y Cajal Street · San Sebastián · 20004",
+  "coords": [
+   -1.98403,
+   43.31911
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "San Sebastián",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "50303-266029",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/50303-266029/libertad-san-sebastian"
+  },
+  "osm": {
+   "id": "node/5709314762",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Gipuzkoa",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-036",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-037",
+  "name": "Starbucks Girona C.C. Espai Girones",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Cami dels Carlins 10 · Gerona · 17190",
+  "coords": [
+   2.78138,
+   41.96711
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Gerona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "80874-310152",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/80874-310152/girona-c.c.-espai-girones"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Girona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-037",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-038",
+  "name": "Starbucks Gran Jonquera",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Avenida de Galicia 22 17700 La Jonquera · La Jonquera · 17700",
+  "coords": [
+   2.88125,
+   42.40244
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "La Jonquera",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "87771-317945",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/87771-317945/gran-jonquera"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Girona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-038",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-039",
+  "name": "Starbucks Lloret de Mar Calle de Sant Pe",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Carrer de Sant Pere 14 17310 Lloret deMar Girona · Lloret de Mar · 17310",
+  "coords": [
+   2.8466,
+   41.69994
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Lloret de Mar",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "85482-315237",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/85482-315237/lloret-de-mar-calle-de-sant-pe"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Girona",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-039",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-040",
+  "name": "Starbucks C.C. Nevada",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Nevada Shopping Shopping Center, 75 las Palmeras Avenue. Aramilla. · Granada · 18100",
+  "coords": [
+   -3.61342,
+   37.14658
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Granada",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "56289-290196",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/56289-290196/c.c.-nevada"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Granada",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-040",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-041",
+  "name": "Starbucks Gran Via 4",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "4 Gran Via Colon Street · Granada · 18010",
+  "coords": [
+   -3.59765,
+   37.17628
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Granada",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "53733-285971",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/53733-285971/gran-via-4"
+  },
+  "osm": {
+   "id": "node/6033811985",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Granada",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-041",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-042",
+  "name": "Starbucks C.C. Momentum Plaza",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Momentum Plaza Shopping Center, 4 S'Olivera Avenue. Magaluf, Calvia · Palma · 07181",
+  "coords": [
+   2.53216,
+   39.50616
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Palma",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "55377-289216",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/55377-289216/c.c.-momentum-plaza"
+  },
+  "osm": {
+   "id": "node/6367124810",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Illes Balears",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-042",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-043",
+  "name": "Starbucks Cort Mallorca - Saint Andrews",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "14 Cort Square · Palma · 07001",
+  "coords": [
+   2.65037,
+   39.56981
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Palma",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "51261-277926",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/51261-277926/cort-mallorca---saint-andrews"
+  },
+  "osm": {
+   "id": "node/4938239421",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Illes Balears",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-043",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-044",
+  "name": "Starbucks Porto Pi C.C. Palma de Mallorca",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Avenida de Gabriel Roca 54 Ponent 07015 Palma de Mallorca · Palma · 07015",
+  "coords": [
+   2.62179,
+   39.5511
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Palma",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "85262-314138",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/85262-314138/porto-pi-cc-palma-de-mallorca"
+  },
+  "osm": {
+   "id": "node/12913181789",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Illes Balears",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-044",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-045",
+  "name": "Starbucks Logrono C.C. Berceo",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "C C Berceo Calle Lerida 1 26006 LogronoLa Rioja · Logroño · 26006",
+  "coords": [
+   -2.42053,
+   42.46286
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Logroño",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "91198-317078",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/91198-317078/logrono-cc-berceo"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "La Rioja",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-045",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-046",
+  "name": "Starbucks C.C. Los Alisios",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Los Alisios Shopping Center, 15 GC-308 Road. Las Palmas Gran Canaria · Las Palmas de Gran Canaria · 35018",
+  "coords": [
+   -15.47687,
+   28.09455
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Las Palmas de Gran Canaria",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "53272-284627",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/53272-284627/c.c.-los-alisios"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Las Palmas",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-046",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-047",
+  "name": "Starbucks El Corte Inglés Mesa y Lopez",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "ECI MESA Y LOPEZ · Las Palmas de Gran Canaria · 35007",
+  "coords": [
+   -15.43159,
+   28.13454
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Las Palmas de Gran Canaria",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "51504-267116",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/51504-267116/eci-mesa-y-lopez"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Las Palmas",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-047",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-048",
+  "name": "Starbucks Meloneras",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "C.C. Boulevard El Faro. Planta baja. Parcela HB1. Urb Meloneras 2-A · Las Palmas de Gran Canaria · 35100",
+  "coords": [
+   -15.60117,
+   27.73626
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Las Palmas de Gran Canaria",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "57374-291465",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/57374-291465/sbux-meloneras"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Las Palmas",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-048",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-049",
+  "name": "Starbucks Las Rozas Village (Kiosk)",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "C. Juan Ramen Jimenez, 3, 28232 Las Rozas de Madrid, Madrid · Las Rozas de Madrid · 28232",
+  "coords": [
+   -3.90272,
+   40.51886
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Las Rozas de Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "86028-315878",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/86028-315878/las-rozas-village-kiosk"
+  },
+  "osm": {
+   "id": "node/13289081684",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-049",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-050",
+  "name": "Starbucks Alcala",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "1 2 Alcala Street · Madrid · 28014",
+  "coords": [
+   -3.69948,
+   40.4179
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "40410-83446",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/40410-83446/alcala"
+  },
+  "osm": {
+   "id": "node/623953553",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-050",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-051",
+  "name": "Starbucks Conde Penalver",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Conde Pe alver 10 · Madrid · 28006",
+  "coords": [
+   -3.67543,
+   40.42624
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "31501-103703",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/31501-103703/conde-penalver"
+  },
+  "osm": {
+   "id": "node/5475288768",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-051",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-052",
+  "name": "Starbucks Diversia",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Heron Diversia Leisure Centre, 21-23 Bruselas Avenue · Madrid · 28100",
+  "coords": [
+   -3.63845,
+   40.53023
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "40412-86343",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/40412-86343/diversia"
+  },
+  "osm": {
+   "id": "node/6922980729",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-052",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-053",
+  "name": "Starbucks E C I Pozuelo",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Camino dsel cerro d elos gamos 2 Pozuelo 28224 Madrid · Madrid · 28224",
+  "coords": [
+   -3.80774,
+   40.4629
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "23899-311663",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/23899-311663/e-c-i-pozuelo"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-053",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-054",
+  "name": "Starbucks Gran Via 58",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "58 Gran Via · Madrid · 28013",
+  "coords": [
+   -3.70807,
+   40.42188
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "40427-95781",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/40427-95781/gran-via-58"
+  },
+  "osm": {
+   "id": "node/600212333",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-054",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-055",
+  "name": "Starbucks Islazul",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Islazul Shopping Center · Madrid · 28054",
+  "coords": [
+   -3.73743,
+   40.36399
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "32471-108694",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/32471-108694/islazul"
+  },
+  "osm": {
+   "id": "node/10961531579",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-055",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-056",
+  "name": "Starbucks Juan Bravo 16",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "16 Juan Bravo Street · Madrid · 28006",
+  "coords": [
+   -3.68347,
+   40.43273
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "32533-107812",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/32533-107812/juan-bravo-16"
+  },
+  "osm": {
+   "id": "node/1359795118",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-056",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-057",
+  "name": "Starbucks La Gavia",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "La Gavia Shopping Center Local B118 · Madrid · 28051",
+  "coords": [
+   -3.59852,
+   40.36899
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "1371-125250",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/1371-125250/la-gavia"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-057",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-058",
+  "name": "Starbucks Madrid Calle Montera 38",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Calle de la Montera 38 · Madrid · 28013",
+  "coords": [
+   -3.7017,
+   40.41925
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "68511-303550",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/68511-303550/madrid-calle-montera-38"
+  },
+  "osm": {
+   "id": "node/184049441",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-058",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-059",
+  "name": "Starbucks Madrid Cea Bermudez 63",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Calle Cea Bermudez 63 Madrid · Madrid · 28003",
+  "coords": [
+   -3.71614,
+   40.43894
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "80992-310265",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/80992-310265/madrid-cea-bermudez-63"
+  },
+  "osm": {
+   "id": "node/11327858636",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-059",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-060",
+  "name": "Starbucks Madrid Gran Via 46",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "C Gran Via 46 28013 Madrid · Madrid · 28013",
+  "coords": [
+   -3.70604,
+   40.4205
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "78810-308861",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/78810-308861/madrid-gran-via-46"
+  },
+  "osm": {
+   "id": "node/184049491",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-060",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-061",
+  "name": "Starbucks Madrid Plaza Santa Cruz 6",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Plaza Santa Cruz 6 Madrid · Madrid · 28012",
+  "coords": [
+   -3.70564,
+   40.41533
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "83424-313059",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/83424-313059/madrid-plaza-santa-cruz-6"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-061",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-062",
+  "name": "Starbucks Madrid Serrano 41",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "calle Serrano 41 Madrid 28001 · Madrid · 28001",
+  "coords": [
+   -3.68757,
+   40.42852
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "83423-313060",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/83423-313060/madrid-serrano-41"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-062",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-063",
+  "name": "Starbucks Montera 8",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "C/ Montera 8 · Madrid · 28013",
+  "coords": [
+   -3.70273,
+   40.41782
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "57512-291639",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/57512-291639/montera-8"
+  },
+  "osm": {
+   "id": "node/3644961945",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-063",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-064",
+  "name": "Starbucks Padre Damian",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "29 Padre Damian Street · Madrid · 28036",
+  "coords": [
+   -3.68563,
+   40.45946
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "30712-99808",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/30712-99808/padre-damian"
+  },
+  "osm": {
+   "id": "node/5351136509",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-064",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-065",
+  "name": "Starbucks Palace",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "5 Canovas del Castillo Square · Madrid · 28005",
+  "coords": [
+   -3.69503,
+   40.41499
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "40402-128944",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/40402-128944/palace"
+  },
+  "osm": {
+   "id": "node/5070216321",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-065",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-066",
+  "name": "Starbucks Plaza Espana",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Plaza Espana Square, 73 Gran Via Street · Madrid · 28013",
+  "coords": [
+   -3.71071,
+   40.42326
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "40421-86960",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/40421-86960/plaza-espana"
+  },
+  "osm": {
+   "id": "node/622204563",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-066",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-067",
+  "name": "Starbucks Reina Sofia",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "4 Doctor Drumen Street · Madrid · 28012",
+  "coords": [
+   -3.69305,
+   40.40905
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "32060-105168",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/32060-105168/reina-sofia"
+  },
+  "osm": {
+   "id": "node/12081159379",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-067",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-068",
+  "name": "Starbucks Rivas",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "H2O - Rivas Futura Shopping Center, 4 Marie Curie Street · Madrid · 28521",
+  "coords": [
+   -3.52681,
+   40.33787
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "31782-108637",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/31782-108637/rivas"
+  },
+  "osm": {
+   "id": "node/3694135441",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-068",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-069",
+  "name": "Starbucks Telefonica",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Commercial Area - District Telefonica, 2 Ronda la Comunicacion · Madrid · 28050",
+  "coords": [
+   -3.66304,
+   40.51509
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "56907-290901",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/56907-290901/sbux-telefonica"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-069",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-070",
+  "name": "Starbucks Xanadu",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Xanadu Shopping Center, Street Puerto Navacerrada. · Madrid · 28939",
+  "coords": [
+   -3.92745,
+   40.29943
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Madrid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "31664-108318",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/31664-108318/xanadu"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-070",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-071",
+  "name": "Starbucks Equinoccio",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Equinoccio Shopping Center, 2 La Fresa Street · Majadahonda · 28222",
+  "coords": [
+   -3.87466,
+   40.45496
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Majadahonda",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "17078-176509",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/17078-176509/equinoccio"
+  },
+  "osm": {
+   "id": "node/4955205327",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-071",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-072",
+  "name": "Starbucks Plaza Norte Ii",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Plaza Norte 2 Shopping Center, 11-12 Comercio Square · San Sebastian de los Reyes · 28700",
+  "coords": [
+   -3.61446,
+   40.54114
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "San Sebastian de los Reyes",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "32619-125251",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/32619-125251/plaza-norte-ii"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Madrid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-072",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-073",
+  "name": "Starbucks El Corte Inglés Alicante Maissonave",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "El Corte Ingles Alicante Kiosko exterio · Alicante",
+  "coords": [
+   -0.49336,
+   38.34291
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Alicante",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "50976-276782",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/50976-276782/sbux-eci-alicante-maissonave"
+  },
+  "osm": {
+   "id": "node/11964291431",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Alicante",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-073",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-074",
+  "name": "Starbucks C.C. Nueva Condomina",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Autova A-7, Km. 760 · Murcia · 30110",
+  "coords": [
+   -1.14901,
+   38.04085
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Murcia",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "61942-296282",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/61942-296282/c.c.-nueva-condomina"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Murcia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-074",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-075",
+  "name": "Starbucks El Corte Inglés Murcia",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Gran Via Escultor Francisco Salcillo 42 · Murcia · 30005",
+  "coords": [
+   -1.132,
+   37.98854
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Murcia",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "50300-260427",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/50300-260427/eci-murcia"
+  },
+  "osm": {
+   "id": "node/4908694807",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Murcia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-075",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-076",
+  "name": "Starbucks Malaga C.C. Muelle Uno",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "P del Muelle Uno 4 29016 Malaga · Málaga · 29016",
+  "coords": [
+   -4.41305,
+   36.71733
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Málaga",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "78491-308481",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/78491-308481/malaga-cc-muelle-uno"
+  },
+  "osm": {
+   "id": "node/11853318600",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Málaga",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-076",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-077",
+  "name": "Starbucks Malaga C.C. Vialia",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Explanada de la Estacion s/n 29002 Malaga · Málaga · 29002",
+  "coords": [
+   -4.43075,
+   36.71084
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Málaga",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "85910-311741",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/85910-311741/malaga-cc-vialia"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Málaga",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-077",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-078",
+  "name": "Starbucks Malaga Pl. Constitucion 4",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Plaza de la Constitucion 4, Malaga, 29005 · Málaga · 29005",
+  "coords": [
+   -4.4223,
+   36.72084
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Málaga",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "68979-304193",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/68979-304193/malaga-pl.-constitucion-4"
+  },
+  "osm": {
+   "id": "node/4663652451",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Málaga",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-078",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-079",
+  "name": "Starbucks Plaza Felix Sainz",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "9 Felix Saenz Square · Málaga · 29005",
+  "coords": [
+   -4.42315,
+   36.71917
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Málaga",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "29456-253884",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/29456-253884/plaza-felix-sainz"
+  },
+  "osm": {
+   "id": "node/5286253560",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Málaga",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-079",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-080",
+  "name": "Starbucks Cordovilla C.C. La Morea",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Barrio La Morea, s/n, 31191 Cordovilla, Navarra · Cordovilla · 31191",
+  "coords": [
+   -1.63327,
+   42.78299
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Cordovilla",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "86833-315913",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/86833-315913/cordovilla-cc-la-morea"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Navarra",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-080",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-081",
+  "name": "Starbucks Pamplona Mercaderes 6",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Calle Mercaderes, 6 31001 Pamplona, Navarra · Pamplona · 31001",
+  "coords": [
+   -1.64322,
+   42.81827
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Pamplona",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "85301-313327",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/85301-313327/pamplona-mercaderes-6"
+  },
+  "osm": {
+   "id": "node/4353227096",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Navarra",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-081",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-082",
+  "name": "Starbucks C.C Vialia Vigo",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Vigo-Urzaiz, Plaza Estacion 1, Vigo, Pontevedra · Vigo · 36201",
+  "coords": [
+   -8.71379,
+   42.2342
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Vigo",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "66801-301397",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/66801-301397/sbux-c.c-vialia-vigo"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Pontevedra",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-082",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-083",
+  "name": "Starbucks Plaza Mayor 21",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Square Mayor, 21 · Salamanca · 37002",
+  "coords": [
+   -5.66462,
+   40.96525
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Salamanca",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "56290-290197",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/56290-290197/plaza-mayor-21"
+  },
+  "osm": {
+   "id": "node/4449179962",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Salamanca",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-083",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-084",
+  "name": "Starbucks C.C. Siam Mall",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Siam Mall Shopping Center, 3 Siam Avenue · Santa Cruz de Tenerife · 38670",
+  "coords": [
+   -16.72257,
+   28.06903
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Santa Cruz de Tenerife",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "53004-284008",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/53004-284008/c.c.-siam-mall"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Santa Cruz de Tenerife",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-084",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-085",
+  "name": "Starbucks La Laguna",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "16 La Concepcion Square · Santa Cruz de Tenerife · 38201",
+  "coords": [
+   -16.31772,
+   28.49534
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Santa Cruz de Tenerife",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "57372-291468",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/57372-291468/sbux-la-laguna"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Santa Cruz de Tenerife",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-085",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-086",
+  "name": "Starbucks Sta Cruz Tnf Bethencourt Alfon",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Calle de S. Francisco, 9, 38002, Santa Cruz de Tenerife · Santa Cruz de Tenerife · 38002",
+  "coords": [
+   -16.24909,
+   28.46761
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Santa Cruz de Tenerife",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "85930-315748",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/85930-315748/sta-cruz-tnf-bethencourt-alfon"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Santa Cruz de Tenerife",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-086",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-087",
+  "name": "Starbucks Sevilla Fashion Outlet",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "P Industrial Los Espartales, A4, KM 531, 41300 San Jose de la Rinconada, Sevilla · San José de la Rinconada · 41300",
+  "coords": [
+   -5.88542,
+   37.43937
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "San José de la Rinconada",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "78409-308394",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/78409-308394/sevilla-fashion-outlet"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Sevilla",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-087",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-088",
+  "name": "Starbucks C.C. Lagoh",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Ronda de Circunvalacion, 614 · Sevilla · 41012",
+  "coords": [
+   -5.98683,
+   37.3435
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Sevilla",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "58972-289059",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/58972-289059/c.c.-lagoh"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Sevilla",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-088",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-089",
+  "name": "Starbucks Sevilla Airside",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Sevilla · Sevilla · 41020",
+  "coords": [
+   -5.92512,
+   37.42121
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Sevilla",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "68935-304111",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/68935-304111/sevilla-airside"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Sevilla",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-089",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-090",
+  "name": "Starbucks Sevilla C.C. Nervion Plaza",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Calle Luis de Morales 3 41005 Sevilla · Sevilla · 41005",
+  "coords": [
+   -5.9728,
+   37.38306
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Sevilla",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "82070-311525",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/82070-311525/sevilla-cc-nervion-plaza"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Sevilla",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-090",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-091",
+  "name": "Starbucks Comercio 40",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "40 Comercio Street · Toledo · 45001",
+  "coords": [
+   -4.02229,
+   39.8592
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Toledo",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "53380-285009",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/53380-285009/comercio-40"
+  },
+  "osm": {
+   "id": "node/2648637547",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Toledo",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-091",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-092",
+  "name": "Starbucks Bonaire",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Bonaire Shopping Center, Road A-3, km 345. · Aldaia · 46960",
+  "coords": [
+   -0.48791,
+   39.47152
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Aldaia",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "15307-148964",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/15307-148964/bonaire"
+  },
+  "osm": {
+   "id": "way/299375809",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Valencia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-092",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-093",
+  "name": "Starbucks C.C. El Saler",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "C.C El Saler, Avenida del Profesor Lopez Pinero 16 · Valencia · 46013",
+  "coords": [
+   -0.35542,
+   39.4529
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Valencia",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "66492-301073",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/66492-301073/cc-el-saler"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Valencia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-093",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-094",
+  "name": "Starbucks Valencia Xativa 20",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "C de Xativa 20 46002 Valencia · Valencia · 46002",
+  "coords": [
+   -0.37803,
+   39.46759
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Valencia",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "81561-309280",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/81561-309280/valencia-xativa-20"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Valencia",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-094",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-095",
+  "name": "Starbucks Valladolid C.C. Rio Shopping",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "C. Me Falta un Tornillo, 3, 47195 Arroyo de la Encomienda, Valladolid · Valladolid · 47195",
+  "coords": [
+   -4.78675,
+   41.6294
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Valladolid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "51814-307451",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/51814-307451/valladolid-cc-rio-shopping"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Valladolid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-095",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-096",
+  "name": "Starbucks Valladolid Pza. Mayor",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Plaza Mayor 15 · Valladolid · 47001",
+  "coords": [
+   -4.72909,
+   41.65156
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Valladolid",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "80729-309969",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/80729-309969/valladolid-pza.-mayor"
+  },
+  "osm": {
+   "id": "node/5269915531",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Valladolid",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-096",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-097",
+  "name": "Starbucks Coso",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "15 Coso Street · Zaragoza · 50003",
+  "coords": [
+   -0.88223,
+   41.65348
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Zaragoza",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "51791-279345",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/51791-279345/coso"
+  },
+  "osm": {
+   "id": "node/5009097439",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Zaragoza",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-097",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-098",
+  "name": "Starbucks Zaragoza Pso. Independencia 24",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Paseo de la Independencia, 24, Casco Antiguo, 50004 Zaragoza · Zaragoza · 50004",
+  "coords": [
+   -0.88341,
+   41.6501
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Zaragoza",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "86269-315912",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/86269-315912/zaragoza-pso.-independencia-24"
+  },
+  "osm": {
+   "id": "node/4343407889",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Zaragoza",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-098",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-099",
+  "name": "Starbucks Puerto Venecia Zaragoza",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "Puerto Venecia Shopping Center, 7 Travesia los Jardines Reales · Zargoza · 50021",
+  "coords": [
+   -0.88849,
+   41.60894
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Zargoza",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "50309-266027",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/50309-266027/puerto-venecia-zaragoza"
+  },
+  "osm": {
+   "id": "node/5615267827",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Zaragoza",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-099",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ },
+ {
+  "id": "alsea-sbux-100",
+  "name": "Starbucks Vitoria Plaza de La Virgen Bla",
+  "kind": "Cafetería · Starbucks · Circuito DOOH Alsea",
+  "addr": "CALLE PRADO 2 VITORIA GASTEIZ 01005 · Vitoria · 01005",
+  "coords": [
+   -2.67334,
+   42.84648
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Vitoria",
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "85038-313266",
+   "network": "starbucks espana",
+   "source": "starbucks-store-locator (AllThePlaces 2026-09-19)",
+   "url": "https://www.starbucks.co.uk/store-locator/85038-313266/vitoria-plaza-de-la-virgen-bla"
+  },
+  "osm": {
+   "id": "node/537986489",
+   "brand": "Starbucks"
+  },
+  "circuit": "alsea_starbucks",
+  "province": "Álava",
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-100",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:30",
+    "end": "21:30"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  }
+ }
+]
