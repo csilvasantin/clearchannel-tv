@@ -26,9 +26,9 @@ const CIRCUIT_SCOPE_OPTIONS = [
   {value:'local', labelKey:'scope_local'},
 ];
 const CIRCUIT_IDS_BY_SCOPE = {
-  all: ['all', 'admiraxperience', 'metro_bcn', 'kioskos', 'estancos', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
+  all: ['all', 'admiraxperience', 'metro_bcn', 'kioskos', 'estancos', 'jti_xtanco', 'alsea_starbucks', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
   global: ['desigual', 'mango'],
-  national: ['estancos', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx'],
+  national: ['estancos', 'jti_xtanco', 'alsea_starbucks', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx'],
   city: ['metro_bcn', 'kioskos', 'admiraxperience'],
   local: ['all', 'admiraxperience'],
 };
@@ -242,7 +242,7 @@ const I18N = {
     circuit_panel_title:'Seleccionar circuito', target_panel_title:'Seleccionar target', target_panel_hint:'Estos criterios segmentan la creación de contenidos.',
     circuit_metro_bcn:'Metro Barcelona Ciudad', circuit_desigual:'Desigual Global', circuit_mango:'Mango Global',
     circuit_kioskos:'Kioskos de prensa', circuit_all:'Todos los puntos locales',
-    circuit_estancos:'Xtanco Nacional', circuit_alcampo:'Alcampo · Supermercados (102)', circuit_decathlon:'Decathlon España', circuit_palacio:'El Palacio de Hierro · México', circuit_liverpool_mx:'Liverpool · México', circuit_bbva:'BBVA · España', circuit_banorte_mx:'Banorte · México', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · España', circuit_correos:'Correos · España', circuit_multiopticas:'MultiÓpticas · España', circuit_retail:'Otros retail físicos',
+    circuit_estancos:'Xtanco Nacional', circuit_jti_xtanco:'Circuito JTI Xtanco España 100', circuit_alsea_starbucks:'Circuito Alsea Starbucks España 100', circuit_alcampo:'Alcampo · Supermercados (102)', circuit_decathlon:'Decathlon España', circuit_palacio:'El Palacio de Hierro · México', circuit_liverpool_mx:'Liverpool · México', circuit_bbva:'BBVA · España', circuit_banorte_mx:'Banorte · México', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · España', circuit_correos:'Correos · España', circuit_multiopticas:'MultiÓpticas · España', circuit_retail:'Otros retail físicos',
     all_lines:'Todas las líneas', whole_line:'Toda línea', whole_circuit:'Todo circuito',
     points_label:'puntos', point_label:'punto', impr_day_compact:'impr/día', cpm_label:'CPM',
     circuit_points_title:'Puntos del circuito', view_map:'Ver en mapa', buy_selection:'Comprar selección',
@@ -375,7 +375,7 @@ const I18N = {
     circuit_panel_title:'Select circuit', target_panel_title:'Select target', target_panel_hint:'These criteria segment content creation.',
     circuit_metro_bcn:'Barcelona Metro City', circuit_desigual:'Global Desigual', circuit_mango:'Mango Global',
     circuit_kioskos:'Press kiosk', circuit_all:'All local registered points',
-    circuit_estancos:'National Xtanco', circuit_alcampo:'Alcampo · Supermarkets (102)', circuit_decathlon:'Decathlon Spain', circuit_palacio:'El Palacio de Hierro · Mexico', circuit_liverpool_mx:'Liverpool · Mexico', circuit_bbva:'BBVA · Spain', circuit_banorte_mx:'Banorte · Mexico', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · Spain', circuit_correos:'Correos · Spain', circuit_multiopticas:'MultiÓpticas · Spain', circuit_retail:'Other physical retail',
+    circuit_estancos:'National Xtanco', circuit_jti_xtanco:'JTI Xtanco Spain 100 circuit', circuit_alsea_starbucks:'Alsea Starbucks Spain 100 circuit', circuit_alcampo:'Alcampo · Supermarkets (102)', circuit_decathlon:'Decathlon Spain', circuit_palacio:'El Palacio de Hierro · Mexico', circuit_liverpool_mx:'Liverpool · Mexico', circuit_bbva:'BBVA · Spain', circuit_banorte_mx:'Banorte · Mexico', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · Spain', circuit_correos:'Correos · Spain', circuit_multiopticas:'MultiÓpticas · Spain', circuit_retail:'Other physical retail',
     all_lines:'All lines', whole_line:'Whole line', whole_circuit:'Whole circuit',
     points_label:'points', point_label:'point', impr_day_compact:'impr/day', cpm_label:'CPM',
     circuit_points_title:'Circuit points', view_map:'View on map', buy_selection:'Buy selection',
@@ -771,6 +771,11 @@ function isMultiopticasLocation(loc) {
   return brand === 'multiopticas' || extBrand === 'multiopticas' || hay.includes('multiopticas');
 }
 
+// JTI · Xtanco (FLT-100992): 100 estancos reales (OSM shop=tobacco). Semilla: jti-alsea/circuito-jti-xtanco-100.seed.json
+function isJtiXtancoLocation(loc) { return /^jti-xtanco-/i.test(String(loc.id || '')) || loc.circuit === 'jti_xtanco'; }
+// Alsea · Starbucks (FLT-100992): 100 cafeterías reales (store locator Starbucks). Semilla: jti-alsea/circuito-alsea-starbucks-100.seed.json
+function isAlseaStarbucksLocation(loc) { return /^alsea-sbux-/i.test(String(loc.id || '')) || loc.circuit === 'alsea_starbucks' || (loc.external && normText(loc.external.brand) === 'starbucks'); }
+
 // Alcampo (FLT-100351): 36 supermercados + 3 hipermercados. Semilla: tools/import-alcampo-circuit.mjs.
 function isAlcampoLocation(loc) {
   if (/^alcampo-/i.test(String(loc.id || ''))) return true;
@@ -848,6 +853,8 @@ function circuitDefinitions() {
   const estancoItems = LOCATIONS.filter(isEstancoLocation);
   const mangoItems = LOCATIONS.filter(isMangoLocation);
   const alcampoItems = alcampoTourOrder(LOCATIONS.filter(isAlcampoLocation));
+  const jtiXtancoItems = LOCATIONS.filter(isJtiXtancoLocation);
+  const alseaStarbucksItems = LOCATIONS.filter(isAlseaStarbucksLocation);
   const decathlonItems = LOCATIONS.filter(isDecathlonLocation);
   const palacioItems = LOCATIONS.filter(isPalacioLocation);
   const liverpoolItems = LOCATIONS.filter(isLiverpoolLocation);
@@ -857,7 +864,7 @@ function circuitDefinitions() {
   const elcorteinglesItems = LOCATIONS.filter(isElCorteInglesLocation);
   const correosItems = LOCATIONS.filter(isCorreosLocation);
   const multiopticasItems = LOCATIONS.filter(isMultiopticasLocation);
-  const retailItems = LOCATIONS.filter(l => !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l));
+  const retailItems = LOCATIONS.filter(l => !isAlseaStarbucksLocation(l) && !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l));
   return {
     admiraxperience: {label:'AdmiraXperience',items:LOCATIONS.filter(isAdmiraXperienceLocation),segmentation:circuitSegmentationForItems(LOCATIONS.filter(isAdmiraXperienceLocation))},
     metro_bcn: {
@@ -874,6 +881,16 @@ function circuitDefinitions() {
       label: t('circuit_mango'),
       items: mangoItems,
       segmentation: circuitSegmentationForItems(mangoItems),
+    },
+    jti_xtanco: {
+      label: t('circuit_jti_xtanco'),
+      items: jtiXtancoItems,
+      segmentation: circuitSegmentationForItems(jtiXtancoItems),
+    },
+    alsea_starbucks: {
+      label: t('circuit_alsea_starbucks'),
+      items: alseaStarbucksItems,
+      segmentation: circuitSegmentationForItems(alseaStarbucksItems),
     },
     alcampo: {
       label: t('circuit_alcampo'),
