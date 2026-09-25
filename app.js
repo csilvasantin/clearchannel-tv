@@ -26,9 +26,9 @@ const CIRCUIT_SCOPE_OPTIONS = [
   {value:'local', labelKey:'scope_local'},
 ];
 const CIRCUIT_IDS_BY_SCOPE = {
-  all: ['all', 'admiraxperience', 'metro_bcn', 'kioskos', 'estancos', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
+  all: ['all', 'admiraxperience', 'metro_bcn', 'kioskos', 'estancos', 'jti_xtanco', 'alsea_starbucks', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
   global: ['desigual', 'mango'],
-  national: ['estancos', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx'],
+  national: ['estancos', 'jti_xtanco', 'alsea_starbucks', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx'],
   city: ['metro_bcn', 'kioskos', 'admiraxperience'],
   local: ['all', 'admiraxperience'],
 };
@@ -242,7 +242,7 @@ const I18N = {
     circuit_panel_title:'Seleccionar circuito', target_panel_title:'Seleccionar target', target_panel_hint:'Estos criterios segmentan la creación de contenidos.',
     circuit_metro_bcn:'Metro Barcelona Ciudad', circuit_desigual:'Desigual Global', circuit_mango:'Mango Global',
     circuit_kioskos:'Kioskos de prensa', circuit_all:'Todos los puntos locales',
-    circuit_estancos:'Xtanco Nacional', circuit_alcampo:'Alcampo · Supermercados (102)', circuit_decathlon:'Decathlon España', circuit_palacio:'El Palacio de Hierro · México', circuit_liverpool_mx:'Liverpool · México', circuit_bbva:'BBVA · España', circuit_banorte_mx:'Banorte · México', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · España', circuit_correos:'Correos · España', circuit_multiopticas:'MultiÓpticas · España', circuit_retail:'Otros retail físicos',
+    circuit_estancos:'Xtanco Nacional', circuit_jti_xtanco:'Circuito JTI Xtanco España 100', circuit_alsea_starbucks:'Circuito Alsea Starbucks España 100', circuit_alcampo:'Alcampo · Supermercados (102)', circuit_decathlon:'Decathlon España', circuit_palacio:'El Palacio de Hierro · México', circuit_liverpool_mx:'Liverpool · México', circuit_bbva:'BBVA · España', circuit_banorte_mx:'Banorte · México', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · España', circuit_correos:'Correos · España', circuit_multiopticas:'MultiÓpticas · España', circuit_retail:'Otros retail físicos',
     all_lines:'Todas las líneas', whole_line:'Toda línea', whole_circuit:'Todo circuito',
     points_label:'puntos', point_label:'punto', impr_day_compact:'impr/día', cpm_label:'CPM',
     circuit_points_title:'Puntos del circuito', view_map:'Ver en mapa', buy_selection:'Comprar selección',
@@ -375,7 +375,7 @@ const I18N = {
     circuit_panel_title:'Select circuit', target_panel_title:'Select target', target_panel_hint:'These criteria segment content creation.',
     circuit_metro_bcn:'Barcelona Metro City', circuit_desigual:'Global Desigual', circuit_mango:'Mango Global',
     circuit_kioskos:'Press kiosk', circuit_all:'All local registered points',
-    circuit_estancos:'National Xtanco', circuit_alcampo:'Alcampo · Supermarkets (102)', circuit_decathlon:'Decathlon Spain', circuit_palacio:'El Palacio de Hierro · Mexico', circuit_liverpool_mx:'Liverpool · Mexico', circuit_bbva:'BBVA · Spain', circuit_banorte_mx:'Banorte · Mexico', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · Spain', circuit_correos:'Correos · Spain', circuit_multiopticas:'MultiÓpticas · Spain', circuit_retail:'Other physical retail',
+    circuit_estancos:'National Xtanco', circuit_jti_xtanco:'JTI Xtanco Spain 100 circuit', circuit_alsea_starbucks:'Alsea Starbucks Spain 100 circuit', circuit_alcampo:'Alcampo · Supermarkets (102)', circuit_decathlon:'Decathlon Spain', circuit_palacio:'El Palacio de Hierro · Mexico', circuit_liverpool_mx:'Liverpool · Mexico', circuit_bbva:'BBVA · Spain', circuit_banorte_mx:'Banorte · Mexico', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · Spain', circuit_correos:'Correos · Spain', circuit_multiopticas:'MultiÓpticas · Spain', circuit_retail:'Other physical retail',
     all_lines:'All lines', whole_line:'Whole line', whole_circuit:'Whole circuit',
     points_label:'points', point_label:'point', impr_day_compact:'impr/day', cpm_label:'CPM',
     circuit_points_title:'Circuit points', view_map:'View on map', buy_selection:'Buy selection',
@@ -702,6 +702,7 @@ function isKioskoLocation(loc) {
 }
 
 function isEstancoLocation(loc) {
+  if (isJtiXtancoLocation(loc)) return false;
   const hay = normText([loc.id, loc.name, loc.kind].join(' '));
   return hay.includes('estanco') || hay.includes('xtanco');
 }
@@ -770,6 +771,11 @@ function isMultiopticasLocation(loc) {
   const extBrand = loc.external && normText(loc.external.brand);
   return brand === 'multiopticas' || extBrand === 'multiopticas' || hay.includes('multiopticas');
 }
+
+// JTI · Xtanco (FLT-100992): 100 estancos reales (OSM shop=tobacco). Semilla: jti-alsea/circuito-jti-xtanco-100.seed.json
+function isJtiXtancoLocation(loc) { return /^jti-xtanco-/i.test(String(loc.id || '')) || loc.circuit === 'jti_xtanco'; }
+// Alsea · Starbucks (FLT-100992): 100 cafeterías reales (store locator Starbucks). Semilla: jti-alsea/circuito-alsea-starbucks-100.seed.json
+function isAlseaStarbucksLocation(loc) { return /^alsea-sbux-/i.test(String(loc.id || '')) || loc.circuit === 'alsea_starbucks' || (loc.external && normText(loc.external.brand) === 'starbucks'); }
 
 // Alcampo (FLT-100351): 36 supermercados + 3 hipermercados. Semilla: tools/import-alcampo-circuit.mjs.
 function isAlcampoLocation(loc) {
@@ -848,6 +854,8 @@ function circuitDefinitions() {
   const estancoItems = LOCATIONS.filter(isEstancoLocation);
   const mangoItems = LOCATIONS.filter(isMangoLocation);
   const alcampoItems = alcampoTourOrder(LOCATIONS.filter(isAlcampoLocation));
+  const jtiXtancoItems = LOCATIONS.filter(isJtiXtancoLocation);
+  const alseaStarbucksItems = LOCATIONS.filter(isAlseaStarbucksLocation);
   const decathlonItems = LOCATIONS.filter(isDecathlonLocation);
   const palacioItems = LOCATIONS.filter(isPalacioLocation);
   const liverpoolItems = LOCATIONS.filter(isLiverpoolLocation);
@@ -857,7 +865,7 @@ function circuitDefinitions() {
   const elcorteinglesItems = LOCATIONS.filter(isElCorteInglesLocation);
   const correosItems = LOCATIONS.filter(isCorreosLocation);
   const multiopticasItems = LOCATIONS.filter(isMultiopticasLocation);
-  const retailItems = LOCATIONS.filter(l => !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l));
+  const retailItems = LOCATIONS.filter(l => !isJtiXtancoLocation(l) && !isAlseaStarbucksLocation(l) && !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l));
   return {
     admiraxperience: {label:'AdmiraXperience',items:LOCATIONS.filter(isAdmiraXperienceLocation),segmentation:circuitSegmentationForItems(LOCATIONS.filter(isAdmiraXperienceLocation))},
     metro_bcn: {
@@ -874,6 +882,16 @@ function circuitDefinitions() {
       label: t('circuit_mango'),
       items: mangoItems,
       segmentation: circuitSegmentationForItems(mangoItems),
+    },
+    jti_xtanco: {
+      label: t('circuit_jti_xtanco'),
+      items: jtiXtancoItems,
+      segmentation: circuitSegmentationForItems(jtiXtancoItems),
+    },
+    alsea_starbucks: {
+      label: t('circuit_alsea_starbucks'),
+      items: alseaStarbucksItems,
+      segmentation: circuitSegmentationForItems(alseaStarbucksItems),
     },
     alcampo: {
       label: t('circuit_alcampo'),
@@ -3266,6 +3284,7 @@ function renderPanel(loc) {
       </div>
     </div>`;
   }).join('');
+  if(loc.source==='yokup-retailer'&&!loc.surfaces.length)list.innerHTML='<p class="office-interior-note">'+(document.documentElement.lang==='en'?'Establishment registered from Yokup. Equipment and advertising availability have not been confirmed.':'Establecimiento registrado desde Yokup. Equipos y disponibilidad publicitaria pendientes de confirmar.')+'</p>';
   if (isAdmiraXperienceLocation(loc) && !loc.surfaces.length) list.innerHTML = '<p class="office-interior-note">'+(loc.interiorStatus==='external-manual'?'Interior disponible en IEU, con selección manual de oficina y acceso mediante tu cuenta autorizada.':'Pantallas interiores pendientes de vincular.')+' Abre «Recorrer AdmiraXperience» para llegar al destino y acceder al interior.</p>';
   try{ startSurfMirrors(); }catch(_){}
   // El feed de pujas es REAL y global (poller RTB): al abrir un panel NO lo
@@ -4010,17 +4029,32 @@ bindBuyCheckout();
 consumePixeriaDraftFromUrl();
 
 // Return from the campaign preview to the exact catalogue place, in either language.
-let walkReturnRestored = false;
+let walkReturnRestored = false, walkReturnLookup = false;
 function restoreWalkReturn() {
   if (walkReturnRestored || new URLSearchParams(location.search).get('draft')) return;
   const id = new URLSearchParams(location.search).get('locationId');
   const loc = id && LOCATIONS.find(item => String(item.id) === id);
-  if (!loc) return;
+  if (!loc) {
+    if(id&&!walkReturnLookup&&window.loadOmnipLocationDetail){walkReturnLookup=true;window.loadOmnipLocationDetail(id,5000).then(found=>{if(found){setLocations([...LOCATIONS.filter(l=>l.id!==found.id),found]);updateLocationsSource();restoreWalkReturn();}}).catch(()=>{});}
+    return;
+  }
   walkReturnRestored = true;
   if (map.loaded()) flyToLocation(loc);
   else map.once('load', () => flyToLocation(loc));
 }
 restoreWalkReturn();
+
+// Newly imported establishments must appear even if the large legacy catalogue times out.
+async function mergeRetailerLocations(){
+  try {
+    const incoming=await window.loadYokupLocationsAsync();if(!incoming.length)return;
+    const ids=new Set(incoming.map(l=>l.id));
+    setLocations([...LOCATIONS.filter(l=>!ids.has(l.id)),...incoming]);
+    updateLocationsSource();renderCircuitSelector();restoreWalkReturn();
+  } catch { /* The next refresh retries; retain the currently displayed catalogue. */ }
+}
+mergeRetailerLocations();
+setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
 
 // ─── Refresh asincrónico desde el worker (KV) ─────────────────────
 // El sync arrancó con localStorage/default. Dos fases (Jobs #3238 · Woz #3236 · FLT-100442, 14-sep-2026):
@@ -4057,13 +4091,14 @@ restoreWalkReturn();
     const res = await window.loadOmnipLocationsAsync(4500);
     if (!res || !Array.isArray(res.locations) || !res.locations.length) return;
     if (locationsSignature(res.locations, res.updatedAt) === locationsSignature(LOCATIONS, res.updatedAt)) return;
-    setLocations(res.locations);
+    const freshIds=new Set(res.locations.map(l=>l.id));
+    setLocations([...res.locations,...LOCATIONS.filter(l=>l.source==='yokup-retailer'&&!freshIds.has(l.id))]);
     restoreWalkReturn();
     updateBiddingLiveCounters();
     const cpms = LOCATIONS.flatMap(l => (Array.isArray(l.surfaces) ? l.surfaces : []).map(s => parseFloat(String(s.cpm).replace(/[^\d.]/g,'')))).filter(Boolean);
     if (cpms.length) {
       const lo = Math.min(...cpms), hi = Math.max(...cpms);
-      const el = document.getElementById('p-cpm'); if (el && !isAdmiraXperienceLocation(activeLocation || {})) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
+      const el = document.getElementById('p-cpm'); if (el && activeLocation?.source!=='yokup-retailer' && !isAdmiraXperienceLocation(activeLocation || {})) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
     }
     renderCircuitSelector();
     if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();
