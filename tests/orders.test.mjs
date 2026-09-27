@@ -88,3 +88,19 @@ test('planner budget survives storage and participates in idempotency',async()=>
  assert.equal((await handleOrders(request('POST',{...payload(),budget:600},cookie),env)).status,409);
  for(const budget of [-1,0,1e13,'500'])assert.equal((await handleOrders(request('POST',{...payload(),budget},cookie),env)).status,400);
 });
+test('emit books the owner order once on the demo grid, never for other owners',async()=>{
+ const booked=[];const days={};
+ const fetchImpl=async(url,init)=>{ const u=new URL(url);
+  if(u.pathname==='/grid/day'){ const s=u.searchParams.get('screen'); return new Response(JSON.stringify({bands:[{id:'tarde',isNow:true,slots:days[s]||[]}]})); }
+  const b=JSON.parse(init.body);booked.push(b);(days[b.screen]??=[]).push({kind:'paid',title:b.title,bookingId:'bk_'+booked.length});return new Response(JSON.stringify({ok:true,id:'bk_'+booked.length})); };
+ const env={ORDERS_DB:database(),GRID_KEY:'k',fetchImpl},cookie=await session(env);
+ const {order}=await (await handleOrders(request('POST',payload(),cookie),env)).json();
+ const emitReq=(c)=>new Request(origin+'/api/orders/emit',{method:'POST',headers:{Origin:origin,Cookie:c,'Content-Type':'application/json'},body:JSON.stringify({id:order.id})});
+ const r=await handleOrders(emitReq(cookie),env);assert.equal(r.status,200);
+ const {emissions}=await r.json();assert.deepEqual(emissions.map(e=>e.screen),['xtanco-valencia-a','xtanco-valencia-musica']);
+ assert.equal(booked.length,2);assert.equal(booked[0].price,10.25);assert.equal(booked[1].price,0);assert.equal(booked[0].key,'k');
+ assert.ok(booked.every(b=>b.status==='sold'&&b.title.includes(order.id)));
+ const again=await (await handleOrders(emitReq(cookie),env)).json();assert.ok(again.emissions.every(e=>e.replayed));assert.equal(booked.length,2);
+ assert.equal((await handleOrders(emitReq(await session(env)),env)).status,404);
+ assert.equal((await handleOrders(emitReq(cookie),{...env,GRID_KEY:undefined})).status,503);
+});

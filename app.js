@@ -234,7 +234,7 @@ const I18N = {
     ed_kpi_plays:'PASES HOY', ed_kpi_screens:'PANTALLAS EN ANTENA', ed_kpi_pieces:'PIEZAS EMITIDAS', ed_kpi_rate:'PASES / MIN',
     ed_radar_title:'RADAR DE CIRCUITOS · RED FÍSICA', ed_awaiting:'◌ ESPERANDO SEÑAL', ed_mix_type:'MEZCLA POR TIPO', ed_ranking:'CIRCUITOS · RANKING', ed_feed:'▸ FEED DE EMISIÓN',
     ed_nolink:'⚠ SIN ENLACE', ed_linked:'◉ RED ENLAZADA · {n} XPACIOS', ed_no_emission:'— sin emisión —', ed_no_circuits:'— sin circuitos activos —', ed_ticker_waiting:'esperando primeras emisiones del canal…',
-    stores:'Xpaces', screens:'pantallas', screens_sim:'pantallas (sim.)',
+    stores:'Xpaces', screens:'pantallas', screens_sim:'pantallas (sim.)', revenue_today:'€ vendido hoy (sin cobrar)',
     select_circuit:'Seleccionar circuito', select_target:'Seleccionar target',
     lang_toggle:'ENG', lang_toggle_aria:'Cambiar a inglés',
     circuit_scope_label:'Alcance del circuito',
@@ -335,7 +335,7 @@ const I18N = {
     tour_hint:'Tour DooH: vuela de punto en punto por el circuito y el target seleccionados.',
     map_preparing:'Preparando mapa · ', map_loading:'Cargando detalle · ',
     map_incomplete:'Mapa incompleto. Tour DooH pausado; vuelve a iniciarlo para reintentar.',
-    meta_surfaces:'surfaces', meta_imprday:'impr/día', meta_cpm:'CPM rango',
+    meta_surfaces:'surfaces', meta_imprday:'impr/día (est.)', meta_cpm:'CPM rango',
     waiting_bid:'// motor RTB conectado · esperando demanda…',
     recent:'Recientes', addresses:'Direcciones', searching_addr:'buscando direcciones…', no_addr:'sin direcciones',
     stores_bidding_1:'Xpace en bidding', stores_bidding_n:'Xpaces en bidding',
@@ -367,7 +367,7 @@ const I18N = {
     ed_kpi_plays:'PLAYS TODAY', ed_kpi_screens:'SCREENS ON AIR', ed_kpi_pieces:'PIECES AIRED', ed_kpi_rate:'PLAYS / MIN',
     ed_radar_title:'CIRCUITS RADAR · PHYSICAL NETWORK', ed_awaiting:'◌ AWAITING SIGNAL', ed_mix_type:'MIX BY TYPE', ed_ranking:'CIRCUITS · RANKING', ed_feed:'▸ BROADCAST FEED',
     ed_nolink:'⚠ NO LINK', ed_linked:'◉ NETWORK LINKED · {n} XPACES', ed_no_emission:'— no broadcast —', ed_no_circuits:'— no active circuits —', ed_ticker_waiting:'awaiting the channel\'s first broadcasts…',
-    stores:'Xpaces', screens:'screens', screens_sim:'screens (sim.)',
+    stores:'Xpaces', screens:'screens', screens_sim:'screens (sim.)', revenue_today:'€ sold today (not charged)',
     select_circuit:'Select circuit', select_target:'Select target',
     lang_toggle:'ESP', lang_toggle_aria:'Switch to Spanish',
     circuit_scope_label:'Circuit scope',
@@ -468,7 +468,7 @@ const I18N = {
     tour_hint:'Tour DooH: fly between points in the selected circuit and target.',
     map_preparing:'Preparing map · ', map_loading:'Loading detail · ',
     map_incomplete:'Map incomplete. Tour DooH paused; start it again to retry.',
-    meta_surfaces:'surfaces', meta_imprday:'impr/day', meta_cpm:'CPM range',
+    meta_surfaces:'surfaces', meta_imprday:'impr/day (est.)', meta_cpm:'CPM range',
     waiting_bid:'// RTB engine connected · waiting for demand…',
     recent:'Recent', addresses:'Addresses', searching_addr:'searching addresses…', no_addr:'no addresses',
     stores_bidding_1:'Xpace bidding', stores_bidding_n:'Xpaces bidding',
@@ -1887,8 +1887,10 @@ async function submitBuyCheckout() {
     if (ok) {
       const reserve = {pending:'order_pending',confirmed:'order_confirmed',rejected:'order_rejected'}[saved.reservationStatus];
       const payment = {not_started:'payment_not_started',paid:'payment_paid',failed:'payment_failed',refunded:'payment_refunded'}[saved.paymentStatus];
-      ok.innerHTML = tf('order_ok', {orderId:escHtml(saved.id), price:formatMoney(saved.estimatedPrice)}) + '<br>' + escHtml(reserve ? t(reserve) : '—') + ' · ' + escHtml(payment ? t(payment) : '—');
+      ok.innerHTML = tf('order_ok', {orderId:escHtml(saved.id), price:formatMoney(saved.estimatedPrice)}) + '<br>' + escHtml(reserve ? t(reserve) : '—') + ' · ' + escHtml(payment ? t(payment) : '—')
+        + `<br><button type="button" class="buy-emit" id="buy-emit" data-order="${escHtml(saved.id)}">▶ ${LANG === 'en' ? 'Air it now in Xtanco Valencia (demo)' : 'Emitir ya en Xtanco Valencia (demo)'}</button><span id="buy-emit-out"></span>`;
       ok.hidden = false;
+      document.getElementById('buy-emit')?.addEventListener('click', emitSavedOrder);
     }
     if (state) state.textContent = t('order_received');
     setStatus(tf('status_reserved', {orderId:saved.id}));
@@ -1900,6 +1902,26 @@ async function submitBuyCheckout() {
     orderSubmitting = false;
     document.querySelector('#buy-modal .buy-body')?.removeAttribute('inert');
     if (button) { button.disabled = false; button.textContent = t('buy_submit'); }
+  }
+}
+
+// «El euro que entra»: la solicitud recibida se programa en la parrilla del
+// Xpacio gemelo Xtanco Valencia (pantalla A + hilo musical). El servidor elige
+// pantallas y cápsulas; lo vendido suma en el contador de ingreso (sin cobro).
+async function emitSavedOrder(e) {
+  const btn = e.currentTarget, out = document.getElementById('buy-emit-out');
+  btn.disabled = true;
+  if (out) out.textContent = LANG === 'en' ? ' Booking the grid…' : ' Programando en parrilla…';
+  try {
+    const r = await fetch('/api/orders/emit', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: btn.dataset.order }) });
+    const d = await r.json();
+    if (!r.ok) throw Error(d.error || r.status);
+    const label = { capsula_publicitaria: LANG === 'en' ? '📺 Ad capsule on screen' : '📺 Cápsula publicitaria en pantalla', capsula_sonora: LANG === 'en' ? '🎵 Audio capsule in the music feed' : '🎵 Cápsula sonora en el hilo musical' };
+    if (out) out.innerHTML = d.emissions.map(x => `<br>${escHtml(label[x.role] || x.screen)} · ${escHtml(x.screen)} · ${escHtml(x.bandId)} · <a href="${escHtml(x.watch)}" target="_blank" rel="noopener">${LANG === 'en' ? 'watch' : 'ver'}</a>`).join('');
+    refreshRevenue();
+  } catch (err) {
+    btn.disabled = false;
+    if (out) out.textContent = (LANG === 'en' ? ' Could not air it: ' : ' No se pudo emitir: ') + err.message;
   }
 }
 
@@ -3380,6 +3402,22 @@ function renderImprPerMin() {
   ti.title = realImprSourceOk ? 'Impresiones reales del último minuto' : 'Sin datos del motor RTB';
 }
 setInterval(renderImprPerMin, 5000);
+
+// Contador de ingreso: suma real de /grid/sales de hoy en las pantallas donde
+// emite la demo. Es lo vendido en parrilla; la pasarela de pago no está activa.
+const REVENUE_SCREENS = ['xtanco-valencia-a', 'xtanco-valencia-musica'];
+async function refreshRevenue() {
+  const el = document.getElementById('t-rev'); if (!el) return;
+  const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid' }).format(new Date());
+  try {
+    const d = await (await fetch(`${PIXER}/grid/sales?screens=${REVENUE_SCREENS.join(',')}&from=${day}&to=${day}`, { cache: 'no-store' })).json();
+    if (!d || !d.ok) throw Error();
+    el.textContent = formatMoney(d.revenue);
+    el.title = `${d.count} ${LANG === 'en' ? 'passes sold today in Xtanco Valencia · not charged' : 'pases vendidos hoy en Xtanco Valencia · sin cobrar'}`;
+  } catch { el.textContent = '—'; el.title = LANG === 'en' ? 'Grid unavailable' : 'Parrilla no disponible'; }
+}
+refreshRevenue();
+setInterval(refreshRevenue, 30000);
 
 function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function renderBidFeed() {

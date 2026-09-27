@@ -1,4 +1,5 @@
 import { normalizeOrder } from '../order-model.mjs';
+import { emitOrder } from './emit.mjs';
 export { normalizeOrder } from '../order-model.mjs';
 // A received request is neither an inventory reservation nor a payment.
 const COOKIE = '__Host-cc-orders';
@@ -14,7 +15,9 @@ function publicOrder(row) {
 }
 export async function handleOrders(request, env) {
   const url = new URL(request.url);
-  if (url.pathname !== '/api/orders') return json({ error: 'not_found' }, 404);
+  const emit = url.pathname === '/api/orders/emit';
+  if (url.pathname !== '/api/orders' && !emit) return json({ error: 'not_found' }, 404);
+  if (emit && request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, { Allow: 'POST' });
   if (!['GET','POST'].includes(request.method)) return json({ error: 'method_not_allowed' }, 405, { Allow: 'GET, POST' });
   if (request.headers.get('Sec-Fetch-Site') === 'cross-site' || (request.method === 'POST' && request.headers.get('Origin') !== url.origin)) return json({ error: 'origin_not_allowed' }, 403);
   if (!env.ORDERS_DB) return json({ error: 'orders_unavailable' }, 503);
@@ -37,6 +40,16 @@ export async function handleOrders(request, env) {
       return json({ orders: rows.results.map(publicOrder) }, 200, headers);
     }
     if (!request.headers.get('Content-Type')?.startsWith('application/json')) return json({ error: 'json_required' }, 415);
+    if (emit) {
+      // Solo el dueño de la solicitud puede emitirla, y cada solicitud se emite una vez.
+      if (!env.GRID_KEY) return json({ error: 'emit_unavailable' }, 503);
+      let id; try { id = String(JSON.parse(await request.text()).id || ''); } catch { return json({ error: 'invalid_json' }, 400); }
+      const row = /^CC-[0-9a-f-]{36}$/.test(id) && await db.prepare('SELECT * FROM campaign_orders WHERE id=? AND owner_hash=?').bind(id, owner).first();
+      if (!row) return json({ error: 'order_not_found' }, 404);
+      if (row.status !== 'received') return json({ error: 'order_not_emittable' }, 409);
+      try { return json({ emissions: await emitOrder(publicOrder(row), { gridKey: env.GRID_KEY, origin: url.origin, fetchImpl: env.fetchImpl }) }, 200, headers); }
+      catch { return json({ error: 'emit_failed' }, 502); }
+    }
     if (Number(request.headers.get('Content-Length')) > MAX_BODY) return json({ error: 'body_too_large' }, 413);
     const raw = await request.text();
     if (new TextEncoder().encode(raw).length > MAX_BODY) return json({ error: 'body_too_large' }, 413);

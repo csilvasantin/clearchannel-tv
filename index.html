@@ -342,6 +342,9 @@
   .buy-legal{margin:10px 0 0;color:var(--mut);font-size:11px;line-height:1.35}
   .buy-error{margin-top:10px;color:var(--warn);font-size:12px;line-height:1.35}
   .buy-ok{border:1px solid rgba(136,255,170,.35);border-radius:10px;background:rgba(136,255,170,.08);padding:14px;color:#bfffd0;font-size:13px;line-height:1.45}
+  .buy-ok .buy-emit{margin-top:10px;cursor:pointer;border:1px solid #7dffd0;border-radius:8px;background:rgba(125,255,208,.12);color:#7dffd0;font-weight:700;padding:8px 14px;font-size:13px}
+  .buy-ok .buy-emit:disabled{opacity:.55;cursor:default}
+  .buy-ok a{color:#ffd866}
   @media (max-width:820px){
     .buy-body{grid-template-columns:1fr}
     .buy-summary{position:static}
@@ -815,6 +818,7 @@
   <div class="lt-head"><span class="pulse"></span>BIDDING LIVE</div>
   <div class="lt-row up"><span>impr/min</span><b id="t-impr">—</b></div>
   <div class="lt-row"><span data-i18n="stores">Xpaces</span><b id="t-locs">5</b></div>
+  <div class="lt-row"><span data-i18n="revenue_today" title="Vendido hoy en la parrilla de Xtanco Valencia. Sin cobro: la pasarela de pago no está activa">€ vendido hoy (sin cobrar)</span><b id="t-rev">—</b></div>
   <div class="lt-row"><span data-i18n="screens_sim" title="Estimación simulada: el catálogo no trae el nº real de pantallas por punto">pantallas (sim.)</span><b id="t-screens">—</b></div>
 </div>
 
@@ -1212,7 +1216,7 @@
     <div class="addr" id="p-addr">Calle de Santa Rosa 4 · Madrid</div>
     <div class="meta">
       <div><b id="p-surfaces">6</b><span data-i18n="meta_surfaces">surfaces</span></div>
-      <div><b id="p-impr">~1.2K</b><span data-i18n="meta_imprday">impr/día</span></div>
+      <div><b id="p-impr">~1.2K</b><span data-i18n="meta_imprday">impr/día (est.)</span></div>
       <div><b id="p-cpm">€2-€8</b><span data-i18n="meta_cpm">CPM rango</span></div>
     </div>
   </div>
