@@ -41,9 +41,13 @@
 <link rel="dns-prefetch" href="https://basemaps.cartocdn.com">
 <link rel="dns-prefetch" href="https://tiles.basemaps.cartocdn.com">
 <link rel="dns-prefetch" href="https://server.arcgisonline.com">
-<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css">
-<link rel="stylesheet" href="https://www.carlossilva.info/admira-design/contact-panel.css">
+<!-- #4566: la CSS de otros dominios ya no bloquea el primer fotograma (el vídeo de la bola tapa el mapa mientras llega) -->
+<link rel="preload" as="image" href="/assets/intro/globo-poster.jpg" fetchpriority="high">
+<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://www.carlossilva.info/admira-design/contact-panel.css" media="print" onload="this.media='all'">
+<noscript><link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet"><link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css"><link rel="stylesheet" href="https://www.carlossilva.info/admira-design/contact-panel.css"></noscript>
+<link rel="stylesheet" href="intro.css?v=4566-1">
 <script defer src="https://www.carlossilva.info/admira-design/contact-panel.js"></script>
 <!-- Descarga temprano (no bloqueante); se ejecutan al final del body, justo antes del script de init -->
 <link rel="preload" as="script" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js">
@@ -731,6 +735,23 @@
 <link rel="stylesheet" href="cenital-panel.css?v=destinations-2"></head>
 <body>
 
+<!-- Entrada rápida (#4566): vídeo de la propia bola al instante; la bola 3D lo sustituye con fundido. -->
+<div class="intro" id="intro">
+  <video class="intro-video" id="intro-video" autoplay muted loop playsinline preload="auto" poster="/assets/intro/globo-poster.jpg" aria-hidden="true">
+    <source src="/assets/intro/globo.webm" type="video/webm">
+    <source src="/assets/intro/globo.mp4" type="video/mp4">
+  </video>
+</div>
+<!-- Fuera de la capa de vídeo: así el botón y la tarjeta quedan por encima de los controles del mapa. -->
+<button type="button" class="intro-start" id="intro-start">Start demo</button>
+<section class="demo-card" id="demo-card" hidden aria-live="polite"></section>
+<script>
+(function(){var q=new URLSearchParams(location.search).get('lang'),l=q==='en'||q==='es'?q:null;
+if(!l){try{var v=localStorage.getItem('omnip-lang');if(v==='en'||v==='es')l=v;}catch(_){}}
+if(!l)l=window.ADMIRA_SITE_BRAND&&window.ADMIRA_SITE_BRAND.id==='admira'?'es':'en';
+document.getElementById('intro-start').textContent=l==='en'?'Start demo':'Empezar la demo';})();
+</script>
+
 <header>
   <span class="logo"><span class="logo-home" id="logo-home" role="button" tabindex="0" data-brand-wordmark data-i18n-title="logo_home_title" title="Volver al inicio">CLEAR·CHANNEL</span></span>
   <div class="header-controls">
@@ -1293,7 +1314,13 @@
 <script defer src="locations.js?v=yokup-20260914-1"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="app.js?v=jti-alsea-20260925-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="app.js?v=4566-1"></script><script defer src="intro.js?v=4566-1"></script>
+<script>
+// Caché de la bola (#4566): la segunda visita abre desde el navegador.
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js').catch(function(){}); });
+}
+</script>
 <script defer src="planner-ui.js?v=20260905-1"></script>
 <script type="module" src="walk-launch.mjs?v=20260905-1"></script>
 

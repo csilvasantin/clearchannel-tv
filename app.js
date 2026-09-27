@@ -2206,6 +2206,23 @@ const STYLE_RELIEVE = {
 // Vista inicial ("posición 0") — compartida por el arranque y por el reset
 // al pulsar el logo de Clear Channel.
 const HOME_VIEW = {center: [-28, 16], zoom: 2.15, pitch: 0, bearing: 0};
+// Nivel de la bola (encargo #4566): Good es ligero — imagen satélite a media
+// resolución (teselas de 256 px pintadas a 512: una cuarta parte de peticiones
+// y texturas), 1 px por píxel CSS y caché corta. Better es el detalle de
+// siempre; Best sube la nitidez en pantallas retina y la caché. Se elige solo
+// según el equipo, o a mano con ?calidad=good|better|best (se recuerda).
+const GLOBE_QUALITY = (function(){
+  const levels = ['good', 'better', 'best'];
+  const asked = new URLSearchParams(location.search).get('calidad') || new URLSearchParams(location.search).get('quality');
+  if (levels.includes(asked)) { try { localStorage.setItem('cc-globe-quality', asked); } catch(_) {} return asked; }
+  try { const saved = localStorage.getItem('cc-globe-quality'); if (levels.includes(saved)) return saved; } catch(_) {}
+  const c = navigator.connection || {};
+  const light = c.saveData || /(^|-)2g$/.test(c.effectiveType || '') || (navigator.deviceMemory || 8) <= 4
+    || (navigator.hardwareConcurrency || 8) <= 4 || matchMedia('(max-width: 760px)').matches;
+  return light ? 'good' : 'better';
+})();
+document.documentElement.dataset.globeQuality = GLOBE_QUALITY;
+if (GLOBE_QUALITY === 'good') STYLE_TIERRA.sources.esri.tileSize = 512;
 const map = new maplibregl.Map({
   container: 'map', style: STYLE_TIERRA,
   center: HOME_VIEW.center, zoom: HOME_VIEW.zoom, pitch: HOME_VIEW.pitch,
@@ -2213,8 +2230,24 @@ const map = new maplibregl.Map({
   renderWorldCopies: false,
   // Keep lower-resolution parents while detailed imagery is arriving.
   cancelPendingTileRequestsWhileZooming: false,
-  maxTileCacheSize: 384,
+  maxTileCacheSize: {good: 128, better: 384, best: 768}[GLOBE_QUALITY],
+  ...(GLOBE_QUALITY === 'good' ? {pixelRatio: 1} : GLOBE_QUALITY === 'best' ? {pixelRatio: Math.max(2, devicePixelRatio || 1)} : {}),
 });
+// Aviso para la entrada en vídeo (intro.js): la bola ya pinta el mundo entero.
+// Con el giro continuo puede no llegar nunca un «idle»: se mira en cada render,
+// y hace falta al menos una tesela satélite pintada (sin teselas, «cargadas» es trivial).
+{
+  let esriTiles = 0;
+  const countTile = e => { if (e.sourceId === 'esri' && e.tile) esriTiles++; };
+  const ready = () => {
+    if (!esriTiles || !map.isStyleLoaded() || !map.areTilesLoaded()) return;
+    map.off('render', ready); map.off('sourcedata', countTile);
+    document.documentElement.dataset.globeReady = '1';
+    document.dispatchEvent(new CustomEvent('cc:globe-ready'));
+  };
+  map.on('sourcedata', countTile);
+  map.on('render', ready);
+}
 map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-left');
 const tourCamera = TourMap.createTourCamera(map);
 let circuitOverview=null;
