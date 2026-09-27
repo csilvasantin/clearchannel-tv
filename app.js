@@ -234,7 +234,7 @@ const I18N = {
     ed_kpi_plays:'PASES HOY', ed_kpi_screens:'PANTALLAS EN ANTENA', ed_kpi_pieces:'PIEZAS EMITIDAS', ed_kpi_rate:'PASES / MIN',
     ed_radar_title:'RADAR DE CIRCUITOS · RED FÍSICA', ed_awaiting:'◌ ESPERANDO SEÑAL', ed_mix_type:'MEZCLA POR TIPO', ed_ranking:'CIRCUITOS · RANKING', ed_feed:'▸ FEED DE EMISIÓN',
     ed_nolink:'⚠ SIN ENLACE', ed_linked:'◉ RED ENLAZADA · {n} XPACIOS', ed_no_emission:'— sin emisión —', ed_no_circuits:'— sin circuitos activos —', ed_ticker_waiting:'esperando primeras emisiones del canal…',
-    stores:'Xpaces', screens:'pantallas',
+    stores:'Xpaces', screens:'pantallas', screens_sim:'pantallas (sim.)',
     select_circuit:'Seleccionar circuito', select_target:'Seleccionar target',
     lang_toggle:'ENG', lang_toggle_aria:'Cambiar a inglés',
     circuit_scope_label:'Alcance del circuito',
@@ -367,7 +367,7 @@ const I18N = {
     ed_kpi_plays:'PLAYS TODAY', ed_kpi_screens:'SCREENS ON AIR', ed_kpi_pieces:'PIECES AIRED', ed_kpi_rate:'PLAYS / MIN',
     ed_radar_title:'CIRCUITS RADAR · PHYSICAL NETWORK', ed_awaiting:'◌ AWAITING SIGNAL', ed_mix_type:'MIX BY TYPE', ed_ranking:'CIRCUITS · RANKING', ed_feed:'▸ BROADCAST FEED',
     ed_nolink:'⚠ NO LINK', ed_linked:'◉ NETWORK LINKED · {n} XPACES', ed_no_emission:'— no broadcast —', ed_no_circuits:'— no active circuits —', ed_ticker_waiting:'awaiting the channel\'s first broadcasts…',
-    stores:'Xpaces', screens:'screens',
+    stores:'Xpaces', screens:'screens', screens_sim:'screens (sim.)',
     select_circuit:'Select circuit', select_target:'Select target',
     lang_toggle:'ESP', lang_toggle_aria:'Switch to Spanish',
     circuit_scope_label:'Circuit scope',
@@ -3366,7 +3366,20 @@ function renderBidFeedEmpty() {
 // decide real no devuelve demanda para esa surface.
 const ADVERTISERS = ['Coca-Cola','El Corte Inglés','BBVA','Iberia','Estrella Galicia','Lotería Nac','Vapeo Pro','Nestlé','Sanitas','Telefónica','Repsol','Mahou','Mercadona','Google'];
 let bidFeedItems = [];
-let globalImprCount = 0;
+// BIDDING LIVE · impr/min: solo eventos reales (decisiones de /rtb/feed y acks
+// de pantallas mapeadas en /signage/feed) con marca de tiempo del último minuto.
+// Sin fuente alcanzable se muestra «—», nunca una cifra estimada.
+let realImprTs = [];
+let realImprSourceOk = false;
+function noteRealImpr(ts) { realImprTs.push(Number(ts) || Date.now()); }
+function renderImprPerMin() {
+  const cut = Date.now() - 60000;
+  realImprTs = realImprTs.filter(ts => ts >= cut);
+  const ti = document.getElementById('t-impr'); if (!ti) return;
+  ti.textContent = realImprSourceOk ? realImprTs.length.toLocaleString('es') : '—';
+  ti.title = realImprSourceOk ? 'Impresiones reales del último minuto' : 'Sin datos del motor RTB';
+}
+setInterval(renderImprPerMin, 5000);
 
 function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function renderBidFeed() {
@@ -3410,14 +3423,17 @@ async function pollRtbFeed() {
     if (!r.ok) return;
     const d = await r.json();
     const decisions = Array.isArray(d && d.decisions) ? d.decisions : [];
+    realImprSourceOk = true;
     if (!rtbBootstrapped) {
       // Primera carga: sembramos el feed con las últimas reales para que se vea
       // actividad al abrir, marcándolas como vistas (no las volvemos a inyectar).
       const seed = decisions.slice(0, 10);
       seed.forEach(x => rtbSeen.add(rtbKey(x)));
       bidFeedItems = seed.map(decisionToRow);   // ya vienen más recientes primero
+      seed.forEach(x => noteRealImpr(x.ts));     // renderImprPerMin descarta las de hace >60 s
       rtbBootstrapped = true;
       renderBidFeed();
+      renderImprPerMin();
       return;
     }
     // Prepend solo las nuevas, en orden cronológico (viejas→nuevas) para que la
@@ -3430,11 +3446,11 @@ async function pollRtbFeed() {
       rtbSeen.add(k);
       bidFeedItems.unshift(decisionToRow(dec));
       if (bidFeedItems.length > 14) bidFeedItems.pop();
-      globalImprCount++;
+      noteRealImpr(dec.ts);
     }
     if (rtbSeen.size > 600) { const arr = Array.from(rtbSeen); rtbSeen = new Set(arr.slice(-400)); }
     renderBidFeed();
-    const ti = document.getElementById('t-impr'); if (ti) ti.textContent = globalImprCount.toLocaleString('es');
+    renderImprPerMin();
   } catch { /* motor dormido — conservamos las últimas conocidas, sin inventar */ }
 }
 pollRtbFeed();
@@ -3580,28 +3596,9 @@ document.getElementById('surfaces').addEventListener('click', (e) => {
   launchWinnerToTwin(parseInt(btn.dataset.surfIdx, 10), btn);
 });
 
-// Background ticker — sigue subiendo aunque no haya panel abierto
-function backgroundTick() {
-  // Ritmo agregado de toda la red (sumar live surfaces de TODAS las locs)
-  const totalLive = LOCATIONS.reduce((a,l) => a + l.surfaces.filter(s=>s.status==='live').length, 0);
-  // ~ 0.7 impresiones por surface live por segundo, con jitter
-  const inc = Math.round(totalLive * (0.4 + Math.random()*0.7));
-  globalImprCount += inc;
-  document.getElementById('t-impr').textContent = globalImprCount.toLocaleString('es');
-}
-setInterval(backgroundTick, 1500);
-
 // ─── Métricas reales del worker pixer-eleven ──────────────────────
 async function loadRealMetrics() {
   updateBiddingLiveCounters();
-  try {
-    const f = await fetch(PIXER + '/signage/feed?limit=50', {cache:'no-cache'}).then(r => r.json());
-    if (f && Array.isArray(f.items) && f.items.length) {
-      // Bootstrap del contador con tamaño real del feed multiplicado por un factor de exposición
-      globalImprCount = Math.max(globalImprCount, f.items.length * 23);
-      document.getElementById('t-impr').textContent = globalImprCount.toLocaleString('es');
-    }
-  } catch {}
 }
 loadRealMetrics();
 // Re-fetch cada 30s para mantener el ticker honesto
@@ -3643,9 +3640,8 @@ function handlePixerItem(item) {
   if (activeLocation && activeLocation.id === match.loc.id) {
     spawnRealBid(match.loc, match.surf, item);
   }
-  // Cualquier item real cuenta para el ticker global, haya panel abierto o no.
-  globalImprCount++;
-  document.getElementById('t-impr').textContent = globalImprCount.toLocaleString('es');
+  // Cualquier ack real de una pantalla mapeada cuenta para impr/min, haya panel abierto o no.
+  if (item.acked_at) { noteRealImpr(item.acked_at); renderImprPerMin(); }
 }
 
 async function pollPixerFeed() {
