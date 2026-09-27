@@ -1,7 +1,7 @@
 // «El euro que entra» (encargo #4505 · FLT-101121): una solicitud recibida se
 // programa en la parrilla real del Xpacio gemelo Xtanco Valencia. Pantalla A
 // emite la cápsula publicitaria (admira.tv/canal.html) y el hilo musical del
-// gemelo la cápsula sonora. /grid/sales cuenta lo vendido; no hay cobro.
+// gemelo la cápsula sonora (tipo audio: canal.html trata «music» como imagen). /grid/sales cuenta lo vendido; no hay cobro.
 // Pantallas y creativos los fija el servidor: el comprador no elige a dónde se emite.
 const GRID = 'https://api.admira.store';
 export const EMIT_TARGETS = [
@@ -9,8 +9,8 @@ export const EMIT_TARGETS = [
     creative: origin => ({ type: 'image', url: origin + '/assets/demo/capsula-clearchannel-xtanco.png', name: 'Cápsula Clear Channel × Xtanco' }),
     watch: 'https://admira.tv/canal.html?screen=xtanco-valencia-a' },
   { screen: 'xtanco-valencia-musica', role: 'capsula_sonora', category: 'publicidad', paid: false,
-    creative: () => ({ type: 'music', url: 'https://api.admira.store/stock/asset/1788556467836-r1j7ic?v=1685901', name: 'Vida mía (versión Admira)' }),
-    watch: 'https://www.xpaceos.com/xpacios/xtanco-valencia/' },
+    creative: () => ({ type: 'audio', url: 'https://api.admira.store/stock/asset/1788556467836-r1j7ic?v=1685901', name: 'Vida mía (versión Admira)' }),
+    watch: 'https://admira.tv/canal.html?screen=xtanco-valencia-musica' },
 ];
 const madridDate = (d = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
 
