@@ -9,7 +9,8 @@
 //                                // Si está, los items que llegan a esos screens
 //                                // se inyectan como bids LIVE en el feed.
 //   } ],
-//   twin?:<string>      // opcional. URL del gemelo de esta tienda; si no, cae a TWIN_BASE+&loc=<id>.
+//   twin?:<string>      // legado: URL de tour o gemelo; no habilita por sí sola «Ver Gemelo Digital».
+//   xpaceUrl?:<string>  // asociación explícita HTTPS con xpaceos.com; '' desasocia un valor heredado.
 //   // ── Config del Digital Twin (la lee game.html vía ?loc= → window.STORE_CFG) ──
 //   employees?:[{ name, role }]  // roster real. role: 'cajero'|'repositor'|'azafata'|
 //                                // 'manager'|'dj' (o índice 0-4). El twin usa este roster.
@@ -1036,6 +1037,7 @@ window.OMNIP_LOCATIONS_DEFAULT = [
     ],
     music:'lounge', cameras:true,
     twin:'https://www.pixeria.com/xpacios/xtanco-barcelona/',
+    xpaceUrl:'https://www.xpaceos.com/xpacios/xtanco-barcelona/',
     twinOnClick:true,
     surfaces:[
       { name:'LED Frontal',       desc:'Pantalla principal sobre el mostrador · 1920×1080',  status:'live', impr:680, cpm:'€8', surface:'pantalla',  screen:'xtanco-barcelona-led-frontal' },
@@ -1134,6 +1136,7 @@ window.OMNIP_LOCATIONS_EXTRA = [
     addr:'Carrer de Colón 22 · València · 46004 · Spain', coords:[-0.3739, 39.4685],
     music:'lounge', cameras:true,
     twin:'https://www.pixeria.com/xpacios/xtanco-valencia/',
+    xpaceUrl:'https://www.xpaceos.com/xpacios/xtanco-valencia/',
     // InstoreMedia · gemelo digital: el botón «Ver Gemelo Digital» (sin flyLabel, mantiene
     // su rótulo) vuela al Xpacio admira-xp del gemelo XpaceOS.
     fly:'https://www.xpaceos.com/admira-xp/?play=1',
@@ -1159,6 +1162,7 @@ window.OMNIP_LOCATIONS_EXTRA = [
     circuit:'alsea_starbucks', network:'Alsea', city:'Barcelona', province:'Barcelona',
     music:'lounge', cameras:true,
     twin:'https://www.xpaceos.com/xpacios/cafebreria/',
+    xpaceUrl:'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=cafebreria-barcelona',
     fly:'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=cafebreria-barcelona',
     twinOnClick:true,
     surfaces:[
@@ -1355,16 +1359,18 @@ window.mergeOmnipLocations = function(base, extra) {
   // Enlaces de "vuelo" curados en el bundle (fly/flyLabel) mandan sobre la fuente
   // remota/local: se superponen por id para que el KV/localStorage no los pise
   // (p.ej. el botón «AI HARNESS» de News & Coffee vive en el bundle, no en la KV).
+  // xpaceUrl es editable: la semilla sólo completa asociaciones ausentes; el valor
+  // remoto/local explícito, incluido vacío para desasociar, tiene prioridad.
   try {
     const flyById = new Map();
     [window.OMNIP_LOCATIONS_DEFAULT, window.OMNIP_LOCATIONS_EXTRA].forEach(src => {
       (src || []).forEach(l => {
-        if (l && l.id && l.fly) flyById.set(l.id, { fly: l.fly, flyLabel: l.flyLabel, interiorStatus:l.interiorStatus, interiorName:l.interiorName, interiorUrl:l.interiorUrl });
+        if (l && l.id && (l.fly || Object.prototype.hasOwnProperty.call(l, 'xpaceUrl'))) flyById.set(l.id, { fly: l.fly, flyLabel: l.flyLabel, xpaceUrl:l.xpaceUrl, hasXpaceUrl:Object.prototype.hasOwnProperty.call(l, 'xpaceUrl'), interiorStatus:l.interiorStatus, interiorName:l.interiorName, interiorUrl:l.interiorUrl });
       });
     });
     if (flyById.size) out.forEach(l => {
       const f = l && l.id && flyById.get(l.id);
-      if (f) { if(f.interiorStatus){l.interiorStatus=f.interiorStatus;l.interiorName=f.interiorName;l.interiorUrl=f.interiorUrl;} l.fly = f.fly; if (f.flyLabel != null) l.flyLabel = f.flyLabel; }
+      if (f) { if(f.interiorStatus){l.interiorStatus=f.interiorStatus;l.interiorName=f.interiorName;l.interiorUrl=f.interiorUrl;} if (f.fly) l.fly = f.fly; if (f.flyLabel != null) l.flyLabel = f.flyLabel; if (f.hasXpaceUrl && !Object.prototype.hasOwnProperty.call(l, 'xpaceUrl')) l.xpaceUrl = f.xpaceUrl; }
     });
   } catch (e) {}
   return out;

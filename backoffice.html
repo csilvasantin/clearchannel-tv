@@ -9,7 +9,7 @@
 <meta name="description" content="Backoffice para dar de alta gemelos digitales (Xpaces + surfaces) en el mapa de Clear Channel.">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script src="locations.js?v=circuits-20260907-2"></script>
+<script src="locations.js?v=20260928-xpace-1"></script>
 <script src="https://accounts.google.com/gsi/client" async></script>
 <style>
   :root{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--warn:#ff8866;--danger:#ff4f5e;--card:#0a1620;--card2:#0d1c28;--line:rgba(120,243,255,.18)}
@@ -57,6 +57,14 @@
   .gate .gfoot{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);color:var(--mut);font-size:11px;text-align:center}
   .gate .gfoot a{color:var(--brand)}
 
+  [hidden]{display:none!important}
+  .demo-access{padding:20px 28px;border-bottom:1px solid var(--line)}
+  .demo-access h2{font-size:18px;margin:0 0 6px}
+  .demo-access p{color:var(--mut);font-size:13px}
+  .demo-cards{display:flex;flex-wrap:wrap;gap:14px}
+  .demo-card{flex:1;min-width:240px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .demo-card h3{margin:0 0 14px}
+  .demo-card a{display:inline-block;color:var(--brand);margin:0 18px 8px 0}
   .shell{display:grid;grid-template-columns:280px 1fr 380px;gap:0;height:calc(100vh - 65px);min-height:0}
   @media(max-width:1100px){.shell{grid-template-columns:240px 1fr 320px}}
   @media(max-width:880px){.shell{grid-template-columns:1fr;height:auto}}
@@ -177,7 +185,7 @@
   <div class="gbox">
     <div class="glogo">CLEAR<span class="dot">·</span>CHANNEL</div>
     <h2 data-i18n="gate_title">Backoffice</h2>
-    <p class="gsub" data-i18n-html="gate_sub">Acceso restringido a cuentas <b>@admira.com</b>. Inicia sesión con Google para gestionar <b>Clear Channel</b>.</p>
+    <p class="gsub" data-i18n-html="gate_sub">Inicia sesión con Google. Gestión para <b>@admira.com</b> y demos para las cuentas autorizadas de Carlos.</p>
     <div id="g-signin" style="display:flex;justify-content:center;margin:8px 0 4px"></div>
     <div class="gerr" id="g-err"></div>
     <div class="gfoot" data-i18n-html="gate_foot">¿Vienes a mirar el mapa? <a href="index.html">Ir al mapa público →</a></div>
@@ -191,7 +199,7 @@
     <a href="index.html" data-i18n="nav_public_map">Mapa público</a>
     <a href="about.html" data-i18n="nav_rtb">Concepto RTB</a>
     <a href="../xpace-os/">Xpace OS</a>
-    <a href="../01.-AdmiraXperience-Game/" target="_blank" rel="noopener">↗ Digital Twin</a>
+    <a href="#demo-access" id="nav-demos" hidden data-i18n="nav_demos">Mis demos</a>
     <div class="lang-switch" id="lang-switch" role="group" aria-label="Idioma / Language">
       <button type="button" class="lang-btn" data-lang="en">EN</button>
       <button type="button" class="lang-btn" data-lang="es">ES</button>
@@ -201,7 +209,13 @@
   </nav>
 </header>
 
-<div class="shell">
+<section class="demo-access" id="demo-access" hidden aria-labelledby="demo-title">
+  <h2 id="demo-title" data-i18n="demo_title">Demos JTI y Alsea</h2>
+  <p id="demo-account"></p>
+  <div class="demo-cards" id="demo-cards"></div>
+  <p data-i18n="demo_note">Escenarios de demostración. Abrir el gemelo no confirma emisión en dispositivos físicos.</p>
+</section>
+<div class="shell" id="catalog-shell" hidden>
 
   <!-- ── Lista de tiendas ── -->
   <aside class="bo-list">
@@ -296,6 +310,8 @@
 
       <fieldset>
         <legend data-i18n="legend_twin">Gemelo Digital</legend>
+        <div class="row"><label for="f-xpace" data-i18n="label_xpace">Xpacio asociado</label><input id="f-xpace" type="url" placeholder="https://www.xpaceos.com/xpacios/…"></div>
+        <p class="mini-note" data-i18n="xpace_note">URL del Xpacio en XpaceOS. Déjala vacía para ocultar el botón de gemelo digital.</p>
         <div class="row"><label for="f-music" data-i18n="label_music">Hilo musical</label><input id="f-music" type="text" placeholder="lounge · techno · pop · flamenco · seoul · trap"></div>
         <div class="row"><label for="f-cameras" data-i18n="label_cameras">Cámaras</label><label style="display:flex;align-items:center;gap:8px;font-weight:normal;cursor:pointer"><input id="f-cameras" type="checkbox" style="width:auto"> <span data-i18n="cameras_note">El punto tiene cámaras (LiveCam)</span></label></div>
         <div class="row" style="align-items:flex-start"><label for="f-employees" data-i18n="label_employees">Empleados</label><textarea id="f-employees" rows="4" placeholder="Un empleado por línea: Nombre, rol&#10;Marta, cajero&#10;Jordi, repositor&#10;Núria, azafata&#10;Pau, manager" style="flex:1;min-width:0;font-family:inherit;font-size:13px;line-height:1.5;padding:8px 10px;border-radius:8px;background:rgba(2,8,13,.6);color:var(--ink);border:1px solid var(--line);resize:vertical"></textarea></div>
@@ -354,13 +370,15 @@
   </div>
 </div>
 
+<script src="xpace-link.js?v=20260928-xpace-1"></script>
 <script>
 // ─── i18n (comparte idioma con la portada vía localStorage omnip-lang) ──
 const I18N = {
   es: {
     bo_sub:'/ backoffice',
+    nav_demos:'Mis demos', demo_title:'Demos JTI y Alsea', demo_map:'Ver ficha', demo_tour:'Tour DooH', demo_twin:'Ver Gemelo Digital ↗', demo_note:'Escenarios de demostración. Abrir el gemelo no confirma emisión en dispositivos físicos.', label_xpace:'Xpacio asociado', xpace_note:'URL del Xpacio en XpaceOS. Déjala vacía para ocultar el botón de gemelo digital.',
     gate_title:'Backoffice',
-    gate_sub:'Acceso restringido a cuentas <b>@admira.com</b>. Inicia sesión con Google para gestionar <b>Clear Channel</b>.',
+    gate_sub:'Inicia sesión con Google. Gestión para <b>@admira.com</b> y demos para las cuentas autorizadas de Carlos.',
     remember:'Recordar en este navegador', enter:'Entrar',
     gate_foot:'¿Vienes a mirar el mapa? <a href="index.html">Ir al mapa público →</a>',
     nav_target:'Target Model', nav_public_map:'Mapa público', nav_rtb:'Concepto RTB', logout:'Logout',
@@ -402,8 +420,9 @@ const I18N = {
   },
   en: {
     bo_sub:'/ backoffice',
+    nav_demos:'My demos', demo_title:'JTI and Alsea demos', demo_map:'View location', demo_tour:'DooH Tour', demo_twin:'View Digital Twin ↗', demo_note:'Demo scenarios. Opening the twin does not confirm playback on physical devices.', label_xpace:'Linked Xpace', xpace_note:'Xpace URL on XpaceOS. Leave empty to hide the digital twin button.',
     gate_title:'Backoffice',
-    gate_sub:'Restricted to <b>@admira.com</b> accounts. Sign in with Google to manage <b>Clear Channel</b>.',
+    gate_sub:'Sign in with Google. Management for <b>@admira.com</b> and demos for Carlos’s authorized accounts.',
     remember:'Remember on this browser', enter:'Sign in',
     gate_foot:'Here to see the map? <a href="index.html">Go to the public map →</a>',
     nav_target:'Target Model', nav_public_map:'Public map', nav_rtb:'RTB concept', logout:'Logout',
@@ -460,16 +479,17 @@ function setLang(lang){
   try { localStorage.setItem('omnip-lang', LANG); } catch(_){}
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === LANG));
   applyI18n();
+  renderDemoAccess();
   try { if (typeof renderList === 'function') renderList(); } catch(_){}
   try { if (typeof refreshBadge === 'function') refreshBadge(); } catch(_){}
 }
 
-// ─── Login gate · Sign in with Google (solo @admira.com) ────────────
-// La seguridad real la impone el worker omnipublicity-api: verifica la
-// firma del ID token, aud=GOOGLE_CLIENT_ID y hd/email=admira.com. Aquí
-// el gate es la capa de UX.
+// ─── Google login: verified server-side session and scoped demo access ────
+// /api/demo-session verifies Google identity and demo permissions.
+// Publishing still requires the independent omnipublicity-api write authorization.
 const GOOGLE_CLIENT_ID = '861856772040-quq6ut76k4mqj3fdq87h6g6caht3nm4l.apps.googleusercontent.com';
-const ALLOWED_DOMAIN = 'admira.com';
+let verifiedSession = null;
+let sessionExpiryTimer;
 const GTOK_KEY = 'omnip-bo-gtoken';
 
 const gate = document.getElementById('gate');
@@ -497,30 +517,53 @@ function storedGoogle() {
 function getGoogleToken() { const g = storedGoogle(); return g ? g.token : null; }
 function googleEmail() { const g = storedGoogle(); return g ? g.email : ''; }
 function isAuthed() {
-  const g = storedGoogle();
-  return !!(g && String(g.email||'').toLowerCase().endsWith('@'+ALLOWED_DOMAIN));
+  return !!(verifiedSession && verifiedSession.expiresAt > Date.now());
+}
+function renderDemoAccess() {
+  const demos = isAuthed() ? verifiedSession.demos : [];
+  document.getElementById('demo-access').hidden = !demos.length;
+  document.getElementById('nav-demos').hidden = !demos.length;
+  document.getElementById('demo-account').textContent = demos.length ? verifiedSession.email : '';
+  document.getElementById('demo-cards').innerHTML = demos.map(d => {
+    const mapUrl = 'index.html?lang=' + LANG + '&locationId=' + encodeURIComponent(d.locationId);
+    const tourUrl = 'index.html?lang=' + LANG + '&circuit=' + encodeURIComponent(d.circuit) + '&tour=1';
+    return `<article class="demo-card"><h3>${escHtml(d.title)}</h3><a href="${mapUrl}">${t('demo_map')}</a><a href="${tourUrl}">${t('demo_tour')}</a><a href="${escHtml(d.twinUrl)}" target="_blank" rel="noopener">${t('demo_twin')}</a></article>`;
+  }).join('');
+}
+async function verifySession(token) {
+  const response = await fetch('/api/demo-session', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, cache: 'no-store' });
+  if (!response.ok) throw new Error(response.status === 503 ? 'verification_unavailable' : 'unauthorized');
+  verifiedSession = await response.json();
+  try { localStorage.setItem(GTOK_KEY, JSON.stringify({ token, email: verifiedSession.email })); } catch {}
+  gate.classList.add('hidden');
+  document.getElementById('catalog-shell').hidden = !verifiedSession.canManageCatalog;
+  document.getElementById('badge-mode').hidden = !verifiedSession.canManageCatalog;
+  renderDemoAccess();
+  clearTimeout(sessionExpiryTimer);
+  sessionExpiryTimer = setTimeout(() => { clearAuth(); gate.classList.remove('hidden'); }, Math.max(0, verifiedSession.expiresAt - Date.now()));
+  if (verifiedSession.canManageCatalog) await bootBackoffice();
 }
 function clearAuth() {
+  verifiedSession = null;
+  clearTimeout(sessionExpiryTimer);
+  document.getElementById('catalog-shell').hidden = true;
+  renderDemoAccess();
   try { localStorage.removeItem(GTOK_KEY); sessionStorage.removeItem(GTOK_KEY); } catch {}
   try { if (window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect(); } catch {}
 }
 
 // Callback de Google Identity Services tras login.
-function onGoogleCredential(resp) {
+async function onGoogleCredential(resp) {
   const token = resp && resp.credential;
-  const pl = token ? parseJwt(token) : null;
-  if (!pl) { gErr.textContent = (LANG==='en'?'Google sign-in error':'Error de acceso con Google'); return; }
-  const email = String(pl.email || '').toLowerCase();
-  const okDomain = (String(pl.hd||'').toLowerCase() === ALLOWED_DOMAIN) || email.endsWith('@'+ALLOWED_DOMAIN);
-  if (!okDomain || pl.email_verified === false) {
-    gErr.textContent = (LANG==='en'?'Only @':'Solo cuentas @') + ALLOWED_DOMAIN;
-    try { localStorage.removeItem(GTOK_KEY); sessionStorage.removeItem(GTOK_KEY); google.accounts.id.disableAutoSelect(); } catch {}
-    return;
+  if (!token) return;
+  gErr.textContent = LANG === 'en' ? 'Verifying access…' : 'Verificando acceso…';
+  try { await verifySession(token); gErr.textContent = ''; }
+  catch (error) {
+    clearAuth();
+    gErr.textContent = error.message === 'verification_unavailable'
+      ? (LANG === 'en' ? 'Verification unavailable. Try signing in again.' : 'No se pudo verificar el acceso. Vuelve a intentarlo.')
+      : (LANG === 'en' ? 'Account not authorized or session expired. Sign in again.' : 'Cuenta no autorizada o sesión caducada. Vuelve a entrar con Google.');
   }
-  try { localStorage.setItem(GTOK_KEY, JSON.stringify({ token, email })); } catch {}
-  gErr.textContent = '';
-  gate.classList.add('hidden');
-  bootBackoffice();
 }
 
 function initGoogleGate() {
@@ -529,7 +572,6 @@ function initGoogleGate() {
     google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
       callback: onGoogleCredential,
-      hd: ALLOWED_DOMAIN,
       auto_select: true,
       cancel_on_tap_outside: false,
     });
@@ -555,7 +597,7 @@ let pendingPin = false;
 let booted = false;
 
 async function bootBackoffice() {
-  if (booted) return;
+  if (!isAuthed() || !verifiedSession.canManageCatalog || booted) return;
   booted = true;
   // Arranque sincrónico para no esperar al worker.
   locations = window.loadOmnipLocations().map(l => JSON.parse(JSON.stringify(normalizeLocation(l))));
@@ -640,6 +682,7 @@ function promptApiToken(reason) {
 
 // ─── Publicar al worker ────────────────────────────────────────────
 async function publishToWorker() {
+  if (!isAuthed() || !verifiedSession.canManageCatalog) return;
   if (!locations.length) { showToast('Catálogo vacío', 'err'); return; }
   let token = getGoogleToken() || getApiToken();
   if (!token) {
@@ -876,6 +919,7 @@ function editLocation(idx) {
   $('f-addr').value = loc.addr || '';
   $('f-lat').value = loc.coords ? loc.coords[1] : '';
   $('f-lng').value = loc.coords ? loc.coords[0] : '';
+  $('f-xpace').value = Object.prototype.hasOwnProperty.call(loc, 'xpaceUrl') ? loc.xpaceUrl : (window.XpaceLinks?.associationUrl(loc) || '');
   $('f-music').value = loc.music || '';
   $('f-cameras').checked = (loc.cameras !== false); // por defecto con cámaras
   $('f-employees').value = employeesToText(loc.employees);
@@ -903,6 +947,7 @@ function newLocation() {
   $('f-addr').value = '';
   $('f-lat').value = loc.coords[1];
   $('f-lng').value = loc.coords[0];
+  $('f-xpace').value = '';
   $('f-music').value = '';
   $('f-cameras').checked = true;
   $('f-employees').value = '';
@@ -979,12 +1024,14 @@ function readForm() {
   const emp = parseEmployees($('f-employees').value, prev && prev.employees);
   if (emp.length) loc.employees = emp;
   else delete loc.employees;
+  loc.xpaceUrl = $('f-xpace').value.trim();
   // Preserva el twin propio si la tienda lo tenía.
   if (prev && prev.twin) loc.twin = prev.twin;
   return normalizeLocation(loc);
 }
 
 function validateLocation(loc, isNew) {
+  if (loc.xpaceUrl && !window.XpaceLinks?.validXpaceUrl(loc.xpaceUrl)) return LANG === 'en' ? 'Use a specific HTTPS XpaceOS URL.' : 'Usa una URL HTTPS de un Xpacio concreto de XpaceOS.';
   if (!loc.id) return 'El id es obligatorio.';
   if (!/^[a-z0-9-]+$/.test(loc.id)) return 'El id solo admite minúsculas, números y guiones.';
   if (!loc.name) return 'El nombre es obligatorio.';
@@ -1306,13 +1353,11 @@ $('btn-token').addEventListener('click', () => promptApiToken('Editar API token 
 // ─── Init ──────────────────────────────────────────────────────────
 // El boot real (locations, map, list) vive en bootBackoffice() y solo
 // se dispara tras autenticar correctamente. Si la auth ya está en
-// localStorage, levantamos sesión inmediatamente y saltamos el gate.
+// localStorage, la volvemos a verificar en el servidor antes de abrir el gate.
 // Esta comprobación tiene que ir AL FINAL para que las let de arriba
 // (locations, booted, ...) ya estén fuera de la TDZ cuando bootBackoffice corra.
-if (isAuthed()) {
-  gate.classList.add('hidden');
-  bootBackoffice();
-}
+const existingGoogle = storedGoogle();
+if (existingGoogle) onGoogleCredential({ credential: existingGoogle.token });
 
 // ─── Selector de idioma EN/ES (comparte preferencia con la portada) ──
 document.querySelectorAll('#lang-switch .lang-btn').forEach(btn => {

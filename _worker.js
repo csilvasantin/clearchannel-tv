@@ -1,4 +1,5 @@
 import { handleOrders } from './server/orders.mjs';
+import { handleDemoSession } from './server/demo-session.mjs';
 
 const ADMIRA_HOST = /(^|\.)admira\.app$/i;
 
@@ -74,6 +75,7 @@ function admiraRewriter(pathname) {
 
 export default {
   async fetch(request, env) {
+    if (new URL(request.url).pathname === '/api/demo-session') return handleDemoSession(request);
     if (new URL(request.url).pathname.startsWith('/api/orders')) return handleOrders(request, env);
     var url = new URL(request.url);
     if (ADMIRA_HOST.test(url.hostname) && ADMIRA_MCP_FILES[url.pathname]) {
