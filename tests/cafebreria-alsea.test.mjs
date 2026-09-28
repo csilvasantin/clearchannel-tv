@@ -16,9 +16,10 @@ const cafe = win.OMNIP_LOCATIONS_EXTRA.find(l => l.id === 'cafebreria-barcelona'
 test('la Cafebrería está en el catálogo con su gemelo y superficies', () => {
   assert.ok(cafe, 'cafebreria-barcelona en OMNIP_LOCATIONS_EXTRA');
   assert.deepEqual([...cafe.coords], [2.15979, 41.39574]);
-  assert.equal(cafe.twin, 'https://www.xpaceos.com/xpacios/cafebreria/');
-  assert.equal(cafe.xpaceUrl, 'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=cafebreria-barcelona');
-  assert.equal(cafe.fly, 'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=cafebreria-barcelona');
+  assert.equal(cafe.twin, 'https://www.pixeria.com/stock.html?type=xpaces&highlight=1790375438696-1ladz7');
+  assert.equal(cafe.fly, 'https://www.pixeria.com/stock.html?type=xpaces&highlight=1790375438696-1ladz7');
+  assert.equal(cafe.flyLabel, 'Ver Gemelo Digital ↗');
+  assert.equal(Object.prototype.hasOwnProperty.call(cafe, 'xpaceUrl'), false);
   assert.equal(cafe.twinOnClick, true);
   assert.ok(cafe.surfaces.length >= 6);
   cafe.surfaces.filter(s => s.screen).forEach(s => assert.match(s.screen, /^cafebreria-barcelona-[a-z0-9-]+$/));

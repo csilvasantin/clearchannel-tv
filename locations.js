@@ -1161,9 +1161,12 @@ window.OMNIP_LOCATIONS_EXTRA = [
     addr:'Passeig de Gràcia 103 · Barcelona · 08008 · Spain', coords:[2.15979, 41.39574],
     circuit:'alsea_starbucks', network:'Alsea', city:'Barcelona', province:'Barcelona',
     music:'lounge', cameras:true,
-    twin:'https://www.xpaceos.com/xpacios/cafebreria/',
-    xpaceUrl:'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=cafebreria-barcelona',
-    fly:'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=cafebreria-barcelona',
+    // Gemelo = la Cafebrería de los consejeros en el visor Xpaces de Pixeria (GLB de Trinity con
+    // estantería de libros Blinkist/Casa del Libro/Wallapop, vinilos, tele y capa ITIL 8/16/32/64).
+    // Pide login de Pixeria, como xtanco-valencia. Orden de Carlos 28-09-2026. El Good de 8 bits
+    // sigue en xpaceos.com/xpacios/cafebreria/. Sin xpaceUrl: el botón es una acción propia (flyLabel).
+    twin:'https://www.pixeria.com/stock.html?type=xpaces&highlight=1790375438696-1ladz7',
+    fly:'https://www.pixeria.com/stock.html?type=xpaces&highlight=1790375438696-1ladz7', flyLabel:'Ver Gemelo Digital ↗',
     twinOnClick:true,
     surfaces:[
       { name:'Menu board',                   desc:'Tríptico de pantallas sobre la barra · carta, maridajes café+libro y promos · 3×1080×1920', status:'live',  impr:520, cpm:'€8', surface:'pantalla',   screen:'cafebreria-barcelona-menu-board' },
