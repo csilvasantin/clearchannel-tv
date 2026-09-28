@@ -2593,7 +2593,11 @@ function addLocationsLayer() {
     const id = e.features[0].properties.id;
     const loc = LOC_BY_ID.get(id);
     if (!loc) return;
-    if (loc.twinOnClick && (loc.fly || loc.twin)) { window.open(loc.fly || loc.twin, '_blank', 'noopener'); }
+    // An explicit association (including removal) also controls automatic opening.
+    // Preserve independent legacy tours such as Matterport when not migrated.
+    const twinTarget = Object.prototype.hasOwnProperty.call(loc, 'xpaceUrl')
+      ? window.XpaceLinks?.associationUrl(loc) : (loc.fly || loc.twin);
+    if (loc.twinOnClick && twinTarget) { window.open(twinTarget, '_blank', 'noopener'); }
     flyToLocation(loc);
   });
   // Cursor
