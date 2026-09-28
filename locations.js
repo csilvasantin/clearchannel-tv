@@ -3,7 +3,7 @@
 //
 // Schema: { id, name, kind, addr, coords:[lng,lat], surfaces:[
 //   { name, desc, status:'live'|'sched'|'idle', impr:Number, cpm:String,
-//     surface:'pantalla'|'escaparate'|'mostrador'|'vending'|'pwa',
+//     surface:'pantalla'|'escaparate'|'mostrador'|'vending'|'pwa'|'audio',  // audio = hilo musical (cápsula sonora)
 //     pixerScreens?:[<string>]   // opcional. IDs de screens en pixer-eleven
 //                                // que pintan en esta surface (ej: 'xtore-lg8qao').
 //                                // Si está, los items que llegan a esos screens
@@ -1146,6 +1146,30 @@ window.OMNIP_LOCATIONS_EXTRA = [
       { name:'Vending / cigarreras', desc:'Display digital del vending · programación por franjas',   status:'sched', impr:80,  cpm:'€3', surface:'vending',    screen:'xtanco-valencia-vending' },
       { name:'PWA Xtanco Club',      desc:'Notificaciones push y cards para clientes de proximidad',  status:'live',  impr:140, cpm:'€2', surface:'pwa' },
     ],
+  },
+  {
+    // Cafebrería Barcelona — Xpacio 3D del circuito Alsea (presentación Alsea 30-sep-2026),
+    // gemelo del Xtanco Valencia para cafetería-librería. Entra en «Circuito Alsea Starbucks
+    // España 100» por circuit:'alsea_starbucks' (convive con alsea-sbux-021, misma dirección).
+    // impr/cpm ESTIMADOS (mismo rango que xtanco-valencia; el panel los muestra con «~»).
+    // screen = <id>-<slug(nombre)>, igual que deriva la parrilla; el hilo musical usa -musica
+    // como la cápsula sonora xtanco-valencia-musica.
+    id:'cafebreria-barcelona', name:'Cafebrería Barcelona', kind:'Cafebrería · Retail físico · Gemelo digital · Xpacio 3D',
+    addr:'Passeig de Gràcia 103 · Barcelona · 08008 · Spain', coords:[2.15979, 41.39574],
+    circuit:'alsea_starbucks', network:'Alsea', city:'Barcelona', province:'Barcelona',
+    music:'lounge', cameras:true,
+    twin:'https://www.xpaceos.com/xpacios/cafebreria/',
+    fly:'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=cafebreria-barcelona',
+    twinOnClick:true,
+    surfaces:[
+      { name:'Menu board',                   desc:'Tríptico de pantallas sobre la barra · carta, maridajes café+libro y promos · 3×1080×1920', status:'live',  impr:520, cpm:'€8', surface:'pantalla',   screen:'cafebreria-barcelona-menu-board' },
+      { name:'Pedido listo',                 desc:'Pantalla de recogida «pedido listo» · audiencia en espera junto a la barra',               status:'live',  impr:380, cpm:'€6', surface:'pantalla',   screen:'cafebreria-barcelona-pedido-listo' },
+      { name:'Escaparate Passeig de Gràcia', desc:'Visible desde Passeig de Gràcia · eje comercial y turístico de alto tráfico',              status:'live',  impr:480, cpm:'€9', surface:'escaparate', screen:'cafebreria-barcelona-escaparate-passeig-de-gracia' },
+      { name:'Rincón librería',              desc:'Pantalla integrada en la estantería de libros · novedades, lectura y club de lectores',    status:'live',  impr:160, cpm:'€4', surface:'pantalla',   screen:'cafebreria-barcelona-rincon-libreria' },
+      { name:'Hilo musical lounge',          desc:'Cápsula sonora en el hilo musical lounge del local · audio',                              status:'live',  impr:240, cpm:'€3', surface:'audio',      screen:'cafebreria-barcelona-musica' },
+      { name:'PWA Club Cafebrería',          desc:'Notificaciones push y cards para socios del club de proximidad',                          status:'live',  impr:140, cpm:'€2', surface:'pwa' },
+    ],
+    segmentation:{ required:false, schedule:{ start:'07:30', end:'21:30' }, typologies:['exterior','interior'], genders:['hombre','mujer'], ages:['joven','adulto','senior'], timeSlots:['manana','mediodia','tarde'] },
   },
   {
     // Gemelo digital Desigual Ginza (Tokio) — al pulsar el punto abre el tour Matterport.

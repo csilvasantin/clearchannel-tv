@@ -3205,7 +3205,9 @@ function renderSurfMirror(el, it){
     const u=String(it.url).replace(/"/g,'&quot;');
     el.innerHTML = (type==='video'||type==='animation')
       ? '<video src="'+u+'" muted playsinline autoplay preload="auto"></video>'
-      : '<img src="'+u+'" alt="" loading="lazy">';
+      : type==='audio'
+        ? '<div class="surf-off">♪ '+escHtml(it.name||'audio')+'</div>'   // cápsula sonora: sin <img> roto
+        : '<img src="'+u+'" alt="" loading="lazy">';
   } else if(it.startedAt){ el.setAttribute('data-started', String(it.startedAt)); }
   // Sync de posición fotograma a fotograma: el preview va al segundo real que
   // emite el dispositivo (now-startedAt), corrigiendo solo si deriva > 0.7s.
@@ -3294,6 +3296,15 @@ function thumbFor(kind, status) {
       <rect x="26" y="17" width="10" height="1.5" fill="${fill}" opacity=".4"/>
       <rect x="26" y="22" width="6" height="4" rx="1" fill="${fill}" opacity=".7"/>
       <circle cx="32" cy="38" r="1.6" fill="${fill}" opacity=".7"/>
+    </svg>`;
+  }
+  if (kind === 'audio') {
+    // Hilo musical / cápsula sonora (p.ej. cafebreria-barcelona-musica): altavoz + ondas.
+    return `<svg viewBox="0 0 64 48" style="opacity:${dim}">
+      <path d="M14 19h8l10-8v26l-10-8h-8z" fill="#0a1620" stroke="${fill}" stroke-width="1.2"/>
+      <path d="M38 18q5 6 0 12" fill="none" stroke="${fill}" stroke-width="1.4" opacity=".75"/>
+      <path d="M43 13q10 11 0 22" fill="none" stroke="${fill}" stroke-width="1.4" opacity=".5"/>
+      <path d="M48 8q15 16 0 32" fill="none" stroke="${fill}" stroke-width="1.4" opacity=".3"/>
     </svg>`;
   }
   return `<svg viewBox="0 0 64 48"><rect x="4" y="4" width="56" height="40" fill="${fill}" opacity=".2"/></svg>`;
