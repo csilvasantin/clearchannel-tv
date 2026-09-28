@@ -23,7 +23,7 @@
   // ─── Vídeo → bola 3D ──────────────────────────────────────────────
   // El vídeo gira como la bola (5°/s desde -28°); al fundir se coloca la bola en
   // la longitud del fotograma que se ve para que el cambio no salte.
-  const demo = {running: false, step: 0, flown: false, simulated: 0, audio: null};
+  const demo = {running: false, step: 0, flown: false, simulated: 0, audio: null, plan: null};
   const VIDEO_LNG0 = -28, VIDEO_DEG_S = 5, VIDEO_LOOP_S = 12;
   function videoLng() {
     const t = video && Number.isFinite(video.currentTime) ? video.currentTime : 0;
@@ -75,7 +75,9 @@
     {
       title: () => L('Zoom a un Xpacio y planifica', 'Zoom into a Xpacio and plan'),
       body: () => {
-        const p = plan();
+        // La compra reutiliza esta cifra: las impr/día de la ficha se refrescan en
+        // vivo a los pocos segundos y el paso 2 no debe cobrar otra (encargo #4604).
+        const p = demo.plan = plan();
         const rows = p.rows.map(r => `<li><span>${esc(r.name)}</span><b>${money(r.cost)}</b><small>${r.impr.toLocaleString(es() ? 'es-ES' : 'en-US')} ${L('impr.', 'impr.')} · CPM ${money(r.cpm)}</small></li>`).join('');
         const waiting = globeShown ? '' : `<p class="demo-note">${L('La bola 3D termina de cargar; seguimos sobre el vídeo y volamos al Xpacio en cuanto esté.', 'The 3D globe is still loading; we carry on over the video and fly to the Xpacio as soon as it is ready.')}</p>`;
         return `<p><b>Xtanco Valencia</b> · ${L('Carrer de Colón 22, València', 'Carrer de Colón 22, Valencia')}</p>
@@ -89,7 +91,7 @@
     {
       title: () => L('Compra', 'Buy'),
       body: () => {
-        const p = plan();
+        const p = demo.plan || plan();
         return `<p>${L('Un clic y la campaña queda comprada.', 'One click and the campaign is bought.')}</p>
           <button type="button" class="demo-buy" id="demo-buy">${L('Comprar', 'Buy')} · ${money(p.total)}</button>
           <p class="demo-bought" id="demo-bought" hidden></p>
@@ -98,7 +100,7 @@
       enter: () => {
         const btn = document.getElementById('demo-buy');
         btn?.addEventListener('click', () => {
-          demo.simulated = plan().total;
+          demo.simulated = (demo.plan || plan()).total;
           btn.disabled = true;
           const ref = 'SIM-' + Math.random().toString(36).slice(2, 8).toUpperCase();
           const ok = document.getElementById('demo-bought');
@@ -174,7 +176,7 @@
     render();
   }
   function start() {
-    Object.assign(demo, {running: true, step: 0, flown: false, simulated: 0});
+    Object.assign(demo, {running: true, step: 0, flown: false, simulated: 0, plan: null});
     startBtn.classList.add('off');
     card.hidden = false;
     render();
