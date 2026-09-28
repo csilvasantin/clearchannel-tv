@@ -1247,13 +1247,18 @@ document.getElementById('intro-start').textContent=l==='en'?'Start demo':'Empeza
     <h2 id="p-name">Xtanco</h2>
     <div class="addr" id="p-addr">Calle de Santa Rosa 4 · Madrid</div>
     <div class="meta">
-      <div><b id="p-surfaces">6</b><span data-i18n="meta_surfaces">surfaces</span></div>
+      <div><b id="p-surfaces">6</b><span data-i18n="meta_surfaces">dispositivos</span></div>
       <div><b id="p-impr">~1.2K</b><span data-i18n="meta_imprday">impr/día (est.)</span></div>
       <div><b id="p-cpm">€2-€8</b><span data-i18n="meta_cpm">CPM rango</span></div>
     </div>
   </div>
   <div class="body">
-    <h3 data-i18n="surfaces_available">Surfaces disponibles</h3>
+    <div class="actions">
+      <a href="#" id="p-tour" class="primary" data-i18n="tour_start" data-i18n-title="tour_hint" title="Tour DooH: vuela de punto en punto por el circuito y el target seleccionados.">▶ Tour DooH</a>
+      <a id="p-twin" href="https://www.xpaceos.com" target="_blank" rel="noopener" data-i18n="view_twin">Ver Gemelo Digital ↗</a>
+      <a id="p-twin-hd" href="#" target="_blank" rel="noopener" style="display:none" data-i18n="twin_hd">🎥 Gemelo Hiperrealista ↗</a>
+    </div>
+    <h3 data-i18n="surfaces_available">Dispositivos disponibles</h3>
     <div id="surfaces"></div>
     <div class="bidfeed-wrap">
       <div class="bf-head">
@@ -1266,11 +1271,6 @@ document.getElementById('intro-start').textContent=l==='en'?'Start demo':'Empeza
         <span id="bf-traffic-status" class="bf-traffic-status"></span>
       </div>
       <div id="bidfeed"></div>
-    </div>
-    <div class="actions">
-      <a href="#" id="p-tour" class="primary" data-i18n="tour_start" data-i18n-title="tour_hint" title="Tour DooH: vuela de punto en punto por el circuito y el target seleccionados.">▶ Tour DooH</a>
-      <a id="p-twin" href="https://www.xpaceos.com" target="_blank" rel="noopener" data-i18n="view_twin">Ver Gemelo Digital ↗</a>
-      <a id="p-twin-hd" href="#" target="_blank" rel="noopener" style="display:none" data-i18n="twin_hd">🎥 Gemelo Hiperrealista ↗</a>
     </div>
     <div class="actions previo-row" id="p-previo-row" hidden><a href="#" id="p-previo" data-i18n="previo_point" data-i18n-title="previo_point_hint" title="Vuela a la tienda y muestra la pantalla emitiendo sobre la foto de fachada.">📺 Previo DooH · ver la pantalla emitiendo</a></div>
   </div>
