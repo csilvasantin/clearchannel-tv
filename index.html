@@ -448,6 +448,7 @@ addEventListener('resize',ccFitIntro);
   .bf-traffic-status.ok{color:var(--accent)}
 
   aside.panel .actions{display:flex;gap:10px;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+  aside.panel .actions.panel-navigation{margin-top:0;padding-top:0;border-top:0;margin-bottom:18px}
   aside.panel .actions a{flex:1;text-align:center;font-family:monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:10px;border:1px solid var(--brand);border-radius:6px;color:var(--brand)}
   aside.panel .actions a:hover{background:var(--brand);color:#001620;text-decoration:none}
   aside.panel .actions a.primary{background:var(--brand);color:#001620}
@@ -1253,7 +1254,7 @@ document.getElementById('intro-start').textContent=l==='en'?'Start demo':'Empeza
     </div>
   </div>
   <div class="body">
-    <div class="actions">
+    <div class="actions panel-navigation">
       <a href="#" id="p-tour" class="primary" data-i18n="tour_start" data-i18n-title="tour_hint" title="Tour DooH: vuela de punto en punto por el circuito y el target seleccionados.">▶ Tour DooH</a>
       <a id="p-twin" href="https://www.xpaceos.com" target="_blank" rel="noopener" data-i18n="view_twin">Ver Gemelo Digital ↗</a>
       <a id="p-twin-hd" href="#" target="_blank" rel="noopener" style="display:none" data-i18n="twin_hd">🎥 Gemelo Hiperrealista ↗</a>
