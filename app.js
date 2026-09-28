@@ -3365,13 +3365,9 @@ function renderPanel(loc) {
   // vaciamos, solo re-pintamos las decisiones reales ya recibidas (o el estado
   // "esperando demanda" si aún no ha llegado ninguna).
   startBidFeed(loc);
-  // Botón de gemelo/harness del panel. Data-driven por ubicación:
-  //   · loc.fly     → destino del "vuelo" (con transición de despegue). p.ej.:
-  //                   News & Coffee (Gràcia) → adcelerate/demo (harness CanalKiosk);
-  //                   Xtanco Barcelona       → xpaceos.com/scan/visor (gemelo digital).
-  //   · loc.flyLabel→ rótulo propio del botón (p.ej. 'AI HARNESS ↗'); sin él se
-  //                   mantiene el rótulo por defecto traducible ('Ver Gemelo Digital').
-  // Sin loc.fly → comportamiento ACTUAL intacto (loc.twin embebido / xpaceos.com).
+  // Navegación superior: `xpaceUrl` es la asociación explícita con un Xpacio.
+  // Los `twin`/`fly` heredados no habilitan «Ver Gemelo Digital»; un `flyLabel`
+  // conserva las acciones especiales (AI Harness, Recorrer AdmiraXperience).
   // Previo DooH (FLT-100364): solo en puntos con previo o del circuito Alcampo.
   const previoRow = document.getElementById('p-previo-row');
   if (previoRow) {
@@ -3382,13 +3378,17 @@ function renderPanel(loc) {
   const pTwin = document.getElementById('p-twin');
   const panelEl = document.getElementById('panel');
   pTwin.classList.remove('launch');
-  pTwin.setAttribute('target', '_blank'); // fallback: nueva pestaña (clic medio / abrir en pestaña)
-  if (loc.fly) {
-    pTwin.href = loc.fly;
-    if (loc.flyLabel) {
+  pTwin.onclick = null;
+  const navigation = window.XpaceLinks && window.XpaceLinks.panelNavigation(loc);
+  pTwin.hidden = !navigation;
+  if (!navigation) pTwin.removeAttribute('href');
+  if (navigation) {
+    pTwin.href = navigation.href;
+    pTwin.setAttribute('target', '_blank');
+    if (navigation.kind === 'special') {
       // Rótulo propio: lo sacamos del ciclo i18n para que no lo pise applyI18n al cambiar idioma.
       pTwin.removeAttribute('data-i18n');
-      pTwin.textContent = loc.flyLabel;
+      pTwin.textContent = navigation.label;
     } else {
       pTwin.setAttribute('data-i18n', 'view_twin');
       pTwin.textContent = t('view_twin');
@@ -3397,22 +3397,14 @@ function renderPanel(loc) {
     pTwin.onclick = function(e){
       if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // respeta nueva pestaña
       e.preventDefault();
-      if (reduceTwin) { window.location.href = loc.fly; return; }
+      if (reduceTwin) { window.location.href = navigation.href; return; }
       // Despegue: el panel se atenúa/escala y volamos al destino.
       pTwin.classList.add('launch');
       if (panelEl) panelEl.classList.add('flying');
       let done = false;
-      const go = () => { if (done) return; done = true; window.location.href = loc.fly; };
+      const go = () => { if (done) return; done = true; window.location.href = navigation.href; };
       (panelEl || pTwin).addEventListener('transitionend', go, { once: true });
       setTimeout(go, 520);
-    };
-  } else {
-    // Comportamiento actual: rótulo por defecto; twin embebido (iso) si lo hay, si no xpaceos.com.
-    pTwin.setAttribute('data-i18n', 'view_twin');
-    pTwin.textContent = t('view_twin');
-    pTwin.href = loc.twin || 'https://www.xpaceos.com';
-    pTwin.onclick = function(e){
-      if (loc.twin) { e.preventDefault(); openIsoView(loc.twin, loc.name); }
     };
   }
   // Gemelo Hiperrealista (UE5 · Pixel Streaming): aparece solo si el punto tiene

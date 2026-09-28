@@ -17,6 +17,7 @@ test('la Cafebrería está en el catálogo con su gemelo y superficies', () => {
   assert.ok(cafe, 'cafebreria-barcelona en OMNIP_LOCATIONS_EXTRA');
   assert.deepEqual([...cafe.coords], [2.15979, 41.39574]);
   assert.equal(cafe.twin, 'https://www.xpaceos.com/xpacios/cafebreria/');
+  assert.equal(cafe.xpaceUrl, 'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=cafebreria-barcelona');
   assert.equal(cafe.fly, 'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=cafebreria-barcelona');
   assert.equal(cafe.twinOnClick, true);
   assert.ok(cafe.surfaces.length >= 6);
