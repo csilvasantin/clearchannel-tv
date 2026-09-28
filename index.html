@@ -47,7 +47,14 @@
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/contact-panel.css" media="print" onload="this.media='all'">
 <noscript><link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet"><link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css"><link rel="stylesheet" href="https://www.carlossilva.info/admira-design/contact-panel.css"></noscript>
-<link rel="stylesheet" href="intro.css?v=4566-1">
+<link rel="stylesheet" href="intro.css?v=4675-1">
+<script>
+// Reserva el espacio de la demo y los widgets bajo la bola en móvil.
+window.ccIntroScale=()=>innerWidth<=760?Math.max(0.22,Math.min(1,(innerWidth-48)/600,(innerHeight-440)/600)):1;
+function ccFitIntro(){document.documentElement.style.setProperty('--intro-scale',ccIntroScale());}
+ccFitIntro();
+addEventListener('resize',ccFitIntro);
+</script>
 <script defer src="https://www.carlossilva.info/admira-design/contact-panel.js"></script>
 <!-- Descarga temprano (no bloqueante); se ejecutan al final del body, justo antes del script de init -->
 <link rel="preload" as="script" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js">
@@ -768,6 +775,10 @@ document.getElementById('intro-start').textContent=l==='en'?'Start demo':'Empeza
       <button type="button" class="header-circuit-btn" id="header-circuit-btn" data-i18n="select_circuit">Seleccionar circuito</button>
       <button type="button" class="header-circuit-btn" id="header-target-btn" data-i18n="select_target">Seleccionar target</button>
       <button type="button" class="header-circuit-btn" id="header-orders-btn" data-i18n="orders_title">Mis solicitudes</button>
+      <details id="advanced-tools" class="advanced-tools">
+        <summary class="header-circuit-btn" data-i18n="advanced_mode">Modo avanzado</summary>
+        <button type="button" id="advanced-emission" class="header-circuit-btn" data-i18n="emission_room">Sala de emisión</button>
+      </details>
       <a href="/players/">Player virtual</a>
       <a href="backoffice.html" data-i18n="login">Login</a>
       <div class="lang-switch" id="lang-switch" role="group" aria-label="Idioma / Language">
@@ -1314,7 +1325,7 @@ document.getElementById('intro-start').textContent=l==='en'?'Start demo':'Empeza
 <script defer src="locations.js?v=yokup-20260914-1"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="app.js?v=4566-1"></script><script defer src="intro.js?v=4604-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="app.js?v=4675-1"></script><script defer src="intro.js?v=4604-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
@@ -1340,7 +1351,7 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
   </div>
 </div>
 <style>
-  #neoDock{ position:fixed; left:18px; bottom:18px; z-index:9000; font-family:ui-sans-serif,-apple-system,system-ui,sans-serif } /* izq: la dcha la ocupa BROADCAST ROOM */
+  #neoDock{ position:fixed; left:18px; bottom:18px; z-index:9000; font-family:ui-sans-serif,-apple-system,system-ui,sans-serif } /* acceso de contacto */
   #neoFab .neo-face{ width:30px; height:30px; border-radius:50%; object-fit:cover; object-position:center 26%; flex:0 0 auto;
     border:1px solid #2a7fa6; display:block; margin-left:-6px }
   #neoFab{ display:inline-flex; align-items:center; gap:9px; padding:10px 17px 10px 12px; border-radius:999px; cursor:pointer;

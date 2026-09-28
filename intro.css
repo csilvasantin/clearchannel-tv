@@ -5,7 +5,7 @@
   -webkit-mask:radial-gradient(closest-side,#000 82%,transparent) 50% 50%/1280px 800px no-repeat;mask:radial-gradient(closest-side,#000 82%,transparent) 50% 50%/1280px 800px no-repeat}
 .intro.globe-ready{background:transparent}
 .intro.globe-ready .intro-video{opacity:0;visibility:hidden;transition:opacity .8s ease,visibility 0s .8s}
-.intro-start{position:fixed;left:50%;bottom:max(64px,11vh);transform:translateX(-50%);z-index:9;
+.intro-start{position:fixed;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9;
   font:800 clamp(18px,2.2vw,24px)/1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.01em;color:#001620;
   padding:20px 44px;border:0;border-radius:999px;cursor:pointer;white-space:nowrap;
   background:linear-gradient(90deg,#78f3ff,#ffd866);box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 6px rgba(120,243,255,.14);
@@ -53,6 +53,36 @@
 .demo-back{color:#dff8ff;background:transparent;border:1px solid rgba(120,243,255,.3)}
 @media (max-width:760px){
   .demo-card{top:auto;bottom:12px;left:12px;width:calc(100vw - 24px);max-height:62vh}
-  .intro-start{padding:17px 32px;bottom:38vh}
+  .intro-start{padding:17px 32px;bottom:max(36px,env(safe-area-inset-bottom))}
+  body #neoDock{bottom:102px}
+  body .live-ticker{bottom:172px}
+  body .map-ctrls{bottom:102px}
+  .intro-video{width:calc(1280px * var(--intro-scale,1));height:calc(800px * var(--intro-scale,1));inset:auto;left:50%;top:50%;transform:translate(-50%,-50%);object-fit:fill;mask-size:100% 100%;-webkit-mask-size:100% 100%}
+  .intro{background-size:calc(1280px * var(--intro-scale,1)) calc(800px * var(--intro-scale,1))}
+  .header-controls > nav > .header-circuit-btn{width:calc(50% - 6px);padding:0 5px;font-size:10px}
+  .advanced-tools{margin-right:auto}
+  #advanced-emission{left:0;right:auto}
+
 }
 @media (prefers-reduced-motion:reduce){.intro-video{display:none}.intro{background:#02080d url(/assets/intro/globo-poster.jpg) 50% 50% no-repeat}.intro.globe-ready{background:transparent}}
+
+/* Herramientas de operación: acceso explícito, sin lanzador flotante. */
+.advanced-tools{position:relative}
+.advanced-tools summary{display:flex;align-items:center;list-style:none}
+.advanced-tools summary::-webkit-details-marker{display:none}
+.advanced-tools summary::after{content:'▾';margin-left:8px}
+.advanced-tools[open] summary::after{content:'▴'}
+#advanced-emission{position:absolute;right:0;top:calc(100% + 8px);min-width:100%;z-index:2;background:var(--card);box-shadow:0 8px 25px #0008}
+html:not([data-ui-mode="advanced"]) #extad-emit-btn{display:none}
+
+/* La cabecera se adapta también al portátil de 1280 px. */
+@media (min-width:761px) and (max-width:1600px){
+  body header{display:grid;grid-template-columns:auto 1fr;gap:8px 18px}
+  header .header-controls{display:contents}
+  header .search-wrap{width:280px;justify-self:end}
+  header .header-controls > nav{grid-column:1/-1;flex-wrap:wrap;justify-content:center;gap:8px}
+}
+
+@media (max-width:760px) and (prefers-reduced-motion:reduce){
+  .intro{background-size:calc(1280px * var(--intro-scale,1)) calc(800px * var(--intro-scale,1))}
+}

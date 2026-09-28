@@ -228,6 +228,7 @@ const I18N = {
     logo_home_title:'Volver al inicio',
     search_ph:'Buscar Xpace · "Xtanco", "Loterías", "BCN" o cualquier dirección',
     login:'Login', contact:'Contacto',
+    advanced_mode:'Modo avanzado',
     emission_room:'Sala de emisión',
     ed_type_video:'Vídeo', ed_type_animation:'Animación', ed_type_image:'Imagen', ed_type_twin:'Gemelo', ed_type_npc:'NPC', ed_type_audio:'Audio', ed_type_music:'Música', ed_type_voice:'Locución', ed_others:'Otros',
     ed_linking:'◍ ENLAZANDO RED…', ed_on_air:'● EN ANTENA', ed_close_esc:'Cerrar (Esc)',
@@ -361,6 +362,7 @@ const I18N = {
     logo_home_title:'Back to start',
     search_ph:'Search Xpace · "Xtanco", "Loterías", "BCN" or any address',
     login:'Login', contact:'Contact',
+    advanced_mode:'Advanced mode',
     emission_room:'Broadcast room',
     ed_type_video:'Video', ed_type_animation:'Animation', ed_type_image:'Image', ed_type_twin:'Twin', ed_type_npc:'NPC', ed_type_audio:'Audio', ed_type_music:'Music', ed_type_voice:'Voice-over', ed_others:'Others',
     ed_linking:'◍ LINKING NETWORK…', ed_on_air:'● ON AIR', ed_close_esc:'Close (Esc)',
@@ -2205,7 +2207,7 @@ const STYLE_RELIEVE = {
 // ─── Map ───────────────────────────────────────────────────────────
 // Vista inicial ("posición 0") — compartida por el arranque y por el reset
 // al pulsar el logo de Clear Channel.
-const HOME_VIEW = {center: [-28, 16], zoom: 2.15, pitch: 0, bearing: 0};
+const HOME_VIEW = {center: [-28, 16], zoom: 2.15 + Math.log2(window.ccIntroScale?.() || 1), pitch: 0, bearing: 0};
 // Nivel de la bola (encargo #4566): Good es ligero — imagen satélite a media
 // resolución (teselas de 256 px pintadas a 512: una cuarta parte de peticiones
 // y texturas), 1 px por píxel CSS y caché corta. Better es el detalle de
@@ -2232,6 +2234,12 @@ const map = new maplibregl.Map({
   cancelPendingTileRequestsWhileZooming: false,
   maxTileCacheSize: {good: 128, better: 384, best: 768}[GLOBE_QUALITY],
   ...(GLOBE_QUALITY === 'good' ? {pixelRatio: 1} : GLOBE_QUALITY === 'best' ? {pixelRatio: Math.max(2, devicePixelRatio || 1)} : {}),
+});
+// Al redimensionar, adapta la vista inicial sin alterar un Xpacio ya explorado.
+window.addEventListener('resize',()=>{
+  const wasHome=Math.abs(map.getZoom()-HOME_VIEW.zoom)<0.01 && map.getPitch()===0;
+  HOME_VIEW.zoom=2.15+Math.log2(window.ccIntroScale?.() || 1);
+  if(wasHome) map.jumpTo({zoom:HOME_VIEW.zoom});
 });
 // Aviso para la entrada en vídeo (intro.js): la bola ya pinta el mundo entero.
 // Con el giro continuo puede no llegar nunca un «idle»: se mira en cada render,
@@ -4790,9 +4798,6 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     #emission-deck .ed-tk-scr{color:#8ed2ff}
     #emission-deck .ed-tk-sep{color:#2f8d8d;padding:0 10px}
     @keyframes ed-marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-    #ed-launch{position:fixed;z-index:9000;cursor:pointer;display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,rgba(10,30,40,.92),rgba(4,18,28,.92));border:1px solid rgba(125,255,208,.5);color:#7dffd0;border-radius:999px;padding:9px 16px;font:inherit;font-size:11px;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 22px rgba(125,255,208,.22),inset 0 0 14px rgba(125,255,208,.06);backdrop-filter:blur(4px)}
-    #ed-launch .dot{width:8px;height:8px;border-radius:50%;background:#9effa0;box-shadow:0 0 10px #9effa0;animation:ed-blink 1.4s steps(2) infinite}
-    #ed-launch:hover{border-color:#7dffd0;box-shadow:0 0 30px rgba(125,255,208,.4)}
     @media(max-width:760px){#emission-deck .ed-kpis{grid-template-columns:repeat(2,1fr)}#emission-deck .ed-main{grid-template-columns:1fr}#emission-deck .ed-kpi-v{font-size:30px}}
     `; document.head.appendChild(s);
   }
@@ -4803,6 +4808,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
   function edClock(){ const el=document.getElementById('ed-clock'); if(!el) return; try{ el.textContent=new Date().toLocaleTimeString(edLocale(),{hour12:false,timeZone:'Europe/Madrid'}); }catch(_){ } }
   let _edTimer=null,_edClk=null,_edPrev=null;
   function emissionDeck(){
+    if(!document.getElementById('advanced-tools')?.open) return;
     if(document.getElementById('emission-deck')) return;
     injectEdeckStyle(); _edPrev=null;
     const ov=document.createElement('div'); ov.id='emission-deck';
@@ -4891,13 +4897,16 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     const items=recent.map(r=>'<span class="ed-tk"><b style="color:'+(EMIT_TYPE_COL[r.type]||'#7dffd0')+'">'+(EMIT_TYPE_EMOJI[r.type]||'▸')+'</b> <span class="ed-tk-scr">'+edEsc(r.screen)+'</span> ▸ '+edEsc(r.title).slice(0,42)+'</span>').join('<span class="ed-tk-sep">·</span>');
     host.innerHTML=items+'<span class="ed-tk-sep">·</span>'+items; host.style.animation='ed-marq 40s linear infinite';
   }
-  // Lanzador fijo siempre visible (el botón 📡 del panel RTB también abre la Sala).
-  function mountEmissionLauncher(){
-    if(document.getElementById('ed-launch')) return;
-    injectEdeckStyle();
-    const b=document.createElement('button'); b.id='ed-launch'; b.style.right='14px'; b.style.bottom='118px';
-    b.innerHTML='<span class="dot"></span>🚀 <span data-i18n="emission_room">'+t('emission_room')+'</span>';
-    b.onclick=emissionDeck; document.body.appendChild(b);
+  // La sala se abre solo desde el modo avanzado; nunca flota sobre la portada.
+  function wireAdvancedEmission(){
+    const mode=document.getElementById('advanced-tools');
+    const button=document.getElementById('advanced-emission');
+    if(!mode || !button) return;
+    button.onclick=emissionDeck;
+    mode.addEventListener('toggle',()=>{
+      document.documentElement.dataset.uiMode=mode.open?'advanced':'basic';
+      if(!mode.open) document.getElementById('ed-close')?.click();
+    });
   }
   async function render(){
     const box=document.getElementById('extad-live'); if(!box) return;
@@ -5085,6 +5094,6 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     }catch(e){}
   }
   function wireCampaign(){ fillCampSeg(); const b=document.getElementById('camp-launch'); if(b) b.onclick=launchCampaign; const ed=document.getElementById('camp-buy'); if(ed) ed.addEventListener('toggle',()=>{ if(ed.open) renderCampaigns(); }); renderCampaigns(); setInterval(renderCampaigns,20000); }
-  function start(){ render(); setInterval(render, 12000); wireEditor(); wireCampaign(); const cb=document.getElementById('extad-circuit-btn'); if(cb) cb.onclick=circuitReport; const eb=document.getElementById('extad-emit-btn'); if(eb) eb.onclick=emissionDeck; mountEmissionLauncher(); }
+  function start(){ render(); setInterval(render, 12000); wireEditor(); wireCampaign(); const cb=document.getElementById('extad-circuit-btn'); if(cb) cb.onclick=circuitReport; const eb=document.getElementById('extad-emit-btn'); if(eb) eb.onclick=emissionDeck; wireAdvancedEmission(); }
   if(document.readyState!=='loading') start(); else document.addEventListener('DOMContentLoaded', start);
 })();
