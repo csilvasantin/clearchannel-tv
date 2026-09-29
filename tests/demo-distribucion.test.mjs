@@ -36,6 +36,7 @@ assert.match(sala, /\/api\/demo-signage\//);
 const worker = readFileSync(new URL('../_worker.js', import.meta.url), 'utf8');
 assert.match(worker, /proxyDemoSignage/);
 assert.match(worker, /body\.target = DEMO_SALA/);
+assert.match(js, /p\.circuito === c && !p\.ejemplo/);
 assert.doesNotMatch(sala + js, /locName|machine:/);
 
 console.log('demo-distribucion ok');

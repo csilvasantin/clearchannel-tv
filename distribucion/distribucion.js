@@ -196,9 +196,13 @@
 
   function cambiarCircuito(c) {
     state.circuito = c;
+    var pieza = state.piezas.find(function (p) { return p.circuito === c && !p.ejemplo; })
+      || state.piezas.find(function (p) { return p.circuito === c; });
+    if (pieza) state.pieza = pieza;
     state.seleccion = new Set();
     state.modo = 'sueltos';
     marcarModos();
+    pintarPieza();
     pintarLista();
     pintarMapa();
     pintarEstados();
