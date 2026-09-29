@@ -1,0 +1,802 @@
+[
+ {
+  "id": "alsea-mx-sbux-01-tijuana",
+  "name": "Starbucks Tijuana · Plaza Río",
+  "kind": "Cafetería · Starbucks · Alsea México",
+  "addr": "AVENIDA PASEO DE LOS HEROES  95 LOCAL E-5 ZONA URBANA RIO TIJUANA CP 22010 TIJUANA BAJA CALIFORNIA · Tijuana · 22010 · México",
+  "coords": [
+   -117.018754,
+   32.527349
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Tijuana",
+  "province": "BCN",
+  "country": "MX",
+  "circuit": "alsea_mexico",
+  "tourOrder": 1,
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "38252",
+   "network": "starbucks mexico",
+   "source": "starbucks.com.mx store locator (/api/getStores, 2026-09-28)",
+   "url": "https://www.starbucks.com.mx/stores"
+  },
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:00",
+    "end": "22:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  },
+  "xpaceUrl": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "twinOnClick": true,
+  "twinNote": "Vertical cafeteria aún no existe en admira-xp (cae a Xtanco). Enlace al gemelo de Starbucks Paseo de Gracia 103 (alsea-sbux-021). FLT-101244."
+ },
+ {
+  "id": "alsea-mx-sbux-02-monterrey",
+  "name": "Starbucks Monterrey · Pabellón M",
+  "kind": "Cafetería · Starbucks · Alsea México",
+  "addr": "AV. JUAREZ 1102 Y 1102-1 AL 1102-12 NIVEL 1 PB-C17 MONTERREY CENTRO CP 64000 MONTERREY NUEVO LEÓN · Monterrey · 64000 · México",
+  "coords": [
+   -100.319595336914,
+   25.666903660561
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Monterrey",
+  "province": "NLE",
+  "country": "MX",
+  "circuit": "alsea_mexico",
+  "tourOrder": 2,
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "38670",
+   "network": "starbucks mexico",
+   "source": "starbucks.com.mx store locator (/api/getStores, 2026-09-28)",
+   "url": "https://www.starbucks.com.mx/stores"
+  },
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:00",
+    "end": "22:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  },
+  "xpaceUrl": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "twinOnClick": true,
+  "twinNote": "Vertical cafeteria aún no existe en admira-xp (cae a Xtanco). Enlace al gemelo de Starbucks Paseo de Gracia 103 (alsea-sbux-021). FLT-101244."
+ },
+ {
+  "id": "alsea-mx-sbux-03-leon",
+  "name": "Starbucks León · Poliforum (Blvd. Francisco Villa)",
+  "kind": "Cafetería · Starbucks · Alsea México",
+  "addr": "BLVD. FRANCISCO VILLA 1820 LOCALES  1-172 Y 1-173 ORIENTAL CP 37510 LEON GUANAJUATO · León · 37500 · México",
+  "coords": [
+   -101.656140089035,
+   21.1155645766608
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "León",
+  "province": "GUA",
+  "country": "MX",
+  "circuit": "alsea_mexico",
+  "tourOrder": 3,
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "38453",
+   "network": "starbucks mexico",
+   "source": "starbucks.com.mx store locator (/api/getStores, 2026-09-28)",
+   "url": "https://www.starbucks.com.mx/stores"
+  },
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:00",
+    "end": "22:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  },
+  "xpaceUrl": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "twinOnClick": true,
+  "twinNote": "Vertical cafeteria aún no existe en admira-xp (cae a Xtanco). Enlace al gemelo de Starbucks Paseo de Gracia 103 (alsea-sbux-021). FLT-101244."
+ },
+ {
+  "id": "alsea-mx-sbux-04-guadalajara",
+  "name": "Starbucks Guadalajara · Centro Gdl",
+  "kind": "Cafetería · Starbucks · Alsea México",
+  "addr": "DEGOLLADO 202,211,213 Y 217 10,201-207 A GUADALAJARA CENTRO CP 44100 GUADALAJARA JALISCO · Guadalajara · 44100 · México",
+  "coords": [
+   -103.3448156,
+   20.6741566
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Guadalajara",
+  "province": "JAL",
+  "country": "MX",
+  "circuit": "alsea_mexico",
+  "tourOrder": 4,
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "38624",
+   "network": "starbucks mexico",
+   "source": "starbucks.com.mx store locator (/api/getStores, 2026-09-28)",
+   "url": "https://www.starbucks.com.mx/stores"
+  },
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:00",
+    "end": "22:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  },
+  "xpaceUrl": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "twinOnClick": true,
+  "twinNote": "Vertical cafeteria aún no existe en admira-xp (cae a Xtanco). Enlace al gemelo de Starbucks Paseo de Gracia 103 (alsea-sbux-021). FLT-101244."
+ },
+ {
+  "id": "alsea-mx-sbux-05-queretaro",
+  "name": "Starbucks Querétaro · Constituyentes",
+  "kind": "Cafetería · Starbucks · Alsea México",
+  "addr": "AVENIDA CONSTITUYENTES 57 1 CIMATARIO CP 76030 QUERETARO QUERETARO · Querétaro · 76030 · México",
+  "coords": [
+   -100.393291,
+   20.584085
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Querétaro",
+  "province": "QUE",
+  "country": "MX",
+  "circuit": "alsea_mexico",
+  "tourOrder": 5,
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "38467",
+   "network": "starbucks mexico",
+   "source": "starbucks.com.mx store locator (/api/getStores, 2026-09-28)",
+   "url": "https://www.starbucks.com.mx/stores"
+  },
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:00",
+    "end": "22:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  },
+  "xpaceUrl": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "twinOnClick": true,
+  "twinNote": "Vertical cafeteria aún no existe en admira-xp (cae a Xtanco). Enlace al gemelo de Starbucks Paseo de Gracia 103 (alsea-sbux-021). FLT-101244."
+ },
+ {
+  "id": "alsea-mx-sbux-06-cdmx",
+  "name": "Starbucks CDMX · Madero",
+  "kind": "Cafetería · Starbucks · Alsea México",
+  "addr": "FRANCISCO I MADERO MANZANA 14 42 S/N CENTRO DE LA CUIDAD DE MEXICO AREA 1 CP 06000 CUAUHTEMOC CIUDAD DE MEXICO · Ciudad de México · 06000 · México",
+  "coords": [
+   -99.137403,
+   19.433649
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Ciudad de México",
+  "province": "CDMX",
+  "country": "MX",
+  "circuit": "alsea_mexico",
+  "tourOrder": 6,
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "38487",
+   "network": "starbucks mexico",
+   "source": "starbucks.com.mx store locator (/api/getStores, 2026-09-28)",
+   "url": "https://www.starbucks.com.mx/stores"
+  },
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:00",
+    "end": "22:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  },
+  "xpaceUrl": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "twinOnClick": true,
+  "twinNote": "Vertical cafeteria aún no existe en admira-xp (cae a Xtanco). Enlace al gemelo de Starbucks Paseo de Gracia 103 (alsea-sbux-021). FLT-101244."
+ },
+ {
+  "id": "alsea-mx-sbux-07-puebla",
+  "name": "Starbucks Puebla · Puebla Centro",
+  "kind": "Cafetería · Starbucks · Alsea México",
+  "addr": "AVENIDA 2 ORIENTE 203 LOCAL B PUEBLA CENTRO CP 72000 PUEBLA PUEBLA · Puebla · 72000 · México",
+  "coords": [
+   -98.1967163077206,
+   19.0441844167093
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Puebla",
+  "province": "PUE",
+  "country": "MX",
+  "circuit": "alsea_mexico",
+  "tourOrder": 7,
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "38699",
+   "network": "starbucks mexico",
+   "source": "starbucks.com.mx store locator (/api/getStores, 2026-09-28)",
+   "url": "https://www.starbucks.com.mx/stores"
+  },
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:00",
+    "end": "22:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  },
+  "xpaceUrl": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "twinOnClick": true,
+  "twinNote": "Vertical cafeteria aún no existe en admira-xp (cae a Xtanco). Enlace al gemelo de Starbucks Paseo de Gracia 103 (alsea-sbux-021). FLT-101244."
+ },
+ {
+  "id": "alsea-mx-sbux-08-oaxaca",
+  "name": "Starbucks Oaxaca · Plaza del Parque",
+  "kind": "Cafetería · Starbucks · Alsea México",
+  "addr": "CALZADA PORFIRIO DIAZ 27 KIOSKO REFORMA CP 68050 OAXACA DE JUAREZ OAXACA · Oaxaca · 68050 · México",
+  "coords": [
+   -96.71906,
+   17.078757
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Oaxaca",
+  "province": "OAX",
+  "country": "MX",
+  "circuit": "alsea_mexico",
+  "tourOrder": 8,
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "38519",
+   "network": "starbucks mexico",
+   "source": "starbucks.com.mx store locator (/api/getStores, 2026-09-28)",
+   "url": "https://www.starbucks.com.mx/stores"
+  },
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:00",
+    "end": "22:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  },
+  "xpaceUrl": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "twinOnClick": true,
+  "twinNote": "Vertical cafeteria aún no existe en admira-xp (cae a Xtanco). Enlace al gemelo de Starbucks Paseo de Gracia 103 (alsea-sbux-021). FLT-101244."
+ },
+ {
+  "id": "alsea-mx-sbux-09-merida",
+  "name": "Starbucks Mérida · Paseo de Montejo",
+  "kind": "Cafetería · Starbucks · Alsea México",
+  "addr": "CALLE 56 A 465  CENTRO CP 97000 MERIDA YUCATAN · Mérida · 97000 · México",
+  "coords": [
+   -89.6182096999999,
+   20.9850204
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Mérida",
+  "province": "YUC",
+  "country": "MX",
+  "circuit": "alsea_mexico",
+  "tourOrder": 9,
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "38435",
+   "network": "starbucks mexico",
+   "source": "starbucks.com.mx store locator (/api/getStores, 2026-09-28)",
+   "url": "https://www.starbucks.com.mx/stores"
+  },
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:00",
+    "end": "22:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  },
+  "xpaceUrl": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "twinOnClick": true,
+  "twinNote": "Vertical cafeteria aún no existe en admira-xp (cae a Xtanco). Enlace al gemelo de Starbucks Paseo de Gracia 103 (alsea-sbux-021). FLT-101244."
+ },
+ {
+  "id": "alsea-mx-sbux-10-cancun",
+  "name": "Starbucks Cancún · Puerto Cancún",
+  "kind": "Cafetería · Starbucks · Alsea México",
+  "addr": "AV. BONAMPAK L-1-02 A-49C ZONA HOTELERA CP 77500  QUINTANA ROO · Cancún · 77500 · México",
+  "coords": [
+   -86.80794,
+   21.160301
+  ],
+  "music": "lounge",
+  "cameras": false,
+  "city": "Cancún",
+  "province": "ROO",
+  "country": "MX",
+  "circuit": "alsea_mexico",
+  "tourOrder": 10,
+  "external": {
+   "brand": "Starbucks",
+   "operator": "Alsea",
+   "storeId": "38723",
+   "network": "starbucks mexico",
+   "source": "starbucks.com.mx store locator (/api/getStores, 2026-09-28)",
+   "url": "https://www.starbucks.com.mx/stores"
+  },
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "surfaces": [
+   {
+    "name": "Menu board digital",
+    "desc": "Tríptico de pantallas sobre la barra · carta y promos",
+    "status": "sched",
+    "impr": 700,
+    "cpm": "€7",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Pantalla recogida",
+    "desc": "Pantalla 'pedido listo' junto a la zona de recogida",
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€5",
+    "surface": "pantalla"
+   },
+   {
+    "name": "Escaparate",
+    "desc": "Pantalla de escaparate a pie de calle / galería comercial",
+    "status": "idle",
+    "impr": 400,
+    "cpm": "€4",
+    "surface": "escaparate"
+   }
+  ],
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "07:00",
+    "end": "22:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "joven",
+    "adulto",
+    "senior"
+   ],
+   "timeSlots": [
+    "manana",
+    "mediodia",
+    "tarde"
+   ]
+  },
+  "xpaceUrl": "https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021",
+  "twinOnClick": true,
+  "twinNote": "Vertical cafeteria aún no existe en admira-xp (cae a Xtanco). Enlace al gemelo de Starbucks Paseo de Gracia 103 (alsea-sbux-021). FLT-101244."
+ }
+]
