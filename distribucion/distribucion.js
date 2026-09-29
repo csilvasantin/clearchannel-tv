@@ -40,6 +40,10 @@
 
   function $(id) { return document.getElementById(id); }
   function asset(id) { return API + '/stock/asset/' + id; }
+  function signage(tail) {
+    if (location.hostname.endsWith('.pages.dev')) return '/api/demo-signage/' + tail;
+    return API + '/signage/' + tail;
+  }
   function madrid(d) {
     return new Intl.DateTimeFormat('es-ES', {
       timeZone: 'Europe/Madrid', dateStyle: 'short', timeStyle: 'medium'
@@ -324,7 +328,7 @@
       source: 'demo-distribucion',
       meta: { source: 'demo-distribucion', page: 'Distribuir', asset_id: pieza.videoId || pieza.id, asset_label: pieza.titulo }
     };
-    var r = await fetch(API + '/signage/push', {
+    var r = await fetch(signage('push'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -341,7 +345,7 @@
       n++;
       if (n > 20) clearInterval(state.poll);
       try {
-        var now = await fetch(API + '/signage/now?screen=' + SALA, { cache: 'no-store' }).then(function (r) { return r.json(); });
+        var now = await fetch(signage('now'), { cache: 'no-store' }).then(function (r) { return r.json(); });
         var item = now && now.item;
         if (!item || (pushId && item.id && item.id !== pushId)) return;
         if (item.status === 'descargando' || item.status === 'reproduciendo') {

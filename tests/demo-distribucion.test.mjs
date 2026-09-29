@@ -31,6 +31,11 @@ assert.match(js, /1790608980217-vni6ai/);
 assert.doesNotMatch(js, /signage\/push[\s\S]{0,400}target:\s*null/);
 assert.match(sala, /it\.target === SCREEN/);
 assert.match(sala, /producer: 'demo-sala-macmini'/);
+assert.match(js, /\/api\/demo-signage\//);
+assert.match(sala, /\/api\/demo-signage\//);
+const worker = readFileSync(new URL('../_worker.js', import.meta.url), 'utf8');
+assert.match(worker, /proxyDemoSignage/);
+assert.match(worker, /body\.target = DEMO_SALA/);
 assert.doesNotMatch(sala + js, /locName|machine:/);
 
 console.log('demo-distribucion ok');

@@ -73,10 +73,72 @@ function admiraRewriter(pathname) {
   return rewriter;
 }
 
+const DEMO_SALA = 'demo-sala-macmini';
+const SIGNAGE_ORIGIN = 'https://api.admira.store';
+
+function jsonResponse(obj, status) {
+  return new Response(JSON.stringify(obj), {
+    status: status || 200,
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
+  });
+}
+
+// El preview de Pages no está en la lista de orígenes de la antena. Este puente
+// solo habla con la pantalla de sala de la demo y no reenvía un destino distinto.
+async function proxyDemoSignage(request, url) {
+  const tail = url.pathname.slice('/api/demo-signage/'.length);
+  if (request.method === 'GET' && tail === 'feed') {
+    return fetch(SIGNAGE_ORIGIN + '/signage/feed?screen=' + DEMO_SALA + '&limit=20', { headers: { accept: 'application/json' } });
+  }
+  if (request.method === 'GET' && tail === 'now') {
+    return fetch(SIGNAGE_ORIGIN + '/signage/now?screen=' + DEMO_SALA, { headers: { accept: 'application/json' } });
+  }
+  if (request.method === 'POST' && tail === 'push') {
+    let body = {};
+    try { body = await request.json(); } catch { return jsonResponse({ error: 'bad-json' }, 400); }
+    body.target = DEMO_SALA;
+    body.interrupt = false;
+    delete body.loc;
+    delete body.locName;
+    delete body.machine;
+    return fetch(SIGNAGE_ORIGIN + '/signage/push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  }
+  if (request.method === 'POST' && tail === 'now') {
+    let body = {};
+    try { body = await request.json(); } catch { return jsonResponse({ error: 'bad-json' }, 400); }
+    body.screen = DEMO_SALA;
+    body.producer = DEMO_SALA;
+    delete body.loc;
+    delete body.locName;
+    delete body.machine;
+    return fetch(SIGNAGE_ORIGIN + '/signage/now', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  }
+  if (request.method === 'POST' && tail.indexOf('ack/') === 0) {
+    const id = tail.slice(4);
+    if (!/^[A-Za-z0-9-]+$/.test(id)) return jsonResponse({ error: 'bad-id' }, 400);
+    return fetch(SIGNAGE_ORIGIN + '/signage/ack/' + id, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ screen: DEMO_SALA })
+    });
+  }
+  return jsonResponse({ error: 'not-found' }, 404);
+}
+
 export default {
   async fetch(request, env) {
-    if (new URL(request.url).pathname === '/api/demo-session') return handleDemoSession(request);
-    if (new URL(request.url).pathname.startsWith('/api/orders')) return handleOrders(request, env);
+    var early = new URL(request.url);
+    if (early.pathname.startsWith('/api/demo-signage/')) return proxyDemoSignage(request, early);
+    if (early.pathname === '/api/demo-session') return handleDemoSession(request);
+    if (early.pathname.startsWith('/api/orders')) return handleOrders(request, env);
     var url = new URL(request.url);
     if (ADMIRA_HOST.test(url.hostname) && ADMIRA_MCP_FILES[url.pathname]) {
       var twin = new URL(request.url);

@@ -1,6 +1,10 @@
 (function () {
   var SCREEN = 'demo-sala-macmini';
   var API = 'https://api.admira.store';
+  function signage(tail) {
+    if (location.hostname.endsWith('.pages.dev')) return '/api/demo-signage/' + tail;
+    return API + '/signage/' + tail;
+  }
   var video = document.getElementById('video');
   var titulo = document.getElementById('titulo');
   var fase = document.getElementById('fase');
@@ -10,7 +14,7 @@
   var yaReproduce = false;
 
   function postAhora(item) {
-    return fetch(API + '/signage/now', {
+    return fetch(signage('now'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ screen: SCREEN, producer: 'demo-sala-macmini', item: item })
@@ -18,7 +22,7 @@
   }
 
   function ack(id) {
-    return fetch(API + '/signage/ack/' + encodeURIComponent(id), {
+    return fetch(signage('ack/' + encodeURIComponent(id)), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ screen: SCREEN })
@@ -68,7 +72,7 @@
 
   async function pulso() {
     try {
-      var r = await fetch(API + '/signage/feed?screen=' + SCREEN + '&limit=20', { cache: 'no-store' });
+      var r = await fetch(signage('feed'), { cache: 'no-store' });
       var d = await r.json();
       var items = (d && d.items) || [];
       var propio = items.find(function (it) { return it && it.target === SCREEN && it.src; });
