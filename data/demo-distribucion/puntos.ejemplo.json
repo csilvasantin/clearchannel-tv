@@ -1,0 +1,208 @@
+{
+  "fuente": "ejemplo",
+  "nota": "Lista provisional EJEMPLO hasta que exista data/demo-distribucion/puntos.json de Niobe. Alsea: 10 Starbucks de México del catálogo. JTI: 10 estancos Xtanco del catálogo.",
+  "alsea": [
+    {
+      "id": "alsea-mx-sbux-01-tijuana",
+      "nombre": "Starbucks Tijuana · Plaza Río",
+      "marca": "Alsea · Starbucks",
+      "ciudad": "Tijuana",
+      "lat": 32.527349,
+      "lng": -117.018754,
+      "grupo": "norte",
+      "ejemplo": false
+    },
+    {
+      "id": "alsea-mx-sbux-02-monterrey",
+      "nombre": "Starbucks Monterrey · Pabellón M",
+      "marca": "Alsea · Starbucks",
+      "ciudad": "Monterrey",
+      "lat": 25.666903660561,
+      "lng": -100.319595336914,
+      "grupo": "norte",
+      "ejemplo": false
+    },
+    {
+      "id": "alsea-mx-sbux-03-leon",
+      "nombre": "Starbucks León · Poliforum (Blvd. Francisco Villa)",
+      "marca": "Alsea · Starbucks",
+      "ciudad": "León",
+      "lat": 21.1155645766608,
+      "lng": -101.656140089035,
+      "grupo": "norte",
+      "ejemplo": false
+    },
+    {
+      "id": "alsea-mx-sbux-04-guadalajara",
+      "nombre": "Starbucks Guadalajara · Centro Gdl",
+      "marca": "Alsea · Starbucks",
+      "ciudad": "Guadalajara",
+      "lat": 20.6741566,
+      "lng": -103.3448156,
+      "grupo": "centro",
+      "ejemplo": false
+    },
+    {
+      "id": "alsea-mx-sbux-05-queretaro",
+      "nombre": "Starbucks Querétaro · Constituyentes",
+      "marca": "Alsea · Starbucks",
+      "ciudad": "Querétaro",
+      "lat": 20.584085,
+      "lng": -100.393291,
+      "grupo": "centro",
+      "ejemplo": false
+    },
+    {
+      "id": "alsea-mx-sbux-06-cdmx",
+      "nombre": "Starbucks CDMX · Madero",
+      "marca": "Alsea · Starbucks",
+      "ciudad": "Ciudad de México",
+      "lat": 19.433649,
+      "lng": -99.137403,
+      "grupo": "centro",
+      "ejemplo": false
+    },
+    {
+      "id": "alsea-mx-sbux-07-puebla",
+      "nombre": "Starbucks Puebla · Puebla Centro",
+      "marca": "Alsea · Starbucks",
+      "ciudad": "Puebla",
+      "lat": 19.0441844167093,
+      "lng": -98.1967163077206,
+      "grupo": "centro",
+      "ejemplo": false
+    },
+    {
+      "id": "alsea-mx-sbux-08-oaxaca",
+      "nombre": "Starbucks Oaxaca · Plaza del Parque",
+      "marca": "Alsea · Starbucks",
+      "ciudad": "Oaxaca",
+      "lat": 17.078757,
+      "lng": -96.71906,
+      "grupo": "sur",
+      "ejemplo": false
+    },
+    {
+      "id": "alsea-mx-sbux-09-merida",
+      "nombre": "Starbucks Mérida · Paseo de Montejo",
+      "marca": "Alsea · Starbucks",
+      "ciudad": "Mérida",
+      "lat": 20.9850204,
+      "lng": -89.6182096999999,
+      "grupo": "sur",
+      "ejemplo": false
+    },
+    {
+      "id": "alsea-mx-sbux-10-cancun",
+      "nombre": "Starbucks Cancún · Puerto Cancún",
+      "marca": "Alsea · Starbucks",
+      "ciudad": "Cancún",
+      "lat": 21.160301,
+      "lng": -86.80794,
+      "grupo": "sur",
+      "ejemplo": false
+    }
+  ],
+  "jti": [
+    {
+      "id": "jti-xtanco-001",
+      "nombre": "Estanco Juan Florez",
+      "marca": "JTI · Xtanco",
+      "ciudad": "A Coruña",
+      "lat": 43.365151,
+      "lng": -8.408523,
+      "grupo": "norte",
+      "ejemplo": false
+    },
+    {
+      "id": "jti-xtanco-002",
+      "nombre": "Estanco La Fortaleza",
+      "marca": "JTI · Xtanco",
+      "ciudad": "Cambre",
+      "lat": 43.318085,
+      "lng": -8.356167,
+      "grupo": "norte",
+      "ejemplo": false
+    },
+    {
+      "id": "jti-xtanco-003",
+      "nombre": "Tabacos Lerri",
+      "marca": "JTI · Xtanco",
+      "ciudad": "Cee",
+      "lat": 42.954207,
+      "lng": -9.188358,
+      "grupo": "norte",
+      "ejemplo": false
+    },
+    {
+      "id": "jti-xtanco-004",
+      "nombre": "San Pablo",
+      "marca": "JTI · Xtanco",
+      "ciudad": "Albacete",
+      "lat": 38.995628,
+      "lng": -1.873593,
+      "grupo": "levante",
+      "ejemplo": false
+    },
+    {
+      "id": "jti-xtanco-005",
+      "nombre": "Estanco",
+      "marca": "JTI · Xtanco",
+      "ciudad": "San Juan de Alicante",
+      "lat": 38.401578,
+      "lng": -0.435833,
+      "grupo": "levante",
+      "ejemplo": false
+    },
+    {
+      "id": "jti-xtanco-006",
+      "nombre": "Estanco Expendidura 25",
+      "marca": "JTI · Xtanco",
+      "ciudad": "Alicante",
+      "lat": 38.342997,
+      "lng": -0.497797,
+      "grupo": "levante",
+      "ejemplo": false
+    },
+    {
+      "id": "jti-xtanco-007",
+      "nombre": "Expendeduría Les Rotes",
+      "marca": "JTI · Xtanco",
+      "ciudad": "Dénia",
+      "lat": 38.836458,
+      "lng": 0.117498,
+      "grupo": "levante",
+      "ejemplo": false
+    },
+    {
+      "id": "jti-xtanco-008",
+      "nombre": "Estanco Mercedes",
+      "marca": "JTI · Xtanco",
+      "ciudad": "San Miguel de Salinas",
+      "lat": 37.981204,
+      "lng": -0.789331,
+      "grupo": "levante",
+      "ejemplo": false
+    },
+    {
+      "id": "jti-xtanco-009",
+      "nombre": "Estanco",
+      "marca": "JTI · Xtanco",
+      "ciudad": "Almería",
+      "lat": 36.840364,
+      "lng": -2.463812,
+      "grupo": "sur",
+      "ejemplo": false
+    },
+    {
+      "id": "jti-xtanco-010",
+      "nombre": "Tabacos",
+      "marca": "JTI · Xtanco",
+      "ciudad": "María, Almería",
+      "lat": 37.710903,
+      "lng": -2.165458,
+      "grupo": "sur",
+      "ejemplo": false
+    }
+  ]
+}

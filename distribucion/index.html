@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Distribuir · admira.app</title>
+  <link rel="canonical" href="https://www.admira.app/distribucion/">
+  <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
+  <link rel="stylesheet" href="distribucion.css">
+</head>
+<body>
+  <header>
+    <p class="eyebrow">admira.app · una ruta · biblioteca Pixeria</p>
+    <h1>Distribuir</h1>
+    <p id="fuente-banner" class="nota"></p>
+  </header>
+  <main>
+    <section class="panel" id="pieza" aria-live="polite"></section>
+    <section class="panel">
+      <div class="fila" role="group" aria-label="Circuito">
+        <button type="button" id="btn-alsea" class="on">Alsea</button>
+        <button type="button" id="btn-jti">JTI</button>
+      </div>
+      <div class="fila" role="group" aria-label="Selección" style="margin-top:10px">
+        <button type="button" id="modo-sueltos" class="on">Sueltos</button>
+        <button type="button" id="modo-grupo">Grupo</button>
+        <button type="button" id="modo-todo">Todo el circuito</button>
+        <span id="grupos" class="fila"></span>
+      </div>
+      <div class="fila" role="group" aria-label="Cuándo" style="margin-top:10px">
+        <button type="button" id="cuando-ahora" class="on">Ahora</button>
+        <button type="button" id="cuando-franja">Franja horaria</button>
+        <label class="hora">Desde <input id="desde" type="datetime-local"></label>
+        <label class="hora">Hasta <input id="hasta" type="datetime-local"></label>
+        <label class="hora"><input id="sala-check" type="checkbox" checked> Pantalla de sala</label>
+      </div>
+    </section>
+    <div class="layout">
+      <ul class="lista panel" id="lista"></ul>
+      <div id="mapa" role="region" aria-label="Mapa del circuito"></div>
+    </div>
+    <p class="fila">
+      <button type="button" class="primary" id="publicar">Publicar</button>
+      <span id="aviso" class="nota"></span>
+    </p>
+    <h2>Estado por player</h2>
+    <div class="panel" style="overflow:auto">
+      <table>
+        <thead>
+          <tr><th>Player</th><th>Estado</th><th>Detalle</th></tr>
+        </thead>
+        <tbody id="estados"></tbody>
+      </table>
+    </div>
+    <h2>Registro · qué, dónde y cuándo</h2>
+    <ol class="panel" id="registro"></ol>
+  </main>
+  <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+  <script src="distribucion.js"></script>
+</body>
+</html>
