@@ -1,0 +1,40 @@
+/* Header and overlays share the measured header height in both site brands. */
+:root{--app-header-height:100px}
+body > header{display:grid;grid-template-columns:auto minmax(190px,1fr);gap:8px 16px;padding:8px 16px;align-items:center}
+body > header .header-controls{display:contents}
+body > header .logo{text-align:left;min-width:0}
+body > header .search-wrap{grid-column:2;min-width:0;width:min(100%,420px);max-width:none;justify-self:end;margin:0}
+body > header .header-controls > nav{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px 10px;min-width:0;margin:0}
+body > header .header-circuit-btn{width:auto;min-height:36px}
+#header-menu-toggle{display:none}
+aside.panel{top:var(--app-header-height);max-height:calc(100dvh - var(--app-header-height));overscroll-behavior:contain}
+.suggest{max-height:min(60dvh,calc(100dvh - var(--app-header-height) - 12px))}
+aside.panel .surface .info{min-width:0;overflow-wrap:anywhere}
+aside.panel .actions a{min-width:0;overflow-wrap:anywhere}
+@media(min-width:1600px){
+  body > header{grid-template-columns:auto minmax(190px,1fr) auto}
+  body > header .header-controls > nav{grid-column:3;grid-row:1}
+}
+@media(max-width:720px){
+  body > header{grid-template-columns:minmax(0,1fr) auto;padding:8px 12px;gap:8px}
+  #header-menu-toggle{display:block;grid-column:2;grid-row:1;min-height:40px;padding:0 12px}
+  body > header .search-wrap{grid-column:1/-1;grid-row:2;width:100%}
+  body > header .search input{font-size:16px}
+  body > header .header-controls > nav{display:none;grid-column:1/-1;grid-row:3;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;overflow-y:auto;max-height:calc(100dvh - 116px);padding:2px}
+  body > header[data-nav-open] .header-controls > nav{display:grid}
+  body > header nav > *,body > header nav .header-circuit-btn{width:100%;min-width:0;white-space:normal;min-height:44px;height:auto}
+  body > header nav > a{display:flex;align-items:center;justify-content:center;padding:8px;border:1px solid var(--line);border-radius:8px}
+  body > header nav .header-circuit-btn{font-size:10px;line-height:1.35;padding:8px}
+  body > header nav .lang-switch{justify-content:center}
+  body > header nav .lang-btn{min-height:40px;width:100%}
+  body > header nav details summary{display:flex;align-items:center;justify-content:center;cursor:pointer}
+  aside.panel{top:auto;bottom:0;width:100%;max-width:100%;height:min(65dvh,calc(100dvh - var(--app-header-height)));padding-bottom:env(safe-area-inset-bottom)}
+  #circuit-panel,#target-panel{top:calc(var(--app-header-height) + 8px)!important;left:12px!important;right:12px!important;width:calc(100% - 24px);max-width:none;max-height:calc(100dvh - var(--app-header-height) - 20px);overflow-y:auto}
+  .circuit-body{max-height:calc(100dvh - var(--app-header-height) - 68px)}
+  .addr-card{top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - 20px);overflow-y:auto}
+}
+@media(max-width:720px){
+  /* Floating map shortcuts must not cover the profile or filter controls. */
+  body:has(#panel.open,#circuit-panel:not([hidden]),#target-panel:not([hidden]),header[data-nav-open]) :is(#neoDock,#brand-family,#ticker,.map-ctrls,#intro-start){display:none}
+}
+aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}

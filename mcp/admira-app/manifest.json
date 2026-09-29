@@ -108,5 +108,11 @@
     "url": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&visual=matrix&loc=alsea-sbux-021",
     "es": "En admira.app, busca «Starbucks Paseo de Gracia» y abre la ficha de Paseo de Gracia 103, Barcelona. Pulsa «Visita al Digital Twin» junto a «Tour DOOH» para entrar directamente al Starbucks de XpaceOS en Matrix. Tour DOOH conserva su recorrido por el mapa.",
     "en": "In admira.app, search for “Starbucks Paseo de Gracia” and open the profile at Paseo de Gracia 103, Barcelona. Click “Visit the Digital Twin” beside “Tour DOOH” to open the Starbucks in XpaceOS Matrix directly. Tour DOOH keeps its map tour."
+  },
+  "responsive_navigation": {
+    "es": "La cabecera de admira.app ya no incluye Contacto. En móvil (hasta 720 px), el buscador permanece visible y «Menú» reúne planificación, circuitos, target, solicitudes, modo avanzado, player, acceso e idioma. Pulsa Menú para abrir o cerrar; Escape lo cierra con teclado. En tableta y escritorio las opciones se distribuyen según el ancho. La ficha del punto y los selectores móviles se ajustan a la altura de la cabecera.",
+    "en": "The admira.app header no longer includes Contact. On mobile (up to 720 px), search stays visible and “Menu” contains planning, circuits, target, requests, advanced mode, player, login and language. Toggle Menu to open or close it; Escape closes it from the keyboard. Tablet and desktop options wrap to fit the available width. Location profiles and mobile selectors adapt to the header height.",
+    "help": "https://admira.app/help/#responsive-navigation",
+    "mobile_breakpoint_px": 720
   }
 }
