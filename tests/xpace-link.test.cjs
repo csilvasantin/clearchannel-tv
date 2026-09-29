@@ -30,3 +30,16 @@ test('the contract rejects generic and non-XpaceOS URLs while keeping labelled t
     kind: 'special', href: 'https://admira.tv/admiraxperience/?site=store', label: 'Recorrer AdmiraXperience ↗',
   });
 });
+
+test('Paseo de Gracia 103 opens Starbucks Matrix from slim and full records only', () => {
+  const id = 'alsea-sbux-021';
+  const expected = 'https://www.xpaceos.com/admira-xp/?autostart=xtanco&visual=matrix&loc=alsea-sbux-021';
+  for (const record of [{id}, {id, name:'Starbucks Paseo de Gracia', twin:'https://www.xpaceos.com/admira-xp/?autostart=cafeteria'}]) {
+    assert.equal(associationUrl(record), expected);
+    assert.deepEqual(panelNavigation(record), {kind:'xpacio',href:expected,labelKey:'visit_twin'});
+  }
+  assert.equal(panelNavigation({id:'alsea-sbux-022',name:'Starbucks Paseo de Gracia'}), null);
+  assert.equal(panelNavigation({id,xpaceUrl:''}), null);
+  const override='https://www.xpaceos.com/xpacios/custom/';
+  assert.equal(associationUrl({id,xpaceUrl:override}), override);
+});
