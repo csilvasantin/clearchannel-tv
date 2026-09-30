@@ -364,7 +364,10 @@ addEventListener('resize',ccFitIntro);
 
   /* Panel lateral con surfaces */
   aside.panel{position:fixed;top:80px;right:0;bottom:0;width:400px;max-width:92vw;background:rgba(10,22,32,.96);border-left:1px solid var(--line);backdrop-filter:blur(12px);overflow-y:auto;transform:translateX(110%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:9}
-  aside.panel.open{transform:translateX(0)}
+  /* A restored drag position can keep translateX(110%) inside the viewport.
+     Closed means invisible and non-interactive until a selected point opens it. */
+  aside.panel:not(.open){visibility:hidden;pointer-events:none}
+  aside.panel.open{transform:translateX(0);visibility:visible}
   aside.panel .ph{padding:20px 22px;border-bottom:1px solid var(--line);position:relative}
   aside.panel .ph .kind{font-family:monospace;font-size:10px;color:var(--accent);letter-spacing:.18em;text-transform:uppercase}
   aside.panel .ph h2{margin:6px 0 4px;font-size:24px;letter-spacing:-.01em}
