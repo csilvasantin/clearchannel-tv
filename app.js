@@ -312,7 +312,7 @@ const I18N = {
     err_exp:'La fecha de caducidad no es válida.', err_cvc:'El CVC debe tener 3 o 4 dígitos.',
     order_ok:'Solicitud <b>{orderId}</b> guardada. Importe estimado: <b>{price}</b>. ',
     hero_eyebrow:'Clear Channel · Programática en el mundo real',
-    hero_h1a:'Retail Media', hero_h1b:'in the real world',
+    hero_h1a:'Retail Media', hero_h1b:'en el mundo real',
     hero_p:'Cada hueco visible — pantalla LED, escaparate, vending, panel del mostrador, push de la PWA — es <span class="tag">inventario subastable</span> en tiempo real. Busca un Xpace y aterriza en su ficha de surfaces.',
     hero_arrow:'↑ buscar arriba o pinchar un punto del mapa',
     close:'Cerrar',
@@ -493,12 +493,15 @@ const I18N = {
     sub_neptune:'The priciest CPM in the galaxy: the signal takes 4 hours to arrive.',
   },
 };
+const BRAND_LANGUAGE_KEY = (window.ADMIRA_SITE_BRAND?.id || 'clearchannel') + '-lang';
 let LANG = (function(){
   const explicit = new URLSearchParams(location.search).get('lang');
   if (['en', 'es'].includes(explicit)) return explicit;
-  try { const saved = localStorage.getItem('omnip-lang'); if (['en', 'es'].includes(saved)) return saved; } catch(_) {}
-  return window.ADMIRA_SITE_BRAND?.id === 'admira' ? 'es' : 'en';
+  try { const saved = localStorage.getItem(BRAND_LANGUAGE_KEY); if (['en', 'es'].includes(saved)) return saved; } catch(_) {}
+  return window.ADMIRA_SITE_BRAND?.defaultLanguage || 'en';
 })();
+Object.assign(I18N.es, {live_bidding_label:'Pujas en vivo',neo_label:'Habla con Neo',neo_open:'Habla con Neo, asistente en vivo'});
+Object.assign(I18N.en, {live_bidding_label:'Live bidding',neo_label:'Talk to Neo',neo_open:'Talk to Neo, live assistant'});
 I18N.en.walk_preview = 'Preview campaign ↗';
 I18N.es.walk_preview = 'Previsualizar campaña ↗';
 // Previo DooH (FLT-100364): la pantalla emitiendo sobre la foto de fachada.
@@ -554,7 +557,7 @@ function applyI18n(){
 }
 function setLang(lang){
   LANG = (lang === 'en') ? 'en' : 'es';
-  try { localStorage.setItem('omnip-lang', LANG); } catch(_){}
+  try { localStorage.setItem(BRAND_LANGUAGE_KEY, LANG); } catch(_){}
   applyI18n();
   // Refresca UI dinámica ya pintada
   try { renderCircuitScope(); } catch(_){}
@@ -4505,20 +4508,21 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
 // se guarda en window.CONTENT_TARGET y segmenta la CREACIÓN DE CONTENIDOS.
 (function(){
   const GROUPS = [
-    { key:'temporales', label:'Temporales', items:[['manana','Mañana'],['tarde','Tarde'],['noche','Noche']], extras:true },
-    { key:'contextuales', label:'Contextuales', items:[['exterior','Exterior'],['interior','Interior']] },
-    { key:'tipologia', label:'Tipología', items:[['supermercados','Supermercados'],['estancos','Estancos'],['bancos','Bancos'],['gimnasios','Gimnasios'],['mupi','MUPI'],['correos','Correos'],['transporte','Transporte'],['retail','Retail'],['moda','Moda']] },
-    { key:'datadriven', label:'Data-Driven', items:[['clima','Clima'],['trafico','Tráfico'],['moviles','Móviles'],['inventario','Inventario de tienda']] },
+    { key:'temporales', label:['Temporales','Time'], items:[['manana','Mañana','Morning'],['tarde','Tarde','Afternoon'],['noche','Noche','Night']], extras:true },
+    { key:'contextuales', label:['Contextuales','Context'], items:[['exterior','Exterior','Outdoor'],['interior','Interior','Indoor']] },
+    { key:'tipologia', label:['Tipología','Category'], items:[['supermercados','Supermercados','Supermarkets'],['estancos','Estancos','Tobacco shops'],['bancos','Bancos','Banks'],['gimnasios','Gimnasios','Gyms'],['mupi','MUPI','MUPI'],['correos','Correos','Post offices'],['transporte','Transporte','Transport'],['retail','Retail','Retail'],['moda','Moda','Fashion']] },
+    { key:'datadriven', label:['Basados en datos','Data-driven'], items:[['clima','Clima','Weather'],['trafico','Tráfico','Traffic'],['moviles','Móviles','Mobile devices'],['inventario','Inventario de tienda','Store inventory']] },
   ];
+  const targetLabel=(es,en)=>`<span data-pl-es="${es}" data-pl-en="${en}">${LANG==='en'?en:es}</span>`;
   const CT = window.CONTENT_TARGET = { temporales:[], hora:'', pases:'', contextuales:[], tipologia:[], datadriven:[] };
   try{ const s=JSON.parse(localStorage.getItem('omnip-content-target')||'null'); if(s) Object.assign(CT, s); }catch(_){}
   function persist(){ try{ localStorage.setItem('omnip-content-target', JSON.stringify(CT)); }catch(_){} }
   let panel;
   function buildBody(){
     return GROUPS.map(g=>{
-      const pills = g.items.map(([v,l])=>`<button type="button" class="tg-pill" data-g="${g.key}" data-v="${v}">${l}</button>`).join('');
-      const extras = g.extras ? `<div class="tg-extras"><label>Hora<input type="time" class="tg-hora" value="${CT.hora||''}"></label><label>Nº pases<input type="number" min="0" class="tg-pases" placeholder="0" value="${CT.pases||''}" style="width:58px"></label></div>` : '';
-      return `<div class="tg-group"><div class="tg-glabel">${g.label}</div><div class="tg-pills">${pills}</div>${extras}</div>`;
+      const pills = g.items.map(([v,es,en])=>`<button type="button" class="tg-pill" data-g="${g.key}" data-v="${v}">${targetLabel(es,en)}</button>`).join('');
+      const extras = g.extras ? `<div class="tg-extras"><label>${targetLabel('Hora','Time')}<input type="time" class="tg-hora" value="${CT.hora||''}"></label><label>${targetLabel('Nº pases','Number of plays')}<input type="number" min="0" class="tg-pases" placeholder="0" value="${CT.pases||''}" style="width:58px"></label></div>` : '';
+      return `<div class="tg-group"><div class="tg-glabel">${targetLabel(...g.label)}</div><div class="tg-pills">${pills}</div>${extras}</div>`;
     }).join('');
   }
   function syncPills(){ panel.querySelectorAll('.tg-pill').forEach(b=>{ b.classList.toggle('on', (CT[b.dataset.g]||[]).includes(b.dataset.v)); }); }
@@ -4534,7 +4538,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
     panel.style.left='505px'; panel.style.top='8px'; panel.style.right='auto';   // arriba, pegado al de circuito
     try{ const p=JSON.parse(localStorage.getItem('omnip-target-panel-pos2')||'null'); if(p&&Number.isFinite(p.x)){ panel.style.left=p.x+'px'; panel.style.top=p.y+'px'; } }catch(_){}
     const head=panel.querySelector('.circuit-head');
-    const x=document.createElement('button'); x.className='win-x'; x.type='button'; x.innerHTML='&times;'; x.title='Cerrar'; x.style.cssText='font-size:17px;margin-left:2px';
+    const x=document.createElement('button'); x.className='win-x'; x.type='button'; x.innerHTML='&times;'; x.setAttribute('data-i18n-title','close');x.title=t('close'); x.style.cssText='font-size:17px;margin-left:2px';
     x.addEventListener('click',e=>{ e.stopPropagation(); panel.hidden=true; document.getElementById('header-target-btn')?.classList.remove('active'); });
     head.appendChild(x);
     const tg=panel.querySelector('#target-panel-toggle');

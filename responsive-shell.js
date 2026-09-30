@@ -46,6 +46,8 @@
   function translate(){
     document.querySelectorAll('[data-shell-es]').forEach(el=>{const label=es()?el.dataset.shellEs:el.dataset.shellEn;el.title=label;el.setAttribute('aria-label',label);});
     document.querySelectorAll('[data-shell-text-es]').forEach(el=>{el.textContent=es()?el.dataset.shellTextEs:el.dataset.shellTextEn;});
+    document.querySelector('.mode-switches').setAttribute('aria-label',text('Modos','Modes'));
+    document.querySelectorAll('[data-close-mode]').forEach(button=>button.setAttribute('aria-label',text('Cerrar','Close')));
     panels.options.setAttribute('aria-label',text('Opciones','Options'));panels.expert.setAttribute('aria-label',text('Modo experto','Expert mode'));
     result.textContent='';measure();
   }

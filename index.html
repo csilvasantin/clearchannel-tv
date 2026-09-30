@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="/brand.js?v=20260805-2"></script>
-<link rel="stylesheet" href="/brand.css?v=20260805-2">
+<script src="/brand.js?v=20260930-identity-1"></script>
+<link rel="stylesheet" href="/brand.css?v=20260930-identity-1">
 <link rel="preconnect" href="https://unpkg.com">
 <link rel="dns-prefetch" href="https://unpkg.com">
 <link rel="preconnect" href="https://csilvasantin.github.io">
@@ -741,8 +741,8 @@ addEventListener('resize',ccFitIntro);
   @media (max-width:640px){ .pv-head{padding-right:48px;gap:8px} .pv-titles{flex-basis:100%} }
 </style>
 <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
-<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20260930-modes-2">
-<script defer src="responsive-shell.js?v=20260930-modes-2"></script>
+<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20260930-brand-1">
+<script defer src="responsive-shell.js?v=20260930-brand-1"></script>
 </head>
 <body>
 
@@ -756,7 +756,10 @@ addEventListener('resize',ccFitIntro);
 <section class="demo-card" id="demo-card" hidden aria-live="polite"></section>
 
 <header>
+  <div class="brand-heading">
+      <button type="button" id="header-menu-toggle" class="mode-toggle" aria-expanded="false" aria-controls="header-navigation" data-mode="options" data-shell-es="Opciones" data-shell-en="Options" title="Opciones">☰</button>
   <span class="logo"><span class="logo-home" id="logo-home" role="button" tabindex="0" data-brand-wordmark data-i18n-title="logo_home_title" title="Volver al inicio">CLEAR·CHANNEL</span></span>
+  </div>
   <div class="header-controls">
     <div class="search-wrap">
       <label class="search">
@@ -767,7 +770,6 @@ addEventListener('resize',ccFitIntro);
       <div id="suggest" class="suggest" hidden></div>
     </div>
     <div class="mode-switches" role="group" aria-label="Modos / Modes">
-      <button type="button" id="header-menu-toggle" class="mode-toggle" aria-expanded="false" aria-controls="header-navigation" data-mode="options" data-shell-es="Opciones" data-shell-en="Options" title="Opciones">☰</button>
       <button type="button" id="header-advanced-toggle" class="mode-toggle" aria-expanded="false" aria-controls="advanced-tools" data-mode="advanced" data-shell-es="Modo avanzado" data-shell-en="Advanced mode" title="Modo avanzado">▤</button>
       <button type="button" id="header-expert-toggle" class="mode-toggle" aria-expanded="false" aria-controls="expert-panel" data-mode="expert" data-shell-es="Modo experto" data-shell-en="Expert mode" title="Modo experto">⌘</button>
     </div>
@@ -859,7 +861,7 @@ addEventListener('resize',ccFitIntro);
 <div class="sky-fx" id="sky-fx" aria-hidden="true"></div>
 
 <div class="live-ticker" id="ticker">
-  <div class="lt-head"><span class="pulse"></span>BIDDING LIVE</div>
+  <div class="lt-head"><span class="pulse"></span><span data-i18n="live_bidding_label">Pujas en vivo</span></div>
   <div class="lt-row up"><span>impr/min</span><b id="t-impr">—</b></div>
   <div class="lt-row"><span data-i18n="stores">Xpaces</span><b id="t-locs">5</b></div>
   <div class="lt-row"><span data-i18n="revenue_today" title="Vendido hoy en la parrilla de Xtanco Valencia. Sin cobro: la pasarela de pago no está activa">€ vendido hoy (sin cobrar)</span><b id="t-rev">—</b></div>
@@ -1350,9 +1352,9 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
 
 <!-- ═══ Neo · host MetaHuman en vivo (widget flotante opt-in, reversible) — digitalavatar.ai ═══ -->
 <div id="neoDock">
-  <button id="neoFab" type="button" aria-label="Habla con Neo, host digital en vivo">
+  <button id="neoFab" type="button" data-i18n-aria="neo_open" aria-label="Habla con Neo, asistente en vivo">
     <img class="neo-face" src="https://digitalavatar.ai/assets/neo-poster-1x1.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
-    <span class="neo-dot"></span><span class="neo-lbl">Habla con <b>Neo</b></span>
+    <span class="neo-dot"></span><span class="neo-lbl" data-i18n="neo_label">Habla con Neo</span>
   </button>
   <div id="neoPanel" hidden aria-label="Neo, host MetaHuman en vivo">
     <div class="neo-head">

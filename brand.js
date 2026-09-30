@@ -3,11 +3,12 @@
 
   var hostname = String(window.location.hostname || '').toLowerCase();
   var forced = new URLSearchParams(window.location.search).get('brand');
-  var isAdmira = forced === 'admira' || (forced !== 'clearchannel' && /(^|\.)admira\.app$/.test(hostname));
+  var isAdmira = /(^|\.)admira\.app$/.test(hostname) || (!/(^|\.)clearchannel\.tv$/.test(hostname) && forced === 'admira');
 
   var brands = {
     clearchannel: {
       id: 'clearchannel',
+      defaultLanguage: 'en',
       name: 'Clear Channel',
       wordmark: 'CLEAR·CHANNEL',
       domain: 'www.clearchannel.tv',
@@ -15,7 +16,8 @@
     },
     admira: {
       id: 'admira',
-      name: 'Admira App',
+      defaultLanguage: 'es',
+      name: 'admira.app',
       wordmark: 'ADMIRA·APP',
       domain: 'www.admira.app',
       origin: 'https://www.admira.app'
@@ -25,6 +27,7 @@
 
   document.documentElement.dataset.brand = brand.id;
   window.ADMIRA_SITE_BRAND = brand;
+  document.documentElement.lang = brand.defaultLanguage;
 
   function replaceBrand(value) {
     if (!isAdmira || !value) return value;
@@ -33,7 +36,7 @@
       .replace(/clearchannel\.tv/gi, 'admira.app')
       .replace(/CLEAR(?:\s*<[^>]+>\s*)?·(?:\s*<[^>]+>\s*)?CHANNEL/g, 'ADMIRA·APP')
       .replace(/CLEAR·CHANNEL/g, 'ADMIRA·APP')
-      .replace(/Clear\s+Channel/gi, 'Admira App');
+      .replace(/Clear\s+Channel/gi, 'admira.app');
   }
 
   function rewriteElement(element) {

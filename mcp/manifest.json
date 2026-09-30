@@ -117,6 +117,15 @@
       "advanced": "right",
       "expert": "bottom"
     },
-    "mobile_breakpoint_px": 720
+    "mobile_breakpoint_px": 720,
+    "options_position": "left_of_logo",
+    "independent_panels": true
+  },
+  "brand_identity": {
+    "name": "Clear Channel",
+    "default_language": "en",
+    "language_preference": "per-brand",
+    "theme": "own-domain",
+    "production_domain_wins_over_preview_brand": true
   }
 }

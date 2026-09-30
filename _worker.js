@@ -20,7 +20,7 @@ function replaceBrand(value) {
     .replace(/clearchannel\.tv/gi, 'admira.app')
     .replace(/CLEAR(?:\s*<[^>]+>\s*)?·(?:\s*<[^>]+>\s*)?CHANNEL/g, 'ADMIRA·APP')
     .replace(/CLEAR·CHANNEL/g, 'ADMIRA·APP')
-    .replace(/Clear\s+Channel/gi, 'Admira App');
+    .replace(/Clear\s+Channel/gi, 'admira.app');
 }
 
 function admiraRewriter(pathname) {
@@ -28,11 +28,12 @@ function admiraRewriter(pathname) {
     .on('html', {
       element(element) {
         element.setAttribute('data-brand', 'admira');
+        element.setAttribute('lang', 'es');
       }
     })
     .on('title', {
       text(text) {
-        var branded = replaceBrand(text.text);
+        var branded = pathname === '/' || pathname === '/index.html' ? 'Mapa de espacios comerciales | admira.app' : replaceBrand(text.text);
         // text.text llega tal cual está en el HTML (entidades incluidas): se devuelve como
         // HTML para no escaparlo dos veces (el <title> salía con &amp;amp;).
         if (branded !== text.text) text.replace(branded, { html: true });
@@ -42,6 +43,11 @@ function admiraRewriter(pathname) {
       element(element) {
         var content = element.getAttribute('content');
         var branded = replaceBrand(content);
+        if (pathname === '/' || pathname === '/index.html') {
+          var name = element.getAttribute('name') || element.getAttribute('property');
+          if (name === 'description' || name === 'og:description' || name === 'twitter:description') branded = 'Mapa de espacios comerciales de admira.app. Busca un punto, consulta sus pantallas y planifica campañas.';
+          if (name === 'og:title' || name === 'twitter:title') branded = 'Mapa de espacios comerciales | admira.app';
+        }
         if (branded !== content) element.setAttribute('content', branded);
       }
     })
