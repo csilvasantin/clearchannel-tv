@@ -23,11 +23,11 @@ body > header .search-wrap{grid-column:2;min-width:0;width:min(100%,620px);max-w
 .advanced-actions .header-circuit-btn{width:100%;min-height:44px;white-space:normal;padding:10px;font:12px/1.4 monospace;color:var(--brand);background:transparent;border:1px solid var(--line);border-radius:8px;cursor:pointer;text-transform:uppercase}
 .advanced-panel #advanced-emission{position:static;box-shadow:none}
 .expert-panel{bottom:12px;left:12px;right:12px;max-height:45dvh}
-.expert-command-form{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;font:13px/1.4 monospace}
+.expert-command-form{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:12px;align-items:center;font:13px/1.4 monospace}
 .expert-command-form input{width:100%;min-width:0;padding:12px;background:var(--bg);color:var(--brand);border:1px solid var(--line);border-radius:8px;font:16px/1.4 monospace}
 .expert-command-form button{padding:12px;background:var(--brand);color:#001620;border:0;border-radius:8px;cursor:pointer}
 .expert-panel p{font:12px/1.5 monospace;color:var(--mut);margin:10px 0 0}
-body.mode-expert-open :is(#neoDock,#ticker,.map-ctrls){bottom:var(--expert-panel-height,120px)}
+body.mode-expert-open :is(#neoDock,#ticker,.map-ctrls){bottom:var(--expert-panel-height,76px)}
 aside.panel{top:var(--app-header-height);max-height:calc(100dvh - var(--app-header-height));overscroll-behavior:contain}
 #circuit-panel,#target-panel{z-index:9100}
 .suggest{max-height:min(60dvh,calc(100dvh - var(--app-header-height) - 12px))}
@@ -42,22 +42,20 @@ aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}
  body > header .search-wrap{grid-column:1/-1;grid-row:2;width:100%}
  body > header .search input{font-size:16px}
  .options-panel,.advanced-panel{width:min(300px,calc(100% - 24px))}
- .expert-command-form{grid-template-columns:minmax(0,1fr) auto;gap:8px}
- .expert-command-form label{grid-column:1/-1}
  aside.panel{top:auto;bottom:0;width:100%;max-width:100%;height:min(65dvh,calc(100dvh - var(--app-header-height)));padding-bottom:env(safe-area-inset-bottom)}
  #circuit-panel,#target-panel{top:calc(var(--app-header-height) + 8px)!important;left:12px!important;right:12px!important;width:calc(100% - 24px);max-width:none;max-height:calc(100dvh - var(--app-header-height) - 20px);overflow-y:auto}
  .circuit-body{max-height:calc(100dvh - var(--app-header-height) - 68px)}
  .addr-card{top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - 20px);overflow-y:auto}
  body:is(.mode-options-open,.mode-advanced-open,.mode-expert-open) :is(#neoDock:not(.open),#ticker,.map-ctrls){display:none}
  body:has(#panel.open,#circuit-panel:not([hidden]),#target-panel:not([hidden])) :is(#neoDock:not(.open),#ticker,.map-ctrls){display:none}
- .demo-card{bottom:auto;top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - var(--expert-panel-height,120px) - 8px)}
+ .demo-card{bottom:auto;top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - var(--expert-panel-height,76px) - 8px)}
 }
 
 /* Screen-edge rails share Pixeria's independent, persistent panel toggles. */
 .options-panel,.advanced-panel{top:var(--app-header-height);bottom:0;max-height:none;border-radius:0;width:300px}
 .options-panel{left:0}.advanced-panel{right:0}
 .expert-panel{left:0;right:0;bottom:0;border-radius:0}
-body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:var(--expert-panel-height,120px)}
+body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:var(--expert-panel-height,76px)}
 .map-tools-heading{margin:20px 0 12px;font:12px/1.4 monospace;color:var(--mut);text-transform:uppercase;letter-spacing:.1em}
 #advanced-tools .map-ctrls{position:static;display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:10px;margin:0;padding:0;width:100%;transform:none}
 #advanced-tools .zoom-grp{display:flex;flex-direction:row}
@@ -72,9 +70,10 @@ body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:var(--expert-pa
 }
 
 /* Compact CLI: help belongs to its command output, not a permanent extra row. */
-.expert-panel{height:120px;min-height:112px;max-height:calc(100dvh - var(--app-header-height) - 24px);padding-top:14px}
-.expert-panel .mode-panel-head{margin-bottom:8px}
-#expert-command-result{position:fixed;bottom:calc(var(--expert-panel-height,120px) + 8px);left:14px;right:14px;max-width:620px;margin:0;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 28px #0008;z-index:9200}
+.expert-panel{height:76px;min-height:76px;max-height:calc(100dvh - var(--app-header-height) - 24px);padding:14px 12px 10px}
+.expert-command-form label{font:700 12px/1.4 monospace;letter-spacing:.08em;text-transform:uppercase}
+.expert-command-form .expert-close{padding:4px;background:none;color:var(--brand);font:22px/1 monospace}
+#expert-command-result{position:fixed;bottom:calc(var(--expert-panel-height,76px) + 8px);left:14px;right:14px;max-width:620px;margin:0;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 28px #0008;z-index:9200}
 #expert-command-result[hidden]{display:none}
 .mode-resize{position:absolute;z-index:2;touch-action:none;user-select:none}
 .mode-resize-options{right:0;top:0;bottom:0;width:8px;cursor:col-resize}
@@ -84,4 +83,4 @@ body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:var(--expert-pa
 .mode-resize-options::after,.mode-resize-advanced::after{width:2px;height:36px;left:3px;top:calc(50% - 18px)}
 .mode-resize-expert::after{width:36px;height:2px;left:calc(50% - 18px);top:3px}
 .mode-resize:hover,.mode-resize:focus-visible{background:#88ffd522;outline:1px solid var(--brand);outline-offset:-1px}
-@media(max-width:720px){.expert-command-form label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.expert-command-form{grid-template-columns:minmax(0,1fr) auto}}
+@media(max-width:720px){.expert-command-form{grid-template-columns:64px minmax(0,1fr) auto auto;gap:6px}.expert-command-form label{font-size:10px}.expert-command-form input,.expert-command-form button[type=submit]{padding-inline:8px}}

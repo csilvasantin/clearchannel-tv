@@ -738,8 +738,8 @@ addEventListener('resize',ccFitIntro);
   @media (max-width:640px){ .pv-head{padding-right:48px;gap:8px} .pv-titles{flex-basis:100%} }
 </style>
 <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
-<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20260930-resize-cli-1">
-<script defer src="responsive-shell.js?v=20260930-resize-cli-1"></script>
+<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20260930-expert-row-1">
+<script defer src="responsive-shell.js?v=20260930-expert-row-1"></script>
 </head>
 <body>
 
@@ -826,11 +826,11 @@ addEventListener('resize',ccFitIntro);
 </div>
 </details>
 <section id="expert-panel" class="mode-panel expert-panel" aria-label="Modo experto" hidden>
-  <div class="mode-panel-head"><strong data-shell-text-es="Modo experto" data-shell-text-en="Expert mode">Modo experto</strong><button type="button" data-close-mode="expert" aria-label="Cerrar / Close">×</button></div>
   <form id="expert-command-form" class="expert-command-form">
-    <label for="expert-command" data-shell-text-es="Comando" data-shell-text-en="Command">Comando</label>
+    <label for="expert-command" data-shell-text-es="Modo Experto" data-shell-text-en="Expert Mode">Modo Experto</label>
     <input id="expert-command" type="text" placeholder="/cli" autocomplete="off" spellcheck="false">
     <button type="submit" data-shell-text-es="Ejecutar" data-shell-text-en="Run">Ejecutar</button>
+    <button type="button" class="expert-close" data-close-mode="expert" aria-label="Cerrar / Close">×</button>
   </form>
   <p id="expert-command-result" role="status" aria-live="polite" hidden></p>
 </section>
