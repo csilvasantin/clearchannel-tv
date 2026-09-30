@@ -28,6 +28,7 @@ body > header .search-wrap{grid-column:2;min-width:0;width:min(100%,620px);max-w
 .expert-panel p{font:12px/1.5 monospace;color:var(--mut);margin:10px 0 0}
 body.mode-expert-open :is(#neoDock,#brand-family,#ticker,.map-ctrls){bottom:210px}
 aside.panel{top:var(--app-header-height);max-height:calc(100dvh - var(--app-header-height));overscroll-behavior:contain}
+#circuit-panel,#target-panel{z-index:9100}
 .suggest{max-height:min(60dvh,calc(100dvh - var(--app-header-height) - 12px))}
 aside.panel .surface .info{min-width:0;overflow-wrap:anywhere}
 aside.panel .actions a{min-width:0;overflow-wrap:anywhere}

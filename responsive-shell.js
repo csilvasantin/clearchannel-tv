@@ -18,7 +18,16 @@
   for(const [mode,button] of Object.entries(toggles))button.addEventListener('click',()=>setOpen(mode,!isOpen(mode),{focus:true}));
   document.querySelectorAll('[data-close-mode]').forEach(b=>b.addEventListener('click',()=>{const mode=b.dataset.closeMode;setOpen(mode,false);toggles[mode].focus();}));
   panels.advanced.addEventListener('toggle',sync);
-  panels.advanced.addEventListener('click',event=>{if(event.target.closest('.advanced-actions button:not(#advanced-emission)'))setOpen('advanced',false);});
+  panels.advanced.addEventListener('click',event=>{
+    const action=event.target.closest('.advanced-actions button:not(#advanced-emission)');
+    if(!action)return;
+    setOpen('advanced',false);
+    queueMicrotask(()=>{
+      const selector=action.id==='header-circuit-btn'?'circuit-panel':action.id==='header-target-btn'?'target-panel':null;
+      const panel=selector&&document.getElementById(selector),top=header.getBoundingClientRect().bottom+8;
+      if(panel&&!panel.hidden&&panel.getBoundingClientRect().top<top)panel.style.top=top+'px';
+    });
+  });
   // Close the focused shell panel first, so dialogs retain their Escape behavior.
   document.addEventListener('keydown',event=>{
     if(event.key!=='Escape'||event.defaultPrevented)return;
