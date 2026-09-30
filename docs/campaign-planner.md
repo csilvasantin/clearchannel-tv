@@ -1,6 +1,6 @@
 # Planificador de campañas
 
-Entrada: cabecera **Planificar campaña**, o selector **Comparar circuitos**.
+Entrada: **Modo avanzado → Planificar campaña**, o selector **Comparar circuitos**.
 Elige ámbito, fechas, pases diarios, duración y presupuesto. Cada circuito muestra puntos, impresiones estimadas y total; avisa si supera el presupuesto. El target se puede editar desde el selector. Las impresiones son oportunidades estimadas, no personas únicas. Ninguna cifra confirma disponibilidad, reserva o cobro.
 
 **Guardar plan** conserva un plan por navegador y dominio en `cc-campaign-plan-v1`, sin contacto ni creatividad. Al volver se recuperan fechas, presupuesto, target y los IDs exactos: no se amplía la selección automáticamente. Los puntos que hayan desaparecido del catálogo o target se señalan. Se espera al catálogo inicial antes de permitir guardar; tras un fallo de red queda disponible el catálogo de respaldo. Un plan caducado puede consultarse, pero exige actualizar las fechas para usarlo.

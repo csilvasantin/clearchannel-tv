@@ -47,7 +47,7 @@
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="https://www.carlossilva.info/admira-design/contact-panel.css" media="print" onload="this.media='all'">
 <noscript><link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet"><link rel="stylesheet" href="https://www.carlossilva.info/admira-design/tokens.css"><link rel="stylesheet" href="https://www.carlossilva.info/admira-design/contact-panel.css"></noscript>
-<link rel="stylesheet" href="intro.css?v=4689-1">
+<link rel="stylesheet" href="intro.css?v=20260930-cli-4689-1">
 <script>
 // Reserva el espacio de la demo y los widgets bajo la bola en móvil.
 window.ccIntroScale=()=>innerWidth<=760?Math.max(0.22,Math.min(1,(innerWidth-48)/600,(innerHeight-440)/600)):1;
@@ -741,8 +741,8 @@ addEventListener('resize',ccFitIntro);
   @media (max-width:640px){ .pv-head{padding-right:48px;gap:8px} .pv-titles{flex-basis:100%} }
 </style>
 <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
-<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20260929-1">
-<script defer src="responsive-shell.js?v=20260929-1"></script>
+<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20260930-modes-1">
+<script defer src="responsive-shell.js?v=20260930-modes-1"></script>
 </head>
 <body>
 
@@ -753,15 +753,7 @@ addEventListener('resize',ccFitIntro);
     <source src="/assets/intro/globo.mp4" type="video/mp4">
   </video>
 </div>
-<!-- Fuera de la capa de vídeo: así el botón y la tarjeta quedan por encima de los controles del mapa. -->
-<button type="button" class="intro-start" id="intro-start">Start demo</button>
 <section class="demo-card" id="demo-card" hidden aria-live="polite"></section>
-<script>
-(function(){var q=new URLSearchParams(location.search).get('lang'),l=q==='en'||q==='es'?q:null;
-if(!l){try{var v=localStorage.getItem('omnip-lang');if(v==='en'||v==='es')l=v;}catch(_){}}
-if(!l)l=window.ADMIRA_SITE_BRAND&&window.ADMIRA_SITE_BRAND.id==='admira'?'es':'en';
-document.getElementById('intro-start').textContent=l==='en'?'Start demo':'Empezar la demo';})();
-</script>
 
 <header>
   <span class="logo"><span class="logo-home" id="logo-home" role="button" tabindex="0" data-brand-wordmark data-i18n-title="logo_home_title" title="Volver al inicio">CLEAR·CHANNEL</span></span>
@@ -774,24 +766,40 @@ document.getElementById('intro-start').textContent=l==='en'?'Start demo':'Empeza
       </label>
       <div id="suggest" class="suggest" hidden></div>
     </div>
-    <button type="button" id="header-menu-toggle" class="header-circuit-btn" aria-expanded="false" aria-controls="header-navigation" data-i18n="navigation_menu">Menú ☰</button>
-    <nav id="header-navigation">
-      <button type="button" class="header-circuit-btn" id="header-planner-btn" data-pl-es="Planificar campaña" data-pl-en="Plan campaign">Planificar campaña</button>
-      <button type="button" class="header-circuit-btn" id="header-circuit-btn" data-i18n="select_circuit">Seleccionar circuito</button>
-      <button type="button" class="header-circuit-btn" id="header-target-btn" data-i18n="select_target">Seleccionar target</button>
-      <button type="button" class="header-circuit-btn" id="header-orders-btn" data-i18n="orders_title">Mis solicitudes</button>
-      <details id="advanced-tools" class="advanced-tools">
-        <summary class="header-circuit-btn" data-i18n="advanced_mode">Modo avanzado</summary>
-        <button type="button" id="advanced-emission" class="header-circuit-btn" data-i18n="emission_room">Sala de emisión</button>
-      </details>
-      <a href="/players/">Player virtual</a>
-      <a href="backoffice.html" data-i18n="login">Login</a>
-      <div class="lang-switch" id="lang-switch" role="group" aria-label="Idioma / Language">
-        <button type="button" class="lang-btn" id="lang-toggle" data-lang-target="en" aria-label="Switch to English">ENG</button>
-      </div>
-    </nav>
+    <div class="mode-switches" role="group" aria-label="Modos / Modes">
+      <button type="button" id="header-menu-toggle" class="mode-toggle" aria-expanded="false" aria-controls="header-navigation" data-mode="options" data-shell-es="Opciones" data-shell-en="Options" title="Opciones">☰</button>
+      <button type="button" id="header-advanced-toggle" class="mode-toggle" aria-expanded="false" aria-controls="advanced-tools" data-mode="advanced" data-shell-es="Modo avanzado" data-shell-en="Advanced mode" title="Modo avanzado">▤</button>
+      <button type="button" id="header-expert-toggle" class="mode-toggle" aria-expanded="false" aria-controls="expert-panel" data-mode="expert" data-shell-es="Modo experto" data-shell-en="Expert mode" title="Modo experto">⌘</button>
+    </div>
   </div>
 </header>
+<nav id="header-navigation" class="mode-panel options-panel" aria-label="Opciones" hidden>
+  <div class="mode-panel-head"><strong data-shell-text-es="Opciones" data-shell-text-en="Options">Opciones</strong><button type="button" data-close-mode="options" aria-label="Cerrar / Close">×</button></div>
+  <a href="/players/" data-shell-text-es="Player virtual" data-shell-text-en="Virtual player">Player virtual</a>
+  <a href="backoffice.html" data-i18n="login">Login</a>
+  <a href="/help/#navigation-modes" data-shell-text-es="Ayuda" data-shell-text-en="Help">Ayuda</a>
+  <div class="lang-switch" id="lang-switch" role="group" aria-label="Idioma / Language"><button type="button" class="lang-btn" id="lang-toggle" data-lang-target="en" aria-label="Switch to English">ENG</button></div>
+</nav>
+<details id="advanced-tools" class="mode-panel advanced-panel">
+  <summary class="mode-panel-head"><strong data-i18n="advanced_mode">Modo avanzado</strong><span aria-hidden="true">×</span></summary>
+  <div class="advanced-actions">
+    <button type="button" class="header-circuit-btn" id="header-planner-btn" data-pl-es="Planificar campaña" data-pl-en="Plan campaign">Planificar campaña</button>
+    <button type="button" class="header-circuit-btn" id="header-circuit-btn" data-i18n="select_circuit">Seleccionar circuito</button>
+    <button type="button" class="header-circuit-btn" id="header-target-btn" data-i18n="select_target">Seleccionar target</button>
+    <button type="button" class="header-circuit-btn" id="header-orders-btn" data-i18n="orders_title">Mis solicitudes</button>
+    <button type="button" id="advanced-emission" class="header-circuit-btn" data-i18n="emission_room">Sala de emisión</button>
+  </div>
+</details>
+<section id="expert-panel" class="mode-panel expert-panel" aria-label="Modo experto" hidden>
+  <div class="mode-panel-head"><strong data-shell-text-es="Modo experto" data-shell-text-en="Expert mode">Modo experto</strong><button type="button" data-close-mode="expert" aria-label="Cerrar / Close">×</button></div>
+  <form id="expert-command-form" class="expert-command-form">
+    <label for="expert-command" data-shell-text-es="Comando" data-shell-text-en="Command">Comando</label>
+    <input id="expert-command" type="text" placeholder="/cli" autocomplete="off" spellcheck="false" aria-describedby="expert-command-help">
+    <button type="submit" data-shell-text-es="Ejecutar" data-shell-text-en="Run">Ejecutar</button>
+  </form>
+  <p id="expert-command-help" data-shell-text-es="Escribe /cli y pulsa Enter para empezar la demo guiada. /help muestra los comandos." data-shell-text-en="Type /cli and press Enter to start the guided demo. /help shows commands.">Escribe /cli y pulsa Enter para empezar la demo guiada. /help muestra los comandos.</p>
+  <p id="expert-command-result" role="status" aria-live="polite"></p>
+</section>
 
 <div class="space" id="space" aria-hidden="true">
   <div class="galaxy" id="galaxy"></div>
@@ -1330,7 +1338,7 @@ document.getElementById('intro-start').textContent=l==='en'?'Start demo':'Empeza
 <script defer src="locations.js?v=20260929-starbucks-twin-1"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=20260929-responsive-1"></script><script defer src="intro.js?v=4604-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=20260929-responsive-1"></script><script defer src="intro.js?v=20260930-cli-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {

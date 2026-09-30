@@ -1,7 +1,7 @@
 // Entrada rápida y circuito de demo (encargo #4566 · presentación JTI/Altadis).
 // 1) Al abrir se ve al instante un vídeo en bucle grabado de la propia bola; la
 //    bola 3D carga detrás y lo sustituye con un fundido cuando pinta el mundo.
-// 2) «Empezar la demo» / «Start demo» lanza un circuito de 4 pasos. Si la bola
+// 2) /cli desde el modo experto lanza un circuito de 4 pasos. Si la bola
 //    aún no está lista, la demo sigue sobre el vídeo y vuela en cuanto llega.
 // Cifras: la planificación es una estimación con las impresiones/día estimadas
 // de la ficha; la compra es SIMULADA (no hay pasarela, no se guarda ni se
@@ -11,8 +11,7 @@
   'use strict';
   const intro = document.getElementById('intro');
   const video = document.getElementById('intro-video');
-  const startBtn = document.getElementById('intro-start');
-  if (!intro || !startBtn) return;
+  if (!intro) return;
 
   const es = () => (typeof LANG === 'undefined' ? document.documentElement.lang !== 'en' : LANG !== 'en');
   const L = (esText, enText) => (es() ? esText : enText);
@@ -176,8 +175,8 @@
     render();
   }
   function start() {
+    if (demo.running) STEPS[demo.step].leave?.();
     Object.assign(demo, {running: true, step: 0, flown: false, simulated: 0, plan: null});
-    startBtn.classList.add('off');
     card.hidden = false;
     render();
   }
@@ -186,16 +185,14 @@
     demo.running = false;
     card.hidden = true;
     card.innerHTML = '';
-    startBtn.classList.remove('off');
   }
-  startBtn.addEventListener('click', start);
+  window.AdmiraDemo = Object.freeze({start, stop});
   document.addEventListener('keydown', e => { if (demo.running && e.key === 'Escape') stop(); });
   // El idioma puede cambiar con el botón ENG/ES de la cabecera.
   let shownLang = es();
   new MutationObserver(() => {
     if (es() === shownLang) return;
     shownLang = es();
-    startBtn.textContent = L('Empezar la demo', 'Start demo');
     if (demo.running) render();
   }).observe(document.documentElement, {attributes: true, attributeFilter: ['lang']});
 })();

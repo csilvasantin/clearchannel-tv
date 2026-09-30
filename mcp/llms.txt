@@ -86,11 +86,9 @@ Curated association by ID in xpace-link.js; an explicit backoffice xpaceUrl take
 
 ## Navegación responsive / Responsive navigation · admira.app
 
-La cabecera de admira.app ya no incluye Contacto. En móvil (hasta 720 px), el buscador permanece visible y «Menú» reúne planificación, circuitos, target, solicitudes, modo avanzado, player, acceso e idioma. Pulsa Menú para abrir o cerrar; Escape lo cierra con teclado. En tableta y escritorio las opciones se distribuyen según el ancho. La ficha del punto y los selectores móviles se ajustan a la altura de la cabecera.
+La cabecera mantiene el buscador y tres botones: ☰ Opciones abre la barra vertical izquierda (player virtual, acceso, ayuda e idioma); ▤ Modo avanzado abre la barra derecha con Planificar campaña, Seleccionar circuito, Seleccionar target, Mis solicitudes y Sala de emisión; ⌘ Modo experto abre la barra horizontal inferior. Los paneles empiezan cerrados y se pueden abrir de forma independiente. En Experto escribe /cli y pulsa Enter o Ejecutar para iniciar la demo guiada; /help muestra los comandos. Ya no hay un botón flotante Empezar la demo. La compra de la demo sigue siendo simulada: no cobra ni reserva parrilla.
 
-The admira.app header no longer includes Contact. On mobile (up to 720 px), search stays visible and “Menu” contains planning, circuits, target, requests, advanced mode, player, login and language. Toggle Menu to open or close it; Escape closes it from the keyboard. Tablet and desktop options wrap to fit the available width. Location profiles and mobile selectors adapt to the header height.
+The header keeps search and three buttons: ☰ Options opens the left vertical bar (virtual player, login, help and language); ▤ Advanced mode opens the right bar with Plan campaign, Select circuit, Select target, My requests and Emission room; ⌘ Expert mode opens the bottom horizontal bar. Panels start closed and can be opened independently. In Expert, type /cli and press Enter or Run to start the guided demo; /help shows commands. There is no floating Start demo button. Demo purchases remain simulated: no charge or airtime booking.
 
-Help: https://admira.app/help/#responsive-navigation
-Tutorial: https://admira.app/tutorial/#responsive-navigation
-
-Implementación compartida admira.app/clearchannel.tv: responsive-shell.css y responsive-shell.js; ResizeObserver mide la cabecera y actualiza --app-header-height. Menú accesible con aria-expanded/aria-controls; no cambia el estado de selección ni el destino del Digital Twin. / Shared implementation: measured header height, accessible menu state, existing location selection and twin destination preserved.
+Help: https://admira.app/help/#navigation-modes
+Tutorial: https://admira.app/tutorial/#navigation-modes
