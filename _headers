@@ -12,3 +12,12 @@
 
 /assets/intro/*
   Cache-Control: public, max-age=604800
+
+/responsive-shell.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/responsive-shell.css
+  Cache-Control: public, max-age=0, must-revalidate
+
+/intro.js
+  Cache-Control: public, max-age=0, must-revalidate
