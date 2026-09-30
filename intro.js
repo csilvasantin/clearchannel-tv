@@ -79,7 +79,8 @@
         const p = demo.plan = plan();
         const rows = p.rows.map(r => `<li><span>${esc(r.name)}</span><b>${money(r.cost)}</b><small>${r.impr.toLocaleString(es() ? 'es-ES' : 'en-US')} ${L('impr.', 'impr.')} · CPM ${money(r.cpm)}</small></li>`).join('');
         const waiting = globeShown ? '' : `<p class="demo-note">${L('La bola 3D termina de cargar; seguimos sobre el vídeo y volamos al Xpacio en cuanto esté.', 'The 3D globe is still loading; we carry on over the video and fly to the Xpacio as soon as it is ready.')}</p>`;
-        return `<p><b>Xtanco Valencia</b> · ${L('Carrer de Colón 22, València', 'Carrer de Colón 22, Valencia')}</p>
+        return `<p class="demo-note">${L('Demo iniciada con /cli. La compra del recorrido es simulada. Escribe /help en la línea de comandos para consultar la ayuda.', 'Demo started with /cli. The tour purchase is simulated. Type /help in the command line for help.')}</p>
+          <p><b>Xtanco Valencia</b> · ${L('Carrer de Colón 22, València', 'Carrer de Colón 22, Valencia')}</p>
           <p>${L(`Campaña de ${DAYS} días en sus pantallas en directo:`, `A ${DAYS}-day campaign on its live screens:`)}</p>
           <ul class="demo-plan">${rows}</ul>
           <p class="demo-total">${L('Presupuesto', 'Budget')} <b>${money(p.total)}</b> <span class="demo-tag est">${L('estimado', 'estimate')}</span></p>

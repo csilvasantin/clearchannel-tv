@@ -735,8 +735,8 @@ addEventListener('resize',ccFitIntro);
   @media (max-width:640px){ .pv-head{padding-right:48px;gap:8px} .pv-titles{flex-basis:100%} }
 </style>
 <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
-<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20260930-map-tools-1">
-<script defer src="responsive-shell.js?v=20260930-map-tools-1"></script>
+<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20260930-resize-cli-1">
+<script defer src="responsive-shell.js?v=20260930-resize-cli-1"></script>
 </head>
 <body>
 
@@ -826,11 +826,10 @@ addEventListener('resize',ccFitIntro);
   <div class="mode-panel-head"><strong data-shell-text-es="Modo experto" data-shell-text-en="Expert mode">Modo experto</strong><button type="button" data-close-mode="expert" aria-label="Cerrar / Close">×</button></div>
   <form id="expert-command-form" class="expert-command-form">
     <label for="expert-command" data-shell-text-es="Comando" data-shell-text-en="Command">Comando</label>
-    <input id="expert-command" type="text" placeholder="/cli" autocomplete="off" spellcheck="false" aria-describedby="expert-command-help">
+    <input id="expert-command" type="text" placeholder="/cli" autocomplete="off" spellcheck="false">
     <button type="submit" data-shell-text-es="Ejecutar" data-shell-text-en="Run">Ejecutar</button>
   </form>
-  <p id="expert-command-help" data-shell-text-es="Escribe /cli y pulsa Enter para empezar la demo guiada. /help muestra los comandos." data-shell-text-en="Type /cli and press Enter to start the guided demo. /help shows commands.">Escribe /cli y pulsa Enter para empezar la demo guiada. /help muestra los comandos.</p>
-  <p id="expert-command-result" role="status" aria-live="polite"></p>
+  <p id="expert-command-result" role="status" aria-live="polite" hidden></p>
 </section>
 
 <div class="space" id="space" aria-hidden="true">
@@ -1329,7 +1328,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="locations.js?v=20260929-starbucks-twin-1"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=20260930-identity-2"></script><script defer src="intro.js?v=20260930-cli-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=20260930-identity-2"></script><script defer src="intro.js?v=20260930-cli-2"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
