@@ -32,8 +32,12 @@ function admiraRewriter(pathname) {
       }
     })
     .on('title', {
+      element(element) {
+        if (pathname === '/' || pathname === '/index.html') element.setInnerContent('Mapa de espacios comerciales | admira.app');
+      },
       text(text) {
-        var branded = pathname === '/' || pathname === '/index.html' ? 'Mapa de espacios comerciales | admira.app' : replaceBrand(text.text);
+        if (pathname === '/' || pathname === '/index.html') return;
+        var branded = replaceBrand(text.text);
         // text.text llega tal cual está en el HTML (entidades incluidas): se devuelve como
         // HTML para no escaparlo dos veces (el <title> salía con &amp;amp;).
         if (branded !== text.text) text.replace(branded, { html: true });
