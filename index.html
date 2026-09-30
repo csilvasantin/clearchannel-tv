@@ -789,6 +789,10 @@ addEventListener('resize',ccFitIntro);
     <button type="button" class="header-circuit-btn" id="header-circuit-btn" data-i18n="select_circuit">Seleccionar circuito</button>
     <button type="button" class="header-circuit-btn" id="header-target-btn" data-i18n="select_target">Seleccionar target</button>
     <button type="button" class="header-circuit-btn" id="header-orders-btn" data-i18n="orders_title">Mis solicitudes</button>
+    <button id="neoFab" class="header-circuit-btn" aria-controls="neoPanel" aria-expanded="false" type="button" data-i18n-aria="neo_open" aria-label="Habla con Neo, asistente en vivo">
+      <img class="neo-face" src="https://digitalavatar.ai/assets/neo-poster-1x1.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+      <span class="neo-dot"></span><span class="neo-lbl" data-i18n="neo_label">Habla con Neo</span>
+    </button>
     <button type="button" id="advanced-emission" class="header-circuit-btn" data-i18n="emission_room">Sala de emisión</button>
   </div>
 </details>
@@ -1350,13 +1354,9 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
 <script defer src="planner-ui.js?v=20260905-1"></script>
 <script type="module" src="walk-launch.mjs?v=20260905-1"></script>
 
-<!-- ═══ Neo · host MetaHuman en vivo (widget flotante opt-in, reversible) — digitalavatar.ai ═══ -->
-<div id="neoDock">
-  <button id="neoFab" type="button" data-i18n-aria="neo_open" aria-label="Habla con Neo, asistente en vivo">
-    <img class="neo-face" src="https://digitalavatar.ai/assets/neo-poster-1x1.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
-    <span class="neo-dot"></span><span class="neo-lbl" data-i18n="neo_label">Habla con Neo</span>
-  </button>
-  <div id="neoPanel" hidden aria-label="Neo, host MetaHuman en vivo">
+<!-- ═══ Neo · host MetaHuman en vivo (acceso desde Avanzado, panel opt-in) — digitalavatar.ai ═══ -->
+<div id="neoDock" hidden>
+  <div id="neoPanel" role="dialog" tabindex="-1" hidden aria-label="Neo, host MetaHuman en vivo">
     <div class="neo-head">
       <span class="neo-hlive"><span class="neo-dot"></span>Neo · host en vivo</span>
       <button id="neoClose" type="button" aria-label="Cerrar">&times;</button>
@@ -1376,9 +1376,10 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
   #neoFab .neo-lbl b{ color:#5fd0ff }
   .neo-dot{ width:9px; height:9px; border-radius:50%; background:#6ce6a2; box-shadow:0 0 9px #6ce6a2; animation:neoP 1.3s infinite; flex:0 0 auto }
   @keyframes neoP{ 50%{opacity:.3} }
-  #neoDock.open #neoFab{ display:none }
-  #neoPanel{ width:min(360px,calc(100vw - 28px)); background:rgba(6,12,20,.94); border:1px solid #1b3346; border-radius:18px;
-    overflow:hidden; box-shadow:0 22px 60px rgba(0,0,0,.6); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px) }
+  #neoDock[hidden]{display:none}
+  #advanced-tools #neoFab{width:100%;border-radius:9px;box-shadow:none;justify-content:flex-start}
+  #neoPanel{ max-height:calc(100dvh - 90px); width:min(360px,calc(100vw - 28px)); background:rgba(6,12,20,.94); border:1px solid #1b3346; border-radius:18px;
+    overflow-x:hidden;overflow-y:auto; box-shadow:0 22px 60px rgba(0,0,0,.6); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px) }
   .neo-head{ display:flex; align-items:center; gap:8px; padding:11px 14px; border-bottom:1px solid #1b3346; color:#86a6bd; font-size:.78rem }
   .neo-hlive{ display:inline-flex; align-items:center; gap:7px; color:#6ce6a2; font-weight:700 }
   .neo-head #neoClose{ margin-left:auto; background:transparent; border:0; color:#86a6bd; font-size:1.4rem; line-height:1; cursor:pointer; padding:0 4px }
@@ -1393,8 +1394,8 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
         panel=document.getElementById('neoPanel'), close=document.getElementById('neoClose'),
         frame=document.getElementById('neoFrame');
     var SRC='https://digitalavatar.ai/embed-mh.html?ask=1';   // facade: no conecta el stream hasta pulsar dentro
-    function open(){ if(!frame.getAttribute('src')) frame.setAttribute('src',SRC); panel.hidden=false; dock.classList.add('open'); }
-    function shut(){ panel.hidden=true; dock.classList.remove('open'); }
+    function open(){ if(!frame.getAttribute('src')) frame.setAttribute('src',SRC); dock.hidden=false;panel.hidden=false; dock.classList.add('open');fab.setAttribute('aria-expanded','true');close.focus(); }
+    function shut(){ panel.hidden=true;dock.hidden=true; dock.classList.remove('open');fab.setAttribute('aria-expanded','false');document.getElementById('header-advanced-toggle')?.focus(); }
     fab.addEventListener('click', function(){ panel.hidden ? open() : shut(); });
     close.addEventListener('click', shut);
     document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !panel.hidden) shut(); });

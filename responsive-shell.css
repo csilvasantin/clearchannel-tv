@@ -48,7 +48,7 @@ aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}
  #circuit-panel,#target-panel{top:calc(var(--app-header-height) + 8px)!important;left:12px!important;right:12px!important;width:calc(100% - 24px);max-width:none;max-height:calc(100dvh - var(--app-header-height) - 20px);overflow-y:auto}
  .circuit-body{max-height:calc(100dvh - var(--app-header-height) - 68px)}
  .addr-card{top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - 20px);overflow-y:auto}
- body:is(.mode-options-open,.mode-advanced-open,.mode-expert-open) :is(#neoDock,#brand-family,#ticker,.map-ctrls){display:none}
- body:has(#panel.open,#circuit-panel:not([hidden]),#target-panel:not([hidden])) :is(#neoDock,#brand-family,#ticker,.map-ctrls){display:none}
+ body:is(.mode-options-open,.mode-advanced-open,.mode-expert-open) :is(#neoDock:not(.open),#brand-family,#ticker,.map-ctrls){display:none}
+ body:has(#panel.open,#circuit-panel:not([hidden]),#target-panel:not([hidden])) :is(#neoDock:not(.open),#brand-family,#ticker,.map-ctrls){display:none}
  .demo-card{bottom:auto;top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - 218px)}
 }

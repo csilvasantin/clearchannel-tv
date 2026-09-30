@@ -103,3 +103,7 @@ Tutorial: https://admira.app/tutorial/#navigation-modes
 El botón ☰ Opciones se encuentra justo a la izquierda del logo. ▤ Avanzado y ⌘ Experto permanecen a la derecha. Los tres paneles se abren y cierran de forma independiente. admira.app conserva su identidad y metaestilo, con castellano por defecto; clearchannel.tv conserva la marca Clear Channel y su metaestilo, con inglés por defecto. La preferencia de idioma se guarda por marca; un cambio voluntario de idioma no cambia su identidad. /cli sigue iniciando la demo desde Experto.
 
 The ☰ Options button sits immediately to the left of the logo. ▤ Advanced and ⌘ Expert remain on the right. Each panel opens and closes independently. admira.app retains its identity and visual theme with Spanish by default; clearchannel.tv retains Clear Channel branding and its visual theme with English by default. Language preferences are stored per brand; choosing another language does not change brand identity. /cli still starts the guided demo from Expert.
+
+## Neo — Advanced mode / Modo avanzado
+«Habla con Neo» está dentro de ▤ Modo avanzado. La home no muestra el botón flotante. Abre Avanzado y pulsa Habla con Neo; el panel se carga bajo demanda. Cerrar o Escape vuelve al botón Avanzado.
+“Talk to Neo” is inside ▤ Advanced mode. The home page has no floating Neo button. Open Advanced and select Talk to Neo; the panel loads on demand. Close or Escape returns focus to Advanced.

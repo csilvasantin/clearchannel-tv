@@ -122,7 +122,15 @@
     },
     "mobile_breakpoint_px": 720,
     "options_position": "left_of_logo",
-    "independent_panels": true
+    "independent_panels": true,
+    "neo": {
+      "access": "advanced-tools > neoFab",
+      "initially_visible": false,
+      "panel": "neoPanel",
+      "loads_on_click": true,
+      "es": "«Habla con Neo» está dentro de ▤ Modo avanzado. La home no muestra el botón flotante. Abre Avanzado y pulsa Habla con Neo; el panel se carga bajo demanda. Cerrar o Escape vuelve al botón Avanzado.",
+      "en": "“Talk to Neo” is inside ▤ Advanced mode. The home page has no floating Neo button. Open Advanced and select Talk to Neo; the panel loads on demand. Close or Escape returns focus to Advanced."
+    }
   },
   "brand_identity": {
     "name": "admira.app",
