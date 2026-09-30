@@ -6,6 +6,7 @@ body > header .logo{text-align:left;min-width:0}
 body > header .search-wrap{grid-column:2;min-width:0;width:min(100%,620px);max-width:none;justify-self:end;margin:0}
 .mode-switches{display:flex;gap:8px;grid-column:3}
 .mode-toggle{display:grid;place-items:center;width:40px;height:40px;font:700 20px/1 monospace;color:var(--brand);background:var(--card);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.mode-toggle.header-login{width:auto;padding:0 12px;font:600 13px/1 sans-serif;text-decoration:none}
 .mode-toggle[aria-expanded=true]{color:#001620;background:var(--brand);border-color:var(--brand)}
 .mode-toggle:focus-visible,.mode-panel :is(button,a,input,summary):focus-visible{outline:2px solid var(--brand);outline-offset:3px}
 .mode-panel{position:fixed;z-index:9000;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--text,#e8f6ff);box-shadow:0 12px 40px #0008;padding:14px;overflow-y:auto;overscroll-behavior:contain}
@@ -24,10 +25,10 @@ body > header .search-wrap{grid-column:2;min-width:0;width:min(100%,620px);max-w
 .advanced-panel #advanced-emission{position:static;box-shadow:none}
 .expert-panel{bottom:12px;left:12px;right:12px;max-height:45dvh}
 .expert-command-form{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:12px;align-items:center;font:13px/1.4 monospace}
-.expert-command-form input{width:100%;min-width:0;padding:12px;background:var(--bg);color:var(--brand);border:1px solid var(--line);border-radius:8px;font:16px/1.4 monospace}
-.expert-command-form button{padding:12px;background:var(--brand);color:#001620;border:0;border-radius:8px;cursor:pointer}
+.expert-command-form input{width:100%;min-width:0;padding:6px 10px;background:var(--bg);color:var(--brand);border:1px solid var(--line);border-radius:8px;font:16px/1.4 monospace}
+.expert-command-form button{padding:9px 10px;background:var(--brand);color:#001620;border:0;border-radius:8px;cursor:pointer}
 .expert-panel p{font:12px/1.5 monospace;color:var(--mut);margin:10px 0 0}
-body.mode-expert-open :is(#neoDock,#ticker,.map-ctrls){bottom:var(--expert-panel-height,76px)}
+body.mode-expert-open :is(#neoDock,#ticker,.map-ctrls){bottom:var(--expert-panel-height,56px)}
 aside.panel{top:var(--app-header-height);max-height:calc(100dvh - var(--app-header-height));overscroll-behavior:contain}
 #circuit-panel,#target-panel{z-index:9100}
 .suggest{max-height:min(60dvh,calc(100dvh - var(--app-header-height) - 12px))}
@@ -48,7 +49,7 @@ aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}
  .addr-card{top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - 20px);overflow-y:auto}
  body:is(.mode-options-open,.mode-advanced-open,.mode-expert-open) :is(#neoDock:not(.open),#ticker,.map-ctrls){display:none}
  body:has(#panel.open,#circuit-panel:not([hidden]),#target-panel:not([hidden])) :is(#neoDock:not(.open),#ticker,.map-ctrls){display:none}
- .demo-card{bottom:auto;top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - var(--expert-panel-height,76px) - 8px)}
+ .demo-card{bottom:auto;top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - var(--expert-panel-height,56px) - 8px)}
 }
 
 /* Screen-edge rails share Pixeria's independent, persistent panel toggles. */
@@ -64,7 +65,7 @@ aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}
 #advanced-tools #neoFab .neo-lbl{min-width:0}
 
 .expert-panel{left:0;right:0;bottom:0;border-radius:0}
-body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:var(--expert-panel-height,76px)}
+body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:var(--expert-panel-height,56px)}
 .map-tools-heading{margin:20px 0 12px;font:12px/1.4 monospace;color:var(--mut);text-transform:uppercase;letter-spacing:.1em}
 #advanced-tools .map-ctrls{position:static;display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:8px;margin:0;padding:0;width:100%;transform:none}
 #advanced-tools .zoom-grp{display:flex;flex-direction:row}
@@ -79,10 +80,10 @@ body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:var(--expert-pa
 }
 
 /* Compact CLI: help belongs to its command output, not a permanent extra row. */
-.expert-panel{height:76px;min-height:76px;max-height:calc(100dvh - var(--app-header-height) - 24px);padding:14px 12px 10px}
+.expert-panel{height:56px;min-height:56px;max-height:calc(100dvh - var(--app-header-height) - 24px);padding:10px 10px 6px}
 .expert-command-form label{font:700 12px/1.4 monospace;letter-spacing:.08em;text-transform:uppercase}
 .expert-command-form .expert-close{padding:4px;background:none;color:var(--brand);font:22px/1 monospace}
-#expert-command-result{position:fixed;bottom:calc(var(--expert-panel-height,76px) + 8px);left:14px;right:14px;max-width:620px;margin:0;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 28px #0008;z-index:9200}
+#expert-command-result{position:fixed;bottom:calc(var(--expert-panel-height,56px) + 8px);left:14px;right:14px;max-width:620px;margin:0;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 28px #0008;z-index:9200}
 #expert-command-result[hidden]{display:none}
 .mode-resize{position:absolute;z-index:2;touch-action:none;user-select:none}
 .mode-resize-options{right:0;top:0;bottom:0;width:8px;cursor:col-resize}

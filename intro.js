@@ -1,7 +1,7 @@
 // Entrada rápida y circuito de demo (encargo #4566 · presentación JTI/Altadis).
 // 1) Al abrir se ve al instante un vídeo en bucle grabado de la propia bola; la
 //    bola 3D carga detrás y lo sustituye con un fundido cuando pinta el mundo.
-// 2) /cli desde el modo experto lanza un circuito de 4 pasos. Si la bola
+// 2) /demo o /cli desde el modo experto lanza un circuito de 4 pasos. Si la bola
 //    aún no está lista, la demo sigue sobre el vídeo y vuela en cuanto llega.
 // Cifras: la planificación es una estimación con las impresiones/día estimadas
 // de la ficha; la compra es SIMULADA (no hay pasarela, no se guarda ni se
@@ -79,7 +79,7 @@
         const p = demo.plan = plan();
         const rows = p.rows.map(r => `<li><span>${esc(r.name)}</span><b>${money(r.cost)}</b><small>${r.impr.toLocaleString(es() ? 'es-ES' : 'en-US')} ${L('impr.', 'impr.')} · CPM ${money(r.cpm)}</small></li>`).join('');
         const waiting = globeShown ? '' : `<p class="demo-note">${L('La bola 3D termina de cargar; seguimos sobre el vídeo y volamos al Xpacio en cuanto esté.', 'The 3D globe is still loading; we carry on over the video and fly to the Xpacio as soon as it is ready.')}</p>`;
-        return `<p class="demo-note">${L('Demo iniciada con /cli. La compra del recorrido es simulada. Escribe /help en la línea de comandos para consultar la ayuda.', 'Demo started with /cli. The tour purchase is simulated. Type /help in the command line for help.')}</p>
+        return `<p class="demo-note">${L('Demo guiada iniciada. La compra del recorrido es simulada. Escribe /help en la línea de comandos para consultar la ayuda.', 'Guided demo started. The tour purchase is simulated. Type /help in the command line for help.')}</p>
           <p><b>Xtanco Valencia</b> · ${L('Carrer de Colón 22, València', 'Carrer de Colón 22, Valencia')}</p>
           <p>${L(`Campaña de ${DAYS} días en sus pantallas en directo:`, `A ${DAYS}-day campaign on its live screens:`)}</p>
           <ul class="demo-plan">${rows}</ul>

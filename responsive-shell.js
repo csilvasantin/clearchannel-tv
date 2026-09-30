@@ -44,17 +44,17 @@
   input.addEventListener('input',()=>say(''));
   document.getElementById('expert-command-form').addEventListener('submit',event=>{
     event.preventDefault();const command=input.value.trim().toLowerCase();
-    if(command==='/cli'){
-      if(!window.AdmiraDemo){say(text('La demo está cargando. Vuelve a ejecutar /cli.','The demo is loading. Run /cli again.'));return;}
+    if(command==='/demo'||command==='/cli'){
+      if(!window.AdmiraDemo){say(text('La demo está cargando. Vuelve a ejecutar /demo.','The demo is loading. Run /demo again.'));return;}
       say('');window.AdmiraDemo.start();
-    }else if(command==='/help')say(text('/cli — empezar la demo guiada (compra simulada). /help — ayuda.','/cli — start the guided demo (simulated purchase). /help — help.'));
-    else say(text('Comando no reconocido. Usa /cli o /help.','Unknown command. Use /cli or /help.'));
+    }else if(command==='/help')say(text('/demo — empezar la demo guiada (compra simulada). /cli — también inicia la demo. /help — ayuda.','/demo — start the guided demo (simulated purchase). /cli — also starts the demo. /help — help.'));
+    else say(text('Comando no reconocido. Usa /demo, /cli o /help.','Unknown command. Use /demo, /cli or /help.'));
   });
   // Resize the rails from their inner edge and the CLI from its top edge.
   const sizeHandles={};
   function bounds(mode){
-    const max=mode==='expert'?Math.max(76,innerHeight-header.getBoundingClientRect().height-24):Math.max(180,Math.min(700,innerWidth-24));
-    return {min:mode==='expert'?76:180,max};
+    const max=mode==='expert'?Math.max(56,innerHeight-header.getBoundingClientRect().height-24):Math.max(180,Math.min(700,innerWidth-24));
+    return {min:mode==='expert'?56:180,max};
   }
   function setSize(mode,value,persist=false){
     const {min,max}=bounds(mode),size=Math.round(Math.max(min,Math.min(max,value)));
@@ -68,11 +68,11 @@
     const handle=document.createElement('div');handle.className='mode-resize mode-resize-'+mode;handle.tabIndex=0;
     handle.setAttribute('role','separator');handle.setAttribute('aria-orientation',mode==='expert'?'horizontal':'vertical');
     handle.setAttribute('aria-controls',panel.id);panel.append(handle);sizeHandles[mode]=handle;
-    const initial=mode==='expert'?76:200;
+    const initial=mode==='expert'?56:200;
     let saved;try{saved=Number(localStorage.getItem('admira_panel_size_'+mode));}catch(_){}
     // Migrate the former default while retaining deliberately resized panels.
-    const formerDefault=mode==='expert'?120:300;
-    setSize(mode,saved>0&&saved!==formerDefault?saved:initial);
+    const formerDefaults=mode==='expert'?[76,120]:[300];
+    setSize(mode,saved>0&&!formerDefaults.includes(saved)?saved:initial);
     let drag=null;
     handle.addEventListener('pointerdown',event=>{
       if(event.button!==0)return;
