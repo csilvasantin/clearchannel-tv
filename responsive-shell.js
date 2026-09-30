@@ -53,8 +53,8 @@
   // Resize the rails from their inner edge and the CLI from its top edge.
   const sizeHandles={};
   function bounds(mode){
-    const max=mode==='expert'?Math.max(76,innerHeight-header.getBoundingClientRect().height-24):Math.max(220,Math.min(700,innerWidth-24));
-    return {min:mode==='expert'?76:220,max};
+    const max=mode==='expert'?Math.max(76,innerHeight-header.getBoundingClientRect().height-24):Math.max(180,Math.min(700,innerWidth-24));
+    return {min:mode==='expert'?76:180,max};
   }
   function setSize(mode,value,persist=false){
     const {min,max}=bounds(mode),size=Math.round(Math.max(min,Math.min(max,value)));
@@ -68,10 +68,11 @@
     const handle=document.createElement('div');handle.className='mode-resize mode-resize-'+mode;handle.tabIndex=0;
     handle.setAttribute('role','separator');handle.setAttribute('aria-orientation',mode==='expert'?'horizontal':'vertical');
     handle.setAttribute('aria-controls',panel.id);panel.append(handle);sizeHandles[mode]=handle;
-    const initial=mode==='expert'?76:300;
+    const initial=mode==='expert'?76:200;
     let saved;try{saved=Number(localStorage.getItem('admira_panel_size_'+mode));}catch(_){}
     // Migrate the former default while retaining deliberately resized panels.
-    setSize(mode,saved>0&&!(mode==='expert'&&saved===120)?saved:initial);
+    const formerDefault=mode==='expert'?120:300;
+    setSize(mode,saved>0&&saved!==formerDefault?saved:initial);
     let drag=null;
     handle.addEventListener('pointerdown',event=>{
       if(event.button!==0)return;

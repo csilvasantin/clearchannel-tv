@@ -13,7 +13,7 @@ body > header .search-wrap{grid-column:2;min-width:0;width:min(100%,620px);max-w
 .mode-panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px;font:12px/1.4 monospace;letter-spacing:.1em;text-transform:uppercase;list-style:none}
 .mode-panel-head::-webkit-details-marker{display:none}
 .mode-panel-head button{border:0;background:none;color:var(--brand);font-size:22px;cursor:pointer}
-.options-panel,.advanced-panel{top:calc(var(--app-header-height) + 8px);width:300px;max-height:calc(100dvh - var(--app-header-height) - 24px)}
+.options-panel,.advanced-panel{top:calc(var(--app-header-height) + 8px);width:200px;max-height:calc(100dvh - var(--app-header-height) - 24px)}
 .options-panel{left:12px;display:flex;flex-direction:column;gap:10px}
 .options-panel a,.options-panel .lang-switch{display:flex;align-items:center;padding:12px;color:var(--brand);text-decoration:none;border:1px solid var(--line);border-radius:8px}
 .advanced-panel{right:12px}
@@ -41,7 +41,7 @@ aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}
  .mode-toggle{width:40px;height:40px}
  body > header .search-wrap{grid-column:1/-1;grid-row:2;width:100%}
  body > header .search input{font-size:16px}
- .options-panel,.advanced-panel{width:min(300px,calc(100% - 24px))}
+ .options-panel,.advanced-panel{width:min(200px,calc(100% - 24px))}
  aside.panel{top:auto;bottom:0;width:100%;max-width:100%;height:min(65dvh,calc(100dvh - var(--app-header-height)));padding-bottom:env(safe-area-inset-bottom)}
  #circuit-panel,#target-panel{top:calc(var(--app-header-height) + 8px)!important;left:12px!important;right:12px!important;width:calc(100% - 24px);max-width:none;max-height:calc(100dvh - var(--app-header-height) - 20px);overflow-y:auto}
  .circuit-body{max-height:calc(100dvh - var(--app-header-height) - 68px)}
@@ -52,18 +52,27 @@ aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}
 }
 
 /* Screen-edge rails share Pixeria's independent, persistent panel toggles. */
-.options-panel,.advanced-panel{top:var(--app-header-height);bottom:0;max-height:none;border-radius:0;width:300px}
+.options-panel,.advanced-panel{top:var(--app-header-height);bottom:0;max-height:none;border-radius:0;width:200px}
 .options-panel{left:0}.advanced-panel{right:0}
+.options-panel,.advanced-panel{padding:10px}
+.options-panel .mode-panel-head,.advanced-panel .mode-panel-head{gap:8px;letter-spacing:.06em}
+.options-panel a,.options-panel .lang-switch{padding:10px}
+.advanced-actions{gap:8px}
+.advanced-actions .header-circuit-btn{padding:8px;font-size:11px;overflow-wrap:anywhere}
+#advanced-tools #neoFab{padding:8px;gap:6px;font-size:11px;min-width:0}
+#advanced-tools #neoFab .neo-face{width:26px;height:26px;margin-left:0}
+#advanced-tools #neoFab .neo-lbl{min-width:0}
+
 .expert-panel{left:0;right:0;bottom:0;border-radius:0}
 body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:var(--expert-panel-height,76px)}
 .map-tools-heading{margin:20px 0 12px;font:12px/1.4 monospace;color:var(--mut);text-transform:uppercase;letter-spacing:.1em}
-#advanced-tools .map-ctrls{position:static;display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:10px;margin:0;padding:0;width:100%;transform:none}
+#advanced-tools .map-ctrls{position:static;display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:8px;margin:0;padding:0;width:100%;transform:none}
 #advanced-tools .zoom-grp{display:flex;flex-direction:row}
 #advanced-tools .zoom-grp .ctrl-btn.ztop{border-bottom:0;border-right:1px solid var(--line)}
 #advanced-tools .layer-chooser{display:flex;flex-direction:row;width:100%}
 #advanced-tools .layer-btn{flex:1;min-width:0}
 @media(max-width:720px){
- .options-panel,.advanced-panel{width:min(300px,100%);max-height:none}
+ .options-panel,.advanced-panel{width:min(200px,100%);max-height:none}
  #advanced-tools .map-ctrls{display:flex}
  #advanced-tools .zoom-grp .ctrl-btn{border:0;border-radius:0}
  #advanced-tools .layer-btn{border:0}
