@@ -13,6 +13,7 @@
   }
   function setOpen(mode,open,{focus=false}={}){
     if(mode==='advanced')panels[mode].open=open;else panels[mode].hidden=!open;
+    try{localStorage.setItem('admira_panel_'+mode,open?'1':'0');}catch(_){}
     sync();if(open&&focus){if(mode==='expert')document.getElementById('expert-command').focus();else (panels[mode].querySelector('a,button')||panels[mode]).focus();}
   }
   for(const [mode,button] of Object.entries(toggles))button.addEventListener('click',()=>setOpen(mode,!isOpen(mode),{focus:true}));
@@ -52,5 +53,6 @@
     result.textContent='';measure();
   }
   new MutationObserver(translate).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  for(const mode of Object.keys(panels)){try{setOpen(mode,localStorage.getItem('admira_panel_'+mode)==='1');}catch(_){}}
   new ResizeObserver(measure).observe(header);translate();sync();
 })();

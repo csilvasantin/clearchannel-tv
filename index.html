@@ -741,8 +741,8 @@ addEventListener('resize',ccFitIntro);
   @media (max-width:640px){ .pv-head{padding-right:48px;gap:8px} .pv-titles{flex-basis:100%} }
 </style>
 <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
-<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20260930-brand-1">
-<script defer src="responsive-shell.js?v=20260930-brand-1"></script>
+<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20260930-map-tools-1">
+<script defer src="responsive-shell.js?v=20260930-map-tools-1"></script>
 </head>
 <body>
 
@@ -795,6 +795,38 @@ addEventListener('resize',ccFitIntro);
     </button>
     <button type="button" id="advanced-emission" class="header-circuit-btn" data-i18n="emission_room">Sala de emisión</button>
   </div>
+  <h3 class="map-tools-heading" data-shell-text-es="Vista del mapa" data-shell-text-en="Map view">Vista del mapa</h3>
+<div class="map-ctrls" id="ctrls">
+  <button class="ctrl-btn compass" id="btn-compass" title="Reset bearing/pitch" aria-label="Reset bearing">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M5 8a7 7 0 0 1 14 0M19 16a7 7 0 0 1-14 0"/><polygon points="12,3 9,10 12,8 15,10" fill="#ff5e3a" stroke="none"/></svg>
+  </button>
+  <button class="ctrl-btn" id="btn-3d" data-i18n-title="toggle_2d3d" title="Alternar 2D / 3D">3D</button>
+  <button class="ctrl-btn" id="btn-iso" data-i18n-title="toggle_iso" title="Vista isométrica (como el Gemelo Digital)">ISO</button>
+  <button class="ctrl-btn" id="btn-loc" data-i18n-title="my_location" title="Mi ubicación" data-i18n-aria="locate" aria-label="Localizar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+  </button>
+  <button class="ctrl-btn pegman" id="pegman" data-i18n-title="pegman_title" title="Arrastra el muñeco a una calle para ver Street View" data-i18n-aria="streetview" aria-label="Street View" draggable="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="4.4" r="2.6" fill="#ffd866"/>
+      <path d="M8.4 9.2c0-1.3 1.6-2.1 3.6-2.1s3.6 .8 3.6 2.1l-.7 4.1c-.1 .6-1 .6-1.1 0l-.5-2.8h-.4l-.6 9.4c0 .8-1.2 .8-1.3 0l-.4-5.2h-.6l-.4 5.2c-.1 .8-1.3 .8-1.3 0l-.6-9.4h-.4l-.5 2.8c-.1 .6-1 .6-1.1 0z" fill="#ffd866"/>
+    </svg>
+  </button>
+  <div class="zoom-grp">
+    <button class="ctrl-btn ztop" id="btn-zin" data-i18n-aria="zoom_in" title="Zoom +" aria-label="Acercar">+</button>
+    <button class="ctrl-btn zbot" id="btn-zout" data-i18n-aria="zoom_out" title="Zoom −" aria-label="Alejar">−</button>
+  </div>
+  <div class="layer-chooser" id="layers">
+    <button class="layer-btn active" data-layer="tierra" data-i18n-title="layer_earth_title" title="Vista satélite (globo)">
+      <span class="thumb t-tierra"></span><span class="lbl" data-i18n="layer_earth">Tierra</span>
+    </button>
+    <button class="layer-btn" data-layer="mapa" data-i18n-title="layer_map_title" title="Vista de mapa oscuro">
+      <span class="thumb t-mapa"></span><span class="lbl" data-i18n="layer_map">Mapa</span>
+    </button>
+    <button class="layer-btn" data-layer="relieve" data-i18n-title="layer_terrain_title" title="Vista de relieve / topográfica">
+      <span class="thumb t-relieve"></span><span class="lbl" data-i18n="layer_terrain">Relieve</span>
+    </button>
+  </div>
+</div>
 </details>
 <section id="expert-panel" class="mode-panel expert-panel" aria-label="Modo experto" hidden>
   <div class="mode-panel-head"><strong data-shell-text-es="Modo experto" data-shell-text-en="Expert mode">Modo experto</strong><button type="button" data-close-mode="expert" aria-label="Cerrar / Close">×</button></div>
@@ -1187,37 +1219,7 @@ addEventListener('resize',ccFitIntro);
   <h1 id="hero-h1">Retail Media<br><span class="grad">in the real world</span></h1>
 </div>
 
-<div class="map-ctrls" id="ctrls">
-  <button class="ctrl-btn compass" id="btn-compass" title="Reset bearing/pitch" aria-label="Reset bearing">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M5 8a7 7 0 0 1 14 0M19 16a7 7 0 0 1-14 0"/><polygon points="12,3 9,10 12,8 15,10" fill="#ff5e3a" stroke="none"/></svg>
-  </button>
-  <button class="ctrl-btn" id="btn-3d" data-i18n-title="toggle_2d3d" title="Alternar 2D / 3D">3D</button>
-  <button class="ctrl-btn" id="btn-iso" data-i18n-title="toggle_iso" title="Vista isométrica (como el Gemelo Digital)">ISO</button>
-  <button class="ctrl-btn" id="btn-loc" data-i18n-title="my_location" title="Mi ubicación" data-i18n-aria="locate" aria-label="Localizar">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
-  </button>
-  <button class="ctrl-btn pegman" id="pegman" data-i18n-title="pegman_title" title="Arrastra el muñeco a una calle para ver Street View" data-i18n-aria="streetview" aria-label="Street View" draggable="false">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="4.4" r="2.6" fill="#ffd866"/>
-      <path d="M8.4 9.2c0-1.3 1.6-2.1 3.6-2.1s3.6 .8 3.6 2.1l-.7 4.1c-.1 .6-1 .6-1.1 0l-.5-2.8h-.4l-.6 9.4c0 .8-1.2 .8-1.3 0l-.4-5.2h-.6l-.4 5.2c-.1 .8-1.3 .8-1.3 0l-.6-9.4h-.4l-.5 2.8c-.1 .6-1 .6-1.1 0z" fill="#ffd866"/>
-    </svg>
-  </button>
-  <div class="zoom-grp">
-    <button class="ctrl-btn ztop" id="btn-zin" data-i18n-aria="zoom_in" title="Zoom +" aria-label="Acercar">+</button>
-    <button class="ctrl-btn zbot" id="btn-zout" data-i18n-aria="zoom_out" title="Zoom −" aria-label="Alejar">−</button>
-  </div>
-  <div class="layer-chooser" id="layers">
-    <button class="layer-btn active" data-layer="tierra" data-i18n-title="layer_earth_title" title="Vista satélite (globo)">
-      <span class="thumb t-tierra"></span><span class="lbl" data-i18n="layer_earth">Tierra</span>
-    </button>
-    <button class="layer-btn" data-layer="mapa" data-i18n-title="layer_map_title" title="Vista de mapa oscuro">
-      <span class="thumb t-mapa"></span><span class="lbl" data-i18n="layer_map">Mapa</span>
-    </button>
-    <button class="layer-btn" data-layer="relieve" data-i18n-title="layer_terrain_title" title="Vista de relieve / topográfica">
-      <span class="thumb t-relieve"></span><span class="lbl" data-i18n="layer_terrain">Relieve</span>
-    </button>
-  </div>
-</div>
+
 
 <button type="button" class="map-tour-stop" id="map-tour-stop" data-i18n="tour_stop" hidden>⏸ Parar Tour DooH</button>
 <div class="status-pill" id="status">

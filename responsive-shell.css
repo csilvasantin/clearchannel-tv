@@ -52,3 +52,21 @@ aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}
  body:has(#panel.open,#circuit-panel:not([hidden]),#target-panel:not([hidden])) :is(#neoDock:not(.open),#brand-family,#ticker,.map-ctrls){display:none}
  .demo-card{bottom:auto;top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - 218px)}
 }
+
+/* Screen-edge rails share Pixeria's independent, persistent panel toggles. */
+.options-panel,.advanced-panel{top:var(--app-header-height);bottom:0;max-height:none;border-radius:0;width:300px}
+.options-panel{left:0}.advanced-panel{right:0}
+.expert-panel{left:0;right:0;bottom:0;border-radius:0}
+body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:210px}
+.map-tools-heading{margin:20px 0 12px;font:12px/1.4 monospace;color:var(--mut);text-transform:uppercase;letter-spacing:.1em}
+#advanced-tools .map-ctrls{position:static;display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:10px;margin:0;padding:0;width:100%;transform:none}
+#advanced-tools .zoom-grp{display:flex;flex-direction:row}
+#advanced-tools .zoom-grp .ctrl-btn.ztop{border-bottom:0;border-right:1px solid var(--line)}
+#advanced-tools .layer-chooser{display:flex;flex-direction:row;width:100%}
+#advanced-tools .layer-btn{flex:1;min-width:0}
+@media(max-width:720px){
+ .options-panel,.advanced-panel{width:min(300px,100%);max-height:none}
+ #advanced-tools .map-ctrls{display:flex}
+ #advanced-tools .zoom-grp .ctrl-btn{border:0;border-radius:0}
+ #advanced-tools .layer-btn{border:0}
+}
