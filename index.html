@@ -430,12 +430,6 @@ addEventListener('resize',ccFitIntro);
   .bid-row.real{border-left:2px solid var(--good)}
   .bid-row.win{border-left:2px solid var(--accent);background:rgba(255,216,102,.10)}
   .bid-row .bf-live{display:inline-block;font-size:8.5px;font-weight:700;letter-spacing:.08em;color:#001620;background:var(--good);padding:1px 4px;border-radius:2px;margin-right:5px;vertical-align:middle}
-  #brand-family{position:fixed;left:14px;bottom:12px;z-index:400;display:flex;align-items:center;gap:8px;font-family:monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:rgba(6,14,20,.62);border:1px solid var(--line);border-radius:8px;padding:5px 11px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
-  #brand-family .fam-lbl{color:var(--mut);opacity:.65}
-  #brand-family .fam-sep{color:var(--mut);opacity:.4}
-  #brand-family a{color:var(--mut);text-decoration:none;transition:color .15s ease}
-  #brand-family a:hover{color:var(--accent)}
-  @media (max-width:640px){ #brand-family .fam-lbl{display:none} #brand-family{font-size:9px;gap:6px;padding:4px 9px} }
   .bidfeed-empty{color:var(--mut);font-family:monospace;font-size:11px;padding:8px;border-radius:6px;background:rgba(10,22,32,.5)}
   .bf-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}
   .bf-btn{font-family:monospace;font-size:10.5px;letter-spacing:.03em;color:var(--good);background:rgba(136,255,170,.08);border:1px solid rgba(136,255,170,.35);border-radius:6px;padding:5px 10px;cursor:pointer;transition:background .2s,border-color .2s}
@@ -852,17 +846,6 @@ addEventListener('resize',ccFitIntro);
   </div>
 </div>
 <div id="map"></div>
-
-<!-- Familia de marcas AdmiraNeXT: enlaces discretos al resto del ecosistema
-     (el home no los tenía; detail/marketplace sí). Coherente con la estética. -->
-<div id="brand-family" aria-label="Ecosistema AdmiraNeXT">
-  <span class="fam-lbl" data-i18n="ecosystem">ecosistema</span>
-  <a href="https://www.pixeria.com" target="_blank" rel="noopener">PixerIA</a>
-  <span class="fam-sep">·</span>
-  <a href="https://www.admira.tv" target="_blank" rel="noopener">admira.tv</a>
-  <span class="fam-sep">·</span>
-  <a href="https://www.xpaceos.com" target="_blank" rel="noopener">XpaceOS</a>
-</div>
 
 <!-- Vista isométrica: embebe el Gemelo Digital (game.html) en su perspectiva real.
      Sin punto seleccionado → red isométrica (view=red). Con punto → ?loc=<id>. -->

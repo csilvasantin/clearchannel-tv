@@ -27,7 +27,7 @@ body > header .search-wrap{grid-column:2;min-width:0;width:min(100%,620px);max-w
 .expert-command-form input{width:100%;min-width:0;padding:12px;background:var(--bg);color:var(--brand);border:1px solid var(--line);border-radius:8px;font:16px/1.4 monospace}
 .expert-command-form button{padding:12px;background:var(--brand);color:#001620;border:0;border-radius:8px;cursor:pointer}
 .expert-panel p{font:12px/1.5 monospace;color:var(--mut);margin:10px 0 0}
-body.mode-expert-open :is(#neoDock,#brand-family,#ticker,.map-ctrls){bottom:210px}
+body.mode-expert-open :is(#neoDock,#ticker,.map-ctrls){bottom:210px}
 aside.panel{top:var(--app-header-height);max-height:calc(100dvh - var(--app-header-height));overscroll-behavior:contain}
 #circuit-panel,#target-panel{z-index:9100}
 .suggest{max-height:min(60dvh,calc(100dvh - var(--app-header-height) - 12px))}
@@ -48,8 +48,8 @@ aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}
  #circuit-panel,#target-panel{top:calc(var(--app-header-height) + 8px)!important;left:12px!important;right:12px!important;width:calc(100% - 24px);max-width:none;max-height:calc(100dvh - var(--app-header-height) - 20px);overflow-y:auto}
  .circuit-body{max-height:calc(100dvh - var(--app-header-height) - 68px)}
  .addr-card{top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - 20px);overflow-y:auto}
- body:is(.mode-options-open,.mode-advanced-open,.mode-expert-open) :is(#neoDock:not(.open),#brand-family,#ticker,.map-ctrls){display:none}
- body:has(#panel.open,#circuit-panel:not([hidden]),#target-panel:not([hidden])) :is(#neoDock:not(.open),#brand-family,#ticker,.map-ctrls){display:none}
+ body:is(.mode-options-open,.mode-advanced-open,.mode-expert-open) :is(#neoDock:not(.open),#ticker,.map-ctrls){display:none}
+ body:has(#panel.open,#circuit-panel:not([hidden]),#target-panel:not([hidden])) :is(#neoDock:not(.open),#ticker,.map-ctrls){display:none}
  .demo-card{bottom:auto;top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - 218px)}
 }
 
