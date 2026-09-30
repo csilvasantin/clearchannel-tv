@@ -502,6 +502,24 @@ let LANG = (function(){
 })();
 Object.assign(I18N.es, {live_bidding_label:'Pujas en vivo',neo_label:'Habla con Neo',neo_open:'Habla con Neo, asistente en vivo'});
 Object.assign(I18N.en, {live_bidding_label:'Live bidding',neo_label:'Talk to Neo',neo_open:'Talk to Neo, live assistant'});
+Object.assign(I18N.es, {
+  language_group:'Idioma', zoom_in:'Acercar', zoom_out:'Alejar', simulate_traffic:'▶ Simular tráfico', stop_traffic:'⏸ Parar tráfico', one_impression:'🎲 1 impresión',
+  traffic_hint:'Subastas reales cada 15 s en el circuito demo; consumen presupuesto demo.', impression_hint:'Subastar una impresión real y mostrar el ganador y su segundo precio.',
+  traffic_running:'subastando impresiones reales cada 15 s…', auction_wins:' gana ', auction_price:' · 2º precio €', auction_no_demand:'· sin demanda para ', auction_exhausted:' (presupuesto agotado)', auction_network:'⚠️ error de red al subastar',
+  revenue_hint:'Vendido hoy en la parrilla de Xtanco Valencia. Sin cobro: la pasarela de pago no está activa', screens_hint:'Estimación simulada: el catálogo no trae el nº real de pantallas por punto', impressions_hint:'Impresiones reales del último minuto', no_rtb_data:'Sin datos del motor RTB',
+});
+Object.assign(I18N.en, {
+  language_group:'Language', zoom_in:'Zoom in', zoom_out:'Zoom out', simulate_traffic:'▶ Simulate traffic', stop_traffic:'⏸ Stop traffic', one_impression:'🎲 1 impression',
+  traffic_hint:'Real auctions every 15 s in the demo circuit; they spend demo budget.', impression_hint:'Auction one real impression and show the winner and second price.',
+  traffic_running:'auctioning real impressions every 15 s…', auction_wins:' wins ', auction_price:' · second price €', auction_no_demand:'· no demand for ', auction_exhausted:' (budget exhausted)', auction_network:'⚠️ network error during auction',
+  revenue_hint:'Sold today in the Xtanco Valencia schedule. Not charged: payment gateway is inactive', screens_hint:'Simulated estimate: the catalogue does not include actual screen counts per location', impressions_hint:'Actual impressions in the last minute', no_rtb_data:'No RTB engine data',
+});
+function locationKindLabel(kind) {
+  if (LANG !== 'en') return kind;
+  const labels = {'Estanco':'Tobacco shop','Retail físico':'Physical retail','Gemelo digital':'Digital twin','Xpacio 3D':'3D space','Cafebrería':'Book café','Tienda oficial':'Official store','Loterías':'Lottery','Punto autorizado':'Authorized outlet','Circuito Admira':'Admira circuit','Oficina':'Office','Quiosco de prensa':'Newsstand','DOOH exterior':'Outdoor DOOH','Quiosco':'Kiosk','Supermercado':'Supermarket','Vapeo':'Vape shop','Retail especializado':'Specialty retail'};
+  return String(kind || '').split(' · ').map(part => labels[part] || part).join(' · ');
+}
+
 I18N.en.walk_preview = 'Preview campaign ↗';
 I18N.es.walk_preview = 'Previsualizar campaña ↗';
 // Previo DooH (FLT-100364): la pantalla emitiendo sobre la foto de fachada.
@@ -544,6 +562,8 @@ function applyI18n(){
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle); });
   document.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+  const trafficButton = document.getElementById('bf-traffic-toggle');
+  if (trafficButton?.classList.contains('on')) trafficButton.textContent = t('stop_traffic');
   const h1 = document.getElementById('hero-h1');
   if (h1) h1.innerHTML = t('hero_h1a') + '<br><span class="grad">' + t('hero_h1b') + '</span>';
   const langToggle = document.getElementById('lang-toggle');
@@ -3351,7 +3371,7 @@ function renderPanel(loc) {
   activeLocation = loc;
   document.getElementById('p-name').textContent = loc.name;
   document.getElementById('p-addr').textContent = loc.addr;
-  document.getElementById('p-kind').textContent = loc.kind;
+  document.getElementById('p-kind').textContent = locationKindLabel(loc.kind);
   const confChip = document.getElementById('p-conf');
   if (confChip) {
     const conf = String(loc.alcampo?.confianza || '').toLowerCase();
@@ -3474,7 +3494,7 @@ function renderImprPerMin() {
   realImprTs = realImprTs.filter(ts => ts >= cut);
   const ti = document.getElementById('t-impr'); if (!ti) return;
   ti.textContent = realImprSourceOk ? realImprTs.length.toLocaleString('es') : '—';
-  ti.title = realImprSourceOk ? 'Impresiones reales del último minuto' : 'Sin datos del motor RTB';
+  ti.title = t(realImprSourceOk ? 'impressions_hint' : 'no_rtb_data');
 }
 setInterval(renderImprPerMin, 5000);
 
@@ -3602,25 +3622,25 @@ async function fireOneDecide() {
     const d = await r.json();
     const segLbl = seg.audience + '/' + seg.age + (seg.slot ? '/' + seg.slot : '');
     if (d && d.ok && d.decision) {
-      setTrafficStatus('🔨 ' + d.decision.advertiser + ' gana ' + segLbl + ' · 2º precio €' + (Number(d.decision.price)||0).toFixed(2) + ' (CPM €' + d.decision.cpm + ')', 'ok');
+      setTrafficStatus('🔨 ' + d.decision.advertiser + t('auction_wins') + segLbl + t('auction_price') + (Number(d.decision.price)||0).toFixed(2) + ' (CPM €' + d.decision.cpm + ')', 'ok');
     } else {
-      setTrafficStatus('· sin demanda para ' + segLbl + ' (presupuesto agotado)', 'muted');
+      setTrafficStatus(t('auction_no_demand') + segLbl + t('auction_exhausted'), 'muted');
     }
     // El decide ya quedó registrado en /rtb/feed → refresco inmediato del feed real.
     pollRtbFeed();
   } catch {
-    setTrafficStatus('⚠️ error de red al subastar', 'muted');
+    setTrafficStatus(t('auction_network'), 'muted');
   }
 }
 function toggleTraffic(btn) {
   if (rtbTrafficTimer) {
     clearInterval(rtbTrafficTimer); rtbTrafficTimer = null;
-    btn.textContent = '▶ Simular tráfico'; btn.classList.remove('on');
+    btn.textContent = t('simulate_traffic'); btn.classList.remove('on');
     setTrafficStatus('', '');
     return;
   }
-  btn.textContent = '⏸ Parar tráfico'; btn.classList.add('on');
-  setTrafficStatus('subastando impresiones reales cada 15 s…', '');
+  btn.textContent = t('stop_traffic'); btn.classList.add('on');
+  setTrafficStatus(t('traffic_running'), '');
   fireOneDecide();
   rtbTrafficTimer = setInterval(fireOneDecide, 15000);
 }

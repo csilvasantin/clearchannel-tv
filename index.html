@@ -780,7 +780,7 @@ addEventListener('resize',ccFitIntro);
   <a href="/players/" data-shell-text-es="Player virtual" data-shell-text-en="Virtual player">Player virtual</a>
   <a href="backoffice.html" data-i18n="login">Login</a>
   <a href="/help/#navigation-modes" data-shell-text-es="Ayuda" data-shell-text-en="Help">Ayuda</a>
-  <div class="lang-switch" id="lang-switch" role="group" aria-label="Idioma / Language"><button type="button" class="lang-btn" id="lang-toggle" data-lang-target="en" aria-label="Switch to English">ENG</button></div>
+  <div class="lang-switch" id="lang-switch" data-i18n-aria="language_group" role="group" aria-label="Idioma / Language"><button type="button" class="lang-btn" id="lang-toggle" data-lang-target="en" aria-label="Switch to English">ENG</button></div>
 </nav>
 <details id="advanced-tools" class="mode-panel advanced-panel">
   <summary class="mode-panel-head"><strong data-i18n="advanced_mode">Modo avanzado</strong><span aria-hidden="true">×</span></summary>
@@ -864,8 +864,8 @@ addEventListener('resize',ccFitIntro);
   <div class="lt-head"><span class="pulse"></span><span data-i18n="live_bidding_label">Pujas en vivo</span></div>
   <div class="lt-row up"><span>impr/min</span><b id="t-impr">—</b></div>
   <div class="lt-row"><span data-i18n="stores">Xpaces</span><b id="t-locs">5</b></div>
-  <div class="lt-row"><span data-i18n="revenue_today" title="Vendido hoy en la parrilla de Xtanco Valencia. Sin cobro: la pasarela de pago no está activa">€ vendido hoy (sin cobrar)</span><b id="t-rev">—</b></div>
-  <div class="lt-row"><span data-i18n="screens_sim" title="Estimación simulada: el catálogo no trae el nº real de pantallas por punto">pantallas (sim.)</span><b id="t-screens">—</b></div>
+  <div class="lt-row"><span data-i18n="revenue_today" data-i18n-title="revenue_hint" title="Vendido hoy en la parrilla de Xtanco Valencia. Sin cobro: la pasarela de pago no está activa">€ vendido hoy (sin cobrar)</span><b id="t-rev">—</b></div>
+  <div class="lt-row"><span data-i18n="screens_sim" data-i18n-title="screens_hint" title="Estimación simulada: el catálogo no trae el nº real de pantallas por punto">pantallas (sim.)</span><b id="t-screens">—</b></div>
 </div>
 
 <section class="circuit-panel collapsed" id="circuit-panel" hidden aria-label="Selector de circuitos">
@@ -1199,8 +1199,8 @@ addEventListener('resize',ccFitIntro);
     </svg>
   </button>
   <div class="zoom-grp">
-    <button class="ctrl-btn ztop" id="btn-zin" title="Zoom +" aria-label="Acercar">+</button>
-    <button class="ctrl-btn zbot" id="btn-zout" title="Zoom −" aria-label="Alejar">−</button>
+    <button class="ctrl-btn ztop" id="btn-zin" data-i18n-aria="zoom_in" title="Zoom +" aria-label="Acercar">+</button>
+    <button class="ctrl-btn zbot" id="btn-zout" data-i18n-aria="zoom_out" title="Zoom −" aria-label="Alejar">−</button>
   </div>
   <div class="layer-chooser" id="layers">
     <button class="layer-btn active" data-layer="tierra" data-i18n-title="layer_earth_title" title="Vista satélite (globo)">
@@ -1281,8 +1281,8 @@ addEventListener('resize',ccFitIntro);
         <div class="bf-status"><span class="dot"></span>RTB real · api.admira.store</div>
       </div>
       <div class="bf-controls">
-        <button id="bf-traffic-toggle" class="bf-btn" title="Lanza subastas reales (POST /rtb/decide) contra el circuito demo sim-gracia cada 15 s. Consume presupuesto real de las campañas demo.">▶ Simular tráfico</button>
-        <button id="bf-decide-one" class="bf-btn ghost" title="Subasta UNA impresión real ahora y muestra el ganador y su segundo precio.">🎲 1 impresión</button>
+        <button id="bf-traffic-toggle" data-i18n="simulate_traffic" data-i18n-title="traffic_hint" class="bf-btn" title="Lanza subastas reales (POST /rtb/decide) contra el circuito demo sim-gracia cada 15 s. Consume presupuesto real de las campañas demo.">▶ Simular tráfico</button>
+        <button id="bf-decide-one" data-i18n="one_impression" data-i18n-title="impression_hint" class="bf-btn ghost" title="Subasta UNA impresión real ahora y muestra el ganador y su segundo precio.">🎲 1 impresión</button>
         <span id="bf-traffic-status" class="bf-traffic-status"></span>
       </div>
       <div id="bidfeed"></div>
@@ -1340,7 +1340,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="locations.js?v=20260929-starbucks-twin-1"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=20260930-identity-1"></script><script defer src="intro.js?v=20260930-cli-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=20260930-identity-2"></script><script defer src="intro.js?v=20260930-cli-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
