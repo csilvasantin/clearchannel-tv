@@ -2,7 +2,7 @@ export const CENTRAL='https://www.admiranext.com';
 const KEY='admiranext.xpace.read.v1';
 export function validAccess(data,now=Date.now()){return !!data&&/^[0-9a-f]{64}$/.test(data.token||'')&&Number(data.expires_at)>now&&Number(data.expires_at)<=now+10*60*1000+5000;}
 export class ProjectClient {
- constructor({storage,fetchImpl=fetch}={}){this.storage=storage;this.fetchImpl=fetchImpl;this.access=null;this.expired=false;try{const value=JSON.parse(storage?.getItem(KEY)||'null');if(validAccess(value))this.access=value;else{this.expired=!!value;storage?.removeItem(KEY);}}catch{}}
+ constructor({storage,fetchImpl=(...args)=>globalThis.fetch(...args)}={}){this.storage=storage;this.fetchImpl=fetchImpl;this.access=null;this.expired=false;try{const value=JSON.parse(storage?.getItem(KEY)||'null');if(validAccess(value))this.access=value;else{this.expired=!!value;storage?.removeItem(KEY);}}catch{}}
  accept(data){if(!validAccess(data))throw Error('Invalid AdmiraNext access');this.access={token:data.token,expires_at:data.expires_at};try{this.storage?.setItem(KEY,JSON.stringify(this.access));}catch{}}
  clear(){this.access=null;try{this.storage?.removeItem(KEY);}catch{}}
  async demos(){const r=await this.fetchImpl(CENTRAL+'/api/xpace/demos',{credentials:'omit',cache:'no-store'});if(!r.ok)throw Error('AdmiraNext unavailable');return r.json();}
