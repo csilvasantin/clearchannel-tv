@@ -32,11 +32,13 @@ Verbos (registro en `expert-commands.js`):
 - `/limpiar` (alias `/clear`): vacía la salida del CLI.
 - `/help`: lista verbos, atributos y rutinas.
 
-Atributo `cliente` (alias tolerantes a mayúsculas, acentos y espacios): `starbucks` (alsea_starbucks), `starbucks-mexico` (alsea_mexico), `alcampo`, `canalkiosk` (kioskos), `jti` (jti_xtanco), `estancos`, `decathlon`, `bbva`, `caixabank`, `banorte`, `elcorteingles`, `correos`, `multiopticas`, `palacio`, `liverpool`, `desigual`, `mango`, `admiraxperience`, `metro`. Formas válidas: `/demo starbucks`, `/demo cliente=alcampo`, `/demo Starbucks México`. Atributo `texto`: texto libre para `/buscar`.
+Atributo `cliente` (alias tolerantes a mayúsculas, acentos y espacios): `cafebreria` (Cafebrería independiente), `starbucks` (alsea_starbucks), `starbucks-mexico` (alsea_mexico), `alcampo`, `canalkiosk` (kioskos), `jti` (jti_xtanco), `estancos`, `decathlon`, `bbva`, `caixabank`, `banorte`, `elcorteingles`, `correos`, `multiopticas`, `palacio`, `liverpool`, `desigual`, `mango`, `admiraxperience`, `metro`. Formas válidas: `/demo starbucks`, `/demo cliente=alcampo`, `/demo Starbucks México`. Atributo `texto`: texto libre para `/buscar`.
 
 Rutinas: Demo y Circuito de Starbucks, Starbucks México, Alcampo, CanalKiosk y JTI se generan desde el registro. «＋ Guardar última orden» guarda la última orden válida como rutina propia (`admira_expert_routines_v1`); × la borra. En el CLI, Tab completa verbos y clientes; ↑/↓ recorre el historial.
 
 Expert mode is split into three blocks like admira.live: **CLI** (left), **Verbs** (centre) and **Routines** (right). Blocks can be moved, closed, restored, resized in pairs and are remembered per browser; they stack below 600 px. Verbs: `/demo [client]` (`/cli`), `/circuito <client>`, `/buscar <text>`, `/parar` (`/stop`), `/limpiar` (`/clear`), `/help`. `/demo <client>` tours a real Xpacio from that client’s circuit and says so honestly when screens are only scheduled or not linked to the sales grid; the purchase stays simulated. Routines are generated from the registry, and the last valid command can be saved as your own routine and deleted later. Every new command must be implemented in `expert-commands.js`, documented here and in `/help/`, and listed by `/help`.
+
+Cafebrería tiene circuito propio: `/circuito cafebreria` y las rutinas Demo/Circuito. Su gemelo abre Pixeria desde la ficha; los importes son estimados y el proyecto no tiene emisión física verificada. / Cafebrería has its own circuit and Demo/Circuit routines; its profile opens the Pixeria twin. Figures are estimates and physical emission is unverified.
 
 ## Shell universal en todas las páginas / Universal shell on every page
 

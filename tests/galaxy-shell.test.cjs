@@ -11,7 +11,7 @@ const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const index = read('index.html');
 const backoffice = read('backoffice.html');
-const STAMP = '20261001-shell-1';
+const STAMP = '20261001-shell-cafe-1';
 const squash = html => html.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
 const memory = () => {
   const mem = new Map();

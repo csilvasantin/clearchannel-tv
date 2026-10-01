@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 const app = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
 const start = app.indexOf('function normText');
 const end = app.indexOf('function isAlcampoLocation');
-const ctx = vm.createContext({});
+const ctx = vm.createContext({ LOCATIONS: [] });
 vm.runInContext(app.slice(start, end), ctx);
 
 test('los estancos JTI no entran en Xtanco Nacional', () => {
