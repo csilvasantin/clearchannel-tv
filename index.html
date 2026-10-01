@@ -58,7 +58,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="https://www.carlossilva.info/admira-design/contact-panel.js"></script>
 <!-- Descarga temprano (no bloqueante); se ejecutan al final del body, justo antes del script de init -->
 <link rel="preload" as="script" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js">
-<link rel="preload" as="script" href="locations.js?v=20260929-starbucks-twin-1">
+<link rel="preload" as="script" href="locations.js?v=cafebreria-independent-1">
 <style>
   :root{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--warn:#ff8866;--card:#0a1620;--card2:#0d1c28;--line:rgba(120,243,255,.18)}
   *{box-sizing:border-box}
@@ -738,10 +738,10 @@ addEventListener('resize',ccFitIntro);
   @media (max-width:640px){ .pv-head{padding-right:48px;gap:8px} .pv-titles{flex-basis:100%} }
 </style>
 <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
-<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20261001-experto-3-1">
-<script defer src="responsive-shell.js?v=20261001-experto-3-1"></script>
-<script defer src="expert-commands.js?v=20261001-experto-3-1"></script>
-<script defer src="expert-panel.js?v=20261001-experto-3-1"></script>
+<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20261001-experto-3-cafe-1">
+<script defer src="responsive-shell.js?v=20261001-experto-3-cafe-1"></script>
+<script defer src="expert-commands.js?v=20261001-experto-3-cafe-1"></script>
+<script defer src="expert-panel.js?v=20261001-experto-3-cafe-1"></script>
 </head>
 <body>
 
@@ -934,6 +934,7 @@ addEventListener('resize',ccFitIntro);
       <option value="all" data-i18n="circuit_all">Toda la red Clear Channel</option>
       <option value="estancos" data-i18n="circuit_estancos">Xtanco Nacional</option>
       <option value="jti_xtanco" data-i18n="circuit_jti_xtanco">Circuito JTI Xtanco España 100</option>
+      <option value="cafebreria" data-i18n="circuit_cafebreria">Cafebrería · Proyecto independiente</option>
       <option value="alsea_starbucks" data-i18n="circuit_alsea_starbucks">Circuito Alsea Starbucks España 100</option>
       <option value="alsea_mexico" data-i18n="circuit_alsea_mexico">Alsea México · Starbucks (10)</option>
       <option value="alcampo" data-i18n="circuit_alcampo">Alcampo · Supermercados (102)</option>
@@ -1273,6 +1274,7 @@ addEventListener('resize',ccFitIntro);
     <div class="conf-chip" id="p-conf" hidden></div>
     <h2 id="p-name">Xtanco</h2>
     <div class="addr" id="p-addr">Calle de Santa Rosa 4 · Madrid</div>
+    <p class="addr" id="p-project-note" hidden></p>
     <div class="meta">
       <div><b id="p-surfaces">6</b><span data-i18n="meta_surfaces">dispositivos</span></div>
       <div><b id="p-impr">~1.2K</b><span data-i18n="meta_imprday">impr/día (est.)</span></div>
@@ -1349,10 +1351,10 @@ addEventListener('resize',ccFitIntro);
 
 <!-- Cargados aquí (no en <head>) para que el chrome de la UI pinte antes; preload los anticipa -->
 <script defer src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script defer src="locations.js?v=20260929-starbucks-twin-1"></script>
+<script defer src="locations.js?v=cafebreria-independent-1"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=20260930-identity-2"></script><script defer src="intro.js?v=20261001-experto-3-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=cafebreria-independent-1"></script><script defer src="intro.js?v=20261001-experto-3-cafe-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {

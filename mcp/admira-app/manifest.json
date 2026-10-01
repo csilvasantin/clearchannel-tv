@@ -138,5 +138,15 @@
     "language_preference": "per-brand",
     "theme": "own-domain",
     "production_domain_wins_over_preview_brand": true
+  },
+  "cafebreria_project": {
+    "id": "cafebreria",
+    "location_id": "cafebreria-barcelona",
+    "circuit": "cafebreria",
+    "manifest": "https://admira.app/data/projects/cafebreria.json",
+    "handon": "https://admira.app/cafebreria/",
+    "es": "Cafebrería es un proyecto independiente: Avanzado → Seleccionar circuito → Todos/Ciudad/Local → Cafebrería, o Experto → /circuito cafebreria. La ficha conserva su gemelo Pixeria, 81 objetos, libros y vinilos. Wallapop prepara un anuncio sin publicarlo; eBay no está integrado en las fuentes recuperadas. Los estados ITIL son DEMO y la dirección es de referencia.",
+    "en": "Cafebrería is an independent project: Advanced → Select circuit → All/City/Local → Cafebrería, or Expert → /circuito cafebreria. Its profile keeps the Pixeria twin, 81 objects, books and vinyl records. Wallapop prepares a listing without publishing; no eBay integration was found in the recovered sources. ITIL states are DEMO and the address is a reference.",
+    "mini_tutorial": "https://api.yokup.com/media/fleet/229e706ba84f6952.mp4"
   }
 }

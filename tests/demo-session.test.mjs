@@ -2,12 +2,16 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { GOOGLE_CLIENT_ID, sessionFromClaims, handleDemoSession } from '../server/demo-session.mjs';
 const claims = { aud: GOOGLE_CLIENT_ID, iss: 'https://accounts.google.com', sub: 'user-1', exp: Date.now() / 1000 + 3600, email_verified: true, email: 'csilva@admira.com' };
-test('both Carlos identities receive JTI and Alsea; Gmail does not gain catalog write access', () => {
+test('both Carlos identities receive separate JTI, Alsea and Cafebrería demos; Gmail does not gain catalog write access', () => {
   for (const email of ['csilva@admira.com', 'csilvasantin@gmail.com']) {
     const session = sessionFromClaims({ ...claims, email });
-    assert.deepEqual(session.demos.map(d => d.id), ['jti', 'alsea']);
+    assert.deepEqual(session.demos.map(d => d.id), ['jti', 'alsea', 'cafebreria']);
     assert.equal(session.canManageCatalog, email.endsWith('@admira.com'));
-    assert.equal(session.demos[1].locationId, 'cafebreria-barcelona');
+    assert.equal(session.demos[1].locationId, 'alsea-sbux-021');
+    assert.equal(session.demos[1].circuit, 'alsea_starbucks');
+    assert.equal(session.demos[2].locationId, 'cafebreria-barcelona');
+    assert.equal(session.demos[2].circuit, 'cafebreria');
+    assert.match(session.demos[2].twinUrl, /highlight=1790375438696-1ladz7/);
   }
 });
 test('other staff retain management; unrelated and lookalike accounts get no access', () => {
@@ -29,5 +33,5 @@ test('route fails closed before and after Google validation and never caches ide
   assert.equal(ok.status, 200);
   assert.match(requested, /^https:\/\/oauth2\.googleapis\.com\/tokeninfo\?id_token=/);
   assert.equal(ok.headers.get('Cache-Control'), 'no-store');
-  assert.equal((await ok.json()).demos.length, 2);
+  assert.equal((await ok.json()).demos.length, 3);
 });

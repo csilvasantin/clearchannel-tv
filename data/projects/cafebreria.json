@@ -1,0 +1,70 @@
+{
+  "id": "cafebreria",
+  "name": "Cafebrería Barcelona",
+  "status": "prototype",
+  "location_id": "cafebreria-barcelona",
+  "circuit": "cafebreria",
+  "reference_location_id": "alsea-sbux-021",
+  "reference_address": "Passeig de Gràcia 103, Barcelona",
+  "independent_from_starbucks": true,
+  "profile": "https://admira.app/?locationId=cafebreria-barcelona&lang=es",
+  "handon": "https://admira.app/cafebreria/",
+  "model": {
+    "stock_number": 1202,
+    "asset_id": "1790375438696-1ladz7",
+    "viewer": "https://www.pixeria.com/stock.html?type=xpaces&highlight=1790375438696-1ladz7",
+    "glb": "https://api.admira.store/stock/asset/1790375438696-1ladz7",
+    "editable_blender_available_for_current_model": false,
+    "base_glb": "1790370079244-cv7t5i",
+    "base_blend": "1790370032661-p2nbzi"
+  },
+  "inventory": {
+    "url": "https://www.pixeria.com/assets/xpaces/inventory/alsea-4380.json",
+    "objects": 81,
+    "measured_objects": 35,
+    "additional_objects": 46,
+    "itil_items": 19,
+    "itil_status": "simulated_demo",
+    "legacy_namespace": "alsea"
+  },
+  "books": {
+    "seed_manifest": "https://www.pixeria.com/assets/xpaces/libros/estanteria-libros.json",
+    "seed_models": 6,
+    "capsules": "latest book-of-the-day capsules from Pixeria Stock; may differ from seed models",
+    "buy": "Casa del Libro",
+    "sell": "Wallapop listing preparation; no automatic publication or pricing"
+  },
+  "vinyl": {
+    "items": 6,
+    "interaction": "browser summary and up to 20 seconds of official Apple preview; purchase link to Apple Music"
+  },
+  "marketplaces": {
+    "wallapop": {
+      "status": "listing_preparation",
+      "url": "https://es.wallapop.com/app/catalog/upload"
+    },
+    "ebay": {
+      "status": "not_found_in_recovered_implementation"
+    }
+  },
+  "limitations": [
+    "No verified physical player assignment or real ITIL telemetry.",
+    "Current Pixeria titles and CI namespaces retain Alsea for compatibility.",
+    "8/16/32/64 buttons style ITIL glyphs; the full 3D viewer uses Better 16.",
+    "Reference address is not a new physical store registration."
+  ],
+  "next_steps": [
+    "Define Cafebrería branding and its own creative direction.",
+    "Recover editable Blender for the six-book model.",
+    "Specify eBay flow and reconcile rotating capsule books with seeded book models.",
+    "Connect dedicated physical devices only when assigned to the project."
+  ],
+  "yokup_mission": "DCL-6cfcfd8f6fdfec77c4c79179",
+  "mini_tutorial": {
+    "url": "https://api.yokup.com/media/fleet/229e706ba84f6952.mp4",
+    "kind": "animated_guide_not_screen_recording",
+    "duration_s": 15.069433,
+    "generator": "https://www.admiranext.com/tiktok/",
+    "verified": true
+  }
+}

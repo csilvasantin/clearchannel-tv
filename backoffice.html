@@ -9,7 +9,7 @@
 <meta name="description" content="Backoffice para dar de alta gemelos digitales (Xpaces + surfaces) en el mapa de Clear Channel.">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script src="locations.js?v=20260928-xpace-1"></script>
+<script src="locations.js?v=cafebreria-independent-1"></script>
 <script src="https://accounts.google.com/gsi/client" async></script>
 <style>
   :root{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--warn:#ff8866;--danger:#ff4f5e;--card:#0a1620;--card2:#0d1c28;--line:rgba(120,243,255,.18)}
@@ -376,7 +376,7 @@
 const I18N = {
   es: {
     bo_sub:'/ backoffice',
-    nav_demos:'Mis demos', demo_title:'Demos JTI y Alsea', demo_map:'Ver ficha', demo_tour:'Tour DooH', demo_twin:'Ver Gemelo Digital ↗', demo_note:'Escenarios de demostración. Abrir el gemelo no confirma emisión en dispositivos físicos.', label_xpace:'Xpacio asociado', xpace_note:'URL del Xpacio en XpaceOS. Déjala vacía para ocultar el botón de gemelo digital.',
+    nav_demos:'Mis demos', demo_title:'Demos JTI, Alsea y Cafebrería', demo_cafebreria:'Cafebrería · Proyecto independiente', demo_map:'Ver ficha', demo_tour:'Tour DooH', demo_twin:'Ver Gemelo Digital ↗', demo_note:'Escenarios de demostración. Abrir el gemelo no confirma emisión en dispositivos físicos.', label_xpace:'Xpacio asociado', xpace_note:'URL del Xpacio en XpaceOS. Déjala vacía para ocultar el botón de gemelo digital.',
     gate_title:'Backoffice',
     gate_sub:'Inicia sesión con Google. Gestión para <b>@admira.com</b> y demos para las cuentas autorizadas de Carlos.',
     remember:'Recordar en este navegador', enter:'Entrar',
@@ -420,7 +420,7 @@ const I18N = {
   },
   en: {
     bo_sub:'/ backoffice',
-    nav_demos:'My demos', demo_title:'JTI and Alsea demos', demo_map:'View location', demo_tour:'DooH Tour', demo_twin:'View Digital Twin ↗', demo_note:'Demo scenarios. Opening the twin does not confirm playback on physical devices.', label_xpace:'Linked Xpace', xpace_note:'Xpace URL on XpaceOS. Leave empty to hide the digital twin button.',
+    nav_demos:'My demos', demo_title:'JTI, Alsea and Cafebrería demos', demo_cafebreria:'Cafebrería · Independent project', demo_map:'View location', demo_tour:'DooH Tour', demo_twin:'View Digital Twin ↗', demo_note:'Demo scenarios. Opening the twin does not confirm playback on physical devices.', label_xpace:'Linked Xpace', xpace_note:'Xpace URL on XpaceOS. Leave empty to hide the digital twin button.',
     gate_title:'Backoffice',
     gate_sub:'Sign in with Google. Management for <b>@admira.com</b> and demos for Carlos’s authorized accounts.',
     remember:'Remember on this browser', enter:'Sign in',
@@ -527,7 +527,7 @@ function renderDemoAccess() {
   document.getElementById('demo-cards').innerHTML = demos.map(d => {
     const mapUrl = 'index.html?lang=' + LANG + '&locationId=' + encodeURIComponent(d.locationId);
     const tourUrl = 'index.html?lang=' + LANG + '&circuit=' + encodeURIComponent(d.circuit) + '&tour=1';
-    return `<article class="demo-card"><h3>${escHtml(d.title)}</h3><a href="${mapUrl}">${t('demo_map')}</a><a href="${tourUrl}">${t('demo_tour')}</a><a href="${escHtml(d.twinUrl)}" target="_blank" rel="noopener">${t('demo_twin')}</a></article>`;
+    return `<article class="demo-card"><h3>${escHtml(d.id === 'cafebreria' ? t('demo_cafebreria') : d.title)}</h3><a href="${mapUrl}">${t('demo_map')}</a><a href="${tourUrl}">${t('demo_tour')}</a><a href="${escHtml(d.twinUrl)}" target="_blank" rel="noopener">${t('demo_twin')}</a></article>`;
   }).join('');
 }
 async function verifySession(token) {
