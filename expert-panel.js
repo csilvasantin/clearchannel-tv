@@ -203,6 +203,8 @@
     },
     clear() { log.replaceChildren(); },
     routines: () => allRoutines(),
+    // Marca blanca (marca-blanca.js): se lee al ejecutar porque puede cargar después que este panel.
+    get marca() { return root.AdmiraMarca || null; },
   };
   if (away) {
     ctx.handoff = command => shell.handoff(command);
@@ -210,7 +212,14 @@
   }
   function record(text, result, echo = true) {
     if (!result.cleared) print(echo ? text : '', result.lines, result.ok);
-    if (result.ok && result.parsed.verb.id !== 'limpiar' && result.parsed.verb.id !== 'help' && !result.parsed.verb.local) lastOk = result.command;
+    const keep = () => result.ok && result.parsed.verb.id !== 'limpiar' && result.parsed.verb.id !== 'help' && !result.parsed.verb.local;
+    // Órdenes con respuesta diferida (/marca habla con admiranext.com): el resultado llega después.
+    if (result.later && typeof result.later.then === 'function') {
+      result.later.then(final => {
+        print('', final.lines || [], !!final.ok);
+        if (final.ok && keep()) { lastOk = result.command; renderRoutines(); }
+      }, () => print('', [T('La orden no pudo terminar.', 'The command could not finish.')], false));
+    } else if (keep()) lastOk = result.command;
     if (history[history.length - 1] !== text) { history.push(text); history = history.slice(-30); try { store.setItem(HISTORY_KEY, JSON.stringify(history)); } catch (_) {} }
     cursor = history.length;
     renderRoutines();
@@ -273,7 +282,16 @@
         const attr = C.ATTRIBUTES[attrId];
         const line = el('div', 'expert-verb-attrs');
         line.append(el('span', 'expert-attr-name', `${T(attr.es, attr.en)}${verb.requires.includes(attrId) ? '' : T(' (opcional)', ' (optional)')}:`));
-        if (attr.values) {
+        if (attr.brands) {
+          // Marcas del catálogo (semilla hasta que se lee el catálogo vivo) y «off».
+          for (const b of [...C.brands(), {id: 'off', nombre: T('Volver a Admira', 'Back to Admira')}]) {
+            const chip = btn('expert-chip', b.id);
+            chip.title = b.nombre + (b.propuesta ? T(' · propuesta automática', ' · automatic proposal') : b.ejemplo ? T(' · ejemplo ficticio', ' · fictional sample') : '');
+            chip.addEventListener('click', () => run(`${verb.command} ${b.id}`));
+            line.append(chip);
+          }
+          line.append(el('span', 'expert-attr-more', T('o una web para analizarla', 'or a website to analyse it')));
+        } else if (attr.values) {
           for (const c of attr.values.filter(c => c.featured)) {
             const chip = btn('expert-chip', c.id);
             chip.title = `${T(c.es, c.en)} · ${c.circuit}`;
@@ -352,6 +370,8 @@
     renderVerbs(); renderRoutines();
   }
   new MutationObserver(translate).observe(document.documentElement, {attributes: true, attributeFilter: ['lang']});
+  // El catálogo de marcas llega de admiranext.com solo cuando se usa: se repintan los chips.
+  document.addEventListener('admira:marcas', e => { if (C.setBrands && e.detail) C.setBrands(e.detail.marcas); renderVerbs(); });
   render(); translate();
   root.AdmiraExpert = Object.freeze({run, layout: () => normalizeLayout(state)});
 })(typeof window === 'undefined' ? globalThis : window);

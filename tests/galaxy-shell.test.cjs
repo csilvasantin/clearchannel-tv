@@ -11,10 +11,13 @@ const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const index = read('index.html');
 const backoffice = read('backoffice.html');
-// Sello del componente (galaxy-shell.css/js) en todas las páginas, y sello de los
-// ficheros de comportamiento de la portada (responsive-shell, expert-*), que no cambian.
-const STAMP = '20261001-shell-2';
-const PORTADA_STAMP = '20261001-shell-cafe-1';
+// Sello del componente (galaxy-shell.css/js) en todas las páginas, sello de los ficheros
+// de página que cambiaron con el shell (FLT-101311 c) y sello común de los ficheros de
+// comportamiento de la portada (responsive-shell, expert-*, intro.js), que con la marca
+// blanca (FLT-101331) suben a la vez.
+const STAMP = '20261001-marca-1';
+const PAGES_STAMP = '20261001-shell-2';
+const PORTADA_STAMP = '20261001-marca-1';
 const squash = html => html.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
 const memory = () => {
   const mem = new Map();
@@ -324,7 +327,7 @@ test('layouts measure the shell instead of the old headers', () => {
   assert.match(read('help/index.html'), /\.wrap > header\{/);
   // Files whose content changed carry the new stamp so the service worker does not serve the old copy.
   for (const [page, file] of [['target/index.html', 'target-assets/styles.css'], ['target/index.html', 'target-assets/app.js'], ['tutorial/index.html', 'target-assets/app.js'], ['walk.html', 'walk.css'], ['walk.html', 'walk.mjs']]) {
-    assert.ok(read(page).includes(`${file.split('/').pop()}?v=${STAMP}`), `${page}: ${file}?v=${STAMP}`);
+    assert.ok(read(page).includes(`${file.split('/').pop()}?v=${PAGES_STAMP}`), `${page}: ${file}?v=${PAGES_STAMP}`);
   }
 });
 

@@ -27,3 +27,9 @@
 
 /expert-panel.js
   Cache-Control: public, max-age=0, must-revalidate
+
+/marca-blanca.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/marca-blanca.css
+  Cache-Control: public, max-age=0, must-revalidate

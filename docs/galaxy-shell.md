@@ -18,8 +18,8 @@ El comportamiento es el de la portada porque es el mismo código: `responsive-sh
 En el `<head>`, después de `brand.js`/`brand.css` y de los estilos propios:
 
 ```html
-<link rel="stylesheet" href="/galaxy-shell.css?v=20261001-shell-2">
-<script defer src="/galaxy-shell.js?v=20261001-shell-2" data-section="/ nombre-de-la-página"></script>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261001-marca-1">
+<script defer src="/galaxy-shell.js?v=20261001-marca-1" data-section="/ nombre-de-la-página"></script>
 ```
 
 Opcionalmente, antes del script, `window.ADMIRA_SHELL = {...}`:
@@ -54,6 +54,10 @@ El shell elimina la cabecera propia (`body > header`, salvo `data-shell-keep`) y
 - **Misma barra en todas las páginas**: `galaxy-shell.css` fija en la barra y los paneles los colores de la portada (los de `index.html` en clearchannel.tv y los de `brand.css` en admira.app), aunque la página tenga otra paleta, y aísla el shell de los selectores de elemento de cada página (`section`, `li`, `strong`, `input`, `button`, `.logo`…).
 - **Atajos de teclado** de la página (diapositivas, escena 3D) ignoran el CLI y los paneles: `if (event.target.closest('input,textarea,select,[contenteditable],.mode-panel')) return;`.
 - **Caché**: un fichero que cambia lleva el sello nuevo en su `?v=` (el service worker sirve los estáticos de caché y los refresca por detrás). Si cambia `galaxy-shell.js/.css`, se sube el sello en todas las páginas a la vez.
+
+## Marca blanca
+
+El shell carga también `marca-blanca.js` (el mismo fichero que la portada, con el sello de `galaxy-shell.js`). Sin marca activa no hace nada más; con `?marca=<id>` o `/marca <id>` viste la barra, los paneles y la página con la marca del catálogo de admiranext.com/marcablanca. Detalles en `docs/marca-blanca.md`.
 
 ## Páginas
 
