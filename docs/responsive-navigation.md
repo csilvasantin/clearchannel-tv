@@ -37,3 +37,9 @@ Atributo `cliente` (alias tolerantes a mayúsculas, acentos y espacios): `starbu
 Rutinas: Demo y Circuito de Starbucks, Starbucks México, Alcampo, CanalKiosk y JTI se generan desde el registro. «＋ Guardar última orden» guarda la última orden válida como rutina propia (`admira_expert_routines_v1`); × la borra. En el CLI, Tab completa verbos y clientes; ↑/↓ recorre el historial.
 
 Expert mode is split into three blocks like admira.live: **CLI** (left), **Verbs** (centre) and **Routines** (right). Blocks can be moved, closed, restored, resized in pairs and are remembered per browser; they stack below 600 px. Verbs: `/demo [client]` (`/cli`), `/circuito <client>`, `/buscar <text>`, `/parar` (`/stop`), `/limpiar` (`/clear`), `/help`. `/demo <client>` tours a real Xpacio from that client’s circuit and says so honestly when screens are only scheduled or not linked to the sales grid; the purchase stays simulated. Routines are generated from the registry, and the last valid command can be saved as your own routine and deleted later. Every new command must be implemented in `expert-commands.js`, documented here and in `/help/`, and listed by `/help`.
+
+## Shell universal en todas las páginas / Universal shell on every page
+
+Las demás páginas (empezando por el backoffice) cargan `galaxy-shell.css` + `galaxy-shell.js` y obtienen exactamente esta barra y estos tres paneles; ver `docs/galaxy-shell.md`. Fuera de la portada, `/demo`, `/circuito` y `/buscar` abren la portada y se ejecutan allí; `/help` y `/limpiar` funcionan en sitio. El backoffice añade el verbo local `/nuevo` (alta de un Xpace).
+
+Other pages (starting with the backoffice) load `galaxy-shell.css` + `galaxy-shell.js` and get exactly this header and these three panels; see `docs/galaxy-shell.md`. Away from the home page, `/demo`, `/circuito` and `/buscar` open the home map and run there; `/help` and `/limpiar` run in place. The backoffice adds the page-local verb `/nuevo` (register an Xpace).
