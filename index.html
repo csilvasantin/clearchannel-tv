@@ -738,10 +738,11 @@ addEventListener('resize',ccFitIntro);
   @media (max-width:640px){ .pv-head{padding-right:48px;gap:8px} .pv-titles{flex-basis:100%} }
 </style>
 <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
-<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20261001-shell-cafe-1">
-<script defer src="responsive-shell.js?v=20261001-shell-cafe-1"></script>
-<script defer src="expert-commands.js?v=20261001-shell-cafe-1"></script>
-<script defer src="expert-panel.js?v=20261001-shell-cafe-1"></script>
+<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20261001-marca-1">
+<script defer src="marca-blanca.js?v=20261001-marca-1"></script>
+<script defer src="responsive-shell.js?v=20261001-marca-1"></script>
+<script defer src="expert-commands.js?v=20261001-marca-1"></script>
+<script defer src="expert-panel.js?v=20261001-marca-1"></script>
 </head>
 <body>
 
@@ -972,26 +973,26 @@ addEventListener('resize',ccFitIntro);
         <div style="display:flex;justify-content:space-between;color:#9effa0;border-top:1px dashed rgba(120,210,255,.25);margin-top:5px;padding-top:5px"><span>Total consumido hoy</span><b id="extad-live-total2">0,00 €</b></div>
       </div>
       <!-- Editor de CPM por segmento (la pauta RTB se fija aquí, en clearchannel.tv) -->
-      <details id="segcpm-editor" style="margin-top:8px;border:1px solid rgba(255,216,102,.3);border-radius:10px;background:rgba(20,16,6,.4);padding:7px 10px">
-        <summary style="cursor:pointer;color:#ffd866;font-size:11px;letter-spacing:.05em">✎ CPM por segmento (RTB) — fijar precios</summary>
+      <details id="segcpm-editor" style="margin-top:8px;border:1px solid var(--mbx-borde,rgba(255,216,102,.3));border-radius:10px;background:var(--mbx-inset,rgba(20,16,6,.4));padding:7px 10px">
+        <summary style="cursor:pointer;color:var(--mbx-accent,#ffd866);font-size:11px;letter-spacing:.05em">✎ CPM por segmento (RTB) — fijar precios</summary>
         <div id="segcpm-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:5px 10px;margin-top:8px;font-size:12px"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
           <span id="segcpm-status" style="font-size:10px;opacity:.7"></span>
-          <button type="button" id="segcpm-save" style="cursor:pointer;background:#0e2a22;border:1px solid #2f8d8d;color:#7dffd0;border-radius:7px;padding:5px 12px;font-size:11px;font-weight:bold">Guardar precios</button>
+          <button type="button" id="segcpm-save" style="cursor:pointer;background:var(--mbx-brand,#0e2a22);border:1px solid var(--mbx-brand,#2f8d8d);color:var(--mbx-on-brand,#7dffd0);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:bold">Guardar precios</button>
         </div>
       </details>
       <!-- Compra de campaña programática: segmento + presupuesto → el gemelo muestra
            la creatividad a ese segmento y el presupuesto se consume con los impactos reales -->
-      <details id="camp-buy" style="margin-top:8px;border:1px solid rgba(120,255,160,.3);border-radius:10px;background:rgba(8,22,16,.4);padding:7px 10px">
-        <summary style="cursor:pointer;color:#7dffd0;font-size:11px;letter-spacing:.05em">🛒 Comprar campaña (RTB por segmento)</summary>
+      <details id="camp-buy" style="margin-top:8px;border:1px solid var(--mbx-borde,rgba(120,255,160,.3));border-radius:10px;background:var(--mbx-inset,rgba(8,22,16,.4));padding:7px 10px">
+        <summary style="cursor:pointer;color:var(--mbx-ok,#7dffd0);font-size:11px;letter-spacing:.05em">🛒 Comprar campaña (RTB por segmento)</summary>
         <div style="display:grid;gap:8px;margin-top:8px;font-size:12px">
-          <label style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>Segmento</span><select id="camp-seg" style="background:#0a1118;border:1px solid #2f6a8a;color:#dbeaff;border-radius:5px;padding:4px 6px;font:inherit"></select></label>
-          <label style="display:flex;flex-direction:column;gap:4px"><span>Producto / concepto del anuncio</span><input id="camp-product" type="text" maxlength="80" placeholder="ej: perfume cítrico de verano" style="background:#0a1118;border:1px solid #2f6a8a;color:#dbeaff;border-radius:5px;padding:5px 7px;font:inherit"></label>
-          <label style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>Presupuesto</span><span><input id="camp-budget" type="number" min="1" max="100000" step="50" value="500" style="width:80px;background:#0a1118;border:1px solid #2f6a8a;color:#dbeaff;border-radius:5px;padding:4px 6px;font:inherit;text-align:right"> €</span></label>
-          <div id="camp-preview" style="display:none;text-align:center"><img id="camp-preview-img" alt="creatividad" style="max-width:140px;border:1px solid #2f6a8a;border-radius:8px"><div style="font-size:9px;opacity:.6;margin-top:3px">creatividad generada por PixerIA</div></div>
+          <label style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>Segmento</span><select id="camp-seg" style="background:var(--mbx-fondo,#0a1118);border:1px solid var(--mbx-borde,#2f6a8a);color:var(--mbx-ink,#dbeaff);border-radius:5px;padding:4px 6px;font:inherit"></select></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span>Producto / concepto del anuncio</span><input id="camp-product" type="text" maxlength="80" placeholder="ej: perfume cítrico de verano" style="background:var(--mbx-fondo,#0a1118);border:1px solid var(--mbx-borde,#2f6a8a);color:var(--mbx-ink,#dbeaff);border-radius:5px;padding:5px 7px;font:inherit"></label>
+          <label style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>Presupuesto</span><span><input id="camp-budget" type="number" min="1" max="100000" step="50" value="500" style="width:80px;background:var(--mbx-fondo,#0a1118);border:1px solid var(--mbx-borde,#2f6a8a);color:var(--mbx-ink,#dbeaff);border-radius:5px;padding:4px 6px;font:inherit;text-align:right"> €</span></label>
+          <div id="camp-preview" style="display:none;text-align:center"><img id="camp-preview-img" alt="creatividad" style="max-width:140px;border:1px solid var(--mbx-borde,#2f6a8a);border-radius:8px"><div style="font-size:9px;opacity:.6;margin-top:3px">creatividad generada por PixerIA</div></div>
           <div style="display:flex;justify-content:space-between;align-items:center">
             <span id="camp-status" style="font-size:10px;opacity:.7"></span>
-            <button type="button" id="camp-launch" style="cursor:pointer;background:#0e2a22;border:1px solid #2f8d8d;color:#7dffd0;border-radius:7px;padding:5px 12px;font-size:11px;font-weight:bold">Lanzar campaña</button>
+            <button type="button" id="camp-launch" style="cursor:pointer;background:var(--mbx-brand,#0e2a22);border:1px solid var(--mbx-brand,#2f8d8d);color:var(--mbx-on-brand,#7dffd0);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:bold">Lanzar campaña</button>
           </div>
           <div id="camp-list"></div>
         </div>
@@ -1354,7 +1355,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="locations.js?v=cafebreria-independent-1"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=cafebreria-independent-1"></script><script defer src="intro.js?v=20261001-shell-cafe-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=cafebreria-independent-1"></script><script defer src="intro.js?v=20261001-marca-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {

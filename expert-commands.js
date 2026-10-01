@@ -51,9 +51,52 @@
     return CLIENTS.filter(c => !k || [c.id, c.circuit, c.label, ...c.aliases].some(a => key(a).startsWith(k))).map(c => c.id);
   }
 
+  // Marcas blancas (FLT-101331): ids del catálogo único de admiranext.com/marcablanca.
+  // La semilla vale sin red; marca-blanca.js la sustituye por el catálogo real (setBrands)
+  // cuando ya se habla con admiranext.com (hay marca activa o se ha usado /marca).
+  const BRAND_ID = /^[a-z0-9][a-z0-9-]{0,40}$/;
+  const BRAND_OFF = ['off', 'admira', 'ninguna', 'ninguno', 'none', 'default', 'apagar', 'quitar', 'reset'];
+  const BRAND_SEED = [
+    {id: 'admira', nombre: 'Admira'}, {id: 'lumbre', nombre: 'Lumbre Café', ejemplo: true},
+    {id: 'brumelle', nombre: 'BRUMELLE', ejemplo: true}, {id: 'frescaria', nombre: 'Frescaria Supermercados', ejemplo: true},
+  ];
+  let BRANDS = BRAND_SEED.slice();
+  function setBrands(list) {
+    const clean = (Array.isArray(list) ? list : []).filter(b => b && BRAND_ID.test(String(b.id || '')))
+      .map(b => ({id: String(b.id), nombre: String(b.nombre || b.id), ejemplo: !!b.ejemplo, propuesta: !!b.propuesta}));
+    if (clean.length) BRANDS = clean;
+    return BRANDS.slice();
+  }
+  const brands = () => BRANDS.slice();
+  // Algo que parezca un dominio o una URL http(s): se abre en el analizador de marca.
+  function brandUrl(value) {
+    let v = String(value == null ? '' : value).trim();
+    if (!v || /\s/.test(v)) return null;
+    if (!/^https?:\/\//i.test(v)) {
+      if (!/^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}(?::\d+)?(?:[/?#]\S*)?$/i.test(v)) return null;
+      v = 'https://' + v;
+    }
+    try {
+      const u = new URL(v);
+      return /^https?:$/.test(u.protocol) && !u.username && !u.password && /\./.test(u.hostname) ? u.href : null;
+    } catch (_) { return null; }
+  }
+  // «off» (o admira) · URL · id del catálogo. El id se comprueba al ejecutar (catálogo vivo).
+  function parseBrand(value) {
+    const raw = String(value == null ? '' : value).trim();
+    if (!raw) return null;
+    if (BRAND_OFF.includes(key(raw))) return 'off';
+    const url = brandUrl(raw);
+    if (url) return url;
+    const id = raw.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[\s_]+/g, '-');
+    return BRAND_ID.test(id) ? id : null;
+  }
+  const brandList = lang => BRANDS.map(b => b.id + (b.propuesta ? L(lang, ' (propuesta)', ' (proposal)') : b.ejemplo ? L(lang, ' (ejemplo)', ' (sample)') : '')).join(', ');
+
   const ATTRIBUTES = {
     cliente: {id: 'cliente', aliases: ['client', 'customer', 'circuito', 'circuit'], es: 'cliente', en: 'client', values: CLIENTS},
     texto: {id: 'texto', aliases: ['text', 'q', 'query', 'lugar', 'place'], es: 'texto', en: 'text', free: true},
+    marca: {id: 'marca', aliases: ['brand', 'id', 'web', 'url'], es: 'marca', en: 'brand', brands: true},
   };
   function attributeFor(verb, name) {
     const k = key(name);
@@ -120,6 +163,47 @@
       run(args, ctx) { ctx.clear(); return {ok: true, lines: [], cleared: true}; },
     },
     {
+      id: 'marca', command: '/marca', aliases: ['brand', 'marcablanca'], attributes: ['marca'], requires: [],
+      es: 'Marca blanca del catálogo de admiranext.com/marcablanca: /marca <id> viste la web con esa marca, /marca off vuelve a Admira, /marca sola dice cuál está activa y lista las disponibles, /marca <web> abre el analizador en otra pestaña.',
+      en: 'White label from the admiranext.com/marcablanca catalogue: /marca <id> dresses the site in that brand, /marca off returns to Admira, /marca alone shows the active one and lists them, /marca <website> opens the analyser in a new tab.',
+      run(args, ctx, lang) {
+        const M = ctx && ctx.marca;
+        if (!M) return fail(L(lang, 'La marca blanca aún no está lista en esta página. Vuelve a intentarlo en un momento.', 'White label is not ready on this page yet. Try again in a moment.'));
+        const value = args.marca;
+        const tag = b => (b && b.propuesta ? L(lang, ' · propuesta automática, no es la marca oficial', ' · automatic proposal, not the official brand') : b && b.ejemplo ? L(lang, ' · marca ficticia de ejemplo', ' · fictional sample brand') : '');
+        if (!value) {
+          const now = M.actual();
+          const head = now
+            ? L(lang, `Marca activa: ${now.nombre} (${now.id})${tag(now)}. /marca off vuelve a Admira.`, `Active brand: ${now.nombre} (${now.id})${tag(now)}. /marca off returns to Admira.`)
+            : L(lang, 'Sin marca blanca: ves el aspecto de Admira.', 'No white label: you see the Admira look.');
+          const later = M.listar().then(
+            list => { setBrands(list); return done(L(lang, 'Disponibles: ', 'Available: ') + brandList(lang) + '.'); },
+            () => fail(L(lang, 'No se pudo leer el catálogo de admiranext.com. Conocidas: ', 'Could not read the admiranext.com catalogue. Known: ') + brandList(lang) + '.'));
+          return {ok: true, lines: [head], later};
+        }
+        if (value === 'off') {
+          const r = M.desactivar();
+          return done(r.changed
+            ? L(lang, `Marca ${r.previous.nombre} desactivada: vuelve Admira.`, `${r.previous.nombre} brand turned off: back to Admira.`)
+            : L(lang, 'No había ninguna marca blanca activa: ya ves Admira.', 'No white label was active: you already see Admira.'));
+        }
+        if (/^https?:\/\//.test(value)) {
+          const r = M.analizar(value);
+          if (!r.ok) return fail(L(lang, `No parece una web válida: «${value}».`, `That does not look like a valid website: “${value}”.`));
+          return done(L(lang, `Abriendo el analizador de marca blanca en otra pestaña: ${r.href}`, `Opening the white-label analyser in a new tab: ${r.href}`),
+            L(lang, 'Allí se analiza la web y se guarda en el catálogo; después actívala aquí con /marca <id>.', 'There the site is analysed and saved to the catalogue; then turn it on here with /marca <id>.'));
+        }
+        const later = M.activar(value).then(r => {
+          if (r.ok) { if (!BRANDS.some(b => b.id === r.id)) BRANDS = [...BRANDS, {id: r.id, nombre: r.nombre, ejemplo: !!r.ejemplo, propuesta: !!r.propuesta}];
+            return done(L(lang, `Marca ${r.nombre} (${r.id}) activa${tag(r)}. Se mantiene al navegar en esta pestaña; /marca off vuelve a Admira.`, `${r.nombre} (${r.id}) brand on${tag(r)}. It stays while you browse in this tab; /marca off returns to Admira.`)); }
+          if (r.reason === 'unknown') return fail(L(lang, `La marca «${value}» no está en el catálogo de admiranext.com. No se ha aplicado nada.`, `The brand “${value}” is not in the admiranext.com catalogue. Nothing was applied.`),
+            L(lang, 'Disponibles: ', 'Available: ') + brandList(lang) + L(lang, '. Para crearla: /marca <web de la marca>.', '. To create it: /marca <brand website>.'));
+          return fail(L(lang, 'No se pudo hablar con admiranext.com: la web sigue con su aspecto normal.', 'Could not reach admiranext.com: the site keeps its normal look.'));
+        });
+        return {ok: true, lines: [L(lang, `Aplicando la marca ${value}…`, `Applying the ${value} brand…`)], later};
+      },
+    },
+    {
       id: 'help', command: '/help', aliases: ['ayuda', 'h'], attributes: [], requires: [],
       es: 'Lista verbos, atributos y rutinas.',
       en: 'Lists verbs, attributes and routines.',
@@ -168,6 +252,10 @@
         const client = resolveClient(value);
         if (!client) return {ok: false, error: 'unknown_value', raw, verb, attribute: attr, input: value, suggestions: clientCandidates(value.slice(0, 3))};
         args[attr] = client.id;
+      } else if (ATTRIBUTES[attr].brands) {
+        const brand = parseBrand(value);
+        if (!brand) return {ok: false, error: 'invalid_brand', raw, verb, attribute: attr, input: value};
+        args[attr] = brand;
       } else args[attr] = value;
     }
     const missing = verb.requires.find(a => !args[a]);
@@ -184,6 +272,8 @@
       case 'no_attributes': return [L(lang, `${parsed.verb.command} no admite atributos.`, `${parsed.verb.command} takes no attributes.`)];
       case 'unknown_value': return [L(lang, `Cliente no reconocido: «${parsed.input}».`, `Unknown client: “${parsed.input}”.`),
         L(lang, 'Clientes: ', 'Clients: ') + (parsed.suggestions.length ? parsed.suggestions : CLIENTS.map(c => c.id)).join(', ') + '.'];
+      case 'invalid_brand': return [L(lang, `Marca no válida: «${parsed.input}».`, `Invalid brand: “${parsed.input}”.`),
+        L(lang, `Usa un id del catálogo (${BRANDS.map(b => b.id).join(', ')}), off para volver a Admira o una web (starbucks.es) para analizarla.`, `Use a catalogue id (${BRANDS.map(b => b.id).join(', ')}), off to return to Admira or a website (starbucks.es) to analyse it.`)];
       case 'missing_attribute': return [L(lang, `Falta el ${ATTRIBUTES[parsed.attribute].es}. Uso: ${usage(parsed.verb, lang)}`, `Missing ${ATTRIBUTES[parsed.attribute].en}. Usage: ${usage(parsed.verb, lang)}`)];
       default: return [L(lang, 'Orden no válida.', 'Invalid command.')];
     }
@@ -243,12 +333,15 @@
     const rest = text.slice(space).trim();
     const kv = rest.match(/^([^\s=:]+)\s*[=:]\s*(.*)$/);
     const attr = (kv && attributeFor(verb, kv[1])) || verb.attributes[0];
-    if (!ATTRIBUTES[attr].values) return {value: raw, options: []};
-    const options = clientCandidates(kv && attributeFor(verb, kv[1]) ? kv[2] : rest);
+    if (!ATTRIBUTES[attr].values && !ATTRIBUTES[attr].brands) return {value: raw, options: []};
+    const typed = kv && attributeFor(verb, kv[1]) ? kv[2] : rest;
+    const options = ATTRIBUTES[attr].brands
+      ? [...BRANDS.map(b => b.id), 'off'].filter(id => id.startsWith(String(typed).trim().toLowerCase()))
+      : clientCandidates(typed);
     const head = verb.command + ' ' + (kv && attributeFor(verb, kv[1]) ? attr + '=' : '');
     if (options.length === 1) return {value: head + options[0], options};
     const prefix = commonPrefix(options);
-    return {value: prefix.length > key(rest).length ? head + prefix : raw, options};
+    return {value: prefix.length > String(typed).trim().length ? head + prefix : raw, options};
   }
 
   // Rutinas generadas del registro: verbo × cliente destacado.
@@ -296,6 +389,7 @@
       L(lang, 'ATRIBUTOS', 'ATTRIBUTES'),
       `${L(lang, 'cliente', 'client')}: ` + CLIENTS.map(c => `${c.id} (${L(lang, c.es, c.en)} · ${c.circuit})`).join(', '),
       `${L(lang, 'texto', 'text')}: ${L(lang, 'texto libre para /buscar', 'free text for /search')}`,
+      `${L(lang, 'marca', 'brand')}: off (Admira), ${brandList(lang)} · ${L(lang, 'o una web para analizarla (starbucks.es)', 'or a website to analyse (starbucks.es)')}`,
       L(lang, 'Forma: /demo starbucks · /demo cliente=alcampo · mayúsculas y acentos dan igual.', 'Form: /demo starbucks · /demo client=alcampo · case and accents do not matter.'),
       L(lang, 'RUTINAS', 'ROUTINES'),
       ...routines.map(r => `${r.label} → ${r.command}${r.builtin ? '' : L(lang, ' (tuya)', ' (yours)')}`),
@@ -334,7 +428,7 @@
   }
 
   const api = Object.freeze({
-    CLIENTS, ATTRIBUTES, VERBS, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, parse, execute, errorLines, usage,
+    CLIENTS, ATTRIBUTES, VERBS, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, parse, execute, errorLines, usage,
     complete, defaultRoutines, sanitizeRoutines, loadRoutines, saveRoutines, addRoutine, removeRoutine, helpLines,
     pickDemoXpacio, demoScreens, liveSurfaces, demoSurfaces,
   });

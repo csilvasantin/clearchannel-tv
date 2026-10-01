@@ -220,6 +220,9 @@
     const C = root.AdmiraExpertCommands;
     for (const verb of cfg.verbs) { try { C.registerVerb(verb); } catch (error) { console.warn(error); } }
   };
+  // Marca blanca (FLT-101331): el mismo fichero que carga la portada. Sin marca activa no
+  // inserta nada ni habla con admiranext.com; con marca, viste la barra y los paneles.
+  load('marca-blanca.js').catch(error => console.warn(error));
   load('responsive-shell.js')
     .then(() => (root.AdmiraExpertCommands ? null : load('expert-commands.js')))
     .then(registerVerbs)
