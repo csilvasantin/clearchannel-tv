@@ -205,6 +205,7 @@ window.ADMIRA_SHELL = {
 <!-- Lo propio del backoffice dentro del shell: trabajo → ▤ Avanzado, navegación → ☰ Opciones. -->
 <div data-shell-slots hidden>
   <span class="bo-status" id="badge-mode" data-shell-slot="advanced" title="Sync status with omnipublicity-api">CARGANDO…</span>
+  <a href="#central-project-panel" data-shell-slot="advanced">Proyectos · AdmiraNext</a><a href="https://www.admiranext.com/xpace/manage" target="_blank" rel="noopener" data-shell-slot="advanced">Gestionar locales ↗</a>
   <a href="target/" data-shell-slot="advanced" data-i18n="nav_target">Target Model</a>
   <a href="#demo-access" id="nav-demos" data-shell-slot="advanced" hidden data-i18n="nav_demos">Mis demos</a>
   <a href="../xpace-os/" data-shell-slot="advanced">Xpace OS</a>
@@ -212,6 +213,7 @@ window.ADMIRA_SHELL = {
   <a href="about.html" data-shell-slot="options" data-i18n="nav_rtb">Concepto RTB</a>
 </div>
 
+<section class="demo-access" id="central-project-panel" aria-labelledby="central-project-heading"><h2 id="central-project-heading">Proyectos y locales · AdmiraNext</h2><p>Consulta los proyectos autorizados y sus gemelos desde la gestión central de usuarios. / Read permitted projects and twins from central user management.</p><button id="central-connect" type="button">Conectar con AdmiraNext / Connect</button> <button id="central-refresh" type="button">Actualizar / Refresh</button> <button id="central-disconnect" type="button">Desconectar / Disconnect</button><p id="central-status" role="status"></p><div id="central-projects" class="demo-cards"></div><a href="https://www.admiranext.com/xpace/manage" target="_blank" rel="noopener">Gestionar proyectos, locales y permisos / Manage projects, venues and permissions ↗</a> · <a href="/help/central-projects.md">Contrato API ES / EN ↗</a></section>
 <section class="demo-access" id="demo-access" hidden aria-labelledby="demo-title">
   <h2 id="demo-title" data-i18n="demo_title">Demos JTI y Alsea</h2>
   <p id="demo-account"></p>
@@ -1373,5 +1375,6 @@ if (_badgeEl) _badgeEl.textContent = t('badge_loading');
 setLang(LANG);
 </script>
 
+<script type="module" src="/central-project-backoffice.mjs?v=central-1"></script>
 </body>
 </html>
