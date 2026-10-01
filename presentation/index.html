@@ -59,20 +59,9 @@ img{max-width:100%}
 @keyframes drift2{to{transform:translate(-12vmax,-8vmax) scale(1.2)}}
 
 /* ── Scroll progress + top rule ── */
-.progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:120;
+.progress{position:fixed;top:var(--app-header-height,64px);left:0;height:2px;width:0;z-index:120;
   background:linear-gradient(90deg,var(--crear),var(--operar) 34%,var(--gestionar) 66%,var(--medir));
   box-shadow:0 0 14px rgba(170,136,255,.5)}
-
-/* ── Top bar ── */
-.topbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
-  padding:18px clamp(20px,4vw,44px);transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
-.topbar.solid{background:linear-gradient(to bottom,rgba(5,7,13,.86),rgba(5,7,13,.5));backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.brand{font-family:var(--mono);font-weight:700;letter-spacing:.22em;font-size:13px;color:var(--ink)}
-.brand b{color:var(--crear)}
-.topbar nav{display:flex;gap:22px}
-.topbar nav a{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);transition:color .2s}
-.topbar nav a:hover{color:var(--ink)}
-@media(max-width:820px){.topbar nav{display:none}}
 
 /* ── Side dot nav ── */
 .dots{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:14px}
@@ -88,7 +77,7 @@ img{max-width:100%}
 .mono{font-family:var(--mono);letter-spacing:.16em;text-transform:uppercase;font-size:12px}
 
 /* ═══════════ HERO ═══════════ */
-.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;position:relative;padding:120px 0 80px}
+.hero{min-height:calc(100svh - var(--app-header-height,64px));display:flex;flex-direction:column;justify-content:center;position:relative;padding:56px 0 80px}
 .hero .eyebrow{color:var(--mut);display:flex;align-items:center;gap:12px}
 .hero .eyebrow .tick{width:26px;height:1px;background:linear-gradient(90deg,var(--crear),transparent)}
 .hero h1{font-weight:850;letter-spacing:-.035em;line-height:.94;margin:26px 0 0;
@@ -120,7 +109,7 @@ img{max-width:100%}
 .bridge .col.a{--ac:var(--operar)} .bridge .col.b{--ac:var(--gestionar)} .bridge .col.c{--ac:var(--crear)}
 
 /* ═══════════ ACTS (genérico, reutilizado) ═══════════ */
-.act{min-height:100svh;display:flex;align-items:center;position:relative;padding:110px 0;border-top:1px solid var(--line);overflow:hidden}
+.act{min-height:calc(100svh - var(--app-header-height,64px));display:flex;align-items:center;position:relative;padding:110px 0;border-top:1px solid var(--line);overflow:hidden}
 .act .ghost{position:absolute;font-family:var(--mono);font-weight:800;line-height:.7;
   font-size:clamp(200px,44vw,560px);color:transparent;-webkit-text-stroke:1.4px color-mix(in srgb,var(--ac) 34%,transparent);
   top:50%;transform:translateY(-50%);z-index:0;opacity:.5;pointer-events:none;user-select:none;will-change:transform}
@@ -250,21 +239,22 @@ footer .seal{color:var(--dim);letter-spacing:.14em}
   .hero h1 span{opacity:1 !important;transform:none !important}
 }
 </style>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261001-shell-2">
+<script defer src="/galaxy-shell.js?v=20261001-shell-2" data-section="/ presentación" data-section-en="/ presentation"></script>
 </head>
 <body>
 <div class="bg-fx"></div>
 <div class="grain"></div>
 <div class="progress" id="progress"></div>
 
-<div class="topbar" id="topbar">
-  <div class="brand"><a href="https://www.clearchannel.tv">CLEARCHANNEL<b>.TV</b></a></div>
-  <nav>
-    <a href="#tesis">La tesis</a>
-    <a href="#agentica">Agéntica</a>
-    <a href="#canalkiosk">CanalKiosk · DOOH</a>
-    <a href="#xtanco">Xtanco · RetailMedia</a>
-    <a href="#contacto">Contacto</a>
-  </nav>
+<!-- Shell cuadrático (FLT-101311): los capítulos van a ▤ Avanzado; la documentación, a ☰ Opciones. -->
+<div data-shell-slots hidden>
+  <a href="#tesis" data-shell-slot="advanced" data-shell-text-es="La tesis" data-shell-text-en="The thesis">La tesis</a>
+  <a href="#agentica" data-shell-slot="advanced" data-shell-text-es="Agéntica" data-shell-text-en="Agentic">Agéntica</a>
+  <a href="#canalkiosk" data-shell-slot="advanced">CanalKiosk · DOOH</a>
+  <a href="#xtanco" data-shell-slot="advanced">Xtanco · RetailMedia</a>
+  <a href="#contacto" data-shell-slot="advanced" data-shell-text-es="Contacto" data-shell-text-en="Contact">Contacto</a>
+  <a href="/documentacion/" data-shell-slot="options" data-shell-text-es="Documentación" data-shell-text-en="Documentation">Documentación</a>
 </div>
 
 <div class="dots" id="dots">
@@ -276,7 +266,7 @@ footer .seal{color:var(--dim);letter-spacing:.14em}
 </div>
 
 <!-- ═══ HERO ═══ -->
-<header class="hero" id="top">
+<header class="hero" id="top" data-shell-keep>
   <div class="wrap">
     <div class="eyebrow mono"><span class="tick"></span> clearchannel.tv · RetailMedia + DOOH</div>
     <h1>

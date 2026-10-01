@@ -33,3 +33,37 @@ body > header.galaxy-shell{position:fixed;top:0;left:0;right:0;z-index:10;margin
  .galaxy-shell .logo .galaxy-shell-section{margin-left:6px;letter-spacing:.04em}
 }
 @media(max-width:420px){.galaxy-shell .logo .galaxy-shell-section{display:none}}
+
+/* Todas las páginas (FLT-101311 c). La barra queda siempre por encima del contenido de
+   la página (que puede traer z-index propios) y por debajo de los paneles (9000) y de
+   las capas de la página (puertas, modales, avisos: ≥ 9100). Las anclas internas no
+   quedan escondidas bajo la barra fija. */
+body > header.galaxy-shell{z-index:8900}
+/* La barra y los paneles llevan los colores de la portada en cualquier página, aunque la
+   página tenga su propia paleta: los de index.html en clearchannel.tv y, en admira.app,
+   los mismos valores que brand.css (:root[data-brand="admira"]). */
+body > header.galaxy-shell,#header-navigation,#advanced-tools,#expert-panel{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--warn:#ff8866;--card:#0a1620;--card2:#0d1c28;--line:rgba(120,243,255,.18);--text:#e8f6ff}
+:root[data-brand="admira"] :is(body > header.galaxy-shell,#header-navigation,#advanced-tools,#expert-panel){--bg:#05040c;--ink:#f2efff;--mut:#a69bc8;--brand:#7dffd0;--accent:#b89cff;--good:#7dffd0;--warn:#ff8fa8;--card:#100c20;--card2:#17102c;--line:rgba(184,156,255,.24)}
+html[data-shell=galaxy]{scroll-padding-top:calc(var(--app-header-height,64px) + 12px)}
+/* Capas compartidas del kit admira-design (contacto) por encima del shell. */
+.galaxy-shell-page .admira-contact-backdrop{z-index:9300}
+.galaxy-shell-page .admira-contact-panel{z-index:9310}
+
+/* Aislamiento: los estilos de elemento o de clase genérica de cada página (header, nav,
+   section, input, .logo…) no deforman el shell. Con id o doble clase para ganar siempre. */
+body > header.galaxy-shell{min-height:0;height:auto;max-width:none;box-shadow:none;outline:0}
+body > header.galaxy-shell .logo{display:block;width:auto;height:auto;padding:0;margin:0;background:none;border:0;border-radius:0;box-shadow:none;text-align:left}
+#header-navigation,#advanced-tools,#expert-panel,#expert-panel .expert-module{margin:0}
+#expert-panel .expert-module{padding:0;border-top:0;border-left:0;border-radius:0;background:none;min-height:0;box-shadow:none}
+@media(min-width:601px){#expert-panel .expert-module{border-bottom:0}}
+body > header.galaxy-shell :is(button,a),#header-navigation :is(button,a),#advanced-tools :is(button,a),#expert-panel button{margin:0}
+body > header.galaxy-shell .mode-toggle:not(.header-login){padding:0}
+:is(#header-navigation,#advanced-tools) .mode-panel-head button{padding:0 4px;min-height:0;min-width:0}
+:is(#header-navigation,#advanced-tools,#expert-panel) strong{color:inherit;font-weight:700}
+#expert-panel li{font-size:inherit;line-height:inherit;color:inherit;margin:0}
+#expert-panel li.expert-routine-group{margin-top:4px;font-size:11px;color:var(--mut)}
+/* Con muchos enlaces, el carril hace scroll en vez de aplastarlos. */
+#header-navigation > *{flex-shrink:0}
+#header-navigation a{min-height:0;gap:normal;background:none;font-size:inherit;font-weight:normal;letter-spacing:normal;text-transform:none}
+#expert-panel #expert-command{min-height:0;margin:0;box-shadow:none}
+#expert-panel .expert-command-form{margin:0;padding:0;border:0;background:none}

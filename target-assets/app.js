@@ -1,12 +1,17 @@
 const page = document.body.dataset.page;
 
-const LANG_KEY = "omnip-lang";
+// Mismo idioma que la portada y el shell cuadrático (FLT-101311):
+// ?lang= > preferencia de la marca (<marca>-lang) > idioma por defecto de la marca.
+const SITE_BRAND = window.ADMIRA_SITE_BRAND || { id: "clearchannel", defaultLanguage: "en" };
+const LANG_KEY = `${SITE_BRAND.id || "clearchannel"}-lang`;
 let LANG = (() => {
+  const explicit = new URLSearchParams(location.search).get("lang");
+  if (explicit === "en" || explicit === "es") return explicit;
   try {
-    return localStorage.getItem(LANG_KEY) === "es" ? "es" : "en";
-  } catch (_) {
-    return "en";
-  }
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === "en" || saved === "es") return saved;
+  } catch (_) {}
+  return SITE_BRAND.defaultLanguage === "es" ? "es" : "en";
 })();
 
 let formatter;

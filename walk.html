@@ -7,15 +7,21 @@
   <meta name="description" content="Preview your Pixeria creative on a selected retail surface and explore its registered digital twin.">
   <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
   <link rel="canonical" href="https://www.clearchannel.tv/walk.html">
-  <link rel="stylesheet" href="walk.css?v=20260905-1">
+  <link rel="stylesheet" href="walk.css?v=20261001-shell-2">
   <link rel="stylesheet" href="brand.css">
   <script src="brand.js"></script>
+  <link rel="stylesheet" href="/galaxy-shell.css?v=20261001-shell-2">
+  <script>
+  // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones manda; walk.mjs escucha admira:lang.
+  window.ADMIRA_SHELL = { section: { es: '/ recorre tu campaña', en: '/ walk the campaign' }, setLang() {} };
+  </script>
+  <script defer src="/galaxy-shell.js?v=20261001-shell-2"></script>
   <script defer src="locations.js?v=circuits-20260907-2"></script>
-  <script type="module" src="walk.mjs?v=20260905-1"></script>
+  <script type="module" src="walk.mjs?v=20261001-shell-2"></script>
 </head>
 <body>
-  <header class="walk-header"><a class="wordmark" href="/" data-brand-wordmark>CLEAR·CHANNEL</a><span class="header-caption" data-copy="previewOnly">Campaign preview · no live delivery</span><button id="language" type="button">ESP</button></header>
   <main>
+    <p class="header-caption" data-copy="previewOnly">Campaign preview · no live delivery</p>
     <div class="intro"><div><a id="back" class="back" href="/" data-copy="back">← Back to the network</a><p class="eyebrow">01 / <span data-copy="eyebrow">Walk the campaign</span></p><h1 data-copy="headline">See it where<br>it matters.</h1></div><div class="campaign-name"><label for="campaign" data-copy="campaign">Your campaign</label><input id="campaign" maxlength="100" autocomplete="off"><span id="saved" role="status"></span></div></div>
     <p id="page-status" role="status" class="page-status">Loading the space…</p>
     <div id="workspace" hidden>

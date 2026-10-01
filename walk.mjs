@@ -11,7 +11,9 @@ const copy = {
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 let savedLang = '';
-try { savedLang = localStorage.getItem('omnip-lang') || ''; } catch {}
+// Misma preferencia que la portada y el shell cuadrático: <marca>-lang.
+const LANGUAGE_KEY = (window.ADMIRA_SITE_BRAND?.id || 'clearchannel') + '-lang';
+try { savedLang = localStorage.getItem(LANGUAGE_KEY) || ''; } catch {}
 let lang = localeFor(location.hostname, location.search, savedLang);
 const campaignId = /^[a-zA-Z0-9_-]{1,100}$/.test(params.get('campaignId') || '') ? params.get('campaignId') : 'CC-' + crypto.randomUUID();
 let state;
@@ -45,7 +47,6 @@ function links() {
   const forced = params.get('brand');
   if (['admira', 'clearchannel'].includes(forced)) back.searchParams.set('brand', forced);
   $('back').href = back.href;
-  document.querySelector('.wordmark').href = back.href;
   const studio = new URL(lang === 'es' ? 'https://admira.studio/publicidad.html' : 'https://www.pixeria.com/en/publicidad.html');
   // Existing Pixeria briefing fields. Return integration is intentionally not assumed.
   studio.searchParams.set('from', 'admira');
@@ -64,8 +65,6 @@ function translate() {
   document.documentElement.lang = lang;
   document.title = tr('title') + ' · ' + brand;
   document.querySelectorAll('[data-copy]').forEach(el => { el.textContent = tr(el.dataset.copy); });
-  $('language').textContent = lang === 'en' ? 'ESP' : 'ENG';
-  $('language').setAttribute('aria-label', tr('language'));
   $('asset-search').placeholder = tr('search');
   setPageStatus(pageStatusKey);
   $('scene-title').textContent = place?.name || '';
@@ -159,7 +158,8 @@ function lighting() {
 }
 $('campaign').value = state.title;
 $('campaign').addEventListener('input', e => { state.title = e.target.value; save(); links(); });
-$('language').addEventListener('click', () => { lang = lang === 'en' ? 'es' : 'en'; try { localStorage.setItem('omnip-lang', lang); } catch {} translate(); save(); renderSurface(); });
+// El botón ENG/ESP vive en ☰ Opciones (galaxy-shell.js), que guarda la preferencia y avisa con admira:lang.
+document.addEventListener('admira:lang', e => { const next = e.detail?.lang === 'es' ? 'es' : 'en'; if (next === lang) return; lang = next; translate(); save(); renderSurface(); });
 $('surface').addEventListener('change', e => { state.surfaceId = e.target.value; setPageStatus(catalogueSource === 'local' ? 'catalogFallback' : catalogueSource === 'selection' ? 'savedSelection' : ''); save(); renderSurface(); });
 $('clear').addEventListener('click', () => { delete state.placements[key()]; save(); renderAsset(); });
 $('lighting').addEventListener('input', e => { state.hour = Number(e.target.value); lighting(); save(); });

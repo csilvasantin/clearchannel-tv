@@ -1,3 +1,5 @@
+<!doctype html>
+<html lang="es">
 <meta charset="utf-8">
 <script src="/brand.js?v=20260805-2"></script>
 <link rel="stylesheet" href="/brand.css?v=20260805-2">
@@ -30,7 +32,8 @@
   }
 
   /* ---------- CRT / scanlines / vignette ---------- */
-  .crt{position:fixed;inset:0;pointer-events:none;z-index:60}
+  /* Bajo la barra del shell cuadrático (FLT-101311): la pantalla de diapositivas empieza en --app-header-height. */
+  .crt{position:fixed;inset:var(--app-header-height,64px) 0 var(--shell-bottom,0px);pointer-events:none;z-index:60}
   .crt::before{
     content:"";position:absolute;inset:0;
     background:repeating-linear-gradient(
@@ -45,12 +48,12 @@
     content:"";position:absolute;inset:0;
     background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.65) 100%);
   }
-  .flicker{position:fixed;inset:0;pointer-events:none;z-index:61;
+  .flicker{position:fixed;inset:var(--app-header-height,64px) 0 var(--shell-bottom,0px);pointer-events:none;z-index:61;
     background:var(--phos);opacity:0;mix-blend-mode:overlay;animation:flick 7s infinite steps(1)}
   @keyframes flick{0%,96%,100%{opacity:0}97%{opacity:.02}98%{opacity:.05}99%{opacity:.015}}
 
   /* ---------- stage ---------- */
-  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:2.2vw}
+  #stage{position:fixed;inset:var(--app-header-height,64px) 0 var(--shell-bottom,0px);display:flex;align-items:center;justify-content:center;padding:2.2vw}
   .slide{
     position:absolute;inset:2.2vw;
     display:none;
@@ -187,16 +190,16 @@
   .close h1{font-size:min(7vw,82px)}
 
   /* ---------- nav ---------- */
-  #nav{position:fixed;z-index:70;bottom:14px;left:50%;transform:translateX(-50%);
+  #nav{position:fixed;z-index:70;bottom:calc(var(--shell-bottom,0px) + 14px);left:50%;transform:translateX(-50%);
     display:flex;align-items:center;gap:14px;font-size:12px;letter-spacing:.16em;color:var(--ink-dim)}
   #nav button{font-family:var(--mono);background:rgba(10,25,22,.7);color:var(--phos);
     border:1px solid var(--hud);width:34px;height:30px;cursor:pointer;font-size:16px;line-height:1;
     transition:.12s}
   #nav button:hover{background:var(--phos);color:#02110a;box-shadow:0 0 14px rgba(77,255,155,.5)}
   #count{min-width:78px;text-align:center;color:var(--cyan)}
-  .topbar{position:fixed;top:14px;left:18px;z-index:70;font-size:11px;letter-spacing:.24em;color:var(--phos-dim)}
+  .topbar{position:fixed;top:calc(var(--app-header-height,64px) + 14px);left:18px;z-index:70;font-size:11px;letter-spacing:.24em;color:var(--phos-dim)}
   .topbar b{color:var(--phos)}
-  .progress{position:fixed;top:0;left:0;height:2px;background:var(--phos);z-index:71;
+  .progress{position:fixed;top:var(--app-header-height,64px);left:0;height:2px;background:var(--phos);z-index:71;
     box-shadow:0 0 8px var(--phos);transition:width .25s}
 
   @media (max-width:820px){
@@ -207,6 +210,8 @@
     p,li,.lead{font-size:15px}
   }
 </style>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261001-shell-2">
+<script defer src="/galaxy-shell.js?v=20261001-shell-2" data-section="/ presentación" data-section-en="/ slides"></script>
 
 <div class="progress" id="prog"></div>
 <div class="topbar">CCTV://AGENTIC-GRID <b>v1.0</b></div>
@@ -447,6 +452,8 @@
   document.getElementById('next').onclick=next;
   document.getElementById('prev').onclick=prev;
   document.addEventListener('keydown',function(e){
+    // Las teclas pasan diapositivas, salvo mientras se escribe en el CLI o se usan los paneles del shell.
+    if(e.target.closest&&e.target.closest('input,textarea,select,[contenteditable],.mode-panel'))return;
     if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){next();e.preventDefault();}
     else if(e.key==='ArrowLeft'||e.key==='PageUp'){prev();e.preventDefault();}
     else if(e.key==='Home'){show(0);}

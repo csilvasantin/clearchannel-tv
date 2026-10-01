@@ -17,35 +17,33 @@
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100%}
   a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
   button,select,input{font-family:inherit}
-  header{padding:13px 22px;background:linear-gradient(to bottom,rgba(2,8,13,.95),rgba(2,8,13,.6));border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:20;backdrop-filter:blur(8px)}
-  .logo{font-family:monospace;font-size:13px;letter-spacing:.16em;color:var(--accent);font-weight:bold;white-space:nowrap}
-  .logo .dot{color:var(--brand)}
-  .logo .sub{color:var(--mut);margin-left:10px;font-weight:normal;letter-spacing:.1em;font-size:11px}
-  header .sel{display:flex;align-items:center;gap:7px}
-  header label{font-size:11px;color:var(--mut);font-family:monospace;letter-spacing:.06em;text-transform:uppercase}
+  /* Filtros de la parrilla: contenido de la página, bajo la barra del shell cuadrático. */
+  .toolbar{max-width:1180px;margin:0 auto;padding:16px 22px 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .toolbar .sel{display:flex;align-items:center;gap:7px}
+  .toolbar label{font-size:11px;color:var(--mut);font-family:monospace;letter-spacing:.06em;text-transform:uppercase}
   select,input[type=date]{background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px 10px;font-size:13px;outline:0}
   select:focus,input:focus{border-color:var(--brand)}
-  .grow{flex:1}
-  .btn{background:transparent;border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px 14px;font-size:13px;cursor:pointer;transition:border-color .12s,background .12s;white-space:nowrap}
-  .btn:hover{border-color:var(--brand)}
-  .btn.primary{background:var(--brand);color:#001620;border-color:var(--brand);font-weight:700}
-  .btn.ghost{color:var(--mut)}
-  .btn.live{border-color:var(--good);color:var(--good)} .btn.live.on{background:rgba(136,255,170,.14)}
+  /* Emisión en ▤ Avanzado: «Emitir auto» encendido se ve en verde. */
+  #advanced-tools #autoBtn.on{color:var(--good);border-color:var(--good);background:rgba(136,255,170,.14)}
   .wrap{max-width:1180px;margin:0 auto;padding:20px 22px 60px}
+  @media(max-width:560px){.toolbar{padding:12px 14px 0;gap:10px}.toolbar .sel{flex:1 1 100%;min-width:0}.toolbar select,.toolbar input{flex:1;min-width:0;width:100%}.wrap{padding:16px 14px 48px}}
   .foot{color:var(--mut);font-size:12px;margin-top:6px;text-align:center;font-family:monospace}
 </style>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261001-shell-2">
+<script defer src="/galaxy-shell.js?v=20261001-shell-2" data-section="/ parrilla" data-section-en="/ schedule"></script>
 </head>
 <body>
-<header>
-  <div class="logo">CLEAR<span class="dot">·</span>CHANNEL <span class="sub">PARRILLA · XPACEOS</span></div>
-  <div class="sel"><label>Xpacio</label><select id="storeSel"></select></div>
-  <div class="sel"><label>Pantalla</label><select id="screenSel"></select></div>
-  <div class="sel"><label>Día</label><input type="date" id="dateInp"></div>
-  <div class="grow"></div>
-  <button class="btn live" id="autoBtn" title="Empuja a las pantallas físicas el contenido que toca según la hora">▶ Emitir auto</button>
-  <button class="btn primary" id="emitBtn">Emitir ahora</button>
-  <a class="btn ghost" href="../target/">Target Model</a>
-</header>
+<!-- Shell cuadrático (FLT-101311): la emisión va a ▤ Avanzado; los filtros se quedan en la página. -->
+<div data-shell-slots hidden>
+  <button type="button" id="autoBtn" data-shell-slot="advanced" title="Empuja a las pantallas físicas el contenido que toca según la hora">▶ Emitir auto</button>
+  <button type="button" id="emitBtn" data-shell-slot="advanced">Emitir ahora</button>
+  <a href="../target/" data-shell-slot="advanced">Target Model</a>
+</div>
+<div class="toolbar" role="group" aria-label="Filtros de la parrilla">
+  <div class="sel"><label for="storeSel">Xpacio</label><select id="storeSel"></select></div>
+  <div class="sel"><label for="screenSel">Pantalla</label><select id="screenSel"></select></div>
+  <div class="sel"><label for="dateInp">Día</label><input type="date" id="dateInp"></div>
+</div>
 
 <div class="wrap">
   <div id="cal"></div>

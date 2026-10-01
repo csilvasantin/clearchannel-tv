@@ -11,7 +11,10 @@ const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const index = read('index.html');
 const backoffice = read('backoffice.html');
-const STAMP = '20261001-shell-cafe-1';
+// Sello del componente (galaxy-shell.css/js) en todas las páginas, y sello de los
+// ficheros de comportamiento de la portada (responsive-shell, expert-*), que no cambian.
+const STAMP = '20261001-shell-2';
+const PORTADA_STAMP = '20261001-shell-cafe-1';
 const squash = html => html.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
 const memory = () => {
   const mem = new Map();
@@ -116,7 +119,7 @@ test('backoffice.html loads the shell and hands its own actions to the panels', 
 
 test('galaxy-shell.css reuses responsive-shell.css and the service worker keeps both fresh', () => {
   const css = read('galaxy-shell.css');
-  assert.match(css, new RegExp(`^/\\*[\\s\\S]*?\\*/\\s*@import url\\('responsive-shell\\.css\\?v=${STAMP}'\\);`));
+  assert.match(css, new RegExp(`^/\\*[\\s\\S]*?\\*/\\s*@import url\\('responsive-shell\\.css\\?v=${PORTADA_STAMP}'\\);`));
   const sw = read('sw.js');
   const shell = new RegExp(sw.match(/const SHELL_CODE = \/(.+)\/;/)[1]);
   for (const f of ['/galaxy-shell.js', '/galaxy-shell.css', '/responsive-shell.js', '/expert-panel.js']) assert.ok(shell.test(f), f);
@@ -124,7 +127,8 @@ test('galaxy-shell.css reuses responsive-shell.css and the service worker keeps 
   const js = read('galaxy-shell.js');
   const order = ["load('responsive-shell.js')", "load('expert-commands.js')", "load('expert-panel.js')"].map(s => js.indexOf(s));
   assert.ok(order.every(i => i > 0) && order[0] < order[1] && order[1] < order[2]);
-  assert.ok(index.includes(`expert-panel.js?v=${STAMP}`) && index.includes(`expert-commands.js?v=${STAMP}`));
+  assert.ok(index.includes(`expert-panel.js?v=${PORTADA_STAMP}`) && index.includes(`expert-commands.js?v=${PORTADA_STAMP}`));
+  assert.ok(index.includes(`responsive-shell.css?v=${PORTADA_STAMP}`) && index.includes(`responsive-shell.js?v=${PORTADA_STAMP}`));
 });
 
 test('away from the map, map verbs are handed to the portada; local verbs run in place', () => {
@@ -185,4 +189,157 @@ test('pages can register their own verbs without clobbering shared ones or share
   assert.deepEqual(C.sanitizeRoutines([{command: '/nuevo'}, {command: '/demo jti'}]).map(r => r.command), ['/demo jti']);
   assert.match(C.helpLines('es').join('\n'), /\/nuevo — Alta.*solo en esta página/);
   assert.match(backoffice, /verbs: \[\{\s*id: 'nuevo'/);
+});
+
+// ─── Todas las páginas (FLT-101311 c) ────────────────────────────────────────────
+// Guardián de coherencia: cada HTML del sitio carga el shell cuadrático, es la portada
+// (que lo trae en línea) o figura aquí con el motivo concreto por el que queda fuera.
+// Una página nueva que no cargue el shell hace fallar este test.
+const SHELL_EXCEPTIONS = {
+  'backoffice/index.html': 'Redirección inmediata a /backoffice.html (location.replace + meta refresh); no pinta nada.',
+  'presentation/cc/index.html': 'Redirección inmediata a /presentation/ (location.replace + meta refresh); no pinta nada.',
+  'wututu/index.html': 'Bundle Vite compilado fuera de este repo: demo de contador de audiencias para iPad que se proyecta en un MUPI a pantalla completa (100vh, overflow oculto); una barra encima cortaría el escenario y el HTML se regenera en cada build.',
+};
+// Cabeceras de contenido (título de la página dentro de un contenedor), no barras de navegación.
+const CONTENT_HEADERS = {
+  'help/index.html': 'Portada de la ayuda dentro de .wrap (título y resumen).',
+  'store-3d.html': 'Título de la escena 3D dentro de .app (nombre del Xpace y hotspots).',
+  'presentation/index.html': 'Hero de la presentación (header.hero con data-shell-keep).',
+};
+const SKIP_DIRS = new Set(['.git', 'node_modules', '.wrangler']);
+function htmlPages(dir = root, out = []) {
+  for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
+    if (SKIP_DIRS.has(entry.name)) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) htmlPages(full, out);
+    else if (entry.name.endsWith('.html')) out.push(path.relative(root, full).split(path.sep).join('/'));
+  }
+  return out.sort();
+}
+const pages = htmlPages();
+const adopted = pages.filter(page => page !== 'index.html' && !SHELL_EXCEPTIONS[page]);
+const headEnd = html => ['</head>', '<body'].map(tag => html.indexOf(tag)).filter(i => i >= 0).reduce((a, b) => Math.min(a, b), html.length);
+
+test('every page loads the four-band shell, is the portada, or is a listed exception with its reason', () => {
+  assert.ok(pages.length >= 18, 'the walk finds the site pages');
+  for (const [page, reason] of Object.entries(SHELL_EXCEPTIONS)) {
+    assert.ok(pages.includes(page), `stale exception: ${page}`);
+    assert.ok(reason.length > 40, `exception without a concrete reason: ${page}`);
+    assert.ok(!read(page).includes('galaxy-shell'), `${page} is listed as an exception but loads the shell`);
+  }
+  for (const page of ['backoffice/index.html', 'presentation/cc/index.html']) assert.match(read(page), /location\.replace\(/, page);
+  for (const id of S.PANEL_IDS) assert.ok(index.includes(`id="${id}"`), 'the portada carries the shell in line: ' + id);
+  // The pages Carlos named, plus the ones discovered around them.
+  for (const page of ['about.html', 'backoffice.html', 'detail.html', 'marketplace.html', 'store-3d.html', 'walk.html', 'documentacion/index.html',
+    'help/index.html', 'mcp/index.html', 'parrilla/index.html', 'presentacion/index.html', 'presentation/index.html', 'target/index.html',
+    'tutorial/index.html', 'players/index.html']) assert.ok(adopted.includes(page), page);
+  for (const page of adopted) {
+    const html = read(page);
+    const css = `<link rel="stylesheet" href="/galaxy-shell.css?v=${STAMP}">`;
+    assert.equal(html.split(css).length - 1, 1, `${page}: galaxy-shell.css?v=${STAMP} exactly once`);
+    assert.match(html, new RegExp(`<script defer src="/galaxy-shell\\.js\\?v=${STAMP}"[^>]*></script>`), `${page}: galaxy-shell.js?v=${STAMP}`);
+    assert.equal((html.match(/galaxy-shell\.(?:css|js)\?v=/g) || []).length, 2, `${page}: one stamp for both files`);
+    // The component's stylesheet goes after the page's own styles, so the shell wins ties.
+    const at = html.indexOf(css), end = headEnd(html);
+    assert.ok(at < end, `${page}: shell in <head>`);
+    const head = html.slice(at + css.length, end);
+    assert.ok(!/<style[\s>]|rel="stylesheet"/.test(head), `${page}: no page styles after galaxy-shell.css`);
+    if (html.includes('window.ADMIRA_SHELL')) assert.ok(html.indexOf('window.ADMIRA_SHELL') < html.indexOf('/galaxy-shell.js?v='), `${page}: config before the component`);
+    // No page keeps its own bar: the admira-design nav and the per-page headers are gone.
+    assert.ok(!/class="admira-nav[\s"]/.test(html) && !html.includes('admira-design/nav.css'), `${page}: own admira-nav`);
+    const headers = html.match(/<header[\s>][^>]*/g) || [];
+    for (const tag of headers) assert.ok(CONTENT_HEADERS[page] || tag.includes('data-shell-keep'), `${page}: own <header> left in place: ${tag}`);
+    if (page === 'presentation/index.html') assert.match(html, /<header class="hero" id="top" data-shell-keep>/);
+    for (const [, slot] of html.matchAll(/data-shell-slot="([^"]*)"/g)) assert.ok(['advanced', 'options'].includes(slot), `${page}: slot ${slot}`);
+    assert.ok(!/100vh - (?:42|65|76|112|120)px|top:\s*94px/.test(html), `${page}: fixed heights of the old headers`);
+  }
+});
+
+test('pages hand their own navigation to ☰ Opciones and their work to ▤ Avanzado', () => {
+  const slot = (page, attrs, where) => assert.match(read(page), new RegExp(`<(?:a|button)[^>]*${attrs}[^>]*data-shell-slot="${where}"|<(?:a|button)[^>]*data-shell-slot="${where}"[^>]*${attrs}`), `${page}: ${attrs} → ${where}`);
+  slot('about.html', 'href="marketplace\\.html"', 'options');
+  slot('about.html', 'href="#flujo"', 'advanced');
+  slot('detail.html', 'id="back-map"', 'options');
+  slot('detail.html', 'id="advanced-store-3d"', 'advanced');
+  slot('detail.html', 'data-admira-contact', 'options');
+  slot('marketplace.html', 'data-admira-contact', 'options');
+  slot('store-3d.html', 'id="back-detail"', 'options');
+  slot('documentacion/index.html', 'href="/presentation/"', 'options');
+  slot('mcp/index.html', 'href="llms\\.txt"', 'advanced');
+  slot('parrilla/index.html', 'id="emitBtn"', 'advanced');
+  slot('parrilla/index.html', 'id="autoBtn"', 'advanced');
+  slot('presentation/index.html', 'href="#xtanco"', 'advanced');
+  slot('target/index.html', 'data-action="publish"', 'advanced');
+  slot('target/index.html', 'data-action="export"', 'advanced');
+  slot('tutorial/index.html', 'href="\\.\\./target/"', 'options');
+  // Handlers that look the moved elements up keep finding them.
+  assert.match(read('detail.html'), /getElementById\('advanced-store-3d'\)\.href = store3dHref/);
+  assert.ok(!read('detail.html').includes("getElementById('side-map')"), 'the old side rail is gone');
+  assert.match(read('parrilla/index.html'), /\$\('#emitBtn'\)\.onclick=emitNow;\$\('#autoBtn'\)\.onclick=toggleAuto;/);
+  assert.match(read('target-assets/app.js'), /qsa\("\[data-action\]"\)\.forEach/);
+  // Ayuda in ☰ Opciones lands on the navigation section of /help/.
+  assert.ok(S.COMMON_OPTIONS.some(o => o.href === '/help/#navigation-modes') && read('help/index.html').includes('id="navigation-modes"'));
+});
+
+test('one language switch: pages with their own i18n follow the shell and the per-brand key', () => {
+  for (const page of ['target/index.html', 'tutorial/index.html']) {
+    const html = read(page);
+    assert.match(html, /window\.ADMIRA_SHELL = \{[^\n]*setLang: lang => setLang\(lang\) \};/, page);
+    assert.ok(!html.includes('target-lang-btn'), `${page}: no second language switch`);
+    assert.ok(html.indexOf('/galaxy-shell.js?v=') < html.indexOf('src="../target-assets/app.js'), page);
+  }
+  const app = read('target-assets/app.js');
+  assert.match(app, /const LANG_KEY = `\$\{SITE_BRAND\.id \|\| "clearchannel"\}-lang`;/);
+  assert.ok(!app.includes('omnip-lang'));
+  const walk = read('walk.mjs');
+  assert.ok(!walk.includes('omnip-lang') && !walk.includes("$('language')"));
+  assert.match(walk, /\(window\.ADMIRA_SITE_BRAND\?\.id \|\| 'clearchannel'\) \+ '-lang'/);
+  assert.match(walk, /document\.addEventListener\('admira:lang'/);
+  assert.match(read('walk.html'), /window\.ADMIRA_SHELL = \{[^\n]*setLang\(\) \{\} \};/);
+  assert.ok(!read('walk.html').includes('id="language"'));
+  // The shell dispatches the event walk.mjs listens to, after storing the per-brand preference.
+  assert.match(read('galaxy-shell.js'), /store\.setItem\(languageKey\(brand\), next\)[\s\S]*new CustomEvent\('admira:lang'/);
+});
+
+test('keyboard shortcuts of slides and 3D scene ignore the expert CLI', () => {
+  for (const page of ['presentacion/index.html', 'store-3d.html']) {
+    const html = read(page);
+    const handler = html.slice(html.lastIndexOf("addEventListener('keydown'"));
+    assert.match(handler.slice(0, 400), /closest\('input,textarea,select,\[contenteditable\],\.mode-panel'\)\)\s*return/, page);
+  }
+});
+
+test('layouts measure the shell instead of the old headers', () => {
+  assert.match(read('store-3d.html'), /\.app\{height:calc\(100vh - var\(--app-header-height,64px\) - var\(--shell-bottom,0px\)\);height:calc\(100dvh - var\(--app-header-height,64px\) - var\(--shell-bottom,0px\)\)/);
+  assert.match(read('store-3d.html'), /\.app > header\{/, 'the scene header is scoped, it no longer styles the shell bar');
+  const deck = read('presentacion/index.html');
+  assert.match(deck, /^<!doctype html>/);
+  for (const sel of ['#stage', '.crt', '.flicker']) assert.match(deck, new RegExp(`${sel.replace(/[.#]/g, '\\$&')}\\{position:fixed;inset:var\\(--app-header-height,64px\\) 0 var\\(--shell-bottom,0px\\)`), sel);
+  assert.match(deck, /#nav\{position:fixed;z-index:70;bottom:calc\(var\(--shell-bottom,0px\) \+ 14px\)/);
+  const css = read('target-assets/styles.css');
+  assert.match(css, /top: calc\(var\(--app-header-height, 64px\) \+ 18px\);\n  max-height: calc\(100vh - var\(--app-header-height, 64px\) - var\(--shell-bottom, 0px\) - 36px\);/);
+  assert.match(css, /\.toast \{[^}]*z-index: 9450;/, 'page toasts above the shell panels');
+  assert.ok(!/\.topbar \{|\.target-lang-btn \{|\.tutorial-nav \{/.test(css), 'no styles left for the removed bars');
+  assert.match(read('presentation/index.html'), /\.hero\{min-height:calc\(100svh - var\(--app-header-height,64px\)\)/);
+  assert.match(read('help/index.html'), /\.wrap > header\{/);
+  // Files whose content changed carry the new stamp so the service worker does not serve the old copy.
+  for (const [page, file] of [['target/index.html', 'target-assets/styles.css'], ['target/index.html', 'target-assets/app.js'], ['tutorial/index.html', 'target-assets/app.js'], ['walk.html', 'walk.css'], ['walk.html', 'walk.mjs']]) {
+    assert.ok(read(page).includes(`${file.split('/').pop()}?v=${STAMP}`), `${page}: ${file}?v=${STAMP}`);
+  }
+});
+
+test('the bar wears the portada colours on every page, per brand, and stays on top of page content', () => {
+  const css = read('galaxy-shell.css');
+  const tokens = text => Object.fromEntries([...text.matchAll(/--([a-z0-9]+):\s*([^;}]+)/g)].map(m => [m[1], m[2].trim().replace(/\s+/g, '')]));
+  const cc = tokens(css.match(/body > header\.galaxy-shell,#header-navigation,#advanced-tools,#expert-panel\{(--bg[^}]+)\}/)[1]);
+  const portada = tokens(index.match(/:root\{(--bg[^}]+)\}/)[1]);
+  for (const [k, v] of Object.entries(portada)) assert.equal(cc[k], v, 'clearchannel --' + k);
+  const admira = tokens(css.match(/:root\[data-brand="admira"\] :is\([^)]*\)\{([^}]+)\}/)[1]);
+  const brand = tokens(read('brand.css').match(/:root\[data-brand="admira"\] \{([^}]+)\}/)[1]);
+  for (const [k, v] of Object.entries(brand)) assert.equal(admira[k], v, 'admira --' + k);
+  assert.match(css, /body > header\.galaxy-shell\{z-index:8900\}/);
+  assert.match(css, /html\[data-shell=galaxy\]\{scroll-padding-top:/);
+  assert.match(css, /\.galaxy-shell-page \.admira-contact-panel\{z-index:9310\}/);
+  // Element selectors of a page (section, li, strong, input, button…) cannot reshape the shell.
+  for (const rule of ['#expert-panel .expert-module{padding:0;border-top:0', '#expert-panel li{', '#header-navigation > *{flex-shrink:0}', 'body > header.galaxy-shell .mode-toggle:not(.header-login){padding:0}', '#expert-panel #expert-command{min-height:0;margin:0']) assert.ok(css.includes(rule), rule);
 });

@@ -17,7 +17,7 @@
   body{background:radial-gradient(1200px 600px at 50% -10%,#10243a 0,var(--bg) 60%);color:var(--tx);
     font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1.55;padding:0 18px 80px}
   .wrap{max-width:880px;margin:0 auto}
-  header{padding:54px 0 26px;text-align:center}
+  .wrap > header{padding:54px 0 26px;text-align:center}
   .kicker{color:var(--acc);letter-spacing:.22em;font-size:12px;text-transform:uppercase}
   h1{font-size:clamp(28px,6vw,46px);margin:10px 0 8px;letter-spacing:-.5px}
   .lead{color:var(--mut);font-size:clamp(14px,2.4vw,17px);max-width:640px;margin:0 auto}
@@ -53,8 +53,9 @@
   .adv .a b{color:var(--tx)} .adv .a span{color:var(--mut)}
   .demo{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
   .demo ol{list-style:none;counter-reset:d;display:grid;gap:9px}
-  .demo li{counter-increment:d;display:flex;gap:11px;align-items:flex-start;font-size:14px}
-  .demo li::before{content:counter(d);flex:0 0 24px;height:24px;border-radius:7px;background:#0e2a22;border:1px solid #2f8d8d;
+  /* Texto en bloque junto al número: sin huecos entre palabras ni desborde en móvil. */
+  .demo li{counter-increment:d;position:relative;padding-left:35px;min-height:24px;font-size:14px;overflow-wrap:anywhere}
+  .demo li::before{content:counter(d);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:7px;background:#0e2a22;border:1px solid #2f8d8d;
     color:var(--acc2);font-weight:bold;display:flex;align-items:center;justify-content:center}
   code{background:#0a141d;border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--acc);font-size:12.5px}
   .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
@@ -63,8 +64,21 @@
   footer{margin-top:50px;text-align:center;color:var(--mut);font-size:12px;border-top:1px dashed var(--line);padding-top:20px}
   .em-acc{color:var(--acc)} .em-pink{color:var(--pink)} .em-gold{color:var(--gold)} .em-viol{color:var(--viol)} .em-grn{color:var(--acc2)}
 </style>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261001-shell-2">
+<script defer src="/galaxy-shell.js?v=20261001-shell-2" data-section="/ ayuda" data-section-en="/ help"></script>
 </head>
 <body>
+<!-- Shell cuadrático (FLT-101311): atajos a las secciones en ▤ Avanzado. -->
+<div data-shell-slots hidden>
+  <a href="#pasos" data-shell-slot="advanced" data-shell-text-es="3 pasos" data-shell-text-en="3 steps">3 pasos</a>
+  <a href="#piezas" data-shell-slot="advanced" data-shell-text-es="Las piezas" data-shell-text-en="The pieces">Las piezas</a>
+  <a href="#bucle" data-shell-slot="advanced" data-shell-text-es="Bucle agéntico" data-shell-text-en="Agentic loop">Bucle agéntico</a>
+  <a href="#ventajas" data-shell-slot="advanced" data-shell-text-es="Ventajas" data-shell-text-en="Advantages">Ventajas</a>
+  <a href="#probar" data-shell-slot="advanced" data-shell-text-es="Pruébalo" data-shell-text-en="Try it">Pruébalo</a>
+  <a href="#enlaces" data-shell-slot="advanced" data-shell-text-es="Enlaces" data-shell-text-en="Links">Enlaces</a>
+  <a href="#navigation-modes" data-shell-slot="advanced" data-shell-text-es="Navegación ☰ ▤ ⌘" data-shell-text-en="Navigation ☰ ▤ ⌘">Navegación ☰ ▤ ⌘</a>
+  <a href="#expert-mode" data-shell-slot="advanced" data-shell-text-es="Modo experto" data-shell-text-en="Expert mode">Modo experto</a>
+</div>
 <div class="wrap">
 
   <header>
@@ -75,7 +89,7 @@
   </header>
 
   <!-- 3 PASOS -->
-  <section>
+  <section id="pasos">
     <h2>El bucle, en 3 pasos</h2>
     <div class="steps">
 
@@ -113,7 +127,7 @@
   </section>
 
   <!-- PIEZAS -->
-  <section>
+  <section id="piezas">
     <h2>Las piezas</h2>
     <div class="pillars">
       <div class="pill"><div class="tag em-acc">A · Mide</div><h4>Gemelo Digital</h4><p>El digital twin jugable del punto. Simula y mide clientes, ventas, pantallas y audiencia en tiempo real. Con calendario histórico y DVR para rebobinar cualquier día.</p></div>
@@ -123,7 +137,7 @@
   </section>
 
   <!-- LOOP -->
-  <section>
+  <section id="bucle">
     <h2>El bucle agéntico (cómo encaja todo)</h2>
     <div class="loop"><pre>  clearchannel.tv            PixerIA              Gemelo Digital
  (programática)       (creación IA)        (medición + pantallas)
@@ -140,7 +154,7 @@
   </section>
 
   <!-- VENTAJAS -->
-  <section>
+  <section id="ventajas">
     <h2>Por qué Clear Channel (ventajas)</h2>
     <div class="adv">
       <div class="a"><div class="n"></div><div><b>Audiencia real, no estimaciones.</b> <span>Se paga por impactos reales y cualificados, segmentados por género y edad.</span></div></div>
@@ -153,7 +167,7 @@
   </section>
 
   <!-- DEMO -->
-  <section>
+  <section id="probar">
     <h2>Cómo probarlo en 1 minuto</h2>
     <div class="demo">
       <ol>
@@ -167,7 +181,7 @@
     </div>
   </section>
 
-  <section>
+  <section id="enlaces">
     <h2>Enlaces</h2>
     <div class="links">
       <a href="https://clearchannel.tv">▶ clearchannel.tv (programática)</a>
@@ -182,6 +196,7 @@
 
 </div>
 <section id="starbucks-digital-twin"><h2>Starbucks · admira.app → XpaceOS</h2><p>En admira.app, busca «Starbucks Paseo de Gracia» y abre la ficha de Paseo de Gracia 103, Barcelona. Pulsa «Visita al Digital Twin» junto a «Tour DOOH» para entrar directamente al Starbucks de XpaceOS en Matrix. Tour DOOH conserva su recorrido por el mapa.</p><p lang="en">In admira.app, search for “Starbucks Paseo de Gracia” and open the profile at Paseo de Gracia 103, Barcelona. Click “Visit the Digital Twin” beside “Tour DOOH” to open the Starbucks in XpaceOS Matrix directly. Tour DOOH keeps its map tour.</p><p><a href="https://admira.app/?locationId=alsea-sbux-021&amp;lang=es">Starbucks · admira.app</a> · <a href="https://www.xpaceos.com/admira-xp/?autostart=xtanco&amp;visual=matrix&amp;loc=alsea-sbux-021">Digital Twin · Matrix</a></p></section>
+<span id="navigation-modes"></span>
 <section id="responsive-navigation"><p>El botón ☰ Opciones se encuentra justo a la izquierda del logo. ▤ Avanzado y ⌘ Experto permanecen a la derecha. Los tres paneles se abren y cierran de forma independiente. admira.app conserva su identidad y metaestilo, con castellano por defecto; clearchannel.tv conserva la marca Clear Channel y su metaestilo, con inglés por defecto. La preferencia de idioma se guarda por marca; un cambio voluntario de idioma no cambia su identidad. Login permanece visible entre el buscador y Avanzado. /demo inicia la demo desde Experto; /cli también sigue disponible.</p><p lang="en">The ☰ Options button sits immediately to the left of the logo. ▤ Advanced and ⌘ Expert remain on the right. Each panel opens and closes independently. admira.app retains its identity and visual theme with Spanish by default; clearchannel.tv retains Clear Channel branding and its visual theme with English by default. Language preferences are stored per brand; choosing another language does not change brand identity. Login stays visible between search and Advanced. /demo starts the guided demo from Expert; /cli remains available.</p><h2 id="navigation-modes">Opciones, Avanzado y Experto / Options, Advanced and Expert</h2><p>La cabecera mantiene el buscador y tres botones: ☰ Opciones abre la barra vertical izquierda (player virtual, ayuda e idioma); ▤ Modo avanzado abre la barra derecha con Planificar campaña, Seleccionar circuito, Seleccionar target, Mis solicitudes y Sala de emisión; ⌘ Modo experto abre la barra horizontal inferior. Los paneles empiezan cerrados la primera vez y recuerdan su estado de forma independiente, como en Pixeria. En Experto escribe /demo (o /cli) y pulsa Enter o Ejecutar para iniciar la demo guiada; /help muestra los comandos. Ya no hay un botón flotante Empezar la demo. La compra de la demo sigue siendo simulada: no cobra ni reserva parrilla.</p><p lang="en">The header keeps search and three buttons: ☰ Options opens the left vertical bar (virtual player, help and language); ▤ Advanced mode opens the right bar with Plan campaign, Select circuit, Select target, My requests and Emission room; ⌘ Expert mode opens the bottom horizontal bar. Panels start closed on the first visit and remember their state independently, as in Pixeria. In Expert, type /demo (or /cli) and press Enter or Run to start the guided demo; /help shows commands. There is no floating Start demo button. Demo purchases remain simulated: no charge or airtime booking.</p></section>
 <section id="expert-mode"><h2>Modo experto en 3 bloques / Expert mode in three blocks</h2><p>⌘ Modo experto tiene tres bloques, como admira.live: CLI a la izquierda, Verbos en el centro y Rutinas a la derecha. Cada bloque se mueve con su asa, se cierra con × y se recupera con ⋯; el ancho se reparte arrastrando el borde. El navegador recuerda la distribución; en el móvil los bloques se apilan. Verbos: /demo [cliente] (también /cli), /circuito &lt;cliente&gt;, /buscar &lt;texto&gt;, /parar, /limpiar y /help. Clientes: starbucks, starbucks-mexico, alcampo, canalkiosk, jti, estancos y el resto de circuitos; mayúsculas y acentos dan igual, y también vale /demo cliente=alcampo. /demo con cliente recorre un Xpacio real de su circuito y avisa si sus pantallas solo están programadas o no tienen ventas reales en la parrilla; la compra sigue siendo simulada. Las rutinas ejecutan con un clic Demo o Circuito de cada cliente destacado, y «＋ Guardar última orden» crea rutinas propias que se pueden borrar. Tab completa y ↑/↓ recorre el historial.</p><p lang="en">⌘ Expert mode has three blocks like admira.live: CLI on the left, Verbs in the centre and Routines on the right. Move a block by its handle, close it with × and bring it back with ⋯; drag a border to share width. The browser remembers the layout; on phones the blocks stack. Verbs: /demo [client] (also /cli), /circuito &lt;client&gt;, /buscar &lt;text&gt;, /parar, /limpiar and /help. Clients: starbucks, starbucks-mexico, alcampo, canalkiosk, jti, estancos and the other circuits; case and accents do not matter, and /demo client=alcampo also works. /demo with a client tours a real Xpacio from its circuit and says when its screens are only scheduled or have no real sales on the grid; the purchase remains simulated. Routines run Demo or Circuit for each featured client in one click, and “＋ Save last command” creates your own deletable routines. Tab completes and ↑/↓ walks the history.</p></section><section id="universal-shell"><h2>La misma interfaz en todas las páginas / The same interface on every page</h2><p>El backoffice y las demás páginas usan la misma barra (☰ Opciones, marca, Login, ▤ Avanzado, ⌘ Experto) y los mismos paneles que el mapa. En sus Opciones están Inicio, Player virtual, Ayuda y el idioma; en Avanzado, las acciones de esa página. Desde el Experto de otra página, /demo, /circuito y /buscar abren el mapa de la portada y se ejecutan allí; /help y /limpiar funcionan en la propia página, y las rutinas guardadas son las mismas. En el backoffice, /nuevo abre el alta de un Xpace.</p><p lang="en">The backoffice and the other pages use the same header (☰ Options, brand, Login, ▤ Advanced, ⌘ Expert) and the same panels as the map. Their Options hold Home, Virtual player, Help and language; Advanced holds that page’s actions. From Expert on another page, /demo, /circuito and /buscar open the home map and run there; /help and /limpiar run on the page itself, and saved routines are shared. In the backoffice, /nuevo opens the form to register an Xpace.</p></section><section id="advanced-map"><h2>Mapa en Avanzado / Map in Advanced</h2><p>Abre ▤ Avanzado para orientación, 3D, ISO, Mi ubicación, Street View, zoom y Tierra/Mapa/Relieve. Los controles aparecen y desaparecen con el panel. Opciones y Experto se abren y cierran por separado desde la cabecera; el navegador recuerda cada estado.</p><p lang="en">Open ▤ Advanced for orientation, 3D, ISO, My location, Street View, zoom and Earth/Map/Terrain. Controls appear and disappear with the panel. Options and Expert toggle separately from the header; the browser remembers each state.</p></section>
 <section id="neo-advanced"><h2>Neo · Avanzado / Advanced</h2><p>«Habla con Neo» está dentro de ▤ Modo avanzado. La home no muestra el botón flotante. Abre Avanzado y pulsa Habla con Neo; el panel se carga bajo demanda. Cerrar o Escape vuelve al botón Avanzado.</p><p lang="en">“Talk to Neo” is inside ▤ Advanced mode. The home page has no floating Neo button. Open Advanced and select Talk to Neo; the panel loads on demand. Close or Escape returns focus to Advanced.</p></section>
