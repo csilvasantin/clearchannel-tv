@@ -23,7 +23,7 @@ self.addEventListener('activate', event => {
 
 const SKIP = /^\/(api\/|version\.json|backoffice|mcp\/|sw\.js)/;
 // Shell updates must not mix new markup with old command handlers or styles.
-const SHELL_CODE = /^\/(responsive-shell\.(?:js|css)|intro\.js|expert-(?:commands|panel)\.js)$/;
+const SHELL_CODE = /^\/((?:responsive|galaxy)-shell\.(?:js|css)|intro\.js|expert-(?:commands|panel)\.js)$/;
 const STATIC = /\.(?:js|mjs|css|png|jpe?g|webp|svg|ico|woff2?|webm|mp4|json)$/;
 const ESRI = /^https:\/\/server\.arcgisonline\.com\/ArcGIS\/rest\/services\/World_Imagery\/MapServer\/tile\/(\d+)\//;
 

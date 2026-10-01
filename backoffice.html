@@ -19,24 +19,12 @@
   a:hover{text-decoration:underline}
   button{font-family:inherit}
 
-  header{padding:14px 22px;background:linear-gradient(to bottom,rgba(2,8,13,.92),rgba(2,8,13,.6));border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;flex-wrap:wrap;position:sticky;top:0;z-index:10;backdrop-filter:blur(8px)}
-  .logo{font-family:monospace;font-size:13px;letter-spacing:.16em;color:var(--accent);font-weight:bold;white-space:nowrap}
-  .logo .dot{color:var(--brand)}
-  .logo .sub{color:var(--mut);margin-left:10px;font-weight:normal;letter-spacing:.1em}
-  .logo .ver{font-weight:normal;font-size:10px;letter-spacing:.08em;color:var(--mut);margin-left:10px}
-  nav{margin-left:auto;display:flex;gap:14px;font-size:12px;font-family:monospace;letter-spacing:.06em;text-transform:uppercase}
-  nav a{color:var(--mut)}
-  nav a:hover{color:var(--ink)}
-  nav .badge{font-size:10px;color:var(--accent);border:1px solid rgba(255,216,102,.4);padding:1px 6px;border-radius:3px;letter-spacing:.1em}
-  nav .logout{background:transparent;border:1px solid var(--line);border-radius:6px;color:var(--mut);font-family:monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;cursor:pointer;transition:border-color .12s,color .12s}
-  nav .logout:hover{border-color:var(--danger);color:var(--danger)}
-  .lang-switch{display:inline-flex;gap:2px;background:rgba(10,22,32,.6);border:1px solid var(--line);border-radius:8px;padding:2px}
-  .lang-switch .lang-btn{font-family:monospace;font-size:11px;letter-spacing:.06em;font-weight:700;color:var(--mut);background:transparent;border:0;border-radius:6px;padding:4px 8px;cursor:pointer;transition:background .15s,color .15s}
-  .lang-switch .lang-btn:hover{color:var(--ink)}
-  .lang-switch .lang-btn.active{background:rgba(120,243,255,.14);color:var(--brand);box-shadow:inset 0 0 0 1px rgba(120,243,255,.4)}
+  /* La cabecera es la universal del shell cuadrático (galaxy-shell.css · FLT-101311). */
+  #advanced-tools #btn-logout:hover{border-color:var(--danger);color:var(--danger)}
+  .bo-status{display:block;margin:2px 0 4px;font:10px/1.4 monospace;color:var(--accent);border:1px solid rgba(255,216,102,.4);padding:4px 6px;border-radius:6px;letter-spacing:.1em;text-align:center;overflow-wrap:anywhere}
 
   /* Login gate */
-  .gate{position:fixed;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(120,243,255,.12),transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(255,216,102,.08),transparent 55%),var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+  .gate{position:fixed;inset:0;z-index:9500;background:radial-gradient(ellipse at 30% 20%,rgba(120,243,255,.12),transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(255,216,102,.08),transparent 55%),var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
   .gate.hidden{display:none}
   .gate .gbox{max-width:420px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:32px 28px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
   .gate .glogo{font-family:monospace;font-size:13px;letter-spacing:.16em;color:var(--accent);font-weight:bold;text-align:center;margin-bottom:6px}
@@ -65,7 +53,7 @@
   .demo-card{flex:1;min-width:240px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
   .demo-card h3{margin:0 0 14px}
   .demo-card a{display:inline-block;color:var(--brand);margin:0 18px 8px 0}
-  .shell{display:grid;grid-template-columns:280px 1fr 380px;gap:0;height:calc(100vh - 65px);min-height:0}
+  .shell{display:grid;grid-template-columns:280px 1fr 380px;gap:0;height:calc(100vh - var(--app-header-height,64px) - var(--shell-bottom,0px));height:calc(100dvh - var(--app-header-height,64px) - var(--shell-bottom,0px));min-height:0}
   @media(max-width:1100px){.shell{grid-template-columns:240px 1fr 320px}}
   @media(max-width:880px){.shell{grid-template-columns:1fr;height:auto}}
 
@@ -160,13 +148,13 @@
   @media(max-width:1100px){.place-photo .photo-frame{height:220px}}
 
   /* Toast */
-  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(10,22,32,.96);border:1px solid var(--brand);border-radius:8px;padding:12px 20px;font-family:monospace;font-size:12px;color:var(--ink);letter-spacing:.04em;z-index:30;display:none;backdrop-filter:blur(8px);box-shadow:0 4px 24px rgba(0,0,0,.5)}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(10,22,32,.96);border:1px solid var(--brand);border-radius:8px;padding:12px 20px;font-family:monospace;font-size:12px;color:var(--ink);letter-spacing:.04em;z-index:9450;display:none;backdrop-filter:blur(8px);box-shadow:0 4px 24px rgba(0,0,0,.5)}
   .toast.show{display:block;animation:fadein .3s ease}
   .toast.err{border-color:var(--danger);color:var(--warn)}
   @keyframes fadein{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 
   /* Modals */
-  .modal{position:fixed;inset:0;background:rgba(2,8,13,.85);z-index:40;display:none;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(4px)}
+  .modal{position:fixed;inset:0;background:rgba(2,8,13,.85);z-index:9400;display:none;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(4px)}
   .modal.show{display:flex}
   .modal .box{background:var(--card);border:1px solid var(--brand);border-radius:10px;padding:22px;max-width:560px;width:100%;max-height:80vh;display:flex;flex-direction:column;gap:14px}
   .modal h3{margin:0;font-family:monospace;font-size:12px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase}
@@ -177,6 +165,28 @@
   .modal button.primary{border-color:var(--good);color:var(--good)}
   .modal button.primary:hover{background:var(--good);color:#001620}
 </style>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261001-shell-cafe-1">
+<script>
+// Shell cuadrático universal (FLT-101311): misma barra y paneles que la portada.
+window.ADMIRA_SHELL = {
+  section: '/ backoffice',
+  login: false, // ya estás en el backoffice; Logout vive en ▤ Avanzado
+  setLang: lang => setLang(lang),
+  verbs: [{
+    id: 'nuevo', aliases: ['new'],
+    es: 'Abre el formulario de alta de un Xpace nuevo (requiere cuenta de gestión).',
+    en: 'Opens the form to register a new Xpace (requires a management account).',
+    run(args, ctx, lang) {
+      const T = (es, en) => (lang === 'en' ? en : es);
+      const shell = document.getElementById('catalog-shell'), button = document.getElementById('btn-new');
+      if (!shell || shell.hidden || !button) return {ok: false, lines: [T('Entra con una cuenta de gestión del catálogo para dar de alta un Xpace.', 'Sign in with a catalogue management account to register an Xpace.')]};
+      button.click();
+      return {ok: true, lines: [T('Formulario de nuevo Xpace abierto.', 'New Xpace form opened.')]};
+    },
+  }],
+};
+</script>
+<script defer src="/galaxy-shell.js?v=20261001-shell-cafe-1"></script>
 </head>
 <body>
 
@@ -192,22 +202,15 @@
   </div>
 </div>
 
-<header>
-  <span class="logo">CLEAR<span class="dot">·</span>CHANNEL <span class="sub" data-i18n="bo_sub">/ backoffice</span></span>
-  <nav>
-    <a href="target/" data-i18n="nav_target">Target Model</a>
-    <a href="index.html" data-i18n="nav_public_map">Mapa público</a>
-    <a href="about.html" data-i18n="nav_rtb">Concepto RTB</a>
-    <a href="../xpace-os/">Xpace OS</a>
-    <a href="#demo-access" id="nav-demos" hidden data-i18n="nav_demos">Mis demos</a>
-    <div class="lang-switch" id="lang-switch" role="group" aria-label="Idioma / Language">
-      <button type="button" class="lang-btn" data-lang="en">EN</button>
-      <button type="button" class="lang-btn" data-lang="es">ES</button>
-    </div>
-    <button id="btn-logout" class="logout" data-i18n="logout">Logout</button>
-    <span class="badge" id="badge-mode" title="Sync status with omnipublicity-api">CARGANDO…</span>
-  </nav>
-</header>
+<!-- Lo propio del backoffice dentro del shell: trabajo → ▤ Avanzado, navegación → ☰ Opciones. -->
+<div data-shell-slots hidden>
+  <span class="bo-status" id="badge-mode" data-shell-slot="advanced" title="Sync status with omnipublicity-api">CARGANDO…</span>
+  <a href="target/" data-shell-slot="advanced" data-i18n="nav_target">Target Model</a>
+  <a href="#demo-access" id="nav-demos" data-shell-slot="advanced" hidden data-i18n="nav_demos">Mis demos</a>
+  <a href="../xpace-os/" data-shell-slot="advanced">Xpace OS</a>
+  <button type="button" id="btn-logout" class="logout" data-shell-slot="advanced" data-i18n="logout">Logout</button>
+  <a href="about.html" data-shell-slot="options" data-i18n="nav_rtb">Concepto RTB</a>
+</div>
 
 <section class="demo-access" id="demo-access" hidden aria-labelledby="demo-title">
   <h2 id="demo-title" data-i18n="demo_title">Demos JTI y Alsea</h2>
@@ -372,7 +375,7 @@
 
 <script src="xpace-link.js?v=20260928-xpace-1"></script>
 <script>
-// ─── i18n (preferencia propia de marca, compartida con la portada) ──
+// ─── i18n (mismo idioma que la portada: ?lang= > preferencia por marca > idioma de la marca) ──
 const I18N = {
   es: {
     bo_sub:'/ backoffice',
@@ -466,8 +469,8 @@ const I18N = {
 const BRAND_LANGUAGE_KEY = (window.ADMIRA_SITE_BRAND?.id || 'clearchannel') + '-lang';
 let LANG = (function(){
   const explicit = new URLSearchParams(location.search).get('lang');
-  if (['en','es'].includes(explicit)) return explicit;
-  try { const saved = localStorage.getItem(BRAND_LANGUAGE_KEY); if (['en','es'].includes(saved)) return saved; } catch(_) {}
+  if (['en', 'es'].includes(explicit)) return explicit;
+  try { const saved = localStorage.getItem(BRAND_LANGUAGE_KEY); if (['en', 'es'].includes(saved)) return saved; } catch(_) {}
   return window.ADMIRA_SITE_BRAND?.defaultLanguage || 'en';
 })();
 function t(key){ return (I18N[LANG] && I18N[LANG][key] != null) ? I18N[LANG][key] : (I18N.es[key] != null ? I18N.es[key] : key); }
@@ -483,7 +486,6 @@ function applyI18n(){
 function setLang(lang){
   LANG = (lang === 'en') ? 'en' : 'es';
   try { localStorage.setItem(BRAND_LANGUAGE_KEY, LANG); } catch(_){}
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === LANG));
   applyI18n();
   renderDemoAccess();
   try { if (typeof renderList === 'function') renderList(); } catch(_){}
@@ -1365,10 +1367,7 @@ $('btn-token').addEventListener('click', () => promptApiToken('Editar API token 
 const existingGoogle = storedGoogle();
 if (existingGoogle) onGoogleCredential({ credential: existingGoogle.token });
 
-// ─── Selector de idioma EN/ES (comparte preferencia con la portada) ──
-document.querySelectorAll('#lang-switch .lang-btn').forEach(btn => {
-  btn.addEventListener('click', () => setLang(btn.dataset.lang));
-});
+// ─── Idioma: el botón ENG/ESP de ☰ Opciones (galaxy-shell.js) llama a setLang ──
 const _badgeEl = document.getElementById('badge-mode');
 if (_badgeEl) _badgeEl.textContent = t('badge_loading');
 setLang(LANG);
