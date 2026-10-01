@@ -4,8 +4,12 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-AGENT="${ADMIRANEXT_AGENT:-OraculoMBAPlata}"
-MACHINE="${ADMIRANEXT_MACHINE:-MacBookAirPlata}"
+# La firma se DECLARA, no se hereda (norma 08). Antes, sin variables, firmaba en silencio
+# como OraculoMBAPlata: el 1-oct-2026 una publicación de MorfeoMacMini salió con firma ajena.
+# Acepta el par de la flota (ADMIRA_RELEASE_*) o el histórico (ADMIRANEXT_*); sin ninguno, aborta.
+AGENT="${ADMIRA_RELEASE_AGENT:-${ADMIRANEXT_AGENT:-}}"
+MACHINE="${ADMIRA_RELEASE_MACHINE:-${ADMIRANEXT_MACHINE:-}}"
+[[ -n "$AGENT" && -n "$MACHINE" ]] || { echo "✗ Declara quién publica: ADMIRA_RELEASE_AGENT=<Persona><Equipo> ADMIRA_RELEASE_MACHINE=<Equipo> ./deploy.sh" >&2; exit 1; }
 SIGNATURE="$AGENT · $MACHINE"
 
 if [ -n "$(git status --porcelain)" ]; then
