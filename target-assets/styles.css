@@ -91,33 +91,11 @@ select:focus {
   box-shadow: 0 0 0 3px rgb(77 217 235 / 12%);
 }
 
+/* Bajo la barra del shell cuadrático (galaxy-shell.css · FLT-101311). */
 .app-shell {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--app-header-height, 64px));
 }
 
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: grid;
-  grid-template-columns: max-content minmax(260px, 1fr) max-content;
-  gap: 14px;
-  align-items: center;
-  min-height: 76px;
-  padding: 14px 20px;
-  border-bottom: 1px solid rgb(77 217 235 / 22%);
-  background: rgb(3 8 11 / 88%);
-  backdrop-filter: blur(18px);
-}
-
-.brand {
-  display: flex;
-  gap: 14px;
-  align-items: baseline;
-  min-width: 0;
-}
-
-.brand-mark,
 .eyebrow {
   color: var(--gold);
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
@@ -127,37 +105,6 @@ select:focus {
   text-transform: uppercase;
 }
 
-.brand strong {
-  color: #d8f9ff;
-  font-size: 0.95rem;
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  width: min(100%, 680px);
-  min-height: 46px;
-  padding: 0 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: rgb(8 26 32 / 92%);
-}
-
-.search-bar svg {
-  flex: 0 0 auto;
-  width: 18px;
-  margin-right: 10px;
-  color: var(--muted);
-}
-
-.search-bar input {
-  min-height: 40px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-}
-
-.top-actions,
 .button-row,
 .status-cluster,
 .target-toggle,
@@ -169,41 +116,6 @@ select:focus {
   align-items: center;
 }
 
-.top-actions {
-  justify-content: flex-end;
-}
-
-.target-lang-switch {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  padding: 4px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: rgb(8 26 32 / 72%);
-}
-
-.target-lang-btn {
-  min-width: 34px;
-  min-height: 30px;
-  padding: 0 8px;
-  border: 0;
-  border-radius: 7px;
-  color: var(--muted);
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  background: transparent;
-  cursor: pointer;
-}
-
-.target-lang-btn.is-active {
-  color: var(--cyan);
-  background: rgb(77 217 235 / 14%);
-}
-
-.icon-button,
 .primary-action,
 .ghost-action,
 .tool-button,
@@ -226,12 +138,6 @@ select:focus {
     transform 160ms ease;
 }
 
-.icon-button {
-  width: 42px;
-  padding: 0;
-}
-
-.icon-button svg,
 .primary-action svg,
 .ghost-action svg,
 .tool-button svg,
@@ -253,7 +159,6 @@ select:focus {
   padding: 0 14px;
 }
 
-.icon-button:hover,
 .ghost-action:hover,
 .tool-button:hover,
 .tabs button:hover,
@@ -294,8 +199,8 @@ select:focus {
 .left-rail,
 .target-panel {
   position: sticky;
-  top: 94px;
-  max-height: calc(100vh - 112px);
+  top: calc(var(--app-header-height, 64px) + 18px);
+  max-height: calc(100vh - var(--app-header-height, 64px) - var(--shell-bottom, 0px) - 36px);
   overflow: auto;
 }
 
@@ -312,6 +217,11 @@ select:focus {
 
 .eyebrow {
   margin: 0 0 10px;
+}
+
+/* El buscador de Xpacio vive en el carril izquierdo (antes en la cabecera propia). */
+.xpacio-search {
+  margin-bottom: 10px;
 }
 
 .xpacio-stack,
@@ -900,8 +810,8 @@ input[type="range"] {
 .toast {
   position: fixed;
   right: 20px;
-  bottom: 20px;
-  z-index: 30;
+  bottom: calc(var(--shell-bottom, 0px) + 20px);
+  z-index: 9450;
   max-width: min(360px, calc(100vw - 40px));
   padding: 12px 14px;
   border: 1px solid var(--line-strong);
@@ -922,24 +832,7 @@ input[type="range"] {
 }
 
 .tutorial-shell {
-  min-height: 100vh;
-}
-
-.tutorial-topbar {
-  grid-template-columns: max-content 1fr;
-}
-
-.tutorial-nav {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.tutorial-nav a:not(.primary-action) {
-  min-height: 38px;
-  padding: 9px 10px;
-  color: var(--muted);
+  min-height: calc(100vh - var(--app-header-height, 64px));
 }
 
 .tutorial-intro,
@@ -953,7 +846,7 @@ input[type="range"] {
   grid-template-columns: minmax(280px, 0.78fr) minmax(360px, 1.22fr);
   gap: 28px;
   align-items: center;
-  min-height: calc(100vh - 120px);
+  min-height: calc(100vh - var(--app-header-height, 64px) - 44px);
   padding: 34px 0;
 }
 
@@ -1115,23 +1008,6 @@ input[type="range"] {
 }
 
 @media (max-width: 980px) {
-  .topbar,
-  .tutorial-topbar {
-    grid-template-columns: 1fr;
-  }
-
-  .search-bar,
-  .top-actions,
-  .tutorial-nav {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .top-actions,
-  .tutorial-nav {
-    flex-wrap: wrap;
-  }
-
   .workspace,
   .traffic-layout,
   .simulation-grid,

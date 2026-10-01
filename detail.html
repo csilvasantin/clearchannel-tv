@@ -8,7 +8,6 @@
 <title>Clear Channel | Detalle de Xpace</title>
 <meta name="description" content="Detalle comercial de un Xpace en Clear Channel: inventario retail media, pantallas, audiencia, pujas y campañas.">
 <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/tokens.css">
-<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/nav.css">
   <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/contact-panel.css">
   <script defer src="https://csilvasantin.github.io/admira-design/contact-panel.js"></script>
 <script src="locations.js?v=circuits-20260907-2"></script>
@@ -18,17 +17,10 @@
   html,body{margin:0;min-height:100%;background:radial-gradient(circle at 18% 0,rgba(40,215,239,.14),transparent 32rem),radial-gradient(circle at 95% 15%,rgba(255,182,41,.11),transparent 28rem),var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,sans-serif;line-height:1.5}
   a{color:inherit;text-decoration:none}
   button{font:inherit}
-  .shell{display:grid;grid-template-columns:112px 1fr;min-height:100vh}
+  .shell{min-height:calc(100vh - var(--app-header-height,64px))}
   aside{border-right:1px solid var(--line);background:rgba(3,12,18,.72);padding:28px 14px;display:flex;flex-direction:column;align-items:center;gap:26px}
-  .mark{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--accent));color:#041017;font-weight:900;font-family:monospace}
-  .side-nav{display:grid;gap:12px;width:100%}
-  .side-nav span,.side-nav a{display:grid;place-items:center;min-height:48px;border-radius:8px;color:var(--mut);border:1px solid transparent;font-size:12px;font-family:monospace;text-transform:uppercase;letter-spacing:.08em}
-  .side-nav span{background:rgba(40,215,239,.12);color:var(--brand);border-color:rgba(40,215,239,.18)}
-  .side-nav a:hover{border-color:var(--line);color:var(--ink)}
   main{padding:28px clamp(18px,3vw,42px) 36px}
   .topbar{display:flex;align-items:center;gap:18px;margin-bottom:18px}
-  .back{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:8px;color:var(--mut);background:rgba(255,255,255,.03);font-weight:700}
-  .back:hover{color:var(--ink);border-color:var(--brand)}
   .filters{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
   .filter{min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:8px;color:var(--ink);background:rgba(255,255,255,.03);font-size:14px}
   .hero{display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:stretch}
@@ -72,36 +64,26 @@
   .bar:nth-child(3) .fill{width:72%;background:linear-gradient(90deg,var(--accent),#ffdd70)}
   .bar:nth-child(4) .fill{width:38%;background:linear-gradient(90deg,#3e9bff,var(--brand))}
   .empty{padding:28px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.03);color:var(--mut)}
-  @media (max-width:980px){.shell{grid-template-columns:1fr}aside{display:none}.hero,.lower{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.filters{display:none}}
+  @media (max-width:980px){aside{display:none}.hero,.lower{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.filters{display:none}}
   @media (max-width:560px){main{padding:18px 14px 28px}.topbar{align-items:flex-start}.metrics{grid-template-columns:1fr}.cockpit img{aspect-ratio:16/10}.bar{grid-template-columns:1fr}.track{height:18px}}
 </style>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261001-shell-2">
+<script defer src="/galaxy-shell.js?v=20261001-shell-2" data-section="/ detalle" data-section-en="/ detail"></script>
 </head>
 <body>
-<nav class="admira-nav admira-nav-static" aria-label="Clear Channel · Xperience">
-  <a class="admira-nav-brand" href="https://www.clearchannel.tv">
-    <span class="admira-nav-brand-name">Clear Channel</span>
-    <span class="admira-nav-brand-tag">Xperience</span>
-  </a>
-  <div class="admira-nav-items">
-    <a class="admira-nav-link admira-nav-link-external" href="https://www.pixeria.com">PixerIA</a>
-    <a class="admira-nav-link admira-nav-link-external" href="https://www.xpaceos.com">XpaceOS</a>
-    <a class="admira-nav-link admira-nav-link-active" href="https://www.clearchannel.tv">Xbusiness</a>
-    <a class="admira-nav-link admira-nav-link-cta" href="#contact" data-admira-contact>Contacto</a>
-  </div>
-</nav>
+<!-- Shell cuadrático (FLT-101311): la barra y el carril propios dan paso a ☰ Opciones. -->
+<div data-shell-slots hidden>
+  <a id="back-map" href="index.html" data-shell-slot="options" data-shell-text-es="← Volver al mapa" data-shell-text-en="← Back to the map">← Volver al mapa</a>
+  <a href="https://www.pixeria.com" data-shell-slot="options">PixerIA ↗</a>
+  <a href="https://www.xpaceos.com" data-shell-slot="options">XpaceOS ↗</a>
+  <a href="#contact" data-admira-contact data-shell-slot="options" data-shell-text-es="Contacto" data-shell-text-en="Contact">Contacto</a>
+  <a id="advanced-store-3d" href="store-3d.html?loc=admira-bcn" data-shell-slot="advanced" data-shell-text-es="Entrar al mapa 3D" data-shell-text-en="Open the 3D map">Entrar al mapa 3D</a>
+  <a href="#live-card" data-shell-slot="advanced" data-shell-text-es="Live bidding" data-shell-text-en="Live bidding">Live bidding</a>
+  <a href="#surfaces" data-shell-slot="advanced" data-shell-text-es="Inventario disponible" data-shell-text-en="Available inventory">Inventario disponible</a>
+</div>
 <div class="shell">
-  <aside>
-    <a class="mark" id="side-back" href="index.html">AD</a>
-    <nav class="side-nav" aria-label="Detalle">
-      <span>Resumen</span>
-      <a id="side-map" href="index.html">Mapa</a>
-      <a href="https://www.xpaceos.com">OS</a>
-      <a href="backoffice.html">Login</a>
-    </nav>
-  </aside>
   <main>
     <div class="topbar">
-      <a class="back" id="back-map" href="index.html">← Volver al mapa</a>
       <div class="filters" aria-hidden="true">
         <span class="filter">Hoy</span>
         <span class="filter">Todos los sitios</span>
@@ -192,9 +174,8 @@ function renderDetail() {
   const mapHref = 'index.html?loc=' + encodeURIComponent(loc.id);
   const store3dHref = 'store-3d.html?loc=' + encodeURIComponent(loc.id);
   document.getElementById('back-map').href = mapHref;
-  document.getElementById('side-map').href = mapHref;
-  document.getElementById('side-back').href = mapHref;
   document.getElementById('store-3d-link').href = store3dHref;
+  document.getElementById('advanced-store-3d').href = store3dHref;
   document.title = loc.name + ' | Clear Channel';
 
   setText('kind', loc.kind);

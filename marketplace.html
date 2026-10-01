@@ -22,7 +22,6 @@
 <meta name="twitter:description" content="Marketplace de doble cara del Xpace OS con subasta en tiempo real en el punto de venta.">
 <meta name="twitter:image" content="https://www.clearchannel.tv/assets/og-cover.jpg">
 <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/tokens.css">
-<link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/nav.css">
 <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/contact-panel.css">
 <script defer src="https://csilvasantin.github.io/admira-design/contact-panel.js"></script>
 <style>
@@ -32,7 +31,6 @@
   a{color:var(--brand);text-decoration:none}
   a:hover{text-decoration:underline}
   .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
-  .admira-nav.admira-nav-static{position:sticky;top:0;z-index:20}
 
   /* Hero */
   .hero{padding:84px 0 56px;background:radial-gradient(ellipse at 18% 0%,rgba(120,243,255,.12),transparent 55%),radial-gradient(ellipse at 100% 26%,rgba(255,216,102,.10),transparent 55%)}
@@ -162,21 +160,23 @@
     .flow .arrow{justify-content:center;transform:rotate(90deg)}
   }
 </style>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261001-shell-2">
+<script defer src="/galaxy-shell.js?v=20261001-shell-2" data-section="/ mercado" data-section-en="/ marketplace"></script>
 </head>
 <body>
 
-<nav class="admira-nav admira-nav-static admira-nav-app-bar" aria-label="Clear Channel · Xperience">
-  <a class="admira-nav-brand" href="https://www.clearchannel.tv">
-    <span class="admira-nav-brand-name">Clear Channel</span>
-    <span class="admira-nav-brand-tag">Xperience</span>
-  </a>
-  <div class="admira-nav-items">
-    <a class="admira-nav-link admira-nav-link-external" href="https://www.pixeria.com">PixerIA</a>
-    <a class="admira-nav-link admira-nav-link-external" href="https://www.xpaceos.com">XpaceOS</a>
-    <a class="admira-nav-link admira-nav-link-active" href="https://www.clearchannel.tv">Xbusiness</a>
-    <a class="admira-nav-link admira-nav-link-cta" href="#contact" data-admira-contact>Contacto</a>
-  </div>
-</nav>
+<!-- Shell cuadrático (FLT-101311): la barra propia da paso a ☰ Opciones. -->
+<div data-shell-slots hidden>
+  <a href="about.html" data-shell-slot="options" data-shell-text-es="Concepto RTB" data-shell-text-en="RTB concept">Concepto RTB</a>
+  <a href="https://www.pixeria.com" data-shell-slot="options">PixerIA ↗</a>
+  <a href="https://www.xpaceos.com" data-shell-slot="options">XpaceOS ↗</a>
+  <a href="#contact" data-admira-contact data-shell-slot="options" data-shell-text-es="Contacto" data-shell-text-en="Contact">Contacto</a>
+  <a href="#ecosistema" data-shell-slot="advanced" data-shell-text-es="Ecosistema" data-shell-text-en="Ecosystem">Ecosistema</a>
+  <a href="#anunciantes" data-shell-slot="advanced" data-shell-text-es="Anunciantes" data-shell-text-en="Advertisers">Anunciantes</a>
+  <a href="#espacios" data-shell-slot="advanced" data-shell-text-es="Espacios" data-shell-text-en="Spaces">Espacios</a>
+  <a href="#gemelo" data-shell-slot="advanced" data-shell-text-es="Gemelo digital" data-shell-text-en="Digital twin">Gemelo digital</a>
+  <a href="#motor" data-shell-slot="advanced" data-shell-text-es="Motor RTB" data-shell-text-en="RTB engine">Motor RTB</a>
+</div>
 
 <div class="hero">
   <div class="wrap">

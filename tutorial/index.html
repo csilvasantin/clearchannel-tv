@@ -11,31 +11,25 @@
     />
     <link rel="canonical" href="https://clearchannel.tv/tutorial/" />
     <title>Tutorial Target Model · XpaceOS</title>
-    <link rel="stylesheet" href="../target-assets/styles.css" />
+    <link rel="stylesheet" href="../target-assets/styles.css?v=20261001-shell-2" />
+    <link rel="stylesheet" href="/galaxy-shell.css?v=20261001-shell-2">
+    <script>
+      // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones llama al setLang de target-assets/app.js.
+      window.ADMIRA_SHELL = { section: '/ tutorial', setLang: lang => setLang(lang) };
+    </script>
+    <script defer src="/galaxy-shell.js?v=20261001-shell-2"></script>
     <script defer src="https://unpkg.com/lucide@latest"></script>
-    <script defer src="../target-assets/app.js"></script>
+    <script defer src="../target-assets/app.js?v=20261001-shell-2"></script>
   </head>
   <body data-page="tutorial">
     <div class="tutorial-shell">
-      <header class="topbar tutorial-topbar">
-        <a class="brand" href="../" aria-label="Clear Channel home">
-          <span class="brand-mark">OMNI·PUBLICITY</span>
-          <strong>Tutorial</strong>
-        </a>
-        <div class="target-lang-switch" role="group" aria-label="Language">
-          <button class="target-lang-btn is-active" type="button" data-lang="en">EN</button>
-          <button class="target-lang-btn" type="button" data-lang="es">ES</button>
-        </div>
-        <nav class="tutorial-nav" aria-label="Navegacion tutorial">
-          <a href="#flujo">Flujo</a>
-          <a href="#metricas">Metricas</a>
-          <a href="#privacidad">Privacidad</a>
-          <a class="primary-action" href="../target/">
-            <i data-lucide="layout-dashboard"></i>
-            Abrir backoffice
-          </a>
-        </nav>
-      </header>
+      <!-- Shell cuadrático (FLT-101311): los capítulos van a ▤ Avanzado y el backoffice a ☰ Opciones. -->
+      <div data-shell-slots hidden>
+        <a href="#flujo" data-shell-slot="advanced" data-shell-text-es="Flujo" data-shell-text-en="Flow">Flow</a>
+        <a href="#metricas" data-shell-slot="advanced" data-shell-text-es="Métricas" data-shell-text-en="Metrics">Metrics</a>
+        <a href="#privacidad" data-shell-slot="advanced" data-shell-text-es="Privacidad" data-shell-text-en="Privacy">Privacy</a>
+        <a href="../target/" data-shell-slot="options" data-shell-text-es="Abrir backoffice Target Model" data-shell-text-en="Open Target Model backoffice">Open Target Model backoffice</a>
+      </div>
 
       <main>
         <section class="tutorial-intro">

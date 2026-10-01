@@ -10,49 +10,25 @@
       content="XpaceOS Target Model backoffice: hourly traffic, audience segments, advertising inventory, and playback rules."
     />
     <title>XpaceOS Target Model</title>
-    <link rel="stylesheet" href="../target-assets/styles.css" />
+    <link rel="stylesheet" href="../target-assets/styles.css?v=20261001-shell-2" />
+    <link rel="stylesheet" href="/galaxy-shell.css?v=20261001-shell-2">
+    <script>
+      // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones llama al setLang de target-assets/app.js.
+      window.ADMIRA_SHELL = { section: '/ target model', setLang: lang => setLang(lang) };
+    </script>
+    <script defer src="/galaxy-shell.js?v=20261001-shell-2"></script>
     <script defer src="https://unpkg.com/lucide@latest"></script>
-    <script defer src="../target-assets/app.js"></script>
+    <script defer src="../target-assets/app.js?v=20261001-shell-2"></script>
   </head>
   <body data-page="backoffice">
     <div class="app-shell">
-      <header class="topbar">
-        <a class="brand" href="../" aria-label="Clear Channel home">
-          <span class="brand-mark">OMNI·PUBLICITY</span>
-          <strong>Target Model</strong>
-        </a>
-
-        <label class="search-bar">
-          <i data-lucide="search"></i>
-          <input
-            id="xpacioSearch"
-            type="search"
-            value="Xtanco Santa Rosa"
-            aria-label="Buscar Xpacio"
-          />
-        </label>
-
-        <div class="top-actions">
-          <div class="target-lang-switch" role="group" aria-label="Language">
-            <button class="target-lang-btn is-active" type="button" data-lang="en">EN</button>
-            <button class="target-lang-btn" type="button" data-lang="es">ES</button>
-          </div>
-          <button class="icon-button" type="button" data-action="toggle-mode" aria-label="Cambiar modo">
-            <i data-lucide="git-compare"></i>
-          </button>
-          <button class="icon-button" type="button" data-action="export" aria-label="Exportar modelo">
-            <i data-lucide="download"></i>
-          </button>
-          <button class="primary-action" type="button" data-action="publish">
-            <i data-lucide="send"></i>
-            Publicar en Clear Channel
-          </button>
-          <a class="ghost-action" href="../tutorial/">
-            <i data-lucide="circle-help"></i>
-            Tutorial
-          </a>
-        </div>
-      </header>
+      <!-- Shell cuadrático (FLT-101311): las acciones van a ▤ Avanzado, el tutorial a ☰ Opciones y el buscador al carril izquierdo. -->
+      <div data-shell-slots hidden>
+        <button type="button" data-action="publish" data-shell-slot="advanced">Publish to Clear Channel</button>
+        <button type="button" data-action="toggle-mode" data-shell-slot="advanced" data-shell-text-es="Cambiar modo de datos" data-shell-text-en="Change data mode">Change data mode</button>
+        <button type="button" data-action="export" data-shell-slot="advanced" data-shell-text-es="Exportar modelo" data-shell-text-en="Export model">Export model</button>
+        <a href="../tutorial/" data-shell-slot="options">Tutorial</a>
+      </div>
 
       <main class="workspace">
         <aside class="left-rail" aria-label="Configuracion del Xpacio">
@@ -68,6 +44,7 @@
 
           <section class="rail-section">
             <p class="eyebrow">Xpacio activo</p>
+            <input id="xpacioSearch" class="xpacio-search" type="search" value="Xtanco Santa Rosa" aria-label="Buscar Xpacio" />
             <div class="xpacio-stack">
               <button class="xpacio-pill is-active" type="button">
                 <span>Xtanco Santa Rosa</span>
