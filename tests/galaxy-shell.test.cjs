@@ -14,7 +14,7 @@ const backoffice = read('backoffice.html');
 // Sello del componente (galaxy-shell.css/js) en todas las páginas, y sello de los
 // ficheros de comportamiento de la portada (responsive-shell, expert-*), que no cambian.
 const STAMP = '20261001-shell-2';
-const PORTADA_STAMP = '20261001-shell-1';
+const PORTADA_STAMP = '20261001-shell-cafe-1';
 const squash = html => html.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
 const memory = () => {
   const mem = new Map();

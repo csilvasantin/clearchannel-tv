@@ -1151,15 +1151,13 @@ window.OMNIP_LOCATIONS_EXTRA = [
     ],
   },
   {
-    // Cafebrería Barcelona — Xpacio 3D del circuito Alsea (presentación Alsea 30-sep-2026),
-    // gemelo del Xtanco Valencia para cafetería-librería. Entra en «Circuito Alsea Starbucks
-    // España 100» por circuit:'alsea_starbucks' (convive con alsea-sbux-021, misma dirección).
-    // impr/cpm ESTIMADOS (mismo rango que xtanco-valencia; el panel los muestra con «~»).
-    // screen = <id>-<slug(nombre)>, igual que deriva la parrilla; el hilo musical usa -musica
-    // como la cápsula sonora xtanco-valencia-musica.
-    id:'cafebreria-barcelona', name:'Cafebrería Barcelona', kind:'Cafebrería · Retail físico · Gemelo digital · Xpacio 3D',
+    // Cafebrería: proyecto independiente que reutiliza el modelado de la cafetería.
+    // Dirección de referencia del proyecto, no alta de un nuevo Starbucks físico.
+    // Impr/cpm son estimaciones; estos IDs no certifican players conectados.
+    id:'cafebreria-barcelona', name:'Cafebrería Barcelona', kind:'Cafebrería · Proyecto independiente · Gemelo digital · Xpacio 3D',
+    project_id:'cafebreria', referenceLocationId:'alsea-sbux-021',
     addr:'Passeig de Gràcia 103 · Barcelona · 08008 · Spain', coords:[2.15979, 41.39574],
-    circuit:'alsea_starbucks', network:'Alsea', city:'Barcelona', province:'Barcelona',
+    circuit:'cafebreria', network:'Cafebrería', city:'Barcelona', province:'Barcelona',
     music:'lounge', cameras:true,
     // Gemelo = la Cafebrería de los consejeros en el visor Xpaces de Pixeria (GLB de Trinity con
     // estantería de libros Blinkist/Casa del Libro/Wallapop, vinilos, tele y capa ITIL 8/16/32/64).
@@ -1376,6 +1374,13 @@ window.mergeOmnipLocations = function(base, extra) {
       if (f) { if(f.interiorStatus){l.interiorStatus=f.interiorStatus;l.interiorName=f.interiorName;l.interiorUrl=f.interiorUrl;} if (f.fly) l.fly = f.fly; if (f.flyLabel != null) l.flyLabel = f.flyLabel; if (f.hasXpaceUrl && !Object.prototype.hasOwnProperty.call(l, 'xpaceUrl')) l.xpaceUrl = f.xpaceUrl; }
     });
   } catch (e) {}
+  // Migrar sólo la identidad del proyecto existente cuando llega una ficha anterior
+  // desde KV/cache. Mantener dirección, superficies y demás campos editables.
+  const cafeIdentity = (window.OMNIP_LOCATIONS_EXTRA || []).find(l => l.id === 'cafebreria-barcelona');
+  if (cafeIdentity) out.forEach(l => {
+    if (l.id !== cafeIdentity.id) return;
+    ['project_id', 'referenceLocationId', 'circuit', 'network', 'kind'].forEach(k => { l[k] = cafeIdentity[k]; });
+  });
   return out;
 };
 
