@@ -24,10 +24,9 @@ body > header .search-wrap{grid-column:2;min-width:0;width:min(100%,620px);max-w
 .advanced-actions .header-circuit-btn{width:100%;min-height:44px;white-space:normal;padding:10px;font:12px/1.4 monospace;color:var(--brand);background:transparent;border:1px solid var(--line);border-radius:8px;cursor:pointer;text-transform:uppercase}
 .advanced-panel #advanced-emission{position:static;box-shadow:none}
 .expert-panel{bottom:12px;left:12px;right:12px;max-height:45dvh}
-.expert-command-form{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:12px;align-items:center;font:13px/1.4 monospace}
+.expert-command-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;font:13px/1.4 monospace}
 .expert-command-form input{width:100%;min-width:0;padding:6px 10px;background:var(--bg);color:var(--brand);border:1px solid var(--line);border-radius:8px;font:16px/1.4 monospace}
 .expert-command-form button{padding:9px 10px;background:var(--brand);color:#001620;border:0;border-radius:8px;cursor:pointer}
-.expert-panel p{font:12px/1.5 monospace;color:var(--mut);margin:10px 0 0}
 body.mode-expert-open :is(#neoDock,#ticker,.map-ctrls){bottom:var(--expert-panel-height,56px)}
 aside.panel{top:var(--app-header-height);max-height:calc(100dvh - var(--app-header-height));overscroll-behavior:contain}
 #circuit-panel,#target-panel{z-index:9100}
@@ -79,12 +78,65 @@ body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:var(--expert-pa
  #advanced-tools .layer-btn{border:0}
 }
 
-/* Compact CLI: help belongs to its command output, not a permanent extra row. */
-.expert-panel{height:56px;min-height:56px;max-height:calc(100dvh - var(--app-header-height) - 24px);padding:10px 10px 6px}
-.expert-command-form label{font:700 12px/1.4 monospace;letter-spacing:.08em;text-transform:uppercase}
-.expert-command-form .expert-close{padding:4px;background:none;color:var(--brand);font:22px/1 monospace}
-#expert-command-result{position:fixed;bottom:calc(var(--expert-panel-height,56px) + 8px);left:14px;right:14px;max-width:620px;margin:0;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 28px #0008;z-index:9200}
-#expert-command-result[hidden]{display:none}
+/* Expert mode in three blocks like admira.live (FLT-101307): CLI · VERBOS · RUTINAS. */
+.expert-panel{height:300px;min-height:56px;max-height:calc(100dvh - var(--app-header-height) - 24px);padding:8px 10px 6px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.expert-bar{display:flex;align-items:center;gap:10px;flex:0 0 auto;font:700 12px/1.4 monospace;letter-spacing:.08em;text-transform:uppercase}
+.expert-bar strong{flex:1;min-width:0}
+.expert-bar .expert-close{padding:2px 4px;border:0;background:none;color:var(--brand);font:22px/1 monospace;cursor:pointer}
+.expert-layout-menu{position:relative}
+.expert-layout-menu summary{list-style:none;cursor:pointer;color:var(--brand);border:1px solid var(--line);border-radius:6px;padding:0 8px;font:16px/1.3 monospace}
+.expert-layout-menu summary::-webkit-details-marker{display:none}
+.expert-layout-tools{position:absolute;right:0;top:calc(100% + 6px);min-width:180px;display:flex;flex-direction:column;gap:4px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 28px #0008;z-index:3}
+.expert-layout-tools button,.expert-module-head button{font:700 11px/1.3 monospace;letter-spacing:.06em;color:var(--brand);background:transparent;border:0;border-radius:6px;cursor:pointer;padding:6px;text-align:left;white-space:nowrap}
+.expert-layout-tools button:hover,.expert-module-head button:hover{background:#88ffd51f}
+.expert-blocks{flex:1;min-height:0;display:flex;align-items:stretch;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.expert-blocks-empty{border-style:dashed}
+.expert-module{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;border-right:1px solid var(--line);overflow:hidden}
+.expert-module:last-child{border-right:0}
+.expert-module-head{display:flex;align-items:center;justify-content:space-between;flex:0 0 auto;min-height:28px;padding:0 4px 0 2px;border-bottom:1px solid var(--line);background:#ffffff08}
+.expert-module-head .expert-module-grip{flex:1;cursor:grab;touch-action:none;overflow:hidden;text-overflow:ellipsis}
+.expert-module-head .expert-module-close{font:18px/1 monospace;min-width:28px;text-align:center}
+.expert-module-content{flex:1;min-height:0;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:8px;font:12px/1.45 monospace}
+.expert-module-resizer{position:absolute;right:0;top:28px;bottom:0;width:9px;cursor:col-resize;touch-action:none;z-index:2}
+.expert-module-resizer::after{content:'';position:absolute;right:3px;top:calc(50% - 18px);width:2px;height:36px;border-radius:2px;background:var(--brand);opacity:.45}
+.expert-module-resizer:hover,.expert-module-resizer:focus-visible{background:#88ffd522;outline:1px solid var(--brand);outline-offset:-1px}
+.expert-module[hidden],.expert-module-resizer[hidden],.expert-layout-tools [hidden]{display:none!important}
+.expert-log{flex:1;min-height:40px;margin:0;padding:0;list-style:none;overflow:auto;color:var(--text,#e8f6ff)}
+.expert-log:empty::before{content:attr(data-empty);color:var(--mut)}
+.expert-log li{padding:4px 0;border-bottom:1px dashed var(--line)}
+.expert-log li.error .expert-log-line{color:#ffb38a}
+.expert-log-cmd{display:block;color:var(--brand)}
+.expert-log-title{margin-top:4px;color:var(--brand);font-weight:700;letter-spacing:.08em}
+.expert-log-line{color:var(--mut);overflow-wrap:anywhere}
+.expert-panel .expert-hint{margin:0;font:11px/1.4 monospace;color:var(--mut)}
+.expert-verbs,.expert-routines{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.expert-verb{display:flex;flex-direction:column;gap:4px;padding-bottom:8px;border-bottom:1px dashed var(--line)}
+.expert-verb-btn{align-self:flex-start;padding:4px 10px;background:var(--brand);color:#001620;border:0;border-radius:6px;font:700 13px/1.4 monospace;cursor:pointer}
+.expert-verb-desc{color:var(--text,#e8f6ff);overflow-wrap:anywhere}
+.expert-verb-attrs{display:flex;flex-wrap:wrap;align-items:center;gap:4px;color:var(--mut)}
+.expert-attr-name{text-transform:uppercase;letter-spacing:.06em;font-size:11px}
+.expert-chip{padding:2px 7px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--brand);font:11px/1.4 monospace;cursor:pointer}
+.expert-attr-more{font-size:11px}
+.expert-save-routine{align-self:stretch;padding:7px 10px;background:transparent;color:var(--brand);border:1px dashed var(--brand);border-radius:8px;font:12px/1.3 monospace;cursor:pointer;text-align:left;overflow-wrap:anywhere}
+.expert-save-routine:disabled{opacity:.5;cursor:default;border-color:var(--line)}
+.expert-routine-group{margin-top:4px;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.expert-routine{display:flex;gap:4px}
+.expert-routine-btn{flex:1;min-width:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:6px 8px;background:transparent;color:var(--text,#e8f6ff);border:1px solid var(--line);border-radius:8px;font:12px/1.35 monospace;cursor:pointer;text-align:left}
+.expert-routine-btn:hover,.expert-chip:hover{border-color:var(--brand)}
+.expert-routine-btn code{color:var(--brand);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.expert-routine-label{min-width:0;overflow-wrap:anywhere}
+.expert-routine-del{padding:0 8px;background:transparent;color:var(--brand);border:1px solid var(--line);border-radius:8px;font:16px/1 monospace;cursor:pointer}
+.expert-panel :is(.expert-module-resizer,.expert-chip,.expert-routine-btn,.expert-routine-del,.expert-verb-btn,.expert-save-routine):focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+body.mode-expert-open .demo-card{max-height:calc(100dvh - var(--app-header-height) - var(--expert-panel-height,56px) - 24px)}
+@media(max-width:600px){
+ .expert-panel{overflow-y:auto}
+ .expert-blocks{flex:none;flex-direction:column;overflow:visible}
+ .expert-module{flex:none!important;width:100%;border-right:0;border-bottom:1px solid var(--line)}
+ .expert-module:last-child{border-bottom:0}
+ .expert-module-content{max-height:42dvh}
+ .expert-module-resizer{display:none!important}
+ .expert-module-head button{min-height:36px}
+}
 .mode-resize{position:absolute;z-index:2;touch-action:none;user-select:none}
 .mode-resize-options{right:0;top:0;bottom:0;width:8px;cursor:col-resize}
 .mode-resize-advanced{left:0;top:0;bottom:0;width:8px;cursor:col-resize}
@@ -93,4 +145,4 @@ body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:var(--expert-pa
 .mode-resize-options::after,.mode-resize-advanced::after{width:2px;height:36px;left:3px;top:calc(50% - 18px)}
 .mode-resize-expert::after{width:36px;height:2px;left:calc(50% - 18px);top:3px}
 .mode-resize:hover,.mode-resize:focus-visible{background:#88ffd522;outline:1px solid var(--brand);outline-offset:-1px}
-@media(max-width:720px){.expert-command-form{grid-template-columns:64px minmax(0,1fr) auto auto;gap:6px}.expert-command-form label{font-size:10px}.expert-command-form input,.expert-command-form button[type=submit]{padding-inline:8px}}
+@media(max-width:720px){.expert-command-form{gap:6px}.expert-command-form input,.expert-command-form button[type=submit]{padding-inline:8px}}

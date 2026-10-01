@@ -738,8 +738,10 @@ addEventListener('resize',ccFitIntro);
   @media (max-width:640px){ .pv-head{padding-right:48px;gap:8px} .pv-titles{flex-basis:100%} }
 </style>
 <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
-<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20260930-login-demo-1">
-<script defer src="responsive-shell.js?v=20260930-login-demo-1"></script>
+<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20261001-experto-3-1">
+<script defer src="responsive-shell.js?v=20261001-experto-3-1"></script>
+<script defer src="expert-commands.js?v=20261001-experto-3-1"></script>
+<script defer src="expert-panel.js?v=20261001-experto-3-1"></script>
 </head>
 <body>
 
@@ -826,13 +828,32 @@ addEventListener('resize',ccFitIntro);
 </div>
 </details>
 <section id="expert-panel" class="mode-panel expert-panel" aria-label="Modo experto" hidden>
-  <form id="expert-command-form" class="expert-command-form">
-    <label for="expert-command" data-shell-text-es="Modo Experto" data-shell-text-en="Expert Mode">Modo Experto</label>
-    <input id="expert-command" type="text" placeholder="/demo" autocomplete="off" spellcheck="false">
-    <button type="submit" data-shell-text-es="Ejecutar" data-shell-text-en="Run">Ejecutar</button>
+  <div class="expert-bar">
+    <strong data-shell-text-es="Modo Experto" data-shell-text-en="Expert Mode">Modo Experto</strong>
+    <details class="expert-layout-menu"><summary aria-label="Restaurar o mostrar bloques">⋯</summary><div class="expert-layout-tools" role="group"></div></details>
     <button type="button" class="expert-close" data-close-mode="expert" aria-label="Cerrar / Close">×</button>
-  </form>
-  <p id="expert-command-result" role="status" aria-live="polite" hidden></p>
+  </div>
+  <div class="expert-blocks">
+    <section class="expert-module" data-module="cli" aria-label="CLI">
+      <div class="expert-module-content">
+        <form id="expert-command-form" class="expert-command-form">
+          <input id="expert-command" type="text" placeholder="/demo starbucks" aria-label="Orden del modo experto" autocomplete="off" spellcheck="false">
+          <button type="submit" data-shell-text-es="Ejecutar" data-shell-text-en="Run">Ejecutar</button>
+        </form>
+        <ol id="expert-command-result" class="expert-log" role="log" aria-live="polite"></ol>
+        <p class="expert-hint">Tab completa · ↑/↓ historial · /help ayuda</p>
+      </div>
+    </section>
+    <section class="expert-module" data-module="verbos" aria-label="Verbos">
+      <div class="expert-module-content"><ul id="expert-verbs" class="expert-verbs"></ul></div>
+    </section>
+    <section class="expert-module" data-module="rutinas" aria-label="Rutinas">
+      <div class="expert-module-content">
+        <button type="button" id="expert-save-routine" class="expert-save-routine" disabled>＋ Guardar última orden</button>
+        <ul id="expert-routines" class="expert-routines"></ul>
+      </div>
+    </section>
+  </div>
 </section>
 
 <div class="space" id="space" aria-hidden="true">
@@ -1331,7 +1352,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="locations.js?v=20260929-starbucks-twin-1"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=20260930-identity-2"></script><script defer src="intro.js?v=20260930-login-demo-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20260929-starbucks-twin-1"></script><script defer src="app.js?v=20260930-identity-2"></script><script defer src="intro.js?v=20261001-experto-3-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {

@@ -39,17 +39,7 @@
     const mode=Object.keys(panels).find(m=>isOpen(m)&&panels[m].contains(event.target));
     if(mode){setOpen(mode,false);toggles[mode].focus();}
   });
-  const input=document.getElementById('expert-command'),result=document.getElementById('expert-command-result');
-  const say=message=>{result.textContent=message;result.hidden=!message;};
-  input.addEventListener('input',()=>say(''));
-  document.getElementById('expert-command-form').addEventListener('submit',event=>{
-    event.preventDefault();const command=input.value.trim().toLowerCase();
-    if(command==='/demo'||command==='/cli'){
-      if(!window.AdmiraDemo){say(text('La demo está cargando. Vuelve a ejecutar /demo.','The demo is loading. Run /demo again.'));return;}
-      say('');window.AdmiraDemo.start();
-    }else if(command==='/help')say(text('/demo — empezar la demo guiada (compra simulada). /cli — también inicia la demo. /help — ayuda.','/demo — start the guided demo (simulated purchase). /cli — also starts the demo. /help — help.'));
-    else say(text('Comando no reconocido. Usa /demo, /cli o /help.','Unknown command. Use /demo, /cli or /help.'));
-  });
+  // The expert CLI, verbs and routines live in expert-commands.js + expert-panel.js (FLT-101307).
   // Resize the rails from their inner edge and the CLI from its top edge.
   const sizeHandles={};
   function bounds(mode){
@@ -68,10 +58,11 @@
     const handle=document.createElement('div');handle.className='mode-resize mode-resize-'+mode;handle.tabIndex=0;
     handle.setAttribute('role','separator');handle.setAttribute('aria-orientation',mode==='expert'?'horizontal':'vertical');
     handle.setAttribute('aria-controls',panel.id);panel.append(handle);sizeHandles[mode]=handle;
-    const initial=mode==='expert'?56:200;
+    // Expert holds three blocks (CLI · verbs · routines): taller by default, stacked on phones.
+    const initial=mode==='expert'?(innerWidth<600?Math.round(innerHeight*.6):300):200;
     let saved;try{saved=Number(localStorage.getItem('admira_panel_size_'+mode));}catch(_){}
     // Migrate the former default while retaining deliberately resized panels.
-    const formerDefaults=mode==='expert'?[76,120]:[300];
+    const formerDefaults=mode==='expert'?[56,76,120]:[300];
     setSize(mode,saved>0&&!formerDefaults.includes(saved)?saved:initial);
     let drag=null;
     handle.addEventListener('pointerdown',event=>{
@@ -102,7 +93,7 @@
     document.querySelector('.mode-switches').setAttribute('aria-label',text('Modos','Modes'));
     document.querySelectorAll('[data-close-mode]').forEach(button=>button.setAttribute('aria-label',text('Cerrar','Close')));
     panels.options.setAttribute('aria-label',text('Opciones','Options'));panels.expert.setAttribute('aria-label',text('Modo experto','Expert mode'));
-    say('');measure();
+    measure();
   }
   new MutationObserver(translate).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
   for(const mode of Object.keys(panels)){try{setOpen(mode,localStorage.getItem('admira_panel_'+mode)==='1');}catch(_){}}

@@ -21,3 +21,9 @@
 
 /intro.js
   Cache-Control: public, max-age=0, must-revalidate
+
+/expert-commands.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/expert-panel.js
+  Cache-Control: public, max-age=0, must-revalidate
