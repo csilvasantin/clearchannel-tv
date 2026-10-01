@@ -329,23 +329,26 @@
       const k = layer + '|' + prop;
       const now = m.getPaintProperty(layer, prop);
       if (colors) {
-        if (!(k in mapOriginal) && JSON.stringify(now) !== JSON.stringify(colors[token])) mapOriginal[k] = now;
-        if (JSON.stringify(now) !== JSON.stringify(colors[token])) m.setPaintProperty(layer, prop, colors[token]);
+        // Lo que no es el color de la marca es el de serie (también si app.js recreó la capa).
+        if (JSON.stringify(now) !== JSON.stringify(colors[token])) { mapOriginal[k] = now; m.setPaintProperty(layer, prop, colors[token]); }
       } else if (k in mapOriginal) m.setPaintProperty(layer, prop, mapOriginal[k]);
     }
     return true;
   }
+  // En cuanto existe el mapa se escucha «styledata»: así se pintan las capas aunque app.js
+  // las añada después (catálogo lento, bola aún cargando) o las recree al cambiar de capa.
+  // Antes se daba por vencido a los 60 s si la capa «clusters» aún no existía.
   function brandMap(colors) {
     unbrandMap();
     let tries = 0;
     const attempt = () => {
       if (!current) return;
-      if (paintMap(colors)) {
-        mapHandler = () => { if (current) paintMap(colors); };
-        mapRef.on('styledata', mapHandler);   // al cambiar de capa se recrean las del mapa
-        return;
-      }
-      if (++tries < 60) mapTimer = setTimeout(attempt, 1000);
+      const m = findMap();
+      if (!m) { if (++tries < 240) mapTimer = setTimeout(attempt, 500); return; }
+      mapRef = m;
+      mapHandler = () => { if (current) paintMap(colors); };
+      m.on('styledata', mapHandler);
+      paintMap(colors);
     };
     attempt();
   }
@@ -355,6 +358,16 @@
     mapHandler = null;
     if (mapRef && mapOriginal) { try { paintMap(null); } catch (_) {} }
     mapOriginal = null;
+  }
+
+  // La entrada en vídeo de la portada (#4566) es una grabación de la bola con los clusters
+  // naranja y magenta de serie: con marca no se enseña. Se ve el fondo del espacio hasta que
+  // la bola real (ya con la marca) la sustituye. Sin marca no se toca.
+  function hideIntro(hide) {
+    const video = doc.getElementById('intro-video');
+    if (video) video.style.visibility = hide ? 'hidden' : '';
+    const intro = doc.getElementById('intro');
+    if (intro) intro.style.backgroundImage = hide ? 'none' : '';
   }
 
   function clearRoot() {
@@ -408,6 +421,7 @@
           if (!slot.firstChild) slot.textContent = nombre;   // marca sin logo
         }
         backButton(true);
+        hideIntro(true);
         paintTitle();
         brandMap({brand: tokens['--mbx-brand'], onBrand: tokens['--mbx-on-brand']});
         if (!known.some(k => k.id === current.id)) known = [...known, {id: current.id, nombre, ejemplo: current.ejemplo, propuesta: current.propuesta}];
@@ -424,6 +438,7 @@
   }
 
   function cleanup() {
+    hideIntro(false);
     clearRoot();
     unbrandMap();
     const slot = logoSlot(false); if (slot) slot.remove();
@@ -471,6 +486,7 @@
   const decision = decide(location.search, session);
   if (decision.forget) { store.del(SESSION_KEY); store.del(MODE_KEY); }
   if (decision.id) {
+    hideIntro(true);   // antes de hablar con admiranext.com: el vídeo no llega a verse con los colores de serie
     activar(decision.id).then(r => {
       if (!r.ok && root.console) console.warn('marca blanca: no se aplicó «' + decision.id + '» (' + r.reason + ')');
       if (r.ok) listar().catch(() => {});

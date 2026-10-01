@@ -11,7 +11,7 @@ const C = require('../expert-commands.js');
 
 const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
-const STAMP = '20261001-marca-1';
+const STAMP = '20261001-marca-2';
 const memory = (init = {}) => {
   const mem = new Map(Object.entries(init));
   return {mem, getItem: k => (mem.has(k) ? mem.get(k) : null), setItem: (k, v) => mem.set(k, String(v)), removeItem: k => mem.delete(k)};
@@ -30,21 +30,22 @@ const pages = (() => {
 })();
 
 // Ejecuta marca-blanca.js en un navegador mínimo y anota todo lo que intenta cargar.
-function boot({search = '', session = memory()} = {}) {
+function boot({search = '', session = memory(), extra = {}, loadLinks = false, elements = {}} = {}) {
   const created = [], fetched = [];
-  const node = tag => ({tagName: tag.toUpperCase(), attrs: {}, setAttribute(k, v) { this.attrs[k] = v; }, remove() {}});
+  const node = tag => ({tagName: tag.toUpperCase(), attrs: {}, style: {}, setAttribute(k, v) { this.attrs[k] = v; }, remove() {}});
   const document = {
     currentScript: {src: 'https://www.admira.app/marca-blanca.js?v=' + STAMP},
     documentElement: {lang: 'es', style: {length: 0, setProperty() {}, removeProperty() {}}, getAttribute: () => null, removeAttribute() {}},
-    head: {append: n => created.push(n)},
+    head: {append: n => { created.push(n); if (loadLinks && n.onload) setImmediate(() => n.onload()); }},
+    title: 'Mapa | admira.app',
     createElement: tag => node(tag),
-    querySelector: () => null, querySelectorAll: () => [], getElementById: () => null,
+    querySelector: () => null, querySelectorAll: () => [], getElementById: id => elements[id] || null,
     dispatchEvent() {}, addEventListener() {},
   };
   const window = {document, sessionStorage: session, location: {search, href: 'https://www.admira.app/' + search}, setTimeout: () => 0, clearTimeout() {},
     fetch: url => { fetched.push(url); return new Promise(() => {}); }, history: {replaceState() {}}, console};
   window.window = window;
-  const context = vm.createContext(Object.assign(window, {URL, URLSearchParams, CustomEvent: class {}, MutationObserver: class { observe() {} disconnect() {} }, Promise}));
+  const context = vm.createContext(Object.assign(window, {URL, URLSearchParams, CustomEvent: class {}, MutationObserver: class { observe() {} disconnect() {} }, Promise}, extra));
   vm.runInContext(read('marca-blanca.js'), context);
   return {created, fetched, session, api: context.AdmiraMarca};
 }
@@ -76,6 +77,63 @@ test('with ?marca=<id> or a remembered brand the loader, the common sheet and th
     assert.ok(links.includes(M.BASE + 'marcablanca.css'), `${id}: common sheet`);
     assert.ok(links.includes('https://www.admira.app/marca-blanca.css?v=' + STAMP), `${id}: local sheet with the same stamp`);
   }
+});
+
+// Mapa de MapLibre mínimo: capas, pintura y eventos «styledata».
+function fakeMap() {
+  const layers = new Map(), handlers = [];
+  return {
+    layers, handlers,
+    getLayer: id => (layers.has(id) ? {id} : undefined),
+    getPaintProperty: (id, prop) => (layers.get(id) || {})[prop],
+    setPaintProperty: (id, prop, value) => { layers.get(id)[prop] = value; },
+    on: (event, fn) => { if (event === 'styledata') handlers.push(fn); },
+    off: (event, fn) => { const i = handlers.indexOf(fn); if (i >= 0) handlers.splice(i, 1); },
+    addLayer(id, paint) { layers.set(id, Object.assign({}, paint)); handlers.slice().forEach(fn => fn()); },
+  };
+}
+const fakeLoader = () => ({
+  version: 'test',
+  cargar: id => Promise.resolve({id, nombre: 'Starbucks', catalogo: {propuesta: true}}),
+  aplicar: id => Promise.resolve({id, modo: 'claro', marca: {id, nombre: 'Starbucks', catalogo: {propuesta: true}},
+    variables: {'--mb-primario': '#006241', '--mb-primario-texto': '#FFFFFF', '--mb-fondo': '#FFFFFF', '--mb-superficie': '#FFFFFF', '--mb-texto': '#0F1C1D', '--mb-texto-suave': '#576061'}}),
+});
+const ticks = async (n = 20) => { for (let i = 0; i < n; i++) await new Promise(r => setImmediate(r)); };
+
+test('the brand colours the map clusters even when app.js adds or recreates the layers later', async () => {
+  const map = fakeMap();
+  const video = {style: {}}, intro = {style: {}};
+  const r = boot({search: '?marca=starbucks', loadLinks: true, extra: {map, MarcaBlanca: fakeLoader()}, elements: {'intro-video': video, intro}});
+  assert.equal(video.style.visibility, 'hidden', 'the recorded intro (default orange clusters) is hidden from the start');
+  await ticks();
+  assert.equal(r.api.actual().id, 'starbucks');
+  assert.equal(map.handlers.length, 1, 'listens to the map before its layers exist');
+  // The clusters layer arrives later (slow catalogue, globe still loading): it is painted at once.
+  map.addLayer('clusters', {'circle-color': ['match', ['get', 'circIdx'], 0, '#ffd866', '#78f3ff']});
+  map.addLayer('cluster-count', {'text-color': '#001620'});
+  map.addLayer('selected-ring', {'circle-stroke-color': '#78f3ff'});
+  assert.equal(map.getPaintProperty('clusters', 'circle-color'), '#006241');
+  assert.equal(map.getPaintProperty('cluster-count', 'text-color'), '#FFFFFF');
+  assert.equal(map.getPaintProperty('selected-ring', 'circle-stroke-color'), '#006241');
+  // A layer switch recreates the layers with the default colours: they are painted again.
+  map.addLayer('clusters', {'circle-color': '#78f3ff'});
+  assert.equal(map.getPaintProperty('clusters', 'circle-color'), '#006241');
+  // Back to Admira: default colours, intro untouched again, no listener left.
+  r.api.desactivar();
+  assert.deepEqual(map.getPaintProperty('clusters', 'circle-color'), '#78f3ff');
+  assert.equal(map.handlers.length, 0);
+  assert.equal(video.style.visibility, '');
+});
+
+test('without a brand the intro video and the map are not touched', async () => {
+  const map = fakeMap();
+  map.layers.set('clusters', {'circle-color': '#78f3ff'});
+  const video = {style: {}};
+  boot({search: '', extra: {map, MarcaBlanca: fakeLoader()}, elements: {'intro-video': video}});
+  await ticks();
+  assert.deepEqual(video.style, {});
+  assert.equal(map.handlers.length, 0);
+  assert.equal(map.getPaintProperty('clusters', 'circle-color'), '#78f3ff');
 });
 
 test('the brand decision follows the common loader: ?marca= wins and is remembered, admira/off forget it', () => {
