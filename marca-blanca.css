@@ -115,6 +115,10 @@
 :root[data-mb-marca][data-mb-plataforma="app"] .demo-back{color:var(--mbx-ink);border-color:var(--mb-borde);border-radius:var(--mb-radio-boton,999px)}
 :root[data-mb-marca][data-mb-plataforma="app"] .demo-audio{color:var(--mbx-brand);background:var(--mbx-soft);border-color:var(--mbx-brand)}
 
+/* La entrada en vídeo lleva grabados los clusters de serie: con marca no se enseña (marca-blanca.js
+   ya la oculta al arrancar; esto lo mantiene si la página la vuelve a mostrar). */
+:root[data-mb-marca][data-mb-plataforma="app"] .intro-video{visibility:hidden}
+
 /* Aviso del mapa al pasar por un Xpacio. */
 :root[data-mb-marca][data-mb-plataforma="app"] .xp-tooltip .maplibregl-popup-content{background:var(--mbx-panel);border-color:var(--mb-borde);color:var(--mbx-ink)}
 :root[data-mb-marca][data-mb-plataforma="app"] .xp-tooltip :is(.xp-name){color:var(--mbx-ink)}

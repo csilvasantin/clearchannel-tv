@@ -31,7 +31,8 @@ La marca se mantiene al navegar entre páginas de la misma pestaña (portada, ba
 - **Legibilidad (AA)**: `marca-blanca.js` calcula unos tokens `--mbx-*` a partir de la marca: para cada texto de la barra y los paneles toma el color de la marca si contrasta ≥ 4,5:1 con su fondo y su superficie; si no, el siguiente candidato (primario → secundario → texto) y, en último caso, negro o blanco. Igual para el texto sobre los botones rellenos. Así una marca clara (Lumbre, Frescaria, Starbucks) sigue siendo legible.
 - **Tipografía**: textos con `--mb-fuente-texto`, etiquetas y botones con `--mb-fuente-etiquetas`, CLI con `--mb-fuente-mono`, títulos de fichas con `--mb-fuente-titulos` (el cargador carga las fuentes del catálogo). Radios de la marca en botones, chips y paneles.
 - **Pestaña**: favicon de la marca y título «Nombre del cliente · título de la página».
-- **Mapa**: los clusters, su número y el anillo de selección toman el color primario. Los puntos sueltos conservan el color de su circuito.
+- **Mapa**: los clusters, su número y el anillo de selección toman el color primario. Los puntos sueltos conservan el color de su circuito. El color se aplica escuchando `styledata` del mapa desde que existe, así que vale aunque app.js añada las capas tarde o las recree al cambiar de capa.
+- **Entrada en vídeo**: la grabación de la bola (`assets/intro/globo.*`) lleva los clusters naranja y magenta de serie, así que con marca no se enseña: se ve el fondo del espacio hasta que la bola real, ya con la marca, la sustituye. Sin marca la entrada es la de siempre.
 
 ## Qué no cambia
 
