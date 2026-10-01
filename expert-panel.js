@@ -55,6 +55,10 @@
   if (!row || !C || row.dataset.layoutReady) return;
   row.dataset.layoutReady = 'true';
 
+  // Fuera de la portada (páginas con galaxy-shell.js) no hay mapa: los verbos de
+  // mapa se traspasan a la portada, que los ejecuta al cargar (FLT-101311).
+  const shell = root.AdmiraShell;
+  const away = !!(shell && shell.away && typeof shell.handoff === 'function');
   const lang = () => (document.documentElement.lang === 'en' ? 'en' : 'es');
   const T = (es, en) => (lang() === 'en' ? en : es);
   const store = (() => { try { return root.localStorage; } catch (_) { return null; } })() || {getItem: () => null, setItem() {}};
@@ -200,16 +204,43 @@
     clear() { log.replaceChildren(); },
     routines: () => allRoutines(),
   };
-  function run(command, {echo = true} = {}) {
-    const text = String(command || '').trim();
-    if (!text) return;
-    const result = C.execute(text, ctx, lang());
+  if (away) {
+    ctx.handoff = command => shell.handoff(command);
+    ctx.stop = () => {};
+  }
+  function record(text, result, echo = true) {
     if (!result.cleared) print(echo ? text : '', result.lines, result.ok);
-    if (result.ok && result.parsed.verb.id !== 'limpiar' && result.parsed.verb.id !== 'help') lastOk = result.command;
+    if (result.ok && result.parsed.verb.id !== 'limpiar' && result.parsed.verb.id !== 'help' && !result.parsed.verb.local) lastOk = result.command;
     if (history[history.length - 1] !== text) { history.push(text); history = history.slice(-30); try { store.setItem(HISTORY_KEY, JSON.stringify(history)); } catch (_) {} }
     cursor = history.length;
     renderRoutines();
     return result;
+  }
+  function run(command, {echo = true} = {}) {
+    const text = String(command || '').trim();
+    if (!text) return;
+    return record(text, C.execute(text, ctx, lang()), echo);
+  }
+  // Portada: ejecuta la orden que otra página del shell dejó pendiente. Mientras
+  // la demo o el selector de circuitos aún cargan, reintenta sin ensuciar la salida.
+  function runPending() {
+    let command = null;
+    try { command = C.takePending(root.sessionStorage); } catch (_) {}
+    if (!command) return;
+    const deadline = Date.now() + 20000;
+    const attempt = () => {
+      let retry = false;
+      const watch = fn => (...args) => { const r = fn(...args); if (r && r.ok === false && (r.reason === 'loading' || r.reason === 'not_ready')) retry = true; return r; };
+      const probe = Object.assign({}, ctx, {demo: watch(ctx.demo), circuit: watch(ctx.circuit)});
+      const result = C.execute(command, probe, lang());
+      if (retry && Date.now() < deadline) { setTimeout(attempt, 400); return; }
+      record(command, result);
+    };
+    attempt();
+  }
+  if (!away) {
+    if (document.readyState === 'complete') setTimeout(runPending, 0);
+    else root.addEventListener('load', runPending, {once: true});
   }
   form.addEventListener('submit', e => { e.preventDefault(); const text = input.value; input.value = ''; run(text); });
   input.addEventListener('keydown', e => {
@@ -237,7 +268,7 @@
       const b = btn('expert-verb-btn', verb.command);
       b.title = verb.requires.length ? T('Escribe la orden en el CLI para completarla', 'Writes the command into the CLI to complete it') : T('Ejecutar', 'Run');
       b.addEventListener('click', () => (verb.requires.length ? fill(verb.command + ' ') : run(verb.command)));
-      li.append(b, el('span', 'expert-verb-desc', T(verb.es, verb.en)));
+      li.append(b, el('span', 'expert-verb-desc', T(verb.es, verb.en) + (away && verb.map ? T(' Se ejecuta en el mapa de la portada.', ' Runs on the home map.') : '')));
       for (const attrId of verb.attributes) {
         const attr = C.ATTRIBUTES[attrId];
         const line = el('div', 'expert-verb-attrs');

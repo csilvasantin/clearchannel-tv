@@ -66,7 +66,7 @@
   // run(args, ctx, lang) → {ok, lines}. ctx devuelve {ok:false, reason} si no puede.
   const VERBS = [
     {
-      id: 'demo', command: '/demo', aliases: ['cli'], attributes: ['cliente'], requires: [],
+      id: 'demo', command: '/demo', aliases: ['cli'], attributes: ['cliente'], requires: [], map: true,
       es: 'Demo guiada con compra simulada. Sin cliente: Xtanco Valencia; con cliente: un Xpacio real de su circuito.',
       en: 'Guided demo with a simulated purchase. No client: Xtanco Valencia; with a client: a real Xpacio from its circuit.',
       run(args, ctx, lang) {
@@ -84,7 +84,7 @@
       },
     },
     {
-      id: 'circuito', command: '/circuito', aliases: ['circuit'], attributes: ['cliente'], requires: ['cliente'],
+      id: 'circuito', command: '/circuito', aliases: ['circuit'], attributes: ['cliente'], requires: ['cliente'], map: true,
       es: 'Abre «Seleccionar circuito» con el circuito del cliente, lo selecciona entero y encuadra el mapa.',
       en: 'Opens “Select circuit” on the client’s circuit, selects all of it and frames the map.',
       run(args, ctx, lang) {
@@ -97,7 +97,7 @@
       },
     },
     {
-      id: 'buscar', command: '/buscar', aliases: ['search'], attributes: ['texto'], requires: ['texto'],
+      id: 'buscar', command: '/buscar', aliases: ['search'], attributes: ['texto'], requires: ['texto'], map: true,
       es: 'Busca en el mapa como el buscador de la cabecera: primero Xpacios, luego direcciones.',
       en: 'Searches the map like the header search: Xpacios first, then addresses.',
       run(args, ctx, lang) {
@@ -122,11 +122,28 @@
       id: 'help', command: '/help', aliases: ['ayuda', 'h'], attributes: [], requires: [],
       es: 'Lista verbos, atributos y rutinas.',
       en: 'Lists verbs, attributes and routines.',
-      run(args, ctx, lang) { return done(...helpLines(lang, ctx.routines ? ctx.routines() : defaultRoutines(lang))); },
+      run(args, ctx, lang) { return done(...helpLines(lang, ctx.routines ? ctx.routines() : defaultRoutines(lang), {away: typeof ctx.handoff === 'function'})); },
     },
   ];
   const VERB_KEYS = new Map();
   for (const v of VERBS) for (const alias of [v.id, ...v.aliases]) VERB_KEYS.set(key(alias), v);
+
+  // Verbos propios de una página del shell cuadrático (FLT-101311): solo existen
+  // en esa página (local), no pisan verbos ni alias ya registrados y no se
+  // guardan como rutinas, porque las rutinas se comparten entre páginas.
+  function registerVerb(def) {
+    const id = key(def && def.id);
+    if (!id || typeof def.run !== 'function') throw new TypeError('registerVerb: id y run son obligatorios');
+    const aliases = (Array.isArray(def.aliases) ? def.aliases : []).map(String);
+    const attributes = (Array.isArray(def.attributes) ? def.attributes : []).filter(a => ATTRIBUTES[a]);
+    const requires = (Array.isArray(def.requires) ? def.requires : []).filter(a => attributes.includes(a));
+    if ([id, ...aliases].some(a => VERB_KEYS.has(key(a)))) throw new Error('registerVerb: el verbo /' + id + ' ya existe');
+    const verb = {id, command: '/' + id, aliases, attributes, requires, local: true,
+      es: String(def.es || def.en || ''), en: String(def.en || def.es || ''), run: def.run};
+    VERBS.push(verb);
+    for (const alias of [id, ...aliases]) VERB_KEYS.set(key(alias), verb);
+    return verb;
+  }
 
   function usage(verb, lang) {
     return verb.command + verb.attributes.map(a => (verb.requires.includes(a) ? ` <${L(lang, ATTRIBUTES[a].es, ATTRIBUTES[a].en)}>` : ` [${L(lang, ATTRIBUTES[a].es, ATTRIBUTES[a].en)}]`)).join('');
@@ -174,8 +191,36 @@
   function execute(input, ctx, lang = 'es') {
     const parsed = parse(input);
     if (!parsed.ok) return {ok: false, lines: errorLines(parsed, lang), parsed};
+    // Fuera del mapa (cualquier página del shell salvo la portada) los verbos de
+    // mapa se traspasan a la portada: la página guarda la orden y navega.
+    if (parsed.verb.map && ctx && typeof ctx.handoff === 'function') {
+      const r = ctx.handoff(parsed.command) || {};
+      if (r.ok === false) return {ok: false, parsed, command: parsed.command, lines: [L(lang, 'No se pudo abrir el mapa de la portada.', 'The home map could not be opened.')]};
+      return {ok: true, parsed, command: parsed.command, handoff: true,
+        lines: [L(lang, `Abriendo el mapa de la portada para ejecutar ${parsed.command}…`, `Opening the home map to run ${parsed.command}…`)]};
+    }
     const result = parsed.verb.run(parsed.args, ctx, lang);
     return Object.assign({parsed, command: parsed.command}, result);
+  }
+
+  // Orden pendiente de traspaso a la portada: solo la orden canónica de un verbo
+  // de mapa, en sessionStorage (nunca en la URL) y con caducidad corta.
+  const PENDING_KEY = 'admira_expert_pending_v1';
+  const PENDING_TTL = 2 * 60 * 1000;
+  function savePending(storage, command, now = Date.now()) {
+    const parsed = parse(command);
+    if (!parsed.ok || !parsed.verb.map) return false;
+    try { storage.setItem(PENDING_KEY, JSON.stringify({command: parsed.command, at: now})); return true; } catch (_) { return false; }
+  }
+  function takePending(storage, now = Date.now()) {
+    let raw = null;
+    try { raw = storage.getItem(PENDING_KEY); storage.removeItem(PENDING_KEY); } catch (_) { return null; }
+    try {
+      const item = JSON.parse(raw || 'null');
+      if (!item || typeof item.command !== 'string' || !(now - Number(item.at) >= 0 && now - Number(item.at) <= PENDING_TTL)) return null;
+      const parsed = parse(item.command);
+      return parsed.ok && parsed.verb.map ? parsed.command : null;
+    } catch (_) { return null; }
   }
 
   // Tab: completa el verbo y después el valor del atributo enumerado.
@@ -221,7 +266,7 @@
     const seen = new Set(), list = [];
     for (const item of Array.isArray(raw) ? raw : []) {
       const parsed = parse(item && item.command);
-      if (!parsed.ok || parsed.verb.id === 'limpiar' || seen.has(parsed.command)) continue;
+      if (!parsed.ok || parsed.verb.id === 'limpiar' || parsed.verb.local || seen.has(parsed.command)) continue;
       seen.add(parsed.command);
       const label = String((item && item.label) || parsed.command).trim().slice(0, 60) || parsed.command;
       list.push({id: 'mine:' + parsed.command, label, command: parsed.command, builtin: false});
@@ -236,16 +281,17 @@
   }
   function addRoutine(list, command, label) {
     const parsed = parse(command);
-    if (!parsed.ok || parsed.verb.id === 'limpiar') return {ok: false, list};
+    if (!parsed.ok || parsed.verb.id === 'limpiar' || parsed.verb.local) return {ok: false, list};
     if (list.some(r => r.command === parsed.command)) return {ok: false, duplicate: true, list};
     return {ok: true, list: sanitizeRoutines([...list, {label: label || parsed.command, command: parsed.command}])};
   }
   const removeRoutine = (list, id) => list.filter(r => r.id !== id);
 
-  function helpLines(lang = 'es', routines = defaultRoutines(lang)) {
+  function helpLines(lang = 'es', routines = defaultRoutines(lang), {away = false} = {}) {
+    const where = v => (away && v.map ? L(lang, ' · se ejecuta en el mapa de la portada', ' · runs on the home map') : v.local ? L(lang, ' · solo en esta página', ' · this page only') : '');
     return [
       L(lang, 'VERBOS', 'VERBS'),
-      ...VERBS.map(v => `${usage(v, lang)} — ${L(lang, v.es, v.en)}${v.aliases.length ? ` (${L(lang, 'alias', 'aliases')}: ${v.aliases.map(a => '/' + a).join(', ')})` : ''}`),
+      ...VERBS.map(v => `${usage(v, lang)} — ${L(lang, v.es, v.en)}${v.aliases.length ? ` (${L(lang, 'alias', 'aliases')}: ${v.aliases.map(a => '/' + a).join(', ')})` : ''}${where(v)}`),
       L(lang, 'ATRIBUTOS', 'ATTRIBUTES'),
       `${L(lang, 'cliente', 'client')}: ` + CLIENTS.map(c => `${c.id} (${L(lang, c.es, c.en)} · ${c.circuit})`).join(', '),
       `${L(lang, 'texto', 'text')}: ${L(lang, 'texto libre para /buscar', 'free text for /search')}`,
@@ -287,7 +333,7 @@
   }
 
   const api = Object.freeze({
-    CLIENTS, ATTRIBUTES, VERBS, ROUTINES_KEY, key, resolveClient, clientCandidates, parse, execute, errorLines, usage,
+    CLIENTS, ATTRIBUTES, VERBS, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, parse, execute, errorLines, usage,
     complete, defaultRoutines, sanitizeRoutines, loadRoutines, saveRoutines, addRoutine, removeRoutine, helpLines,
     pickDemoXpacio, demoScreens, liveSurfaces, demoSurfaces,
   });
