@@ -372,7 +372,7 @@
 
 <script src="xpace-link.js?v=20260928-xpace-1"></script>
 <script>
-// ─── i18n (comparte idioma con la portada vía localStorage omnip-lang) ──
+// ─── i18n (preferencia propia de marca, compartida con la portada) ──
 const I18N = {
   es: {
     bo_sub:'/ backoffice',
@@ -463,7 +463,13 @@ const I18N = {
     reset_confirm_1:'Discard all local changes and restore the default catalog (', reset_confirm_2:' Xpaces)?',
   },
 };
-let LANG = (function(){ try { return localStorage.getItem('omnip-lang') === 'es' ? 'es' : 'en'; } catch(_) { return 'en'; } })();
+const BRAND_LANGUAGE_KEY = (window.ADMIRA_SITE_BRAND?.id || 'clearchannel') + '-lang';
+let LANG = (function(){
+  const explicit = new URLSearchParams(location.search).get('lang');
+  if (['en','es'].includes(explicit)) return explicit;
+  try { const saved = localStorage.getItem(BRAND_LANGUAGE_KEY); if (['en','es'].includes(saved)) return saved; } catch(_) {}
+  return window.ADMIRA_SITE_BRAND?.defaultLanguage || 'en';
+})();
 function t(key){ return (I18N[LANG] && I18N[LANG][key] != null) ? I18N[LANG][key] : (I18N.es[key] != null ? I18N.es[key] : key); }
 function applyI18n(){
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
@@ -476,7 +482,7 @@ function applyI18n(){
 }
 function setLang(lang){
   LANG = (lang === 'en') ? 'en' : 'es';
-  try { localStorage.setItem('omnip-lang', LANG); } catch(_){}
+  try { localStorage.setItem(BRAND_LANGUAGE_KEY, LANG); } catch(_){}
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === LANG));
   applyI18n();
   renderDemoAccess();
