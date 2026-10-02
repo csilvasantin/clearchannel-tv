@@ -36,7 +36,9 @@
     "impr": 250,
     "cpm": "€5",
     "surface": "escaparate",
-    "screen": "altadis-bcn-001-p1-vertical"
+    "screen": "altadis-bcn-001-p1-vertical",
+    "media": "https://api.admira.store/stock/asset/1790932601282-l5omzp",
+    "stockId": "1790932601282-l5omzp"
    },
    {
     "name": "P2 · Horizontal mostrador",
@@ -48,7 +50,9 @@
     "impr": 450,
     "cpm": "€8",
     "surface": "pantalla",
-    "screen": "altadis-bcn-001-p2-horizontal"
+    "screen": "altadis-bcn-001-p2-horizontal",
+    "media": "https://api.admira.store/stock/asset/1790932708532-mq8mlu",
+    "stockId": "1790932708532-mq8mlu"
    }
   ],
   "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
@@ -110,7 +114,9 @@
     "impr": 250,
     "cpm": "€5",
     "surface": "escaparate",
-    "screen": "altadis-bcn-002-p1-vertical"
+    "screen": "altadis-bcn-002-p1-vertical",
+    "media": "https://api.admira.store/stock/asset/1790932601282-l5omzp",
+    "stockId": "1790932601282-l5omzp"
    },
    {
     "name": "P2 · Horizontal mostrador",
@@ -122,7 +128,9 @@
     "impr": 450,
     "cpm": "€8",
     "surface": "pantalla",
-    "screen": "altadis-bcn-002-p2-horizontal"
+    "screen": "altadis-bcn-002-p2-horizontal",
+    "media": "https://api.admira.store/stock/asset/1790932708532-mq8mlu",
+    "stockId": "1790932708532-mq8mlu"
    }
   ],
   "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
@@ -184,7 +192,9 @@
     "impr": 250,
     "cpm": "€5",
     "surface": "escaparate",
-    "screen": "altadis-bcn-003-p1-vertical"
+    "screen": "altadis-bcn-003-p1-vertical",
+    "media": "https://api.admira.store/stock/asset/1790932601282-l5omzp",
+    "stockId": "1790932601282-l5omzp"
    },
    {
     "name": "P2 · Horizontal mostrador",
@@ -196,7 +206,9 @@
     "impr": 450,
     "cpm": "€8",
     "surface": "pantalla",
-    "screen": "altadis-bcn-003-p2-horizontal"
+    "screen": "altadis-bcn-003-p2-horizontal",
+    "media": "https://api.admira.store/stock/asset/1790932708532-mq8mlu",
+    "stockId": "1790932708532-mq8mlu"
    }
   ],
   "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
@@ -258,7 +270,9 @@
     "impr": 250,
     "cpm": "€5",
     "surface": "escaparate",
-    "screen": "altadis-bcn-004-p1-vertical"
+    "screen": "altadis-bcn-004-p1-vertical",
+    "media": "https://api.admira.store/stock/asset/1790932601282-l5omzp",
+    "stockId": "1790932601282-l5omzp"
    },
    {
     "name": "P2 · Horizontal mostrador",
@@ -270,7 +284,9 @@
     "impr": 450,
     "cpm": "€8",
     "surface": "pantalla",
-    "screen": "altadis-bcn-004-p2-horizontal"
+    "screen": "altadis-bcn-004-p2-horizontal",
+    "media": "https://api.admira.store/stock/asset/1790932708532-mq8mlu",
+    "stockId": "1790932708532-mq8mlu"
    }
   ],
   "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
@@ -332,7 +348,9 @@
     "impr": 250,
     "cpm": "€5",
     "surface": "escaparate",
-    "screen": "altadis-bcn-005-p1-vertical"
+    "screen": "altadis-bcn-005-p1-vertical",
+    "media": "https://api.admira.store/stock/asset/1790932601282-l5omzp",
+    "stockId": "1790932601282-l5omzp"
    },
    {
     "name": "P2 · Horizontal mostrador",
@@ -344,7 +362,9 @@
     "impr": 450,
     "cpm": "€8",
     "surface": "pantalla",
-    "screen": "altadis-bcn-005-p2-horizontal"
+    "screen": "altadis-bcn-005-p2-horizontal",
+    "media": "https://api.admira.store/stock/asset/1790932708532-mq8mlu",
+    "stockId": "1790932708532-mq8mlu"
    }
   ],
   "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
@@ -406,7 +426,9 @@
     "impr": 250,
     "cpm": "€5",
     "surface": "escaparate",
-    "screen": "altadis-bcn-006-p1-vertical"
+    "screen": "altadis-bcn-006-p1-vertical",
+    "media": "https://api.admira.store/stock/asset/1790932601282-l5omzp",
+    "stockId": "1790932601282-l5omzp"
    },
    {
     "name": "P2 · Horizontal mostrador",
@@ -418,7 +440,9 @@
     "impr": 450,
     "cpm": "€8",
     "surface": "pantalla",
-    "screen": "altadis-bcn-006-p2-horizontal"
+    "screen": "altadis-bcn-006-p2-horizontal",
+    "media": "https://api.admira.store/stock/asset/1790932708532-mq8mlu",
+    "stockId": "1790932708532-mq8mlu"
    }
   ],
   "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
@@ -480,7 +504,9 @@
     "impr": 250,
     "cpm": "€5",
     "surface": "escaparate",
-    "screen": "altadis-bcn-007-p1-vertical"
+    "screen": "altadis-bcn-007-p1-vertical",
+    "media": "https://api.admira.store/stock/asset/1790932601282-l5omzp",
+    "stockId": "1790932601282-l5omzp"
    },
    {
     "name": "P2 · Horizontal mostrador",
@@ -492,7 +518,9 @@
     "impr": 450,
     "cpm": "€8",
     "surface": "pantalla",
-    "screen": "altadis-bcn-007-p2-horizontal"
+    "screen": "altadis-bcn-007-p2-horizontal",
+    "media": "https://api.admira.store/stock/asset/1790932708532-mq8mlu",
+    "stockId": "1790932708532-mq8mlu"
    }
   ],
   "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
@@ -554,7 +582,9 @@
     "impr": 250,
     "cpm": "€5",
     "surface": "escaparate",
-    "screen": "altadis-bcn-008-p1-vertical"
+    "screen": "altadis-bcn-008-p1-vertical",
+    "media": "https://api.admira.store/stock/asset/1790932601282-l5omzp",
+    "stockId": "1790932601282-l5omzp"
    },
    {
     "name": "P2 · Horizontal mostrador",
@@ -566,7 +596,9 @@
     "impr": 450,
     "cpm": "€8",
     "surface": "pantalla",
-    "screen": "altadis-bcn-008-p2-horizontal"
+    "screen": "altadis-bcn-008-p2-horizontal",
+    "media": "https://api.admira.store/stock/asset/1790932708532-mq8mlu",
+    "stockId": "1790932708532-mq8mlu"
    }
   ],
   "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
@@ -628,7 +660,9 @@
     "impr": 250,
     "cpm": "€5",
     "surface": "escaparate",
-    "screen": "altadis-bcn-009-p1-vertical"
+    "screen": "altadis-bcn-009-p1-vertical",
+    "media": "https://api.admira.store/stock/asset/1790932601282-l5omzp",
+    "stockId": "1790932601282-l5omzp"
    },
    {
     "name": "P2 · Horizontal mostrador",
@@ -640,7 +674,9 @@
     "impr": 450,
     "cpm": "€8",
     "surface": "pantalla",
-    "screen": "altadis-bcn-009-p2-horizontal"
+    "screen": "altadis-bcn-009-p2-horizontal",
+    "media": "https://api.admira.store/stock/asset/1790932708532-mq8mlu",
+    "stockId": "1790932708532-mq8mlu"
    }
   ],
   "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
