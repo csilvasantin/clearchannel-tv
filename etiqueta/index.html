@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<script src="/brand.js?v=etiqueta-4893"></script>
+<link rel="stylesheet" href="/brand.css?v=etiqueta-4893">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Etiqueta Digital · demo</title>
+<meta name="description" content="Demo simulada de Etiqueta Digital: recorrido de cliente, Stock to Light y proof of play. Nada enciende hardware.">
+<link rel="stylesheet" href="/galaxy-shell.css?v=etiqueta-4893">
+<style>
+  .etiq{max-width:1100px;margin:0 auto;padding:18px 16px calc(var(--shell-bottom, 0px) + 36px);color:var(--ink,#dff8ff);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  .etiq h1{font:700 28px/1.15 inherit;margin:0 0 8px;letter-spacing:-.02em}
+  .banner{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px;margin:0 0 14px}
+  .banner p{margin:6px 0 0;color:var(--mut)}
+  .kicker{font:700 11px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#ffd866)}
+  .chip{display:inline-block;margin-right:6px;padding:2px 7px;border:1px solid var(--accent,#ffd866);border-radius:999px;color:var(--accent,#ffd866);font:700 10px/1.4 ui-monospace,monospace;letter-spacing:.08em}
+  .phases{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+  .phases button,.scenes button,.go{font:700 13px/1.2 inherit;color:var(--brand);background:transparent;border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer}
+  .phases button[aria-current="step"],.scenes button[aria-selected="true"]{background:var(--brand);color:#04140f;border-color:var(--brand)}
+  .scenes{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+  .idents{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .idents a{color:var(--brand);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:700 13px/1.2 inherit}
+  .idents a[aria-current="true"]{background:var(--brand);color:#04140f}
+  .layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,340px);gap:14px;align-items:start}
+  .stage,.phone,.proof{background:var(--card,#0a1620);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .stage h2,.phone h2,.proof h2{margin:0 0 8px;font:700 16px/1.3 inherit}
+  .aisle{position:relative;min-height:250px;border-radius:12px;background:
+    linear-gradient(#1a140c,#1a140c) 0 78%/100% 22% no-repeat,
+    repeating-linear-gradient(90deg,#142028 0 18px,#101820 18px 36px);
+    padding:12px 12px 64px}
+  .gondola{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  .esl{position:relative;min-height:132px;padding:8px;border-radius:8px;background:#071018;border:1px solid rgba(120,243,255,.25);color:var(--ink)}
+  .esl .led{width:12px;height:12px;border-radius:50%;background:#314047;box-shadow:inset 0 0 0 1px #000}
+  .esl header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font:700 10px/1 ui-monospace,monospace;letter-spacing:.04em}
+  .esl strong{display:block;font-size:14px}
+  .esl .price{margin-top:6px;font:700 18px/1 ui-monospace,monospace;color:var(--accent,#ffd866)}
+  .esl small{display:block;color:var(--mut);font:11px/1.35 ui-monospace,monospace}
+  .esl.lit{border-color:#ffe56a;box-shadow:0 0 0 1px #ffe56a,0 0 22px rgba(255,229,106,.72);background:#1a1608}
+  .esl.lit .led{background:#ffe56a;box-shadow:0 0 12px #ffe56a}
+  .esl.ad{grid-column:1/-1;min-height:72px}
+  .walker{position:absolute;left:8%;bottom:14px;width:34px;height:34px;border-radius:50%;background:var(--brand);color:#04140f;display:grid;place-items:center;font:700 11px/1 ui-monospace,monospace;transition:left .55s ease}
+  .status{min-height:1.4em;margin:8px 0 0;color:var(--mut);font:13px/1.4 ui-monospace,monospace}
+  .phone{width:min(100%,390px);justify-self:center;border-width:10px;border-color:#05080c;border-radius:28px;box-shadow:0 16px 40px #0008}
+  .mission{border:1px dashed var(--line);border-radius:10px;padding:10px;margin:8px 0}
+  .mission b{display:block}
+  .go{width:100%;background:var(--brand);color:#04140f;border:0;min-height:44px}
+  .go:disabled{opacity:.55}
+  .phone .lit-note{margin-top:8px;color:var(--accent,#ffd866);font:700 13px/1.4 ui-monospace,monospace}
+  table{width:100%;border-collapse:collapse;font:12px/1.35 ui-monospace,monospace}
+  th,td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-weight:700}
+  .proposal{color:var(--warn,#ff8866)}
+  .arch{margin-top:14px;color:var(--mut);font-size:13px}
+  @media(max-width:800px){
+    .layout{grid-template-columns:1fr}
+    .layout[data-scene="stock"]{display:flex;flex-direction:column}
+    .layout[data-scene="stock"] #scene-stock{order:-1}
+    .gondola{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .etiq h1{font-size:22px}
+  }
+</style>
+</head>
+<body>
+<div data-shell-slots hidden>
+  <a id="id-admira" data-shell-slot="options" href="?brand=admira" data-shell-text-es="Identidad admira.app" data-shell-text-en="admira.app identity">Identidad admira.app</a>
+  <a id="id-cc" data-shell-slot="options" href="./" data-shell-text-es="Identidad clear&#8203;channel.tv" data-shell-text-en="clear&#8203;channel.tv identity">Identidad clear&#8203;channel.tv</a>
+  <button type="button" id="adv-walk" data-shell-slot="advanced" data-shell-text-es="Recorrido cliente" data-shell-text-en="Customer walk">Recorrido cliente</button>
+  <button type="button" id="adv-stock" data-shell-slot="advanced" data-shell-text-es="Stock to Light" data-shell-text-en="Stock to Light">Stock to Light</button>
+  <button type="button" id="adv-ad" data-shell-slot="advanced" data-shell-text-es="Ad to Light · propuesta" data-shell-text-en="Ad to Light · proposal">Ad to Light · propuesta</button>
+  <button type="button" id="adv-proof" data-shell-slot="advanced" data-shell-text-es="Proof of play" data-shell-text-en="Proof of play">Proof of play</button>
+</div>
+<main class="etiq" id="etiqueta">
+  <p class="kicker" data-es="Demo simulada · Etiqueta Digital" data-en="Simulated demo · Digital label">Demo simulada · Etiqueta Digital</p>
+  <h1 data-es="Cafebrería · Xtore Pixeria" data-en="Cafebrería · Pixeria Xtore">Cafebrería · Xtore Pixeria</h1>
+  <section class="banner">
+    <span class="chip">SIMULADO</span><span class="chip">SIMULATED</span>
+    <p data-es="Las etiquetas de esta página no son hardware. La luz, los precios y el proof of play son de la maqueta. Ad to Light es una propuesta, no un uso ya vendido." data-en="The labels on this page are not hardware. The light, the prices and the proof of play belong to the mock. Ad to Light is a proposal, not a use already sold.">Las etiquetas de esta página no son hardware. La luz, los precios y el proof of play son de la maqueta. Ad to Light es una propuesta, no un uso ya vendido.</p>
+    <div class="idents">
+      <a id="brand-admira" href="?brand=admira">admira.app · castellano</a>
+      <a id="brand-cc" href="./">clear&#8203;channel.tv · English</a>
+    </div>
+  </section>
+  <div class="phases" role="tablist" aria-label="Fases">
+    <button type="button" data-phase="precio" data-es="1 · Precio" data-en="1 · Price">1 · Precio</button>
+    <button type="button" data-phase="operacion" data-es="2 · Operación" data-en="2 · Operations">2 · Operación</button>
+    <button type="button" data-phase="cliente" data-es="3 · Cliente" data-en="3 · Customer">3 · Cliente</button>
+    <button type="button" data-phase="media" data-es="4 · Retail media · propuesta" data-en="4 · Retail media · proposal">4 · Retail media · propuesta</button>
+  </div>
+  <div class="scenes" role="tablist">
+    <button type="button" id="tab-walk" role="tab" aria-selected="true" data-es="Recorrido del cliente" data-en="Customer walk">Recorrido del cliente</button>
+    <button type="button" id="tab-stock" role="tab" aria-selected="false" data-es="Reponedor · admira.shop" data-en="Restocker · admira.shop">Reponedor · admira.shop</button>
+    <button type="button" id="tab-proof" role="tab" aria-selected="false" data-es="Proof of play" data-en="Proof of play">Proof of play</button>
+  </div>
+  <div class="layout">
+    <section class="stage" id="scene-walk">
+      <h2 data-es="Shop to Light · el cliente pasa y la etiqueta se enciende" data-en="Shop to Light · the customer walks by and the label lights">Shop to Light · el cliente pasa y la etiqueta se enciende</h2>
+      <div class="aisle" id="aisle">
+        <div class="gondola" id="gondola"></div>
+        <div class="walker" id="walker" style="left:6%">●</div>
+      </div>
+      <p class="status" id="walk-status" aria-live="polite"></p>
+      <p><button type="button" class="go" id="walk-go" data-es="Encender el recorrido" data-en="Light the walk">Encender el recorrido</button></p>
+    </section>
+    <section class="phone" id="scene-stock">
+      <h2 data-es="admira.shop · Stock to Light" data-en="admira.shop · Stock to Light">admira.shop · Stock to Light</h2>
+      <p class="kicker" data-es="Móvil del reponedor · simulado" data-en="Restocker phone · simulated">Móvil del reponedor · simulado</p>
+      <div class="mission">
+        <span class="chip">SIMULADO</span>
+        <b data-es="Reponer café de origen" data-en="Restock origin coffee">Reponer café de origen</b>
+        <span data-es="Ubicación estantería A3 · etiqueta ESL-CAF-0142 · activo ITIL CAF-ESL-0142" data-en="Shelf location A3 · label ESL-CAF-0142 · ITIL asset CAF-ESL-0142">Ubicación estantería A3 · etiqueta ESL-CAF-0142 · activo ITIL CAF-ESL-0142</span>
+      </div>
+      <button type="button" class="go" id="stock-go" data-es="Encender ubicación" data-en="Light the location">Encender ubicación</button>
+      <p class="lit-note" id="stock-note" hidden data-es="Ubicación A3 encendida en la maqueta." data-en="Location A3 is lit in the mock.">Ubicación A3 encendida en la maqueta.</p>
+      <p><button type="button" class="go" id="ad-go" style="background:transparent;color:var(--warn,#ff8866);border:1px dashed var(--warn,#ff8866)" data-es="Ad to Light · propuesta" data-en="Ad to Light · proposal">Ad to Light · propuesta</button></p>
+    </section>
+  </div>
+  <section class="proof" id="scene-proof">
+    <h2 data-es="Proof of play registrado en la demo" data-en="Proof of play recorded in the demo">Proof of play registrado en la demo</h2>
+    <p id="proof-count" class="status"></p>
+    <table>
+      <thead>
+        <tr>
+          <th data-es="Hora" data-en="Time">Hora</th>
+          <th data-es="Uso" data-en="Use">Uso</th>
+          <th data-es="Etiqueta" data-en="Label">Etiqueta</th>
+          <th data-es="Circuito" data-en="Circuit">Circuito</th>
+          <th data-es="Duración" data-en="Duration">Duración</th>
+        </tr>
+      </thead>
+      <tbody id="proof-body"></tbody>
+    </table>
+  </section>
+  <p class="arch" data-es="Alcance mínimo de la maqueta: Precio, Operación, Cliente y Retail media. Cada etiqueta es un dispositivo IoT simulado de XpaceOS y un activo ITIL simulado. Shop to Light se ve aquí, con la voz de admira.app en castellano y la de clear&#8203;channel.tv en inglés. Stock to Light es el móvil de admira.shop. Ad to Light queda marcado como propuesta sobre el circuito simulado etiqueta_digital. Las misiones de reposición, en el producto, vivirían en Yokup; esta página no crea ninguna." data-en="Minimum scope of the mock: Price, Operations, Customer and Retail media. Each label is a simulated XpaceOS IoT device and a simulated ITIL asset. Shop to Light is shown here, in the admira.app Spanish voice and the clear&#8203;channel.tv English voice. Stock to Light is the admira.shop phone. Ad to Light stays marked as a proposal on the simulated etiqueta_digital circuit. Restock missions would live in Yokup in the product; this page creates none.">Alcance mínimo de la maqueta: Precio, Operación, Cliente y Retail media. Cada etiqueta es un dispositivo IoT simulado de XpaceOS y un activo ITIL simulado. Shop to Light se ve aquí, con la voz de admira.app en castellano y la de clear&#8203;channel.tv en inglés. Stock to Light es el móvil de admira.shop. Ad to Light queda marcado como propuesta sobre el circuito simulado etiqueta_digital. Las misiones de reposición, en el producto, vivirían en Yokup; esta página no crea ninguna.</p>
+</main>
+<script>
+(function () {
+  'use strict';
+  var KEY = 'etiqueta-4893-proof';
+  var HOLD_S = 8;
+  var LABELS = [
+    {id:'ESL-CAF-0142', itil:'CAF-ESL-0142', shelfEs:'A3', shelfEn:'A3', es:'Café de origen', en:'Origin coffee', priceEs:'3,40 €', priceEn:'€3.40', x:'10%'},
+    {id:'ESL-LIB-0208', itil:'LIB-ESL-0208', shelfEs:'A3', shelfEn:'A3', es:'Libro de mesa', en:'Table book', priceEs:'18,00 €', priceEn:'€18.00', x:'34%'},
+    {id:'ESL-TAZ-0311', itil:'TAZ-ESL-0311', shelfEs:'B1', shelfEn:'B1', es:'Taza Pixeria', en:'Pixeria mug', priceEs:'12,00 €', priceEn:'€12.00', x:'58%'},
+    {id:'ESL-CRO-0440', itil:'CRO-ESL-0440', shelfEs:'B1', shelfEn:'B1', es:'Croissant', en:'Croissant', priceEs:'2,10 €', priceEn:'€2.10', x:'82%'}
+  ];
+  var AD = {id:'ESL-AD-0901', itil:'AD-ESL-0901', shelfEs:'cabecera', shelfEn:'endcap', es:'Tu pausa · propuesta', en:'Your break · proposal', priceEs:'PROPUESTA', priceEn:'PROPOSAL', x:'50%', ad:true};
+  var walkTimer = 0;
+  var lit = {};
+
+  function lang() { return document.documentElement.lang === 'en' ? 'en' : 'es'; }
+  function t(es, en) { return lang() === 'en' ? en : es; }
+  function paint() {
+    document.querySelectorAll('[data-es]').forEach(function (el) {
+      el.textContent = t(el.getAttribute('data-es'), el.getAttribute('data-en'));
+    });
+    var admira = document.documentElement.dataset.brand === 'admira';
+    var a = document.getElementById('brand-admira');
+    var c = document.getElementById('brand-cc');
+    if (a) a.setAttribute('aria-current', admira ? 'true' : 'false');
+    if (c) c.setAttribute('aria-current', admira ? 'false' : 'true');
+    renderShelf();
+    renderProof();
+  }
+  function rows() {
+    try { return JSON.parse(sessionStorage.getItem(KEY) || '[]'); } catch (e) { return []; }
+  }
+  function save(list) { sessionStorage.setItem(KEY, JSON.stringify(list)); }
+  function record(label, use, proposal) {
+    var list = rows();
+    list.push({
+      at: new Date().toISOString(),
+      use: use,
+      label: label.id,
+      itil: label.itil,
+      shelf: t(label.shelfEs, label.shelfEn),
+      circuit: 'etiqueta_digital',
+      seconds: HOLD_S,
+      simulated: true,
+      proposal: !!proposal
+    });
+    save(list);
+    renderProof();
+  }
+  function useName(use, proposal) {
+    var name = {shop_to_light:'Shop to Light', stock_to_light:'Stock to Light', ad_to_light:'Ad to Light'}[use] || use;
+    return proposal ? name + t(' · propuesta', ' · proposal') : name;
+  }
+  function renderProof() {
+    var list = rows();
+    var body = document.getElementById('proof-body');
+    var count = document.getElementById('proof-count');
+    body.replaceChildren();
+    if (!list.length) {
+      var tr = document.createElement('tr');
+      var td = document.createElement('td');
+      td.colSpan = 5;
+      td.textContent = t('Todavía no hay ninguna reproducción. Enciende el recorrido o la ubicación.', 'No play has been recorded yet. Light the walk or the location.');
+      tr.append(td);
+      body.append(tr);
+    }
+    list.slice().reverse().forEach(function (row) {
+      var tr = document.createElement('tr');
+      [row.at.slice(11, 19), useName(row.use, row.proposal), row.label + ' · ' + row.shelf, row.circuit + t(' · simulado', ' · simulated'), String(row.seconds) + ' s · SIMULADO'].forEach(function (text, i) {
+        var td = document.createElement('td');
+        td.textContent = text;
+        if (i === 1 && row.proposal) td.className = 'proposal';
+        tr.append(td);
+      });
+      body.append(tr);
+    });
+    count.textContent = list.length + t(' registros en esta sesión · SIMULADO', ' records in this session · SIMULATED');
+  }
+  function card(label) {
+    var art = document.createElement('article');
+    art.className = 'esl' + (label.ad ? ' ad' : '') + (lit[label.id] ? ' lit' : '');
+    art.dataset.label = label.id;
+    art.dataset.lit = lit[label.id] ? '1' : '0';
+    var head = document.createElement('header');
+    var id = document.createElement('span');
+    id.textContent = label.id;
+    var led = document.createElement('span');
+    led.className = 'led';
+    led.setAttribute('aria-hidden', 'true');
+    head.append(id, led);
+    var name = document.createElement('strong');
+    name.textContent = t(label.es, label.en);
+    var price = document.createElement('div');
+    price.className = 'price';
+    price.textContent = t(label.priceEs, label.priceEn);
+    var sim = document.createElement('small');
+    sim.textContent = 'SIMULADO · ITIL ' + label.itil + ' · ' + t('estantería ', 'shelf ') + t(label.shelfEs, label.shelfEn);
+    art.append(head, name, price, sim);
+    return art;
+  }
+  function renderShelf() {
+    var gondola = document.getElementById('gondola');
+    gondola.replaceChildren();
+    LABELS.forEach(function (label) { gondola.append(card(label)); });
+    gondola.append(card(AD));
+  }
+  var phase = 'precio';
+  function show(which, nextPhase) {
+    if (nextPhase) phase = nextPhase;
+    document.getElementById('scene-walk').hidden = which === 'proof';
+    document.getElementById('scene-stock').hidden = which === 'proof';
+    document.querySelector('.layout').dataset.scene = which === 'stock' ? 'stock' : 'walk';
+    document.getElementById('tab-walk').setAttribute('aria-selected', which === 'walk' ? 'true' : 'false');
+    document.getElementById('tab-stock').setAttribute('aria-selected', which === 'stock' ? 'true' : 'false');
+    document.getElementById('tab-proof').setAttribute('aria-selected', which === 'proof' ? 'true' : 'false');
+    document.querySelectorAll('[data-phase]').forEach(function (btn) {
+      btn.setAttribute('aria-current', btn.dataset.phase === phase ? 'step' : 'false');
+    });
+    if (which === 'proof') document.getElementById('scene-proof').scrollIntoView({block:'nearest'});
+    if (which === 'stock') document.getElementById('scene-stock').scrollIntoView({block:'start'});
+  }
+  function light(label, use, proposal) {
+    lit[label.id] = true;
+    renderShelf();
+    var walker = document.getElementById('walker');
+    if (label.x) walker.style.left = label.x;
+    record(label, use, proposal);
+    document.getElementById('walk-status').textContent = t(
+      'Etiqueta ' + label.id + ' encendida · ' + useName(use, proposal) + ' · 8 s simulados',
+      'Label ' + label.id + ' lit · ' + useName(use, proposal) + ' · 8 simulated seconds'
+    );
+  }
+  function startWalk() {
+    show('walk', 'cliente');
+    window.clearInterval(walkTimer);
+    var i = 0;
+    var step = function () {
+      if (i >= LABELS.length) {
+        window.clearInterval(walkTimer);
+        document.getElementById('walk-status').textContent = t(
+          'Recorrido completo. Cuatro etiquetas encendidas y anotadas en el proof of play.',
+          'Walk complete. Four labels lit and written to the proof of play.'
+        );
+        return;
+      }
+      light(LABELS[i], 'shop_to_light', false);
+      i += 1;
+    };
+    step();
+    walkTimer = window.setInterval(step, 1100);
+  }
+  function startStock() {
+    window.clearInterval(walkTimer);
+    show('stock', 'operacion');
+    light(LABELS[0], 'stock_to_light', false);
+    var note = document.getElementById('stock-note');
+    note.hidden = false;
+    note.textContent = t('Ubicación A3 encendida en la maqueta.', 'Location A3 is lit in the mock.');
+  }
+  function startAd() {
+    window.clearInterval(walkTimer);
+    show('walk', 'media');
+    light(AD, 'ad_to_light', true);
+    document.getElementById('scene-proof').scrollIntoView({block:'nearest'});
+  }
+  function verb(id, aliases, es, en, fn) {
+    return {id:id, aliases:aliases, es:es, en:en, attributes:[], run:function (_args, _ctx, language) {
+      fn();
+      return {ok:true, lines:[language === 'en' ? en : es]};
+    }};
+  }
+  window.ADMIRA_SHELL = {
+    section: {es:'/ etiqueta', en:'/ label'},
+    verbs: [
+      verb('recorrer', ['walk'], 'Recorre la góndola y enciende las etiquetas simuladas.', 'Walks the gondola and lights the simulated labels.', startWalk),
+      verb('reponer', ['stock'], 'El reponedor enciende la ubicación A3.', 'The restocker lights location A3.', startStock),
+      verb('anuncio', ['adlight'], 'Enciende la etiqueta de Ad to Light, marcada como propuesta.', 'Lights the Ad to Light label, marked as a proposal.', startAd),
+      verb('prueba', ['proof', 'pop'], 'Muestra el proof of play de esta sesión.', 'Shows this session’s proof of play.', function () { show('proof', 'media'); })
+    ]
+  };
+  document.getElementById('walk-go').addEventListener('click', startWalk);
+  document.getElementById('stock-go').addEventListener('click', startStock);
+  document.getElementById('ad-go').addEventListener('click', startAd);
+  document.getElementById('tab-walk').addEventListener('click', function () { window.clearInterval(walkTimer); show('walk', 'cliente'); });
+  document.getElementById('tab-stock').addEventListener('click', function () { window.clearInterval(walkTimer); show('stock', 'operacion'); });
+  document.getElementById('tab-proof').addEventListener('click', function () { show('proof', 'media'); });
+  document.querySelector('[data-phase="precio"]').addEventListener('click', function () { window.clearInterval(walkTimer); show('walk', 'precio'); });
+  document.querySelector('[data-phase="operacion"]').addEventListener('click', function () { window.clearInterval(walkTimer); show('stock', 'operacion'); });
+  document.querySelector('[data-phase="cliente"]').addEventListener('click', startWalk);
+  document.querySelector('[data-phase="media"]').addEventListener('click', startAd);
+  document.addEventListener('admira:lang', paint);
+  document.addEventListener('admira:shell-ready', function () {
+    var bind = function (id, fn) { var el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+    bind('adv-walk', startWalk);
+    bind('adv-stock', startStock);
+    bind('adv-ad', startAd);
+    bind('adv-proof', function () { show('proof', 'media'); });
+    paint();
+  });
+  renderShelf();
+  renderProof();
+  paint();
+})();
+</script>
+<script defer src="/galaxy-shell.js?v=etiqueta-4893"></script>
+</body>
+</html>
