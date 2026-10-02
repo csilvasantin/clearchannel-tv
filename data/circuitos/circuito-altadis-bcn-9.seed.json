@@ -1,0 +1,668 @@
+[
+ {
+  "id": "altadis-bcn-001",
+  "name": "Estanco Gràcia 1",
+  "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
+  "addr": "Carrer Gran de Gràcia s/n · 08012 Barcelona",
+  "coords": [
+   2.155556,
+   41.3996304
+  ],
+  "city": "Barcelona",
+  "province": "Barcelona",
+  "music": "retail",
+  "cameras": false,
+  "osm": {
+   "id": "node/12875861930",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Estanco",
+   "sponsor": "Altadis",
+   "network": "altadis estancos barcelona",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24, verificado api.openstreetmap.org 2026-10-02)"
+  },
+  "circuit": "altadis_bcn",
+  "tourOrder": 1,
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=altadis-bcn-001",
+  "surfaces": [
+   {
+    "name": "P1 · Vertical escaparate",
+    "desc": "Pantalla vertical en escaparate · 1080×1920 · adaptación 9:16",
+    "orient": "vertical",
+    "w": 1080,
+    "h": 1920,
+    "status": "sched",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate",
+    "screen": "altadis-bcn-001-p1-vertical"
+   },
+   {
+    "name": "P2 · Horizontal mostrador",
+    "desc": "Pantalla horizontal sobre el mostrador · 1920×1080 · adaptación 16:9",
+    "orient": "horizontal",
+    "w": 1920,
+    "h": 1080,
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla",
+    "screen": "altadis-bcn-001-p2-horizontal"
+   }
+  ],
+  "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ]
+  }
+ },
+ {
+  "id": "altadis-bcn-002",
+  "name": "Moe's Expenedoria",
+  "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
+  "addr": "Plaça de la Vila de Gràcia s/n · 08012 Barcelona",
+  "coords": [
+   2.1577654,
+   41.3999081
+  ],
+  "city": "Barcelona",
+  "province": "Barcelona",
+  "music": "retail",
+  "cameras": false,
+  "osm": {
+   "id": "node/6777658347",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Estanco",
+   "sponsor": "Altadis",
+   "network": "altadis estancos barcelona",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24, verificado api.openstreetmap.org 2026-10-02)"
+  },
+  "circuit": "altadis_bcn",
+  "tourOrder": 2,
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=altadis-bcn-002",
+  "surfaces": [
+   {
+    "name": "P1 · Vertical escaparate",
+    "desc": "Pantalla vertical en escaparate · 1080×1920 · adaptación 9:16",
+    "orient": "vertical",
+    "w": 1080,
+    "h": 1920,
+    "status": "sched",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate",
+    "screen": "altadis-bcn-002-p1-vertical"
+   },
+   {
+    "name": "P2 · Horizontal mostrador",
+    "desc": "Pantalla horizontal sobre el mostrador · 1920×1080 · adaptación 16:9",
+    "orient": "horizontal",
+    "w": 1920,
+    "h": 1080,
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla",
+    "screen": "altadis-bcn-002-p2-horizontal"
+   }
+  ],
+  "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ]
+  }
+ },
+ {
+  "id": "altadis-bcn-003",
+  "name": "Estanco Gràcia 3",
+  "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
+  "addr": "Carrer del Torrent de l'Olla s/n · 08008 Barcelona",
+  "coords": [
+   2.1607485,
+   41.3991169
+  ],
+  "city": "Barcelona",
+  "province": "Barcelona",
+  "music": "retail",
+  "cameras": false,
+  "osm": {
+   "id": "node/10761696806",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Estanco",
+   "sponsor": "Altadis",
+   "network": "altadis estancos barcelona",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24, verificado api.openstreetmap.org 2026-10-02)"
+  },
+  "circuit": "altadis_bcn",
+  "tourOrder": 3,
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=altadis-bcn-003",
+  "surfaces": [
+   {
+    "name": "P1 · Vertical escaparate",
+    "desc": "Pantalla vertical en escaparate · 1080×1920 · adaptación 9:16",
+    "orient": "vertical",
+    "w": 1080,
+    "h": 1920,
+    "status": "sched",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate",
+    "screen": "altadis-bcn-003-p1-vertical"
+   },
+   {
+    "name": "P2 · Horizontal mostrador",
+    "desc": "Pantalla horizontal sobre el mostrador · 1920×1080 · adaptación 16:9",
+    "orient": "horizontal",
+    "w": 1920,
+    "h": 1080,
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla",
+    "screen": "altadis-bcn-003-p2-horizontal"
+   }
+  ],
+  "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ]
+  }
+ },
+ {
+  "id": "altadis-bcn-004",
+  "name": "Estanco Gràcia 4",
+  "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
+  "addr": "Carrer de Santa Teresa s/n · 08008 Barcelona",
+  "coords": [
+   2.1602111,
+   41.3973394
+  ],
+  "city": "Barcelona",
+  "province": "Barcelona",
+  "music": "retail",
+  "cameras": false,
+  "osm": {
+   "id": "node/10769626613",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Estanco",
+   "sponsor": "Altadis",
+   "network": "altadis estancos barcelona",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24, verificado api.openstreetmap.org 2026-10-02)"
+  },
+  "circuit": "altadis_bcn",
+  "tourOrder": 4,
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=altadis-bcn-004",
+  "surfaces": [
+   {
+    "name": "P1 · Vertical escaparate",
+    "desc": "Pantalla vertical en escaparate · 1080×1920 · adaptación 9:16",
+    "orient": "vertical",
+    "w": 1080,
+    "h": 1920,
+    "status": "sched",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate",
+    "screen": "altadis-bcn-004-p1-vertical"
+   },
+   {
+    "name": "P2 · Horizontal mostrador",
+    "desc": "Pantalla horizontal sobre el mostrador · 1920×1080 · adaptación 16:9",
+    "orient": "horizontal",
+    "w": 1920,
+    "h": 1080,
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla",
+    "screen": "altadis-bcn-004-p2-horizontal"
+   }
+  ],
+  "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ]
+  }
+ },
+ {
+  "id": "altadis-bcn-005",
+  "name": "Estanco Gràcia 5",
+  "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
+  "addr": "Via Augusta s/n · 08012 Barcelona",
+  "coords": [
+   2.1551713,
+   41.3967736
+  ],
+  "city": "Barcelona",
+  "province": "Barcelona",
+  "music": "retail",
+  "cameras": false,
+  "osm": {
+   "id": "node/11554659567",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Estanco",
+   "sponsor": "Altadis",
+   "network": "altadis estancos barcelona",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24, verificado api.openstreetmap.org 2026-10-02)"
+  },
+  "circuit": "altadis_bcn",
+  "tourOrder": 5,
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=altadis-bcn-005",
+  "surfaces": [
+   {
+    "name": "P1 · Vertical escaparate",
+    "desc": "Pantalla vertical en escaparate · 1080×1920 · adaptación 9:16",
+    "orient": "vertical",
+    "w": 1080,
+    "h": 1920,
+    "status": "sched",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate",
+    "screen": "altadis-bcn-005-p1-vertical"
+   },
+   {
+    "name": "P2 · Horizontal mostrador",
+    "desc": "Pantalla horizontal sobre el mostrador · 1920×1080 · adaptación 16:9",
+    "orient": "horizontal",
+    "w": 1920,
+    "h": 1080,
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla",
+    "screen": "altadis-bcn-005-p2-horizontal"
+   }
+  ],
+  "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ]
+  }
+ },
+ {
+  "id": "altadis-bcn-006",
+  "name": "Estanco nº 003",
+  "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
+  "addr": "Plaça de Gal·la Placídia 26 · 08006 Barcelona",
+  "coords": [
+   2.1526809,
+   41.3997778
+  ],
+  "city": "Barcelona",
+  "province": "Barcelona",
+  "music": "retail",
+  "cameras": false,
+  "osm": {
+   "id": "node/4755079723",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Estanco",
+   "sponsor": "Altadis",
+   "network": "altadis estancos barcelona",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24, verificado api.openstreetmap.org 2026-10-02)"
+  },
+  "circuit": "altadis_bcn",
+  "tourOrder": 6,
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=altadis-bcn-006",
+  "surfaces": [
+   {
+    "name": "P1 · Vertical escaparate",
+    "desc": "Pantalla vertical en escaparate · 1080×1920 · adaptación 9:16",
+    "orient": "vertical",
+    "w": 1080,
+    "h": 1920,
+    "status": "sched",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate",
+    "screen": "altadis-bcn-006-p1-vertical"
+   },
+   {
+    "name": "P2 · Horizontal mostrador",
+    "desc": "Pantalla horizontal sobre el mostrador · 1920×1080 · adaptación 16:9",
+    "orient": "horizontal",
+    "w": 1920,
+    "h": 1080,
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla",
+    "screen": "altadis-bcn-006-p2-horizontal"
+   }
+  ],
+  "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ]
+  }
+ },
+ {
+  "id": "altadis-bcn-007",
+  "name": "Estanco Gràcia 7",
+  "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
+  "addr": "Carrer de Terol s/n · 08012 Barcelona",
+  "coords": [
+   2.1587066,
+   41.403443
+  ],
+  "city": "Barcelona",
+  "province": "Barcelona",
+  "music": "retail",
+  "cameras": false,
+  "osm": {
+   "id": "node/11741880447",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Estanco",
+   "sponsor": "Altadis",
+   "network": "altadis estancos barcelona",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24, verificado api.openstreetmap.org 2026-10-02)"
+  },
+  "circuit": "altadis_bcn",
+  "tourOrder": 7,
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=altadis-bcn-007",
+  "surfaces": [
+   {
+    "name": "P1 · Vertical escaparate",
+    "desc": "Pantalla vertical en escaparate · 1080×1920 · adaptación 9:16",
+    "orient": "vertical",
+    "w": 1080,
+    "h": 1920,
+    "status": "sched",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate",
+    "screen": "altadis-bcn-007-p1-vertical"
+   },
+   {
+    "name": "P2 · Horizontal mostrador",
+    "desc": "Pantalla horizontal sobre el mostrador · 1920×1080 · adaptación 16:9",
+    "orient": "horizontal",
+    "w": 1920,
+    "h": 1080,
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla",
+    "screen": "altadis-bcn-007-p2-horizontal"
+   }
+  ],
+  "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ]
+  }
+ },
+ {
+  "id": "altadis-bcn-008",
+  "name": "Estanco Gràcia 8",
+  "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
+  "addr": "Travessera de Gràcia 194 · 08012 Barcelona",
+  "coords": [
+   2.1602077,
+   41.4027259
+  ],
+  "city": "Barcelona",
+  "province": "Barcelona",
+  "music": "retail",
+  "cameras": false,
+  "osm": {
+   "id": "node/11339652076",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Estanco",
+   "sponsor": "Altadis",
+   "network": "altadis estancos barcelona",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24, verificado api.openstreetmap.org 2026-10-02)"
+  },
+  "circuit": "altadis_bcn",
+  "tourOrder": 8,
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=altadis-bcn-008",
+  "surfaces": [
+   {
+    "name": "P1 · Vertical escaparate",
+    "desc": "Pantalla vertical en escaparate · 1080×1920 · adaptación 9:16",
+    "orient": "vertical",
+    "w": 1080,
+    "h": 1920,
+    "status": "sched",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate",
+    "screen": "altadis-bcn-008-p1-vertical"
+   },
+   {
+    "name": "P2 · Horizontal mostrador",
+    "desc": "Pantalla horizontal sobre el mostrador · 1920×1080 · adaptación 16:9",
+    "orient": "horizontal",
+    "w": 1920,
+    "h": 1080,
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla",
+    "screen": "altadis-bcn-008-p2-horizontal"
+   }
+  ],
+  "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ]
+  }
+ },
+ {
+  "id": "altadis-bcn-009",
+  "name": "Estanco Gràcia 9",
+  "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
+  "addr": "Carrer de Torrijos s/n · 08012 Barcelona",
+  "coords": [
+   2.1599081,
+   41.4024557
+  ],
+  "city": "Barcelona",
+  "province": "Barcelona",
+  "music": "retail",
+  "cameras": false,
+  "osm": {
+   "id": "node/10772906416",
+   "brand": ""
+  },
+  "external": {
+   "brand": "Estanco",
+   "sponsor": "Altadis",
+   "network": "altadis estancos barcelona",
+   "source": "openstreetmap shop=tobacco (Geofabrik 2026-09-24, verificado api.openstreetmap.org 2026-10-02)"
+  },
+  "circuit": "altadis_bcn",
+  "tourOrder": 9,
+  "twin": "https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=altadis-bcn-009",
+  "surfaces": [
+   {
+    "name": "P1 · Vertical escaparate",
+    "desc": "Pantalla vertical en escaparate · 1080×1920 · adaptación 9:16",
+    "orient": "vertical",
+    "w": 1080,
+    "h": 1920,
+    "status": "sched",
+    "impr": 250,
+    "cpm": "€5",
+    "surface": "escaparate",
+    "screen": "altadis-bcn-009-p1-vertical"
+   },
+   {
+    "name": "P2 · Horizontal mostrador",
+    "desc": "Pantalla horizontal sobre el mostrador · 1920×1080 · adaptación 16:9",
+    "orient": "horizontal",
+    "w": 1920,
+    "h": 1080,
+    "status": "sched",
+    "impr": 450,
+    "cpm": "€8",
+    "surface": "pantalla",
+    "screen": "altadis-bcn-009-p2-horizontal"
+   }
+  ],
+  "_nota": "impr/cpm = valores de plantilla del circuito jti_xtanco (estimados, no medidos)",
+  "segmentation": {
+   "required": false,
+   "schedule": {
+    "start": "08:00",
+    "end": "20:00"
+   },
+   "typologies": [
+    "exterior",
+    "interior"
+   ],
+   "genders": [
+    "hombre",
+    "mujer"
+   ],
+   "ages": [
+    "adulto",
+    "senior",
+    "vejez"
+   ]
+  }
+ }
+]
