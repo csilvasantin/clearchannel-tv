@@ -708,9 +708,20 @@ function stampAlseaMexicoTwin(loc) {
   return loc;
 }
 
+// Circuito Altadis BCN (FLT-101352): cada estanco tiene su gemelo en XpaceOS
+// (`twin` del KV). Lo promovemos a `xpaceUrl` para que la ficha muestre
+// «Ver Gemelo Digital», salvo que el punto ya traiga su propio xpaceUrl.
+function stampAltadisTwin(loc) {
+  if (!loc || !/^altadis-bcn-\d+$/.test(String(loc.id || '')) || Object.prototype.hasOwnProperty.call(loc, 'xpaceUrl')) return loc;
+  const href = window.XpaceLinks?.validXpaceUrl?.(loc.twin) || ('https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=' + encodeURIComponent(loc.id));
+  loc.xpaceUrl = href;
+  return loc;
+}
+
 function setLocations(nextLocations) {
   LOCATIONS = Array.isArray(nextLocations) ? nextLocations : [];
   LOCATIONS.forEach(stampAlseaMexicoTwin);
+  LOCATIONS.forEach(stampAltadisTwin);
   LOC_BY_ID = new Map(LOCATIONS.map(l => [l.id, l]));
   invalidateLocationsGeoJSON();
 }
@@ -3254,6 +3265,9 @@ function startSurfMirrors(){
   };
   tick(); _surfMirrorTimer=setInterval(tick, 2500);
 }
+function surfMediaUrl(s){
+  try { const url=new URL(String(s && s.media || '')); return url.protocol==='https:' && !url.username && !url.password ? url.href : ''; } catch(_) { return ''; }
+}
 function renderSurfMirror(el, it){
   const thumb=el.closest('.thumb');
   const fresh = it && it.url && (!it.ts || (Date.now()-it.ts) < 200000);
@@ -3261,6 +3275,16 @@ function renderSurfMirror(el, it){
   const card=el.closest('.surface'); const segEl=card && card.querySelector('.surf-seg');
   if(segEl) renderSegPill(segEl, fresh ? (it && it.aud) : null);
   if(!fresh){
+    // Sin emisión en vivo: si la pantalla tiene contenido asignado (adaptación
+    // del Stock en `media`), lo mostramos como vista programada en vez de «sin señal».
+    const media=el.getAttribute('data-media');
+    if(media){
+      if(el.getAttribute('data-empty')!=='media'){ el.setAttribute('data-empty','media'); el.removeAttribute('data-id');
+        const u=media.replace(/"/g,'&quot;');
+        el.innerHTML='<video class="surf-media" src="'+u+'" muted loop playsinline autoplay preload="metadata"></video><div class="surf-media-tag">Stock · programado</div>';
+        if(thumb) thumb.classList.remove('live'); }
+      return;
+    }
     if(el.getAttribute('data-empty')!=='1'){ el.setAttribute('data-empty','1'); el.removeAttribute('data-id');
       el.innerHTML='<div class="surf-off">○ sin señal</div>'; if(thumb) thumb.classList.remove('live'); }
     return;
@@ -3426,7 +3450,7 @@ function renderPanel(loc) {
     const hasTwin = screensForSurface(loc, s).length;   // pantalla fija o gemelo vivo del Xpacio
     return `
     <div class="surface" data-surface="${s.surface}">
-      <div class="thumb ${s.status==='live'?'live':''} ${s.screen?'feed':''} ${s.orientation==='landscape'?'landscape':''}">${s.screen ? `<div class="surf-mirror" data-screen="${escHtml(s.screen)}"><div class="surf-off">○ conectando…</div></div>` : thumbFor(s.surface, s.status)}</div>
+      <div class="thumb ${s.status==='live'?'live':''} ${s.screen?'feed':''} ${(s.orientation==='landscape'||s.orient==='horizontal')?'landscape':''}">${s.screen ? `<div class="surf-mirror" data-screen="${escHtml(s.screen)}"${surfMediaUrl(s) ? ` data-media="${escHtml(surfMediaUrl(s))}"` : ''}><div class="surf-off">○ conectando…</div></div>` : thumbFor(s.surface, s.status)}</div>
       <div class="info">
         <div class="top">
           <div class="name">${escHtml(s.name)}</div>
