@@ -159,3 +159,23 @@ test('every verb is documented in docs and the public help page', () => {
   }
   for (const client of C.CLIENTS.filter(c => c.featured)) assert.ok(docs.includes('`' + client.id + '`') && help.includes(client.id), client.id);
 });
+
+test('el avatar no se come el alias /cli de /demo', () => {
+  assert.equal(C.isAvatarCommand('/cli ayudante'), true);
+  assert.equal(C.isAvatarCommand('/cli helper off'), true);
+  assert.equal(C.isAvatarCommand('/avatarDigital'), true);
+  assert.equal(C.isAvatarCommand('/digitalAvatar mostrar'), true);
+  assert.equal(C.isAvatarCommand('/cli starbucks'), false);
+  assert.equal(C.isAvatarCommand('/cli'), false);
+  const demo = C.parse('/cli starbucks');
+  assert.equal(demo.ok, true);
+  assert.equal(demo.verb.id, 'demo');
+  assert.equal(demo.args.cliente, 'starbucks');
+  const on = C.execute('/avatarDigital on', {}, 'en');
+  assert.equal(on.ok, true);
+  assert.equal(on.parsed.verb.local, true);
+  assert.equal(on.parsed.verb.id, 'avatardigital');
+  const help = C.helpLines('es').join('\n');
+  assert.match(help, /\/avatarDigital/);
+  assert.match(help, /sigue siendo \/demo/);
+});

@@ -279,7 +279,40 @@
     }
   }
 
+  // /cli sigue siendo alias de /demo. Solo /cli ayudante|helper (y /avatarDigital)
+  // es el interruptor del avatar (FLT-101350).
+  function isAvatarCommand(text) {
+    const raw = String(text == null ? '' : text).trim();
+    const m = raw.match(/^\/?([^\s@]+)(?:@\S+)?(?:\s+([\s\S]*))?$/);
+    if (!m) return false;
+    const verb = m[1].toLowerCase();
+    if (verb === 'avatardigital' || verb === 'digitalavatar') return true;
+    if (verb !== 'cli') return false;
+    return /^(ayudante|helper)(?:\s|$)/i.test(m[2] || '');
+  }
+  function loadAvatar() {
+    if (root.AvatarDigital) return Promise.resolve(root.AvatarDigital);
+    if (typeof document === 'undefined') return Promise.resolve(null);
+    return new Promise(resolve => {
+      const s = document.createElement('script');
+      s.src = '/avatar-digital.js';
+      s.async = true;
+      s.onload = () => resolve(root.AvatarDigital || null);
+      s.onerror = () => resolve(null);
+      (document.head || document.documentElement).append(s);
+    });
+  }
   function execute(input, ctx, lang = 'es') {
+    if (isAvatarCommand(input)) {
+      const en = lang === 'en';
+      const later = loadAvatar()
+        .then(A => (A ? A.handle(input) : (en ? 'Digital avatar unavailable' : 'Avatar digital no disponible')))
+        .then(text => ({ok: true, lines: [String(text || '')]}));
+      return {
+        ok: true, lines: ['…'], later, command: String(input || ''),
+        parsed: {verb: {id: 'avatardigital', local: true}, raw: String(input || '')},
+      };
+    }
     const parsed = parse(input);
     if (!parsed.ok) return {ok: false, lines: errorLines(parsed, lang), parsed};
     // Fuera del mapa (cualquier página del shell salvo la portada) los verbos de
@@ -393,6 +426,8 @@
       L(lang, 'Forma: /demo starbucks · /demo cliente=alcampo · mayúsculas y acentos dan igual.', 'Form: /demo starbucks · /demo client=alcampo · case and accents do not matter.'),
       L(lang, 'RUTINAS', 'ROUTINES'),
       ...routines.map(r => `${r.label} → ${r.command}${r.builtin ? '' : L(lang, ' (tuya)', ' (yours)')}`),
+      L(lang, 'Avatar digital: /avatarDigital [on|off] (alias /digitalAvatar, /cli ayudante, /cli helper). Sin argumento alterna. /cli seguido de un cliente sigue siendo /demo.',
+        'Digital avatar: /avatarDigital [on|off] (alias /digitalAvatar, /cli ayudante, /cli helper). No argument toggles. /cli followed by a client is still /demo.'),
       L(lang, 'Atajos: Tab completa · ↑/↓ historial · Esc cierra.', 'Shortcuts: Tab completes · ↑/↓ history · Esc closes.'),
     ];
   }
@@ -428,10 +463,15 @@
   }
 
   const api = Object.freeze({
-    CLIENTS, ATTRIBUTES, VERBS, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, parse, execute, errorLines, usage,
+    CLIENTS, ATTRIBUTES, VERBS, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, parse, execute, isAvatarCommand, errorLines, usage,
     complete, defaultRoutines, sanitizeRoutines, loadRoutines, saveRoutines, addRoutine, removeRoutine, helpLines,
     pickDemoXpacio, demoScreens, liveSurfaces, demoSurfaces,
   });
   root.AdmiraExpertCommands = api;
+  if (typeof document !== 'undefined') {
+    try {
+      if (root.localStorage && root.localStorage.getItem('da-avatar:' + (root.location && root.location.host)) === '1') loadAvatar();
+    } catch (_) {}
+  }
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window === 'undefined' ? globalThis : window);
