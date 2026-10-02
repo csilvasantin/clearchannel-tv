@@ -709,12 +709,13 @@ function stampAlseaMexicoTwin(loc) {
 }
 
 // Circuito Altadis BCN (FLT-101352): cada estanco tiene su gemelo en XpaceOS
-// (`twin` del KV). Lo promovemos a `xpaceUrl` para que la ficha muestre
+// (escena cafetería). Lo fijamos en `xpaceUrl` para que la ficha muestre
 // «Ver Gemelo Digital», salvo que el punto ya traiga su propio xpaceUrl.
 function stampAltadisTwin(loc) {
   if (!loc || !/^altadis-bcn-\d+$/.test(String(loc.id || '')) || Object.prototype.hasOwnProperty.call(loc, 'xpaceUrl')) return loc;
-  const href = window.XpaceLinks?.validXpaceUrl?.(loc.twin) || ('https://www.xpaceos.com/admira-xp/?autostart=xtanco&loc=' + encodeURIComponent(loc.id));
-  loc.xpaceUrl = href;
+  // Escena cafetería rotulada como el estanco, con nivel visual explícito: sin él,
+  // un nivel «Matrix» guardado en el navegador abría el Starbucks de Pg. de Gràcia.
+  loc.xpaceUrl = 'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&project=estancos&visual=good&loc=' + encodeURIComponent(loc.id);
   return loc;
 }
 
