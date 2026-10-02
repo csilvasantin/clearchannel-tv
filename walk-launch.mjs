@@ -14,6 +14,12 @@ document.addEventListener('click', event => {
     url.searchParams.set('campaign', draft.campaign || '');
     url.searchParams.set('campaignId', draft.id);
   }
+  else if (/^https:\/\//.test(String(context.surface?.media || ''))) {
+    // Pantalla con adaptación asignada (p. ej. circuito Altadis): la previsualizamos.
+    url.searchParams.set('assetUrl', context.surface.media);
+    url.searchParams.set('assetType', 'video');
+    url.searchParams.set('campaign', context.surface.campaign || ('Adaptación ' + (context.surface.orient === 'horizontal' ? '16:9' : context.surface.orient === 'vertical' ? '9:16' : '')).trim());
+  }
   // The map can include locally enriched/player-registered surfaces absent from
   // the base KV catalogue. Carry the exact selected snapshot, not a guessed index.
   try { sessionStorage.setItem(STORAGE_PREFIX + url.searchParams.get('campaignId') + ':selection', JSON.stringify(selectionSnapshot(context.location))); } catch {}
