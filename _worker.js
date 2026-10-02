@@ -26,6 +26,7 @@ function replaceBrand(value) {
 
 function admiraRewriter(pathname) {
   var rewriter = new HTMLRewriter()
+    .on('head', {element(el) {el.append('<script defer src="https://www.admiranext.com/assets/live-presence.js?v=1"></script>', {html:true});}})
     .on('html', {
       element(element) {
         element.setAttribute('data-brand', 'admira');
