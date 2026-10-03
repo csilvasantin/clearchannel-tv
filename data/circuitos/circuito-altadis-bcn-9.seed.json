@@ -1,9 +1,9 @@
 [
  {
   "id": "altadis-bcn-001",
-  "name": "Estanco Gràcia 1",
+  "name": "Estanc Gran de Gràcia 61",
   "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
-  "addr": "Carrer Gran de Gràcia s/n · 08012 Barcelona",
+  "addr": "Carrer Gran de Gràcia 61 · 08012 Barcelona",
   "coords": [
    2.155556,
    41.3996304
@@ -75,7 +75,8 @@
     "senior",
     "vejez"
    ]
-  }
+  },
+  "nameSource": "descriptivo: estanco documentado en Gran de Gràcia 61 (antigua expendeduría nº 302, hoy trasladada según el CMT); sin número vigente"
  },
  {
   "id": "altadis-bcn-002",
@@ -157,9 +158,9 @@
  },
  {
   "id": "altadis-bcn-003",
-  "name": "Estanco Gràcia 3",
+  "name": "Estanc nº 275 · Torrent de l'Olla",
   "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
-  "addr": "Carrer del Torrent de l'Olla s/n · 08008 Barcelona",
+  "addr": "Carrer del Torrent de l'Olla 24 · 08012 Barcelona",
   "coords": [
    2.1607485,
    41.3991169
@@ -231,13 +232,14 @@
     "senior",
     "vejez"
    ]
-  }
+  },
+  "nameSource": "CMT expendedurías activas 03-10-2026: 080275 Torrent de la Olla 24"
  },
  {
   "id": "altadis-bcn-004",
-  "name": "Estanco Gràcia 4",
+  "name": "L'Estanc de Còrsega · nº 124",
   "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
-  "addr": "Carrer de Santa Teresa s/n · 08008 Barcelona",
+  "addr": "Carrer de Còrsega 329 (esq. Santa Teresa) · Barcelona",
   "coords": [
    2.1602111,
    41.3973394
@@ -309,13 +311,14 @@
     "senior",
     "vejez"
    ]
-  }
+  },
+  "nameSource": "CMT expendedurías activas 03-10-2026: 080124 Calle Còrsega 329"
  },
  {
   "id": "altadis-bcn-005",
-  "name": "Estanco Gràcia 5",
+  "name": "Estanc nº 419 · Via Augusta",
   "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
-  "addr": "Via Augusta s/n · 08012 Barcelona",
+  "addr": "Via Augusta 12 · 08006 Barcelona",
   "coords": [
    2.1551713,
    41.3967736
@@ -387,7 +390,8 @@
     "senior",
     "vejez"
    ]
-  }
+  },
+  "nameSource": "CMT expendedurías activas 03-10-2026: 080419 Via Augusta 12"
  },
  {
   "id": "altadis-bcn-006",
@@ -469,9 +473,9 @@
  },
  {
   "id": "altadis-bcn-007",
-  "name": "Estanco Gràcia 7",
+  "name": "Tabacs M. Àngels · nº 359",
   "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
-  "addr": "Carrer de Terol s/n · 08012 Barcelona",
+  "addr": "Carrer de Terol 41-43 · 08012 Barcelona",
   "coords": [
    2.1587066,
    41.403443
@@ -543,11 +547,12 @@
     "senior",
     "vejez"
    ]
-  }
+  },
+  "nameSource": "CMT expendedurías activas 03-10-2026: 080359 Calle Terol 41"
  },
  {
   "id": "altadis-bcn-008",
-  "name": "Estanco Gràcia 8",
+  "name": "Estanc de Gràcia · nº 393",
   "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
   "addr": "Travessera de Gràcia 194 · 08012 Barcelona",
   "coords": [
@@ -621,13 +626,14 @@
     "senior",
     "vejez"
    ]
-  }
+  },
+  "nameSource": "CMT expendedurías activas 03-10-2026: 080393 Travessera de Gràcia 194"
  },
  {
   "id": "altadis-bcn-009",
-  "name": "Estanco Gràcia 9",
+  "name": "Estanc Torrijos 8",
   "kind": "Estanco · Circuito DOOH Altadis · Gemelo digital",
-  "addr": "Carrer de Torrijos s/n · 08012 Barcelona",
+  "addr": "Carrer de Torrijos 8 · 08012 Barcelona",
   "coords": [
    2.1599081,
    41.4024557
@@ -699,6 +705,7 @@
     "senior",
     "vejez"
    ]
-  }
+  },
+  "nameSource": "descriptivo: estanco en directorios en Torrijos 8; sin número en el listado CMT vigente"
  }
 ]
