@@ -35,3 +35,11 @@ test('route fails closed before and after Google validation and never caches ide
   assert.equal(ok.headers.get('Cache-Control'), 'no-store');
   assert.equal((await ok.json()).demos.length, 3);
 });
+test('the demo session does not depend on the host: it works the same on admira.app and admira.biz', async () => {
+  for (const host of ['www.admira.app', 'www.admira.biz', 'admira.biz', 'www.clearchannel.tv']) {
+    const req = new Request(`https://${host}/api/demo-session`, { method: 'POST', headers: { Authorization: 'Bearer test-token', Origin: `https://${host}` } });
+    const res = await handleDemoSession(req, async () => Response.json(claims));
+    assert.equal(res.status, 200, host);
+    assert.equal((await res.json()).email, 'csilva@admira.com', host);
+  }
+});

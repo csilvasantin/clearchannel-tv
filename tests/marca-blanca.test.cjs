@@ -30,11 +30,11 @@ const pages = (() => {
 })();
 
 // Ejecuta marca-blanca.js en un navegador mínimo y anota todo lo que intenta cargar.
-function boot({search = '', session = memory(), extra = {}, loadLinks = false, elements = {}} = {}) {
+function boot({search = '', session = memory(), extra = {}, loadLinks = false, elements = {}, origin = 'https://www.admira.app'} = {}) {
   const created = [], fetched = [];
   const node = tag => ({tagName: tag.toUpperCase(), attrs: {}, style: {}, setAttribute(k, v) { this.attrs[k] = v; }, remove() {}});
   const document = {
-    currentScript: {src: 'https://www.admira.app/marca-blanca.js?v=' + STAMP},
+    currentScript: {src: origin + '/marca-blanca.js?v=' + STAMP},
     documentElement: {lang: 'es', style: {length: 0, setProperty() {}, removeProperty() {}}, getAttribute: () => null, removeAttribute() {}},
     head: {append: n => { created.push(n); if (loadLinks && n.onload) setImmediate(() => n.onload()); }},
     title: 'Mapa | admira.app',
@@ -42,7 +42,7 @@ function boot({search = '', session = memory(), extra = {}, loadLinks = false, e
     querySelector: () => null, querySelectorAll: () => [], getElementById: id => elements[id] || null,
     dispatchEvent() {}, addEventListener() {},
   };
-  const window = {document, sessionStorage: session, location: {search, href: 'https://www.admira.app/' + search}, setTimeout: () => 0, clearTimeout() {},
+  const window = {document, sessionStorage: session, location: {search, href: origin + '/' + search}, setTimeout: () => 0, clearTimeout() {},
     fetch: url => { fetched.push(url); return new Promise(() => {}); }, history: {replaceState() {}}, console};
   window.window = window;
   const context = vm.createContext(Object.assign(window, {URL, URLSearchParams, CustomEvent: class {}, MutationObserver: class { observe() {} disconnect() {} }, Promise}, extra));
@@ -77,6 +77,19 @@ test('with ?marca=<id> or a remembered brand the loader, the common sheet and th
     assert.ok(links.includes(M.BASE + 'marcablanca.css'), `${id}: common sheet`);
     assert.ok(links.includes('https://www.admira.app/marca-blanca.css?v=' + STAMP), `${id}: local sheet with the same stamp`);
   }
+});
+
+// Intercambio de dominios (oct-2026): en admira.biz la marca blanca funciona igual y la
+// hoja local sale del mismo origen que el script, nunca de admira.app (que será Yokup).
+test('on admira.biz the white label behaves the same and the local sheet stays on admira.biz', () => {
+  const quiet = boot({origin: 'https://www.admira.biz'});
+  assert.deepEqual(quiet.created, [], 'no brand: nothing injected');
+  assert.deepEqual(quiet.fetched, [], 'no brand: no request');
+  const r = boot({search: '?marca=lumbre', origin: 'https://www.admira.biz'});
+  const links = r.created.filter(n => n.tagName === 'LINK').map(n => n.href);
+  assert.ok(links.includes(M.BASE + 'marcablanca.css'), 'common sheet');
+  assert.ok(links.includes('https://www.admira.biz/marca-blanca.css?v=' + STAMP), 'local sheet from admira.biz');
+  assert.ok(!links.some(href => href.includes('admira.app')), 'nothing from admira.app');
 });
 
 // Mapa de MapLibre mínimo: capas, pintura y eventos «styledata».

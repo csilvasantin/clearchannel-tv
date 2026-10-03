@@ -56,7 +56,7 @@ jq -n \
   --arg signature "$SIGNATURE" \
   --arg gitShort "$GIT_SHORT" \
   --arg deployedAt "$DEPLOYED_AT" \
-  '{version:$version,agent:$agent,deployer:$agent,machine:$machine,signature:$signature,gitShort:$gitShort,deployedAt:$deployedAt,dirty:false,domains:["www.clearchannel.tv","www.admira.app"]}' \
+  '{version:$version,agent:$agent,deployer:$agent,machine:$machine,signature:$signature,gitShort:$gitShort,deployedAt:$deployedAt,dirty:false,domains:["www.clearchannel.tv","www.admira.app","www.admira.biz"]}' \
   > "$TMP/version.json"
 
 npx --yes wrangler@latest pages deploy "$TMP" --project-name=clearchannel-tv --branch=main --commit-dirty=false

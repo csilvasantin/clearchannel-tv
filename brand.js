@@ -3,7 +3,11 @@
 
   var hostname = String(window.location.hostname || '').toLowerCase();
   var forced = new URLSearchParams(window.location.search).get('brand');
-  var isAdmira = /(^|\.)admira\.app$/.test(hostname) || (!/(^|\.)clearchannel\.tv$/.test(hostname) && forced === 'admira');
+  // admira.app (hoy) y admira.biz (tras el intercambio de dominios con Yokup) son la
+  // misma cara Admira: nombre, dominio y origen salen del apex del Host.
+  var admiraHost = /(^|\.)admira\.(app|biz)$/.exec(hostname);
+  var isAdmira = !!admiraHost || (!/(^|\.)clearchannel\.tv$/.test(hostname) && forced === 'admira');
+  var admiraApex = 'admira.' + (admiraHost ? admiraHost[2] : 'app');
 
   var brands = {
     clearchannel: {
@@ -17,10 +21,10 @@
     admira: {
       id: 'admira',
       defaultLanguage: 'es',
-      name: 'admira.app',
-      wordmark: 'ADMIRA·APP',
-      domain: 'www.admira.app',
-      origin: 'https://www.admira.app'
+      name: admiraApex,
+      wordmark: admiraApex.replace('.', '·').toUpperCase(),
+      domain: 'www.' + admiraApex,
+      origin: 'https://www.' + admiraApex
     }
   };
   var brand = isAdmira ? brands.admira : brands.clearchannel;
@@ -32,11 +36,11 @@
   function replaceBrand(value) {
     if (!isAdmira || !value) return value;
     return String(value)
-      .replace(/www\.clearchannel\.tv/gi, 'www.admira.app')
-      .replace(/clearchannel\.tv/gi, 'admira.app')
-      .replace(/CLEAR(?:\s*<[^>]+>\s*)?·(?:\s*<[^>]+>\s*)?CHANNEL/g, 'ADMIRA·APP')
-      .replace(/CLEAR·CHANNEL/g, 'ADMIRA·APP')
-      .replace(/Clear\s+Channel/gi, 'admira.app');
+      .replace(/www\.clearchannel\.tv/gi, brand.domain)
+      .replace(/clearchannel\.tv/gi, brand.name)
+      .replace(/CLEAR(?:\s*<[^>]+>\s*)?·(?:\s*<[^>]+>\s*)?CHANNEL/g, brand.wordmark)
+      .replace(/CLEAR·CHANNEL/g, brand.wordmark)
+      .replace(/Clear\s+Channel/gi, brand.name);
   }
 
   function rewriteElement(element) {
