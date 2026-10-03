@@ -33,7 +33,7 @@
 
   /* ---------- CRT / scanlines / vignette ---------- */
   /* Bajo la barra del shell cuadrático (FLT-101311): la pantalla de diapositivas empieza en --app-header-height. */
-  .crt{position:fixed;inset:var(--app-header-height,64px) 0 var(--shell-bottom,0px);pointer-events:none;z-index:60}
+  .crt{position:fixed;inset:var(--app-header-height,64px) 0 0;pointer-events:none;z-index:60}
   .crt::before{
     content:"";position:absolute;inset:0;
     background:repeating-linear-gradient(
@@ -48,12 +48,12 @@
     content:"";position:absolute;inset:0;
     background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.65) 100%);
   }
-  .flicker{position:fixed;inset:var(--app-header-height,64px) 0 var(--shell-bottom,0px);pointer-events:none;z-index:61;
+  .flicker{position:fixed;inset:var(--app-header-height,64px) 0 0;pointer-events:none;z-index:61;
     background:var(--phos);opacity:0;mix-blend-mode:overlay;animation:flick 7s infinite steps(1)}
   @keyframes flick{0%,96%,100%{opacity:0}97%{opacity:.02}98%{opacity:.05}99%{opacity:.015}}
 
   /* ---------- stage ---------- */
-  #stage{position:fixed;inset:var(--app-header-height,64px) 0 var(--shell-bottom,0px);display:flex;align-items:center;justify-content:center;padding:2.2vw}
+  #stage{position:fixed;inset:var(--app-header-height,64px) 0 0;display:flex;align-items:center;justify-content:center;padding:2.2vw}
   .slide{
     position:absolute;inset:2.2vw;
     display:none;
@@ -190,7 +190,7 @@
   .close h1{font-size:min(7vw,82px)}
 
   /* ---------- nav ---------- */
-  #nav{position:fixed;z-index:70;bottom:calc(var(--shell-bottom,0px) + 14px);left:50%;transform:translateX(-50%);
+  #nav{position:fixed;z-index:70;bottom:calc(var(--expert-panel-height,0px) + 14px);left:50%;transform:translateX(-50%);
     display:flex;align-items:center;gap:14px;font-size:12px;letter-spacing:.16em;color:var(--ink-dim)}
   #nav button{font-family:var(--mono);background:rgba(10,25,22,.7);color:var(--phos);
     border:1px solid var(--hud);width:34px;height:30px;cursor:pointer;font-size:16px;line-height:1;
@@ -210,8 +210,8 @@
     p,li,.lead{font-size:15px}
   }
 </style>
-<link rel="stylesheet" href="/galaxy-shell.css?v=20261001-marca-2">
-<script defer src="/galaxy-shell.js?v=20261001-marca-2" data-section="/ presentación" data-section-en="/ slides"></script>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261003-superpuestos-1">
+<script defer src="/galaxy-shell.js?v=20261003-superpuestos-1" data-section="/ presentación" data-section-en="/ slides"></script>
 
 <div class="progress" id="prog"></div>
 <div class="topbar">CCTV://AGENTIC-GRID <b>v1.0</b></div>

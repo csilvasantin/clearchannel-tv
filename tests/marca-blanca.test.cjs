@@ -11,7 +11,7 @@ const C = require('../expert-commands.js');
 
 const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
-const STAMP = '20261001-marca-2';
+const STAMP = '20261003-superpuestos-1';
 const memory = (init = {}) => {
   const mem = new Map(Object.entries(init));
   return {mem, getItem: k => (mem.has(k) ? mem.get(k) : null), setItem: (k, v) => mem.set(k, String(v)), removeItem: k => mem.delete(k)};

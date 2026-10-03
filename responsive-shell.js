@@ -1,4 +1,6 @@
 // Galaxy shell: independent left, right and bottom panels, closed on entry.
+// They overlay the content (Carlos, 3-oct-2026): opening one never moves or resizes the page,
+// and the open state is not remembered between loads; only the resized size is.
 (() => {
   const header=document.querySelector('body > header');
   const panels={options:document.getElementById('header-navigation'),advanced:document.getElementById('advanced-tools'),expert:document.getElementById('expert-panel')};
@@ -17,7 +19,6 @@
   }
   function setOpen(mode,open,{focus=false}={}){
     if(mode==='advanced')panels[mode].open=open;else panels[mode].hidden=!open;
-    try{localStorage.setItem('admira_panel_'+mode,open?'1':'0');}catch(_){}
     sync();if(open&&focus){if(mode==='expert')document.getElementById('expert-command').focus();else (panels[mode].querySelector('a,button')||panels[mode]).focus();}
   }
   for(const [mode,button] of Object.entries(toggles))button.addEventListener('click',()=>setOpen(mode,!isOpen(mode),{focus:true}));
@@ -96,6 +97,7 @@
     measure();
   }
   new MutationObserver(translate).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
-  for(const mode of Object.keys(panels)){try{setOpen(mode,localStorage.getItem('admira_panel_'+mode)==='1');}catch(_){}}
+  // Every load starts with the three panels closed; drop the open state older versions stored.
+  for(const mode of Object.keys(panels)){if(isOpen(mode))setOpen(mode,false);try{localStorage.removeItem('admira_panel_'+mode);}catch(_){}}
   new ResizeObserver(measure).observe(header);translate();sync();
 })();

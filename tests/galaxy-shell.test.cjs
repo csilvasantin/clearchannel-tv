@@ -15,9 +15,9 @@ const backoffice = read('backoffice.html');
 // de página que cambiaron con el shell (FLT-101311 c) y sello común de los ficheros de
 // comportamiento de la portada (responsive-shell, expert-*, intro.js), que con la marca
 // blanca (FLT-101331) suben a la vez.
-const STAMP = '20261001-marca-2';
-const PAGES_STAMP = '20261001-shell-2';
-const PORTADA_STAMP = '20261001-marca-2';
+const STAMP = '20261003-superpuestos-1';
+const PAGES_STAMP = '20261003-superpuestos-1';
+const PORTADA_STAMP = '20261003-superpuestos-1';
 const squash = html => html.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
 const memory = () => {
   const mem = new Map();
@@ -112,7 +112,7 @@ test('backoffice.html loads the shell and hands its own actions to the panels', 
   // Logout keeps its own handler; the inner layout follows the measured shell header.
   assert.match(backoffice, /document\.getElementById\('btn-logout'\)\.addEventListener\('click', \(\) => \{\s*if \(!confirm\(t\('logout_confirm'\)\)\) return;\s*clearAuth\(\);\s*location\.reload\(\);/);
   assert.ok(!backoffice.includes('100vh - 65px'));
-  assert.match(backoffice, /\.shell\{[^}]*calc\(100dvh - var\(--app-header-height,64px\) - var\(--shell-bottom,0px\)\)/);
+  assert.match(backoffice, /\.shell\{[^}]*height:calc\(100dvh - var\(--app-header-height,64px\)\);/, 'only the header is subtracted: the panels overlay');
   assert.match(backoffice, /\.gate\{position:fixed;inset:0;z-index:9500;/, 'login gate covers the shell panels');
   // Everything the backoffice did is still there.
   for (const id of ['gate', 'g-signin', 'demo-access', 'demo-cards', 'catalog-shell', 'bo-list-ul', 'bo-map', 'bo-editor', 'btn-publish']) assert.ok(backoffice.includes(`id="${id}"`), id);
@@ -313,14 +313,14 @@ test('keyboard shortcuts of slides and 3D scene ignore the expert CLI', () => {
 });
 
 test('layouts measure the shell instead of the old headers', () => {
-  assert.match(read('store-3d.html'), /\.app\{height:calc\(100vh - var\(--app-header-height,64px\) - var\(--shell-bottom,0px\)\);height:calc\(100dvh - var\(--app-header-height,64px\) - var\(--shell-bottom,0px\)\)/);
+  assert.match(read('store-3d.html'), /\.app\{height:calc\(100vh - var\(--app-header-height,64px\)\);height:calc\(100dvh - var\(--app-header-height,64px\)\)/);
   assert.match(read('store-3d.html'), /\.app > header\{/, 'the scene header is scoped, it no longer styles the shell bar');
   const deck = read('presentacion/index.html');
   assert.match(deck, /^<!doctype html>/);
-  for (const sel of ['#stage', '.crt', '.flicker']) assert.match(deck, new RegExp(`${sel.replace(/[.#]/g, '\\$&')}\\{position:fixed;inset:var\\(--app-header-height,64px\\) 0 var\\(--shell-bottom,0px\\)`), sel);
-  assert.match(deck, /#nav\{position:fixed;z-index:70;bottom:calc\(var\(--shell-bottom,0px\) \+ 14px\)/);
+  for (const sel of ['#stage', '.crt', '.flicker']) assert.match(deck, new RegExp(`${sel.replace(/[.#]/g, '\\$&')}\\{position:fixed;inset:var\\(--app-header-height,64px\\) 0 0;`), sel);
+  assert.match(deck, /#nav\{position:fixed;z-index:70;bottom:calc\(var\(--expert-panel-height,0px\) \+ 14px\)/, 'the floating slide nav steps aside');
   const css = read('target-assets/styles.css');
-  assert.match(css, /top: calc\(var\(--app-header-height, 64px\) \+ 18px\);\n  max-height: calc\(100vh - var\(--app-header-height, 64px\) - var\(--shell-bottom, 0px\) - 36px\);/);
+  assert.match(css, /top: calc\(var\(--app-header-height, 64px\) \+ 18px\);\n  max-height: calc\(100vh - var\(--app-header-height, 64px\) - 36px\);/);
   assert.match(css, /\.toast \{[^}]*z-index: 9450;/, 'page toasts above the shell panels');
   assert.ok(!/\.topbar \{|\.target-lang-btn \{|\.tutorial-nav \{/.test(css), 'no styles left for the removed bars');
   assert.match(read('presentation/index.html'), /\.hero\{min-height:calc\(100svh - var\(--app-header-height,64px\)\)/);

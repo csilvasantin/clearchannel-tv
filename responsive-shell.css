@@ -34,7 +34,7 @@ aside.panel{top:var(--app-header-height);max-height:calc(100dvh - var(--app-head
 aside.panel .surface .info{min-width:0;overflow-wrap:anywhere}
 aside.panel .actions a{min-width:0;overflow-wrap:anywhere}
 aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}
-.demo-card{top:calc(var(--app-header-height) + 12px)}
+body:not(.galaxy-shell-page) .demo-card{top:calc(var(--app-header-height) + 12px)}
 @media(max-width:720px){
  body > header{grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:8px 12px}
  .mode-switches{grid-column:2;grid-row:1;gap:6px}
@@ -48,10 +48,10 @@ aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}
  .addr-card{top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - 20px);overflow-y:auto}
  body:is(.mode-options-open,.mode-advanced-open,.mode-expert-open) :is(#neoDock:not(.open),#ticker,.map-ctrls){display:none}
  body:has(#panel.open,#circuit-panel:not([hidden]),#target-panel:not([hidden])) :is(#neoDock:not(.open),#ticker,.map-ctrls){display:none}
- .demo-card{bottom:auto;top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - var(--expert-panel-height,56px) - 8px)}
+ body:not(.galaxy-shell-page) .demo-card{bottom:auto;top:calc(var(--app-header-height) + 8px);max-height:calc(100dvh - var(--app-header-height) - var(--expert-panel-height,56px) - 8px)}
 }
 
-/* Screen-edge rails share Pixeria's independent, persistent panel toggles. */
+/* Screen-edge rails share Pixeria's independent panel toggles; they overlay the content and start closed. */
 .options-panel,.advanced-panel{top:var(--app-header-height);bottom:0;max-height:none;border-radius:0;width:200px}
 .options-panel{left:0}.advanced-panel{right:0}
 .options-panel,.advanced-panel{padding:10px}
@@ -127,7 +127,7 @@ body.mode-expert-open :is(.options-panel,.advanced-panel){bottom:var(--expert-pa
 .expert-routine-label{min-width:0;overflow-wrap:anywhere}
 .expert-routine-del{padding:0 8px;background:transparent;color:var(--brand);border:1px solid var(--line);border-radius:8px;font:16px/1 monospace;cursor:pointer}
 .expert-panel :is(.expert-module-resizer,.expert-chip,.expert-routine-btn,.expert-routine-del,.expert-verb-btn,.expert-save-routine):focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-body.mode-expert-open .demo-card{max-height:calc(100dvh - var(--app-header-height) - var(--expert-panel-height,56px) - 24px)}
+body.mode-expert-open:not(.galaxy-shell-page) .demo-card{max-height:calc(100dvh - var(--app-header-height) - var(--expert-panel-height,56px) - 24px)}
 @media(max-width:600px){
  .expert-panel{overflow-y:auto}
  .expert-blocks{flex:none;flex-direction:column;overflow:visible}

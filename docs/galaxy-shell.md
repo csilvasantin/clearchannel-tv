@@ -11,15 +11,19 @@ La interfaz que define la portada (`index.html`) en cuatro bandas:
 - **▤ Modo avanzado** (panel derecho): las acciones de trabajo de la página.
 - **⌘ Modo experto** (panel inferior): CLI · Verbos · Rutinas.
 
-El comportamiento es el de la portada porque es el mismo código: `responsive-shell.js/.css` (abrir/cerrar independiente, `admira_panel_*`, redimensionado, Esc, i18n `data-shell-*`), `expert-commands.js` (verbos) y `expert-panel.js` (los tres bloques). `galaxy-shell.js` solo inyecta el marcado y carga esos tres scripts en orden; `galaxy-shell.css` importa `responsive-shell.css` y añade lo que en la portada vive en su `<style>` (cabecera fija, marca, idioma). Los paneles empiezan cerrados en una visita nueva y recuerdan su estado, compartido entre páginas.
+El comportamiento es el de la portada porque es el mismo código: `responsive-shell.js/.css` (abrir/cerrar independiente, redimensionado recordado en `admira_panel_size_*`, Esc, i18n `data-shell-*`), `expert-commands.js` (verbos) y `expert-panel.js` (los tres bloques). `galaxy-shell.js` solo inyecta el marcado y carga esos tres scripts en orden; `galaxy-shell.css` importa `responsive-shell.css` y añade lo que en la portada vive en su `<style>` (cabecera fija, marca, idioma). Los paneles entran cerrados en cada carga de cada página: no se recuerda si estaban abiertos (las versiones anteriores guardaban `admira_panel_<modo>`; ahora se borra al cargar). Sí se recuerda el tamaño redimensionado.
+
+### Paneles superpuestos (principio de Carlos, 3-oct-2026)
+
+«El cuerpo central del sitio (contenido) no se desplaza al abrir las barras opcionales, ni verticales ni la horizontal inferior.» ☰ Opciones, ▤ Avanzado y ⌘ Experto se superponen al contenido (`position: fixed`, `z-index` 9000): al abrirlos, el contenido no cambia de posición, ancho ni alto. Ninguna página resta el alto del panel experto a su altura, a sus `inset` ni a sus `max-height`; solo resta la cabecera, `var(--app-header-height)`. Los elementos flotantes (avisos, navegación de diapositivas, controles del mapa) sí pueden apartarse con `bottom: calc(var(--expert-panel-height, 0px) + …)`, que vale 0 con ⌘ cerrado. Ya no existe `--shell-bottom`. Lo vigila `tests/paneles-superpuestos.test.cjs`. Así lo hace también Yokup (`yk-frame`).
 
 ## Cómo la adopta una página
 
 En el `<head>`, después de `brand.js`/`brand.css` y de los estilos propios:
 
 ```html
-<link rel="stylesheet" href="/galaxy-shell.css?v=20261001-marca-2">
-<script defer src="/galaxy-shell.js?v=20261001-marca-2" data-section="/ nombre-de-la-página"></script>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261003-superpuestos-1">
+<script defer src="/galaxy-shell.js?v=20261003-superpuestos-1" data-section="/ nombre-de-la-página"></script>
 ```
 
 Opcionalmente, antes del script, `window.ADMIRA_SHELL = {...}`:
@@ -42,7 +46,7 @@ Para conservar los manejadores de elementos que ya existen, la página los marca
 </div>
 ```
 
-El shell elimina la cabecera propia (`body > header`, salvo `data-shell-keep`) y el contenedor `[data-shell-slots]` tras mover lo marcado. El contenido debe calcular su altura con `var(--app-header-height)` (y `var(--shell-bottom)` si quiere apartarse del panel experto abierto), y las capas que deban tapar el shell (puertas de login, modales) usan `z-index` ≥ 9100.
+El shell elimina la cabecera propia (`body > header`, salvo `data-shell-keep`) y el contenedor `[data-shell-slots]` tras mover lo marcado. El contenido calcula su altura solo con `var(--app-header-height)`: los paneles se superponen y nunca lo encogen (los flotantes pueden apartarse con `var(--expert-panel-height)`), y las capas que deban tapar el shell (puertas de login, modales) usan `z-index` ≥ 9100.
 
 ### Reglas comunes (FLT-101311 c)
 
@@ -50,7 +54,7 @@ El shell elimina la cabecera propia (`body > header`, salvo `data-shell-keep`) y
 - **Textos de los slots** en los dos idiomas con `data-shell-text-es` / `data-shell-text-en`: el shell los traduce con el resto.
 - **Un solo idioma**: no hay selectores propios. Las páginas con i18n declaran `setLang` (target y tutorial llaman a `setLang` de `target-assets/app.js`) o escuchan `admira:lang` (`walk.mjs`); todas leen y guardan la misma preferencia `<marca>-lang` que la portada (nunca `omnip-lang`).
 - **Cabeceras de contenido**: un `<header>` que es el título de la página dentro de un contenedor (`help`, escena de `store-3d`) se queda, con su CSS acotado (`.wrap > header`, `.app > header`) para no tocar la barra. Uno que sea hijo directo de `body` y deba quedarse lleva `data-shell-keep` (hero de `presentation/`). La barra del kit `admira-design` (`nav.admira-nav` + `nav.css`) desaparece.
-- **Alturas y capas**: nada de `100vh - 42/65/76px` ni `top` fijos de la cabecera vieja: `var(--app-header-height)` y `var(--shell-bottom)`. La barra tiene `z-index: 8900` (por encima del contenido de cualquier página, por debajo de los paneles, 9000); avisos, modales y puertas propios van a ≥ 9100 (el panel de contacto del kit, a 9300). Las anclas internas respetan la barra con `scroll-padding-top`.
+- **Alturas y capas**: nada de `100vh - 42/65/76px` ni `top` fijos de la cabecera vieja: `var(--app-header-height)`, nunca el alto del panel experto. La barra tiene `z-index: 8900` (por encima del contenido de cualquier página, por debajo de los paneles, 9000); avisos, modales y puertas propios van a ≥ 9100 (el panel de contacto del kit, a 9300). Las anclas internas respetan la barra con `scroll-padding-top`.
 - **Misma barra en todas las páginas**: `galaxy-shell.css` fija en la barra y los paneles los colores de la portada (los de `index.html` en clearchannel.tv y los de `brand.css` en admira.app), aunque la página tenga otra paleta, y aísla el shell de los selectores de elemento de cada página (`section`, `li`, `strong`, `input`, `button`, `.logo`…).
 - **Atajos de teclado** de la página (diapositivas, escena 3D) ignoran el CLI y los paneles: `if (event.target.closest('input,textarea,select,[contenteditable],.mode-panel')) return;`.
 - **Caché**: un fichero que cambia lleva el sello nuevo en su `?v=` (el service worker sirve los estáticos de caché y los refresca por detrás). Si cambia `galaxy-shell.js/.css`, se sube el sello en todas las páginas a la vez.
