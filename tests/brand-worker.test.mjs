@@ -38,3 +38,106 @@ assert.equal(await (await worker.fetch(new Request('https://admira.app/mcp/llms.
 assert.equal(await (await worker.fetch(new Request('https://www.clearchannel.tv/mcp/manifest.json'), env)).text(), '/mcp/manifest.json');
 
 console.log('brand worker · puerta MCP de admira.app: ok');
+
+// Intercambio de dominios (oct-2026, paso 1 sin corte): admira.biz pasa a servir esta
+// cara Admira y admira.app la de Yokup. La marca sale del apex del Host y las rutas de
+// Yokup en admira.biz se mandan a www.admira.app; con admira.app o clearchannel.tv nada cambia.
+import { admiraApex, isYokupPath, YOKUP_MOVED_HOST } from '../_worker.js';
+
+for (const host of ['admira.biz', 'www.admira.biz', 'WWW.ADMIRA.BIZ']) assert.equal(ADMIRA_HOST.test(host), true, host);
+for (const host of ['fakeadmira.biz.example', 'admira.bizz', 'admira.business']) assert.equal(ADMIRA_HOST.test(host), false, host);
+assert.equal(admiraApex('www.admira.biz'), 'admira.biz');
+assert.equal(admiraApex('admira.app'), 'admira.app');
+assert.equal(admiraApex('www.clearchannel.tv'), 'admira.app');
+assert.equal(replaceBrand('Clear Channel', 'admira.biz'), 'admira.biz');
+assert.equal(replaceBrand('CLEAR·CHANNEL', 'admira.biz'), 'ADMIRA·BIZ');
+assert.equal(replaceBrand('https://www.clearchannel.tv/about.html', 'admira.biz'), 'https://www.admira.biz/about.html');
+assert.equal(replaceBrand('CLEAR·CHANNEL', 'admira.app'), 'ADMIRA·APP');
+
+// Reescritor HTML con un HTMLRewriter de juguete: título, metas y canónica con el apex del Host.
+class FakeRewriter {
+  constructor() { this.handlers = []; }
+  on(selector, handlers) { this.handlers.push([selector, handlers]); return this; }
+  transform() { return this; }
+}
+globalThis.HTMLRewriter = FakeRewriter;
+const htmlEnv = { ASSETS: { fetch() { return new Response('<html></html>', { headers: { 'content-type': 'text/html' } }); } } };
+async function rewrite(url) {
+  const rw = await worker.fetch(new Request(url), htmlEnv);
+  const of = sel => rw.handlers.find(([s]) => s === sel)[1];
+  const el = (attrs = {}) => ({ attrs: { ...attrs }, inner: null, getAttribute(k) { return this.attrs[k] ?? null; }, setAttribute(k, v) { this.attrs[k] = v; }, setInnerContent(v) { this.inner = v; } });
+  const pathname = new URL(url).pathname;
+  const canonical = el({ href: 'https://www.clearchannel.tv' + pathname }); of('link[rel="canonical"]').element(canonical);
+  const title = el(); of('title').element(title);
+  const ogTitle = el({ property: 'og:title', content: 'Clear Channel' }); of('meta[content]').element(ogTitle);
+  const desc = el({ name: 'description', content: 'Clear Channel' }); of('meta[content]').element(desc);
+  return { canonical: canonical.attrs.href, title: title.inner, ogTitle: ogTitle.attrs.content, desc: desc.attrs.content };
+}
+assert.deepEqual(await rewrite('https://www.admira.biz/'), {
+  canonical: 'https://www.admira.biz/', title: 'Mapa de espacios comerciales | admira.biz', ogTitle: 'Mapa de espacios comerciales | admira.biz',
+  desc: 'Mapa de espacios comerciales de admira.biz. Busca un punto, consulta sus pantallas y planifica campañas.'
+});
+assert.deepEqual(await rewrite('https://www.admira.app/'), {
+  canonical: 'https://www.admira.app/', title: 'Mapa de espacios comerciales | admira.app', ogTitle: 'Mapa de espacios comerciales | admira.app',
+  desc: 'Mapa de espacios comerciales de admira.app. Busca un punto, consulta sus pantallas y planifica campañas.'
+});
+const about = await rewrite('https://admira.biz/about.html');
+assert.equal(about.canonical, 'https://www.admira.biz/about.html');
+assert.equal(about.ogTitle, 'admira.biz');
+// clearchannel.tv no pasa por el reescritor: el HTML sale tal cual.
+assert.equal(await (await worker.fetch(new Request('https://www.clearchannel.tv/'), htmlEnv)).text(), '<html></html>');
+
+// La puerta MCP propia también se sirve en admira.biz.
+assert.equal(await (await worker.fetch(new Request('https://www.admira.biz/mcp/manifest.json'), env)).text(), '/mcp/admira-app/manifest.json');
+assert.equal(await (await worker.fetch(new Request('https://admira.biz/mcp/llms.txt'), env)).text(), '/mcp/admira-app/llms.txt');
+
+// Rutas de Yokup en admira.biz → 308 a www.admira.app con la misma ruta y query.
+const YOKUP = ['/retailer', '/retailer-incidencia', '/incidencias', '/ticket', '/intervencion', '/informe-incidencia', '/instalador',
+  '/alta-instalador', '/alta-punto', '/asistencia', '/dashboard', '/agentica', '/carbono', '/agentes', '/agentDetail', '/consumos',
+  '/supervisor', '/superusuario', '/misiones', '/tareas', '/objetivos', '/decisiones', '/ideas', '/informes', '/notificaciones',
+  '/normativa', '/equipo', '/equipo-inventario', '/estrategia', '/entrenamiento', '/entrar', '/recuperar', '/contactanos',
+  '/circuitos', '/highscore', '/highscoreDetail', '/status', '/llamadas', '/llamadas-mcp', '/demo-llamadas', '/trackandfield', '/admira-live'];
+const YOKUP_PREFIXED = ['/app/', '/app/tareas.js', '/asignaciones/42', '/pruebas/x.html', '/mcp/portales', '/mcp/portales.html',
+  '/mcp/smith-azul.json', '/mcp/installer.json', '/mcp/portals.json', '/mcp/retailer.json', '/mcp/portals-llms.txt', '/yk-shell.js',
+  '/yk-shell.css', '/manifest.webmanifest', '/instalador.webmanifest', '/api/fleet-census', '/api/fleet-census/today'];
+const neverAssets = { ASSETS: { fetch() { throw new Error('una ruta movida no debe llegar a ASSETS'); } } };
+for (const path of [...YOKUP, ...YOKUP.map(p => p + '.html'), ...YOKUP_PREFIXED]) {
+  for (const host of ['www.admira.biz', 'admira.biz']) {
+    const res = await worker.fetch(new Request(`https://${host}${path}?id=7&lang=es`), neverAssets);
+    assert.equal(res.status, 308, `${host}${path}`);
+    assert.equal(res.headers.get('Location'), `https://www.admira.app${path}?id=7&lang=es`, `${host}${path}`);
+  }
+}
+const postMoved = await worker.fetch(new Request('https://www.admira.biz/api/fleet-census', { method: 'POST', body: '{}' }), neverAssets);
+assert.equal(postMoved.status, 308);
+
+// Login de Yokup en admira.biz: el callback vuelve a /entrar de admira.app y el challenge se da por movido.
+const cb = await worker.fetch(new Request('https://www.admira.biz/auth/callback', { method: 'POST', body: 'credential=x' }), neverAssets);
+assert.equal(cb.status, 303);
+assert.equal(cb.headers.get('Location'), 'https://www.admira.app/entrar');
+const ch = await worker.fetch(new Request('https://admira.biz/auth/challenge', { method: 'POST', body: '{}' }), neverAssets);
+assert.equal(ch.status, 410);
+assert.deepEqual(await ch.json(), { moved_to: 'https://www.admira.app' });
+
+// Las rutas propias de este sitio no se redirigen en admira.biz.
+for (const path of ['/', '/index.html', '/about.html', '/detail.html', '/app.js', '/brand.js', '/mcp/', '/mcp/index.html', '/walk.html',
+  '/backoffice.html', '/cafebreria/', '/help/', '/version.json', '/data/projects/cafebreria.json', '/retailers', '/statusbar.js', '/equipos']) {
+  assert.equal(isYokupPath(path), false, path);
+}
+
+// Inerte con admira.app y clearchannel.tv: ni 308, ni 303, ni 410.
+const passthrough = { ASSETS: { fetch(req) { return new Response('asset:' + new URL(req.url).pathname, { headers: { 'content-type': 'text/plain' } }); } } };
+for (const host of ['www.admira.app', 'admira.app', 'www.clearchannel.tv', 'clearchannel.tv', 'admira.biz.example.com']) {
+  assert.equal(YOKUP_MOVED_HOST.test(host), false, host);
+  for (const path of ['/retailer', '/entrar.html', '/app/', '/yk-shell.js', '/api/fleet-census', '/manifest.webmanifest']) {
+    const res = await worker.fetch(new Request(`https://${host}${path}`), passthrough);
+    assert.equal(res.status, 200, `${host}${path}`);
+    assert.equal(await res.text(), 'asset:' + path, `${host}${path}`);
+  }
+  for (const path of ['/auth/callback', '/auth/challenge']) {
+    const res = await worker.fetch(new Request(`https://${host}${path}`, { method: 'POST', body: '{}' }), passthrough);
+    assert.equal(res.status, 200, `${host}${path}`);
+  }
+}
+
+console.log('brand worker · admira.biz (marca, canónica, Yokup movido, /auth/*): ok');

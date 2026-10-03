@@ -9,6 +9,10 @@ test('untrusted media and twin URLs cannot execute scripts or contain credential
 });
 test('fresh Admira sessions default to Spanish; explicit language and saved preference work', () => {
   assert.equal(localeFor('www.admira.app'), 'es');
+  assert.equal(localeFor('www.admira.biz'), 'es');
+  assert.equal(localeFor('admira.biz'), 'es');
+  assert.equal(localeFor('admira.biz.example.com'), 'en');
+  assert.equal(localeFor('www.admira.biz','?lang=en'), 'en');
   assert.equal(localeFor('www.clearchannel.tv'), 'en');
   assert.equal(localeFor('localhost','?brand=admira'), 'es');
   assert.equal(localeFor('www.admira.app','?lang=en','es'), 'en');

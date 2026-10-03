@@ -10,7 +10,7 @@ export function localeFor(hostname, search = '', saved = '') {
   const p = new URLSearchParams(search);
   if (['en', 'es'].includes(p.get('lang'))) return p.get('lang');
   if (['en', 'es'].includes(saved)) return saved;
-  return p.get('brand') === 'admira' || /(^|\.)admira\.app$/i.test(hostname) ? 'es' : 'en';
+  return p.get('brand') === 'admira' || /(^|\.)admira\.(app|biz)$/i.test(hostname) ? 'es' : 'en';
 }
 export function surfaceKey(location, surface, index) {
   return String(surface.screen || surface.id || `${location.id}:${surface.surface || 'surface'}:${surface.name}:${index}`);

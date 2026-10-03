@@ -25,3 +25,10 @@ test('explicit language and that brand’s own saved preference remain available
  assert.equal(resolve('clearchannel.tv','',{'clearchannel-lang':'es'}).lang,'es');
  assert.equal(resolve('admira.app','',{'clearchannel-lang':'es','admira-lang':'en'}).lang,'en');
 });
+test('admira.biz is the same Admira face with its own name, domain, origin and wordmark',()=>{
+ for(const host of ['admira.biz','www.admira.biz']){const r=resolve(host,'',{'clearchannel-lang':'en'});assert.equal(r.brand.id,'admira');assert.equal(r.brand.name,'admira.biz');assert.equal(r.brand.domain,'www.admira.biz');assert.equal(r.brand.origin,'https://www.admira.biz');assert.equal(r.brand.wordmark,'ADMIRA·BIZ');assert.equal(r.lang,'es');assert.equal(r.key,'admira-lang');}
+ for(const host of ['admira.app','www.admira.app']){const r=resolve(host);assert.equal(r.brand.domain,'www.admira.app');assert.equal(r.brand.origin,'https://www.admira.app');assert.equal(r.brand.wordmark,'ADMIRA·APP');}
+ assert.equal(resolve('localhost','?brand=admira').brand.origin,'https://www.admira.app');
+ assert.equal(resolve('admira.biz','?brand=clearchannel').brand.id,'admira');
+ for(const host of ['fakeadmira.biz.example','admira.bizz'])assert.equal(resolve(host).brand.id,'clearchannel');
+});
