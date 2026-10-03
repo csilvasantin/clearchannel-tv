@@ -1,13 +1,16 @@
 /* Shell cuadrático universal (FLT-101311). Reutiliza responsive-shell.css, el mismo
    de la portada, y añade solo lo que en index.html vive en su <style> en línea:
    cabecera fija, marca, selector de idioma y botones de acción. */
-@import url('responsive-shell.css?v=20261001-marca-2');
+@import url('responsive-shell.css?v=20261003-superpuestos-1');
 
 /* Tokens de la portada como valor por defecto: la página y brand.css mandan. */
 :where(:root){--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--warn:#ff8866;--card:#0a1620;--card2:#0d1c28;--line:rgba(120,243,255,.18)}
 
-body.galaxy-shell-page{padding-top:var(--app-header-height);--shell-bottom:0px}
-body.galaxy-shell-page.mode-expert-open{--shell-bottom:var(--expert-panel-height,0px)}
+/* Paneles superpuestos (principio de Carlos, 3-oct-2026): ☰, ▤ y ⌘ flotan sobre el contenido.
+   El cuerpo de la página nunca cambia de posición, ancho ni alto al abrirlos: solo resta la
+   cabecera. Los flotantes (toasts, navegación de diapositivas) pueden apartarse con
+   var(--expert-panel-height), que vale 0 con ⌘ cerrado. */
+body.galaxy-shell-page{padding-top:var(--app-header-height)}
 
 /* Mismo tipo de letra que la portada (su base es la del kit admira-design: 15px/1.55), sea cual sea el de la página. */
 body > header.galaxy-shell,#header-navigation,#advanced-tools,#expert-panel{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:normal;text-transform:none;text-align:left}
