@@ -141,3 +141,30 @@ for (const host of ['www.admira.app', 'admira.app', 'www.clearchannel.tv', 'clea
 }
 
 console.log('brand worker · admira.biz (marca, canónica, Yokup movido, /auth/*): ok');
+
+// Entrada de agentes (#5067): el POST a /auth/agente en admira.app va a api.admira.app con
+// método, Authorization y cuerpo; el GET sigue en ASSETS; clearchannel.tv no reenvía.
+{
+  const { AGENT_LOGIN_HOST } = await import('../_worker.js');
+  assert.equal(AGENT_LOGIN_HOST.test('www.admira.app'), true);
+  assert.equal(AGENT_LOGIN_HOST.test('admira.app'), true);
+  assert.equal(AGENT_LOGIN_HOST.test('www.clearchannel.tv'), false);
+  assert.equal(AGENT_LOGIN_HOST.test('www.admira.biz'), false);
+  const realFetch = globalThis.fetch;
+  const seen = [];
+  globalThis.fetch = async (u, init) => {
+    seen.push({ url: String(u), method: init.method, auth: init.headers.get('authorization'), body: new TextDecoder().decode(init.body) });
+    return new Response('{"ok":false}', { status: 401, headers: { 'content-type': 'application/json', 'set-cookie': '__Host-yk_session=x; Path=/; Secure; HttpOnly' } });
+  };
+  try {
+    const assets = { ASSETS: { fetch() { return new Response('page', { headers: { 'content-type': 'text/plain' } }); } } };
+    const r = await worker.fetch(new Request('https://www.admira.app/auth/agente', { method: 'POST', headers: { Authorization: 'Bearer malo', 'content-type': 'application/json' }, body: '{"agente":"t"}' }), assets);
+    assert.equal(r.status, 401);
+    assert.match(r.headers.get('set-cookie'), /__Host-yk_session/);
+    assert.deepEqual(seen[0], { url: 'https://api.admira.app/auth/agente', method: 'POST', auth: 'Bearer malo', body: '{"agente":"t"}' });
+    assert.equal(await (await worker.fetch(new Request('https://www.admira.app/auth/agente'), assets)).text(), 'page');
+    assert.equal((await worker.fetch(new Request('https://www.clearchannel.tv/auth/agente', { method: 'POST' }), assets)).status, 200);
+    assert.equal(seen.length, 1);
+  } finally { globalThis.fetch = realFetch; }
+  console.log('brand worker · /auth/agente proxy: ok');
+}

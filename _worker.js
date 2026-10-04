@@ -133,12 +133,42 @@ function admiraRewriter(pathname, apex) {
   return rewriter;
 }
 
+// Entrada de agentes sin Google (encargo #5067 · espejo de admira.biz/auth/agente, tool#29).
+// La lógica y el secret viven en api.admira.app; aquí solo se reenvía lo que no es GET/HEAD
+// (método, cabeceras útiles y cuerpo) y se devuelve tal cual, Set-Cookie incluida.
+// El GET sigue sirviendo la página estática. Solo con Host (www.)admira.app o la vista previa
+// *.clearchannel-tv.pages.dev; con clearchannel.tv es inerte.
+const AGENT_LOGIN_HOST = /^(www\.)?admira\.app$|(^|\.)clearchannel-tv\.pages\.dev$/i;
+const AGENT_LOGIN_API = 'https://api.admira.app';
+const AGENT_LOGIN_PASS = ['authorization', 'content-type', 'cookie', 'x-agente', 'x-return-to', 'user-agent', 'cf-connecting-ip'];
+
+async function agentLogin(request, url) {
+  if (url.pathname !== '/auth/agente' || request.method === 'GET' || request.method === 'HEAD') return null;
+  if (!AGENT_LOGIN_HOST.test(url.hostname)) return null;
+  var headers = new Headers();
+  AGENT_LOGIN_PASS.forEach(function (name) {
+    var value = request.headers.get(name);
+    if (value) headers.set(name, value);
+  });
+  headers.set('Origin', 'https://www.admira.app');
+  var init = { method: request.method, headers: headers, redirect: 'manual' };
+  if (request.method !== 'OPTIONS') init.body = await request.arrayBuffer();
+  var response = await fetch(new URL('/auth/agente' + url.search, AGENT_LOGIN_API), init);
+  var out = new Headers(response.headers);
+  out.set('Cache-Control', 'no-store');
+  out.set('Referrer-Policy', 'no-referrer');
+  out.set('X-Content-Type-Options', 'nosniff');
+  return new Response(response.body, { status: response.status, headers: out });
+}
+
 export default {
   async fetch(request, env) {
     if (new URL(request.url).pathname === '/avatar-ask') return avatarAsk({request});
     if (new URL(request.url).pathname === '/api/demo-session') return handleDemoSession(request);
     if (new URL(request.url).pathname.startsWith('/api/orders')) return handleOrders(request, env);
     var url = new URL(request.url);
+    var agent = await agentLogin(request, url);
+    if (agent) return agent;
     var moved = yokupMoved(request, url);
     if (moved) return moved;
     if (ADMIRA_HOST.test(url.hostname) && ADMIRA_MCP_FILES[url.pathname]) {
@@ -153,4 +183,4 @@ export default {
   }
 };
 
-export { ADMIRA_HOST, ADMIRA_MCP_FILES, YOKUP_MOVED_HOST, admiraApex, isYokupPath, replaceBrand, yokupMoved };
+export { ADMIRA_HOST, AGENT_LOGIN_HOST, agentLogin, ADMIRA_MCP_FILES, YOKUP_MOVED_HOST, admiraApex, isYokupPath, replaceBrand, yokupMoved };
