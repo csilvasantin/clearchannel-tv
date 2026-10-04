@@ -167,6 +167,12 @@ test('el avatar no se come el alias /cli de /demo', () => {
   assert.equal(C.isAvatarCommand('/digitalAvatar mostrar'), true);
   assert.equal(C.isAvatarCommand('/cli starbucks'), false);
   assert.equal(C.isAvatarCommand('/cli'), false);
+  assert.equal(C.isAvatarCommand('/avatarON'), true);
+  assert.equal(C.isAvatarCommand('/avatarOFF'), true);
+  assert.equal(C.isAvatarCommand('/avatar reset'), true);
+  assert.equal(C.isAvatarCommand('/avatar'), true);
+  assert.equal(C.isAvatarCommand('/avatar3d on'), false);
+  assert.equal(C.isAvatarCommand('/avatar quizas'), false);
   const demo = C.parse('/cli starbucks');
   assert.equal(demo.ok, true);
   assert.equal(demo.verb.id, 'demo');
