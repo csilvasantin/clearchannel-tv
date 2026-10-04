@@ -4287,7 +4287,7 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
           if (fresh) { if (!Array.isArray(fresh.surfaces)) fresh.surfaces = []; fresh._slim = true; next.push(fresh); byId.set(m.id, fresh); changed = true; }
         }
       });
-      if (changed) { setLocations(next); updateLocationsSource(); }
+      if (changed) { setLocations(next); updateLocationsSource(); if (brandSegmentActive()) { try { renderCircuitSelector(); } catch (_) {} } }
     }
   } catch {}
   const whenIdle = (cb) => (typeof window.requestIdleCallback === 'function' ? window.requestIdleCallback(cb, { timeout: 8000 }) : setTimeout(cb, 3000));
