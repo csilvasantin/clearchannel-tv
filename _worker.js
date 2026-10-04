@@ -75,7 +75,7 @@ function replaceBrand(value, apex) {
 // interruptores clearchannel-tv y admira-biz están apagados). Va en toda página HTML
 // servida con 200 salvo /auth/, en clearchannel.tv y en la cara Admira. Las preguntas
 // van a /avatar-ask de este mismo worker.
-const AVATAR_TAG = '<script defer src="https://www.admiranext.com/assets/avatar.js?v=20261004-avatar-2" data-brain="/avatar-ask" data-admira-avatar></script>';
+const AVATAR_TAG = '<script defer src="https://www.admiranext.com/assets/avatar.js?v=20261004-avatar-3" data-brain="/avatar-ask" data-admira-avatar></script>';
 function wantsAvatar(url, response) {
   return response.status === 200 && !url.pathname.startsWith('/auth/');
 }
