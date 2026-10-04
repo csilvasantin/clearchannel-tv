@@ -168,7 +168,17 @@
       en: 'White label from the admiranext.com/marcablanca catalogue: /marca <id> dresses the site in that brand, /marca off returns to Admira, /marca alone shows the active one and lists them, /marca <website> opens the analyser in a new tab.',
       run(args, ctx, lang) {
         const M = ctx && ctx.marca;
-        if (!M) return fail(L(lang, 'La marca blanca aún no está lista en esta página. Vuelve a intentarlo en un momento.', 'White label is not ready on this page yet. Try again in a moment.'));
+        // Segmentación del globo (cliente-segmento.js): /marca <cliente> deja solo sus puntos, aunque
+        // el cliente no tenga marca blanca en el catálogo; /marca off vuelve a Admira (todos).
+        const S = typeof root !== 'undefined' && root && root.AdmiraSegmento;
+        const G = typeof root !== 'undefined' && root && root.AdmiraGlobo;
+        const seg = () => (G ? G.segmento() : null);
+        const segLine = () => { const g = seg(); return g ? (g.cliente === 'admira'
+          ? L(lang, `Globo: Admira, todos los puntos (${g.puntos}).`, `Globe: Admira, all points (${g.puntos}).`)
+          : g.puntos === g.total ? L(lang, `Globo: «${g.cliente}» no tiene puntos propios; se ven todos (${g.total}).`, `Globe: “${g.cliente}” has no points of its own; showing all (${g.total}).`)
+          : L(lang, `Globo segmentado: ${g.cliente}, ${g.puntos} de ${g.total} puntos.`, `Globe segmented: ${g.cliente}, ${g.puntos} of ${g.total} points.`)) : null; };
+        if (S && args.marca && !/^https?:\/\//.test(args.marca)) S.fijar(args.marca === 'off' ? null : args.marca);
+        if (!M) return S && args.marca ? done(segLine()) : fail(L(lang, 'La marca blanca aún no está lista en esta página. Vuelve a intentarlo en un momento.', 'White label is not ready on this page yet. Try again in a moment.'));
         const value = args.marca;
         const tag = b => (b && b.propuesta ? L(lang, ' · propuesta automática, no es la marca oficial', ' · automatic proposal, not the official brand') : b && b.ejemplo ? L(lang, ' · marca ficticia de ejemplo', ' · fictional sample brand') : '');
         if (!value) {
@@ -183,7 +193,7 @@
         }
         if (value === 'off') {
           const r = M.desactivar();
-          return done(r.changed
+          return done(...(seg() ? [segLine()] : []), r.changed
             ? L(lang, `Marca ${r.previous.nombre} desactivada: vuelve Admira.`, `${r.previous.nombre} brand turned off: back to Admira.`)
             : L(lang, 'No había ninguna marca blanca activa: ya ves Admira.', 'No white label was active: you already see Admira.'));
         }
@@ -195,7 +205,8 @@
         }
         const later = M.activar(value).then(r => {
           if (r.ok) { if (!BRANDS.some(b => b.id === r.id)) BRANDS = [...BRANDS, {id: r.id, nombre: r.nombre, ejemplo: !!r.ejemplo, propuesta: !!r.propuesta}];
-            return done(L(lang, `Marca ${r.nombre} (${r.id}) activa${tag(r)}. Se mantiene al navegar en esta pestaña; /marca off vuelve a Admira.`, `${r.nombre} (${r.id}) brand on${tag(r)}. It stays while you browse in this tab; /marca off returns to Admira.`)); }
+            return done(...(seg() ? [segLine()] : []), L(lang, `Marca ${r.nombre} (${r.id}) activa${tag(r)}. Se mantiene al navegar en esta pestaña; /marca off vuelve a Admira.`, `${r.nombre} (${r.id}) brand on${tag(r)}. It stays while you browse in this tab; /marca off returns to Admira.`)); }
+          if (r.reason === 'unknown' && S && seg() && seg().cliente !== 'admira') return done(segLine(), L(lang, `(«${value}» no tiene marca blanca en el catálogo: se mantiene el aspecto, solo cambian los puntos.)`, `(“${value}” has no white label in the catalogue: the look stays, only the points change.)`));
           if (r.reason === 'unknown') return fail(L(lang, `La marca «${value}» no está en el catálogo de admiranext.com. No se ha aplicado nada.`, `The brand “${value}” is not in the admiranext.com catalogue. Nothing was applied.`),
             L(lang, 'Disponibles: ', 'Available: ') + brandList(lang) + L(lang, '. Para crearla: /marca <web de la marca>.', '. To create it: /marca <brand website>.'));
           return fail(L(lang, 'No se pudo hablar con admiranext.com: la web sigue con su aspecto normal.', 'Could not reach admiranext.com: the site keeps its normal look.'));
