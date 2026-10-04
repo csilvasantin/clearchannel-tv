@@ -223,6 +223,17 @@
   // Marca blanca (FLT-101331): el mismo fichero que carga la portada. Sin marca activa no
   // inserta nada ni habla con admiranext.com; con marca, viste la barra y los paneles.
   load('marca-blanca.js').catch(error => console.warn(error));
+  // ⌘ EXPERTO · CLI con el look de digitalavatar.ai (Carlos, 4-oct-2026): piel compartida de
+  // la suite servida desde admiranext.com/suite. Reviste el panel; los verbos siguen siendo estos.
+  (() => {
+    const EXPERTO = 'https://www.admiranext.com/suite/experto', V = '20261004-experto-da-1';
+    const css = document.createElement('link');
+    css.rel = 'stylesheet'; css.href = EXPERTO + '.css?v=' + V;
+    document.head.append(css);
+    const js = document.createElement('script');
+    js.src = EXPERTO + '.js?v=' + V; js.defer = true;
+    document.head.append(js);
+  })();
   load('responsive-shell.js')
     .then(() => (root.AdmiraExpertCommands ? null : load('expert-commands.js')))
     .then(registerVerbs)
