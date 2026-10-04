@@ -17,7 +17,7 @@ console.log('brand worker: ok');
 // llms.txt propios existen, no arrastran la marca gemela y el worker los sirve
 // cuando el Host es admira.app — y NO cuando es clearchannel.tv.
 import { readFile } from 'node:fs/promises';
-import worker, { ADMIRA_MCP_FILES } from '../_worker.js';
+import worker, { ADMIRA_MCP_FILES, AVATAR_TAG } from '../_worker.js';
 
 assert.equal(ADMIRA_MCP_FILES['/mcp/manifest.json'], '/mcp/admira-app/manifest.json');
 assert.equal(ADMIRA_MCP_FILES['/mcp/llms.txt'], '/mcp/admira-app/llms.txt');
@@ -84,8 +84,19 @@ assert.deepEqual(await rewrite('https://www.admira.app/'), {
 const about = await rewrite('https://admira.biz/about.html');
 assert.equal(about.canonical, 'https://www.admira.biz/about.html');
 assert.equal(about.ogTitle, 'admira.biz');
-// clearchannel.tv no pasa por el reescritor: el HTML sale tal cual.
-assert.equal(await (await worker.fetch(new Request('https://www.clearchannel.tv/'), htmlEnv)).text(), '<html></html>');
+// clearchannel.tv no pasa por el reescritor de marca: solo recibe el cargador del avatar en <head>.
+{
+  const rw = await worker.fetch(new Request('https://www.clearchannel.tv/'), htmlEnv);
+  assert.deepEqual(rw.handlers.map(([s]) => s), ['head']);
+  let appended = ''; rw.handlers[0][1].element({ append(v) { appended += v; } });
+  assert.equal(appended, AVATAR_TAG);
+  // La cara Admira lo lleva junto a la presencia.
+  const biz = await worker.fetch(new Request('https://www.admira.biz/'), htmlEnv);
+  let head = ''; biz.handlers.find(([s]) => s === 'head')[1].element({ append(v) { head += v; } });
+  assert.ok(head.includes('live-presence.js') && head.includes(AVATAR_TAG));
+  // /auth/ queda fuera.
+  assert.equal(await (await worker.fetch(new Request('https://www.clearchannel.tv/auth/login'), htmlEnv)).text(), '<html></html>');
+}
 
 // La puerta MCP propia también se sirve en admira.biz.
 assert.equal(await (await worker.fetch(new Request('https://www.admira.biz/mcp/manifest.json'), env)).text(), '/mcp/admira-app/manifest.json');

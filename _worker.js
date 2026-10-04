@@ -70,11 +70,24 @@ function replaceBrand(value, apex) {
     .replace(/Clear\s+Channel/gi, apex);
 }
 
-function admiraRewriter(pathname, apex) {
+// Avatar digital (encargo avatar · 4-oct-2026): el cargador común de admiranext.com
+// decide si se ve (elección del visitante > interruptor del proyecto > apagado; los
+// interruptores clearchannel-tv y admira-biz están apagados). Va en toda página HTML
+// servida con 200 salvo /auth/, en clearchannel.tv y en la cara Admira. Las preguntas
+// van a /avatar-ask de este mismo worker.
+const AVATAR_TAG = '<script defer src="https://www.admiranext.com/assets/avatar.js?v=20261004-avatar-1" data-brain="/avatar-ask" data-admira-avatar></script>';
+function wantsAvatar(url, response) {
+  return response.status === 200 && !url.pathname.startsWith('/auth/');
+}
+function avatarRewriter() {
+  return new HTMLRewriter().on('head', {element(el) {el.append(AVATAR_TAG, {html:true});}});
+}
+
+function admiraRewriter(pathname, apex, avatar) {
   apex = apex || 'admira.app';
   var homeTitle = 'Mapa de espacios comerciales | ' + apex;
   var rewriter = new HTMLRewriter()
-    .on('head', {element(el) {el.append('<script defer src="https://www.admiranext.com/assets/live-presence.js?v=2"></script>', {html:true});}})
+    .on('head', {element(el) {el.append('<script defer src="https://www.admiranext.com/assets/live-presence.js?v=2"></script>' + (avatar ? AVATAR_TAG : ''), {html:true});}})
     .on('html', {
       element(element) {
         element.setAttribute('data-brand', 'admira');
@@ -190,9 +203,11 @@ export default {
     }
     var response = await env.ASSETS.fetch(request);
     var contentType = response.headers.get('content-type') || '';
-    if (!ADMIRA_HOST.test(url.hostname) || !contentType.includes('text/html')) return response;
-    return admiraRewriter(url.pathname, admiraApex(url.hostname)).transform(response);
+    if (!contentType.includes('text/html')) return response;
+    var avatar = wantsAvatar(url, response);
+    if (!ADMIRA_HOST.test(url.hostname)) return avatar ? avatarRewriter().transform(response) : response;
+    return admiraRewriter(url.pathname, admiraApex(url.hostname), avatar).transform(response);
   }
 };
 
-export { ADMIRA_HOST, AGENT_LOGIN_HOST, agentLogin, agentUpstream, ADMIRA_MCP_FILES, YOKUP_MOVED_HOST, admiraApex, isYokupPath, replaceBrand, yokupMoved };
+export { AVATAR_TAG, ADMIRA_HOST, AGENT_LOGIN_HOST, agentLogin, agentUpstream, ADMIRA_MCP_FILES, YOKUP_MOVED_HOST, admiraApex, isYokupPath, replaceBrand, yokupMoved };

@@ -287,12 +287,29 @@
     if (!m) return false;
     const verb = m[1].toLowerCase();
     if (verb === 'avatardigital' || verb === 'digitalavatar') return true;
+    // Cargador común (encargo avatar · 4-oct-2026): /avatarON, /avatarOFF, /avatar [on|off|reset].
+    if (verb === 'avataron' || verb === 'avataroff') return true;
+    if (verb === 'avatar') return /^(on|off|reset)?$/i.test((m[2] || '').trim());
     if (verb !== 'cli') return false;
     return /^(ayudante|helper)(?:\s|$)/i.test(m[2] || '');
   }
+  // El worker inyecta el cargador común (window.AdmiraAvatar). Si aún no ha llegado se
+  // espera a su <script>; sin él, queda el módulo antiguo /avatar-digital.js.
   function loadAvatar() {
-    if (root.AvatarDigital) return Promise.resolve(root.AvatarDigital);
+    if (root.AdmiraAvatar) return Promise.resolve(root.AdmiraAvatar);
     if (typeof document === 'undefined') return Promise.resolve(null);
+    const tag = document.querySelector('script[data-admira-avatar]');
+    if (tag) {
+      return new Promise(resolve => {
+        tag.addEventListener('load', () => resolve(root.AdmiraAvatar || null), {once: true});
+        tag.addEventListener('error', () => resolve(null), {once: true});
+        setTimeout(() => resolve(root.AdmiraAvatar || null), 4000);
+      }).then(A => A || loadOldAvatar());
+    }
+    return loadOldAvatar();
+  }
+  function loadOldAvatar() {
+    if (root.AvatarDigital) return Promise.resolve(root.AvatarDigital);
     return new Promise(resolve => {
       const s = document.createElement('script');
       s.src = '/avatar-digital.js';
@@ -426,8 +443,8 @@
       L(lang, 'Forma: /demo starbucks · /demo cliente=alcampo · mayúsculas y acentos dan igual.', 'Form: /demo starbucks · /demo client=alcampo · case and accents do not matter.'),
       L(lang, 'RUTINAS', 'ROUTINES'),
       ...routines.map(r => `${r.label} → ${r.command}${r.builtin ? '' : L(lang, ' (tuya)', ' (yours)')}`),
-      L(lang, 'Avatar digital: /avatarDigital [on|off] (alias /digitalAvatar, /cli ayudante, /cli helper). Sin argumento alterna. /cli seguido de un cliente sigue siendo /demo.',
-        'Digital avatar: /avatarDigital [on|off] (alias /digitalAvatar, /cli ayudante, /cli helper). No argument toggles. /cli followed by a client is still /demo.'),
+      L(lang, 'Avatar digital: /avatarON lo muestra y /avatarOFF lo oculta (se recuerda en esta web); /avatar reset vuelve a lo que diga el proyecto. También /avatarDigital [on|off] (alias /digitalAvatar, /cli ayudante, /cli helper); sin argumento alterna. /cli seguido de un cliente sigue siendo /demo.',
+        'Digital avatar: /avatarON shows it and /avatarOFF hides it (remembered on this site); /avatar reset returns to the project setting. Also /avatarDigital [on|off] (alias /digitalAvatar, /cli ayudante, /cli helper); no argument toggles. /cli followed by a client is still /demo.'),
       L(lang, 'Atajos: Tab completa · ↑/↓ historial · Esc cierra.', 'Shortcuts: Tab completes · ↑/↓ history · Esc closes.'),
     ];
   }
@@ -470,7 +487,8 @@
   root.AdmiraExpertCommands = api;
   if (typeof document !== 'undefined') {
     try {
-      if (root.localStorage && root.localStorage.getItem('da-avatar:' + (root.location && root.location.host)) === '1') loadAvatar();
+      // Sin cargador común (vista local sin worker) se respeta la elección antigua.
+      if (!document.querySelector('script[data-admira-avatar]') && root.localStorage && root.localStorage.getItem('da-avatar:' + (root.location && root.location.host)) === '1') loadAvatar();
     } catch (_) {}
   }
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
