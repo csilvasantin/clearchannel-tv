@@ -300,7 +300,7 @@
     if (verb === 'avatardigital' || verb === 'digitalavatar') return true;
     // Cargador común (encargo avatar · 4-oct-2026): /avatarON, /avatarOFF, /avatar [on|off|reset].
     if (verb === 'avataron' || verb === 'avataroff') return true;
-    if (verb === 'avatar') return /^(on|off|reset)?$/i.test((m[2] || '').trim());
+    if (verb === 'avatar') return /^(on|off|reset|good|better|best)?$/i.test((m[2] || '').trim());
     if (verb !== 'cli') return false;
     return /^(ayudante|helper)(?:\s|$)/i.test(m[2] || '');
   }
@@ -454,8 +454,8 @@
       L(lang, 'Forma: /demo starbucks · /demo cliente=alcampo · mayúsculas y acentos dan igual.', 'Form: /demo starbucks · /demo client=alcampo · case and accents do not matter.'),
       L(lang, 'RUTINAS', 'ROUTINES'),
       ...routines.map(r => `${r.label} → ${r.command}${r.builtin ? '' : L(lang, ' (tuya)', ' (yours)')}`),
-      L(lang, 'Avatar digital: /avatarON lo muestra y /avatarOFF lo oculta (se recuerda en esta web); /avatar reset vuelve a lo que diga el proyecto. También /avatarDigital [on|off] (alias /digitalAvatar, /cli ayudante, /cli helper); sin argumento alterna. /cli seguido de un cliente sigue siendo /demo.',
-        'Digital avatar: /avatarON shows it and /avatarOFF hides it (remembered on this site); /avatar reset returns to the project setting. Also /avatarDigital [on|off] (alias /digitalAvatar, /cli ayudante, /cli helper); no argument toggles. /cli followed by a client is still /demo.'),
+      L(lang, 'Avatar digital: /avatar good abre el calvo (cara 3D, 52 blendshapes) · /avatar better abre la chica (Ready Player Me, gafas) · /avatar best abre a Neo (MetaHuman; si el host de render está apagado, cae a la chica). /avatar sin nivel dice el estado. /avatarON lo muestra y /avatarOFF lo oculta. /avatar reset vuelve al interruptor del proyecto. También /avatarDigital (alias /digitalAvatar, /cli ayudante, /cli helper). /cli seguido de un cliente sigue siendo /demo.',
+        'Digital avatar: /avatar good opens the bald 3D face (facecap, 52 blendshapes) · /avatar better opens the web girl (Ready Player Me, glasses) · /avatar best opens Neo (MetaHuman; if the render host is off, the girl takes over). /avatar alone shows the status. /avatarON shows it and /avatarOFF hides it. /avatar reset follows the project switch. Also /avatarDigital (alias /digitalAvatar, /cli ayudante, /cli helper). /cli followed by a client is still /demo.'),
       L(lang, 'Atajos: Tab completa · ↑/↓ historial · Esc cierra.', 'Shortcuts: Tab completes · ↑/↓ history · Esc closes.'),
     ];
   }
