@@ -173,6 +173,9 @@ test('el avatar no se come el alias /cli de /demo', () => {
   assert.equal(C.isAvatarCommand('/avatar'), true);
   assert.equal(C.isAvatarCommand('/avatar3d on'), false);
   assert.equal(C.isAvatarCommand('/avatar quizas'), false);
+  assert.equal(C.isAvatarCommand('/avatar good'), true);
+  assert.equal(C.isAvatarCommand('/avatar better'), true);
+  assert.equal(C.isAvatarCommand('/avatar best'), true);
   const demo = C.parse('/cli starbucks');
   assert.equal(demo.ok, true);
   assert.equal(demo.verb.id, 'demo');
@@ -183,5 +186,8 @@ test('el avatar no se come el alias /cli de /demo', () => {
   assert.equal(on.parsed.verb.id, 'avatardigital');
   const help = C.helpLines('es').join('\n');
   assert.match(help, /\/avatarDigital/);
+  assert.match(help, /\/avatar good/);
+  assert.match(help, /\/avatar better/);
+  assert.match(help, /\/avatar best/);
   assert.match(help, /sigue siendo \/demo/);
 });
