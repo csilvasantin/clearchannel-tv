@@ -78,12 +78,17 @@
     return (INCLUYE[cliente] || [cliente]).indexOf(c) >= 0;
   }
 
-  /** Filtra la lista. Un cliente sin ningún punto (marca de ejemplo, propuesta) no vacía el globo. */
+  // Clientes con puntos propios en el catálogo: con ellos se filtra SIEMPRE, aunque la lista aún
+  // no traiga sus puntos (mientras llega el catálogo completo, ?marca=altadis no enseña nada de JTI).
+  var CONOCIDOS = {};
+  Object.keys(ALIAS).forEach(function (k) { CONOCIDOS[ALIAS[k]] = true; });
+
+  /** Filtra la lista. Un cliente desconocido sin ningún punto (marca de ejemplo, propuesta) no vacía el globo. */
   function filtrar(list, cliente) {
     var all = Array.isArray(list) ? list : [];
     if (!cliente || cliente === 'admira') return all;
     var out = all.filter(function (l) { return visible(l, cliente); });
-    return out.length ? out : all;
+    return out.length || CONOCIDOS[cliente] ? out : all;
   }
 
   function decidir(search, storage) {
@@ -96,7 +101,7 @@
     return s ? resolver(s) : null;
   }
 
-  var api = { clienteDe: clienteDe, visible: visible, filtrar: filtrar, resolver: resolver, decidir: decidir, ALIAS: ALIAS, INCLUYE: INCLUYE };
+  var api = { CONOCIDOS: CONOCIDOS, clienteDe: clienteDe, visible: visible, filtrar: filtrar, resolver: resolver, decidir: decidir, ALIAS: ALIAS, INCLUYE: INCLUYE };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof document === 'undefined' || root.AdmiraSegmento) return;
 

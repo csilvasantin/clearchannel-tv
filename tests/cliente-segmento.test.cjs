@@ -54,3 +54,9 @@ test('Alias y valores de la URL/sesión', () => {
 test('Cliente sin puntos propios (marca de ejemplo) no vacía el globo', () => {
   assert.equal(S.filtrar(P, 'lumbre').length, P.length);
 });
+
+test('Cliente conocido sin puntos aún cargados no enseña los de otro (Altadis nunca ve JTI)', () => {
+  const soloJti = P.filter(l => S.clienteDe(l) === 'jti');
+  assert.deepEqual(S.filtrar(soloJti, 'altadis'), []);
+  assert.deepEqual(S.filtrar(soloJti, 'starbucks'), []);
+});
