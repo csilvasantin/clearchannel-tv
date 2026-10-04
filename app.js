@@ -4,6 +4,8 @@
 // omnipublicity-api (KV) y, si trae algo distinto, re-renderizamos sources +
 // counters. Primer load = instantáneo; segundo paint = autoritativo.
 let LOCATIONS = window.loadOmnipLocations();
+// Catálogo completo; LOCATIONS es la vista segmentada por el cliente activo (cliente-segmento.js).
+let LOCATIONS_ALL = LOCATIONS;
 let plannerCatalogReady = false;
 let LOC_BY_ID = new Map(LOCATIONS.map(l => [l.id, l]));
 let locationsGeoJSONCache = null;
@@ -719,8 +721,14 @@ function stampAltadisTwin(loc) {
   return loc;
 }
 
+function segmentLocations(list) {
+  const S = typeof window !== 'undefined' && window.AdmiraSegmento;
+  return S && typeof S.filtrarActual === 'function' ? S.filtrarActual(list) : list;
+}
 function setLocations(nextLocations) {
-  LOCATIONS = Array.isArray(nextLocations) ? nextLocations : [];
+  LOCATIONS_ALL = Array.isArray(nextLocations) ? nextLocations : [];
+  LOCATIONS = segmentLocations(LOCATIONS_ALL);
+  try { document.documentElement.dataset.segmentoPuntos = String(LOCATIONS.length); } catch (_) {}
   LOCATIONS.forEach(stampAlseaMexicoTwin);
   LOCATIONS.forEach(stampAltadisTwin);
   LOC_BY_ID = new Map(LOCATIONS.map(l => [l.id, l]));
@@ -1342,7 +1350,14 @@ function renderCircuitSelector() {
   const selectAllBtn = document.getElementById('circuit-select-all');
   if (!select || !list || !title) return;
   renderCircuitScope();
-  const allowedCircuitIds = ensureCircuitMatchesScope().filter(id => defs[id]);
+  let allowedCircuitIds = ensureCircuitMatchesScope().filter(id => defs[id]);
+  if (window.AdmiraSegmento && window.AdmiraSegmento.actual() && LOCATIONS.length !== LOCATIONS_ALL.length) {
+    const withItems = allowedCircuitIds.filter(id => id !== 'all' && defs[id].items && defs[id].items.length);
+    if (withItems.length) {
+      allowedCircuitIds = withItems.concat(allowedCircuitIds.includes('all') ? ['all'] : []);
+      if (!allowedCircuitIds.includes(selectedCircuitId)) selectedCircuitId = withItems[0];
+    }
+  }
   select.innerHTML = allowedCircuitIds.map(id => `<option value="${escHtml(id)}">${escHtml(defs[id].label)}</option>`).join('');
   const circuit = defs[selectedCircuitId] || defs[allowedCircuitIds[0]] || defs.all;
   select.value = selectedCircuitId;
@@ -4220,7 +4235,7 @@ function restoreWalkReturn() {
   const id = new URLSearchParams(location.search).get('locationId');
   const loc = id && LOCATIONS.find(item => String(item.id) === id);
   if (!loc) {
-    if(id&&!walkReturnLookup&&window.loadOmnipLocationDetail){walkReturnLookup=true;window.loadOmnipLocationDetail(id,5000).then(found=>{if(found){setLocations([...LOCATIONS.filter(l=>l.id!==found.id),found]);updateLocationsSource();restoreWalkReturn();}}).catch(()=>{});}
+    if(id&&!walkReturnLookup&&window.loadOmnipLocationDetail){walkReturnLookup=true;window.loadOmnipLocationDetail(id,5000).then(found=>{if(found){setLocations([...LOCATIONS_ALL.filter(l=>l.id!==found.id),found]);updateLocationsSource();restoreWalkReturn();}}).catch(()=>{});}
     return;
   }
   walkReturnRestored = true;
@@ -4234,7 +4249,7 @@ async function mergeRetailerLocations(){
   try {
     const incoming=await window.loadYokupLocationsAsync();if(!incoming.length)return;
     const ids=new Set(incoming.map(l=>l.id));
-    setLocations([...LOCATIONS.filter(l=>!ids.has(l.id)),...incoming]);
+    setLocations([...LOCATIONS_ALL.filter(l=>!ids.has(l.id)),...incoming]);
     updateLocationsSource();renderCircuitSelector();restoreWalkReturn();
   } catch { /* The next refresh retries; retain the currently displayed catalogue. */ }
 }
@@ -4253,7 +4268,7 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
     const slim = await window.loadOmnipLocationsSlimAsync(3500);
     if (slim && Array.isArray(slim.locations) && slim.locations.length) {
       let changed = false;
-      const next = LOCATIONS.slice();
+      const next = LOCATIONS_ALL.slice();
       const byId = new Map(next.map(l => [l && l.id, l]));
       slim.locations.forEach(m => {
         if (!m || !m.id) return;
@@ -4275,9 +4290,9 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
   try {
     const res = await window.loadOmnipLocationsAsync(4500);
     if (!res || !Array.isArray(res.locations) || !res.locations.length) return;
-    if (locationsSignature(res.locations, res.updatedAt) === locationsSignature(LOCATIONS, res.updatedAt)) return;
+    if (locationsSignature(res.locations, res.updatedAt) === locationsSignature(LOCATIONS_ALL, res.updatedAt)) return;
     const freshIds=new Set(res.locations.map(l=>l.id));
-    setLocations([...res.locations,...LOCATIONS.filter(l=>l.source==='yokup-retailer'&&!freshIds.has(l.id))]);
+    setLocations([...res.locations,...LOCATIONS_ALL.filter(l=>l.source==='yokup-retailer'&&!freshIds.has(l.id))]);
     restoreWalkReturn();
     updateBiddingLiveCounters();
     const cpms = LOCATIONS.flatMap(l => (Array.isArray(l.surfaces) ? l.surfaces : []).map(s => parseFloat(String(s.cpm).replace(/[^\d.]/g,'')))).filter(Boolean);
@@ -4312,7 +4327,7 @@ async function mergeSelfRegDevices(){
     const j = await r.json();
     const devs = (j && Array.isArray(j.locations)) ? j.locations : [];
     if(!devs.length) return;
-    const byId = new Map((Array.isArray(LOCATIONS)?LOCATIONS:[]).map(l=>[l.id, l]));
+    const byId = new Map((Array.isArray(LOCATIONS_ALL)?LOCATIONS_ALL:[]).map(l=>[l.id, l]));
     let changed = false;
     for(const d of devs){
       if(!d || !d.id) continue;
@@ -4328,6 +4343,33 @@ async function mergeSelfRegDevices(){
 }
 mergeSelfRegDevices();
 setInterval(mergeSelfRegDevices, 60000);
+
+// Cliente activo (cliente-segmento.js): ?marca, ?cliente, la marca de la pestaña, /marca en el
+// Experto o el evento admira:marca. Re-segmenta globo, clusters, contadores, circuitos y buscador
+// sin recargar, y encuadra los puntos del cliente (Admira = todos, sin mover la cámara).
+function brandSegmentCount() { return { cliente: (window.AdmiraSegmento && window.AdmiraSegmento.actual()) || 'admira', puntos: LOCATIONS.length, total: LOCATIONS_ALL.length }; }
+window.AdmiraGlobo = Object.freeze({ segmento: brandSegmentCount, ids: () => LOCATIONS.map(l => l.id) });
+function fitBrandSegment() {
+  if (!window.AdmiraSegmento || !window.AdmiraSegmento.actual() || LOCATIONS.length === LOCATIONS_ALL.length) return;
+  const pts = LOCATIONS.map(l => l.coords).filter(c => Array.isArray(c) && isFinite(c[0]) && isFinite(c[1]));
+  if (!pts.length || !map || typeof map.fitBounds !== 'function') return;
+  let w = 180, e = -180, so = 90, n = -90;
+  pts.forEach(([x, y]) => { w = Math.min(w, x); e = Math.max(e, x); so = Math.min(so, y); n = Math.max(n, y); });
+  try { map.fitBounds([[w, so], [e, n]], { padding: 80, maxZoom: 13, duration: 1200 }); } catch (_) {}
+}
+function applyBrandSegment(fit) {
+  setLocations(LOCATIONS_ALL);
+  if (activeLocation && !LOC_BY_ID.has(activeLocation.id)) { try { document.getElementById('panel-close')?.click(); } catch (_) {} }
+  updateLocationsSource();
+  try { renderCircuitSelector(); } catch (_) {}
+  try { updateBiddingLiveCounters(); } catch (_) {}
+  document.documentElement.dataset.segmentoPuntos = String(LOCATIONS.length);
+  if (fit) { if (map.loaded()) fitBrandSegment(); else map.once('load', fitBrandSegment); }
+}
+document.addEventListener('admira:segmento', () => applyBrandSegment(true));
+document.documentElement.dataset.segmentoPuntos = String(LOCATIONS.length);
+if (window.AdmiraSegmento && window.AdmiraSegmento.actual()) { if (map.loaded()) fitBrandSegment(); else map.once('load', fitBrandSegment); }
+
 
 // Descubrir gemelos ONLINE (pantallas vivas) y refrescar cada 60s → el inventario
 // vendible se mantiene al día sin hardcodear screenIds. Cierra el loop hacia "vender".
@@ -4776,7 +4818,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
   // INFORME POR CIRCUITO: agrega el consumo de HOY de todos los Xpacios, agrupado por
   // circuito (marca / tipo). Lee /day/range hoy por loc (paralelo, cap 30).
   async function circuitReport(){
-    const all=(typeof window.loadOmnipLocations==='function')?window.loadOmnipLocations():[];
+    const all=(typeof window.loadOmnipLocations==='function')?segmentLocations(window.loadOmnipLocations()):[];
     const locs=all.slice(0,60), t=todayStr();
     const ck=l=>{ try{ return (l.external&&l.external.brand)||((l.kind||'').split(/[·|]/)[0].trim())||'Otros'; }catch(_){ return 'Otros'; } };
     document.getElementById('circuit-report')?.remove();
@@ -4835,7 +4877,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
   // explícitamente para que la Sala refleje la emisión real del directo. Aditivo.
   const ED_DEMO_LOCS=[{id:'kiosko',kind:'Kioskos de prensa'}];
   async function fetchEmissionData(){
-    const all=(typeof window.loadOmnipLocations==='function')?window.loadOmnipLocations():[];
+    const all=(typeof window.loadOmnipLocations==='function')?segmentLocations(window.loadOmnipLocations()):[];
     const _seen=new Set(), locs=[];
     for(const l of ED_DEMO_LOCS.concat(all.slice(0,60))){ if(l&&l.id&&!_seen.has(l.id)){ _seen.add(l.id); locs.push(l); } }
     const t=todayStr(), from=edDaysAgoStr(30), d7=edDaysAgoStr(6);
