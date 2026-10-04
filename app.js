@@ -633,8 +633,12 @@ function defaultCircuitIdForScope(scope = selectedCircuitScope) {
   return circuitIdsForScope(scope)[0] || 'all';
 }
 
+function brandSegmentActive() {
+  return typeof window !== 'undefined' && !!(window.AdmiraSegmento && window.AdmiraSegmento.actual()) && LOCATIONS.length !== LOCATIONS_ALL.length;
+}
 function ensureCircuitMatchesScope() {
-  const allowed = circuitIdsForScope();
+  // Con cliente activo valen todos los circuitos (luego el selector deja solo los que tienen puntos).
+  const allowed = brandSegmentActive() ? (CIRCUIT_IDS_BY_SCOPE.all || circuitIdsForScope()) : circuitIdsForScope();
   if (!allowed.includes(selectedCircuitId)) {
     selectedCircuitId = defaultCircuitIdForScope();
     selectedMetroLine = 'all';
@@ -1351,10 +1355,11 @@ function renderCircuitSelector() {
   if (!select || !list || !title) return;
   renderCircuitScope();
   let allowedCircuitIds = ensureCircuitMatchesScope().filter(id => defs[id]);
-  if (window.AdmiraSegmento && window.AdmiraSegmento.actual() && LOCATIONS.length !== LOCATIONS_ALL.length) {
-    const withItems = allowedCircuitIds.filter(id => id !== 'all' && defs[id].items && defs[id].items.length);
+  if (brandSegmentActive()) {
+    // Con cliente activo se ignora el ámbito (local/ciudad/nacional): quedan sus circuitos, estén donde estén.
+    const withItems = (CIRCUIT_IDS_BY_SCOPE.all || allowedCircuitIds).filter(id => id !== 'all' && defs[id] && defs[id].items && defs[id].items.length);
     if (withItems.length) {
-      allowedCircuitIds = withItems.concat(allowedCircuitIds.includes('all') ? ['all'] : []);
+      allowedCircuitIds = withItems.concat(defs.all ? ['all'] : []);
       if (!allowedCircuitIds.includes(selectedCircuitId)) selectedCircuitId = withItems[0];
     }
   }
