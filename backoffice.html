@@ -198,6 +198,7 @@ window.ADMIRA_SHELL = {
     <p class="gsub" data-i18n-html="gate_sub">Inicia sesión con Google. Gestión para <b>@admira.com</b> y demos para las cuentas autorizadas de Carlos.</p>
     <div id="g-signin" style="display:flex;justify-content:center;margin:8px 0 4px"></div>
     <div class="gerr" id="g-err"></div>
+    <div class="gfoot"><a href="/auth/agente?return_to=%2Fbackoffice.html">Entrada de agentes (sin Google) →</a></div>
     <div class="gfoot" data-i18n-html="gate_foot">¿Vienes a mirar el mapa? <a href="index.html">Ir al mapa público →</a></div>
   </div>
 </div>
@@ -545,6 +546,22 @@ async function verifySession(token) {
   if (!response.ok) throw new Error(response.status === 503 ? 'verification_unavailable' : 'unauthorized');
   verifiedSession = await response.json();
   try { localStorage.setItem(GTOK_KEY, JSON.stringify({ token, email: verifiedSession.email })); } catch {}
+  await applySession();
+}
+// Entrada de agentes (encargo #5055): sin Google, con la cookie que deja /auth/agente.
+async function tryAgentSession() {
+  if (isAuthed()) return;
+  try { if (sessionStorage.getItem('bo-agent-skip') === '1') return; } catch {}
+  try {
+    const response = await fetch('/api/demo-session', { method: 'POST', credentials: 'same-origin', cache: 'no-store' });
+    if (!response.ok) return;
+    const session = await response.json();
+    if (!session || !session.agent) return;
+    verifiedSession = session;
+    await applySession();
+  } catch {}
+}
+async function applySession() {
   gate.classList.add('hidden');
   document.getElementById('catalog-shell').hidden = !verifiedSession.canManageCatalog;
   document.getElementById('badge-mode').hidden = !verifiedSession.canManageCatalog;
@@ -593,10 +610,12 @@ function initGoogleGate() {
 // GIS llama a esto cuando termina de cargar (script async); si ya está, ahora.
 window.onGoogleLibraryLoad = initGoogleGate;
 if (window.google && google.accounts && google.accounts.id) initGoogleGate();
+tryAgentSession();
 
 document.getElementById('btn-logout').addEventListener('click', () => {
   if (!confirm(t('logout_confirm'))) return;
   clearAuth();
+  try { sessionStorage.setItem('bo-agent-skip', '1'); } catch {}
   location.reload();
 });
 

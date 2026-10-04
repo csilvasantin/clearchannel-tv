@@ -43,3 +43,17 @@ test('the demo session does not depend on the host: it works the same on admira.
     assert.equal((await res.json()).email, 'csilva@admira.com', host);
   }
 });
+
+// #5055 · entrada de agentes sin Google
+import { agentSession, agentSessionApi, AGENT_EMAIL } from '../server/demo-session.mjs';
+test('agent cookie opens the backoffice only for the agents service account', async () => {
+  const req = (host, cookie) => new Request(`https://${host}/api/demo-session`, { method: 'POST', headers: cookie ? { Cookie: cookie } : {} });
+  const calls = [];
+  const fake = (email) => async (url, init) => { calls.push([url, init.headers.Origin]); return new Response(JSON.stringify({ ok: true, email, name: 'Lucas' }), { status: 200 }); };
+  const s = await agentSession(req('admira.biz', 'x=1; __Host-yk_session=abc'), fake(AGENT_EMAIL), 0);
+  assert.equal(s.agent, true); assert.equal(s.canManageCatalog, true); assert.deepEqual(calls[0], ['https://api.admira.biz/auth/session', 'https://admira.biz']);
+  assert.equal(await agentSession(req('admira.biz', '__Host-yk_session=abc'), fake('someone@else.com')), null);
+  assert.equal(await agentSession(req('admira.biz'), fake(AGENT_EMAIL)), null);
+  assert.equal(agentSessionApi('www.clearchannel.tv'), null);
+  assert.equal(agentSessionApi('clearchannel-tv.pages.dev').api, 'https://api.admira.app');
+});
