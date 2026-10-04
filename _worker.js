@@ -133,27 +133,39 @@ function admiraRewriter(pathname, apex) {
   return rewriter;
 }
 
-// Entrada de agentes sin Google (encargo #5067 · espejo de admira.biz/auth/agente, tool#29).
-// La lógica y el secret viven en api.admira.app; aquí solo se reenvía lo que no es GET/HEAD
-// (método, cabeceras útiles y cuerpo) y se devuelve tal cual, Set-Cookie incluida.
-// El GET sigue sirviendo la página estática. Solo con Host (www.)admira.app o la vista previa
-// *.clearchannel-tv.pages.dev; con clearchannel.tv es inerte.
+// Entrada de agentes sin Google (encargo #5067 en admira.app; encargo #5083 en admira.biz).
+// La lógica y el secret viven en el API de la casa. Aquí solo se reenvía lo que no es
+// GET/HEAD y se devuelve tal cual, Set-Cookie incluida. El GET sigue en la página estática.
+// admira.app y la vista previa van a api.admira.app. (www.)admira.biz va a api.admira.biz,
+// que es la misma mesa y su propia cookie. clearchannel.tv no reenvía.
 const AGENT_LOGIN_HOST = /^(www\.)?admira\.app$|(^|\.)clearchannel-tv\.pages\.dev$/i;
 const AGENT_LOGIN_API = 'https://api.admira.app';
 const AGENT_LOGIN_PASS = ['authorization', 'content-type', 'cookie', 'x-agente', 'x-return-to', 'user-agent', 'cf-connecting-ip'];
 
+function agentUpstream(hostname) {
+  var host = String(hostname || '').toLowerCase();
+  if (host === 'admira.biz' || host === 'www.admira.biz') {
+    return { api: 'https://api.admira.biz', origin: 'https://' + host };
+  }
+  if (AGENT_LOGIN_HOST.test(host)) {
+    return { api: AGENT_LOGIN_API, origin: 'https://www.admira.app' };
+  }
+  return null;
+}
+
 async function agentLogin(request, url) {
   if (url.pathname !== '/auth/agente' || request.method === 'GET' || request.method === 'HEAD') return null;
-  if (!AGENT_LOGIN_HOST.test(url.hostname)) return null;
+  var target = agentUpstream(url.hostname);
+  if (!target) return null;
   var headers = new Headers();
   AGENT_LOGIN_PASS.forEach(function (name) {
     var value = request.headers.get(name);
     if (value) headers.set(name, value);
   });
-  headers.set('Origin', 'https://www.admira.app');
+  headers.set('Origin', target.origin);
   var init = { method: request.method, headers: headers, redirect: 'manual' };
   if (request.method !== 'OPTIONS') init.body = await request.arrayBuffer();
-  var response = await fetch(new URL('/auth/agente' + url.search, AGENT_LOGIN_API), init);
+  var response = await fetch(new URL('/auth/agente' + url.search, target.api), init);
   var out = new Headers(response.headers);
   out.set('Cache-Control', 'no-store');
   out.set('Referrer-Policy', 'no-referrer');
@@ -183,4 +195,4 @@ export default {
   }
 };
 
-export { ADMIRA_HOST, AGENT_LOGIN_HOST, agentLogin, ADMIRA_MCP_FILES, YOKUP_MOVED_HOST, admiraApex, isYokupPath, replaceBrand, yokupMoved };
+export { ADMIRA_HOST, AGENT_LOGIN_HOST, agentLogin, agentUpstream, ADMIRA_MCP_FILES, YOKUP_MOVED_HOST, admiraApex, isYokupPath, replaceBrand, yokupMoved };

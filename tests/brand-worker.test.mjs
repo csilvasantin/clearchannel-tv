@@ -145,15 +145,19 @@ console.log('brand worker · admira.biz (marca, canónica, Yokup movido, /auth/*
 // Entrada de agentes (#5067): el POST a /auth/agente en admira.app va a api.admira.app con
 // método, Authorization y cuerpo; el GET sigue en ASSETS; clearchannel.tv no reenvía.
 {
-  const { AGENT_LOGIN_HOST } = await import('../_worker.js');
+  const { AGENT_LOGIN_HOST, agentUpstream } = await import('../_worker.js');
   assert.equal(AGENT_LOGIN_HOST.test('www.admira.app'), true);
   assert.equal(AGENT_LOGIN_HOST.test('admira.app'), true);
   assert.equal(AGENT_LOGIN_HOST.test('www.clearchannel.tv'), false);
   assert.equal(AGENT_LOGIN_HOST.test('www.admira.biz'), false);
+  assert.equal(agentUpstream('www.admira.app').api, 'https://api.admira.app');
+  assert.equal(agentUpstream('admira.biz').api, 'https://api.admira.biz');
+  assert.equal(agentUpstream('www.admira.biz').origin, 'https://www.admira.biz');
+  assert.equal(agentUpstream('www.clearchannel.tv'), null);
   const realFetch = globalThis.fetch;
   const seen = [];
   globalThis.fetch = async (u, init) => {
-    seen.push({ url: String(u), method: init.method, auth: init.headers.get('authorization'), body: new TextDecoder().decode(init.body) });
+    seen.push({ url: String(u), method: init.method, auth: init.headers.get('authorization'), origin: init.headers.get('origin'), body: new TextDecoder().decode(init.body) });
     return new Response('{"ok":false}', { status: 401, headers: { 'content-type': 'application/json', 'set-cookie': '__Host-yk_session=x; Path=/; Secure; HttpOnly' } });
   };
   try {
@@ -161,10 +165,20 @@ console.log('brand worker · admira.biz (marca, canónica, Yokup movido, /auth/*
     const r = await worker.fetch(new Request('https://www.admira.app/auth/agente', { method: 'POST', headers: { Authorization: 'Bearer malo', 'content-type': 'application/json' }, body: '{"agente":"t"}' }), assets);
     assert.equal(r.status, 401);
     assert.match(r.headers.get('set-cookie'), /__Host-yk_session/);
-    assert.deepEqual(seen[0], { url: 'https://api.admira.app/auth/agente', method: 'POST', auth: 'Bearer malo', body: '{"agente":"t"}' });
+    assert.deepEqual(seen[0], { url: 'https://api.admira.app/auth/agente', method: 'POST', auth: 'Bearer malo', origin: 'https://www.admira.app', body: '{"agente":"t"}' });
+    const biz = await worker.fetch(new Request('https://admira.biz/auth/agente', { method: 'POST', headers: { Authorization: 'Bearer malo', 'X-Agente': 'SmithMacMini' }, body: '{}' }), assets);
+    assert.equal(biz.status, 401);
+    assert.match(biz.headers.get('set-cookie'), /__Host-yk_session/);
+    assert.equal(seen[1].url, 'https://api.admira.biz/auth/agente');
+    assert.equal(seen[1].origin, 'https://admira.biz');
+    const wwwBiz = await worker.fetch(new Request('https://www.admira.biz/auth/agente', { method: 'POST', headers: { Authorization: 'Bearer malo' }, body: '{}' }), assets);
+    assert.equal(wwwBiz.status, 401);
+    assert.equal(seen[2].url, 'https://api.admira.biz/auth/agente');
+    assert.equal(seen[2].origin, 'https://www.admira.biz');
     assert.equal(await (await worker.fetch(new Request('https://www.admira.app/auth/agente'), assets)).text(), 'page');
+    assert.equal(await (await worker.fetch(new Request('https://admira.biz/auth/agente'), assets)).text(), 'page');
     assert.equal((await worker.fetch(new Request('https://www.clearchannel.tv/auth/agente', { method: 'POST' }), assets)).status, 200);
-    assert.equal(seen.length, 1);
+    assert.equal(seen.length, 3);
   } finally { globalThis.fetch = realFetch; }
   console.log('brand worker · /auth/agente proxy: ok');
 }
