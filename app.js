@@ -726,14 +726,25 @@ function stampAltadisTwin(loc) {
 }
 
 // Circuitos demo_<cliente> (crear-demo): el catálogo trae twin→admira.store.
-// Lo copiamos a xpaceUrl para que la ficha muestre «Gemelo Digital» / «Digital Twin».
+// Si xpaceUrl falta o no es una URL válida, lo copiamos para que la ficha
+// y la lista del circuito muestren «Gemelo Digital» / «Digital Twin».
 function stampDemoTwin(loc) {
-  if (!loc || !isDemoCircuitLocation(loc) || Object.prototype.hasOwnProperty.call(loc, 'xpaceUrl')) return loc;
-  const href = window.XpaceLinks && window.XpaceLinks.validXpaceUrl
-    ? window.XpaceLinks.validXpaceUrl(loc.twin)
-    : '';
+  if (!loc || !isDemoCircuitLocation(loc)) return loc;
+  const valid = window.XpaceLinks && window.XpaceLinks.validXpaceUrl;
+  if (typeof valid !== 'function') return loc;
+  if (valid(loc.xpaceUrl)) return loc;
+  const href = valid(loc.twin);
   if (href) loc.xpaceUrl = href;
   return loc;
+}
+
+// Enlace al lado de cada ubicación del circuito demo. Fuera del <label>
+// para que el clic no marque el checkbox.
+function circuitDemoTwinHtml(loc) {
+  if (!isDemoCircuitLocation(loc) || !window.XpaceLinks || typeof window.XpaceLinks.associationUrl !== 'function') return '';
+  const href = window.XpaceLinks.associationUrl(loc);
+  if (!href) return '';
+  return `<a class="cp-twin" data-i18n="digital_twin" href="${escHtml(href)}" target="_blank" rel="noopener noreferrer">${escHtml(t('digital_twin'))}</a>`;
 }
 
 function segmentLocations(list) {
@@ -1432,7 +1443,7 @@ function renderCircuitSelector() {
     const live = surfaces.filter(s => s.status === 'live').length;
     const checked = selectedLocationIds.has(loc.id) ? ' checked' : '';
     const activeDemo = circuitDemo.running && circuitDemo.items[circuitDemo.index] && circuitDemo.items[circuitDemo.index].id === loc.id;
-    return `<label class="circuit-point${activeDemo ? ' demo-active' : ''}" data-loc-id="${escHtml(loc.id)}">
+    const label = `<label class="circuit-point${activeDemo ? ' demo-active' : ''}" data-loc-id="${escHtml(loc.id)}">
       <input type="checkbox" value="${escHtml(loc.id)}"${checked}>
       <span>
         <span class="cp-name">${escHtml(loc.name)}</span>
@@ -1440,6 +1451,8 @@ function renderCircuitSelector() {
       </span>
       <span class="cp-meta">${live}/${surfaces.length}</span>
     </label>`;
+    const twin = circuitDemoTwinHtml(loc);
+    return twin ? `<div class="circuit-point-row">${label}${twin}</div>` : label;
   }).join('') + (items.length > MAX_CIRCUIT_LIST_RENDER
     ? `<div class="circuit-point" aria-hidden="true"><span><span class="cp-name">+${items.length - MAX_CIRCUIT_LIST_RENDER} Xpaces</span><span class="cp-addr">Usa el mapa, la búsqueda o compra todo el circuito para operar la red completa.</span></span><span class="cp-meta">${MAX_CIRCUIT_LIST_RENDER}/${items.length}</span></div>`
     : '');

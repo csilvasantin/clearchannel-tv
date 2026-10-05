@@ -38,7 +38,7 @@ Un agente (GrokBot / Arquitecto / Smith) que reciba «créame demo de X» debe:
 
 ## Gemelo
 
-`visual=better` y no `visual=better`: Matrix es la escena fotográfica de Starbucks y fuerza su marca.
+`visual=better` y no `visual=matrix`: Matrix es la escena fotográfica de Starbucks y fuerza su marca.
 Con `visual=better` el gemelo genérico de XpaceOS se viste con `?marca=<id>`, el hilo y la megafonía
 leen `store=<id>` y el «Circuit tour» recorre los Xpacios `demo_<id>`.
 
@@ -46,10 +46,10 @@ leen `store=<id>` y el «Circuit tour» recorre los Xpacios `demo_<id>`.
 
 `app.js` pinta como circuito propio cualquier punto con `circuit: "demo_<id>"` (etiqueta en `circuitLabel`),
 y `cliente-segmento.js` lo asigna al cliente `<id>`, de modo que `?marca=<id>` filtra el globo a sus Xpacios.
-La ficha de cada Xpacio muestra el enlace **Gemelo Digital** (ES) / **Digital Twin** (EN) hacia
-`admira.store/admira-xp/?…&visual=better&marca=<id>&loc=<loc>&store=<id>` gracias a `xpaceUrl`/`twin`
-(stampDemoTwin en `app.js` + `xpace-link.js` acepta `admira.store`). Un cliente nuevo no exige deploy
-si el catálogo ya lleva `twin`/`xpaceUrl`; el código base ya está en Pages.
+Al lado de cada ubicación del circuito, y también en la ficha, aparece **Gemelo Digital** (ES) / **Digital Twin** (EN).
+Abre `admira.store/admira-xp/?autostart=xtanco&visual=better&marca=<id>&loc=<loc>&store=<id>` (hilo musical).
+`crear_demo.py` escribe `twin` y `xpaceUrl` con esa URL. Si el catálogo solo trae `twin`, `stampDemoTwin`
+copia la URL válida a `xpaceUrl`. Un cliente nuevo no exige otro deploy: el código base ya está en Pages.
 
 ## Deshacer una demo
 

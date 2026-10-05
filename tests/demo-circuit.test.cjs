@@ -32,4 +32,8 @@ test('app.js stamps demo twin xpaceUrl from loc.twin (admira.store)', () => {
   assert.match(src, /LOCATIONS\.forEach\(stampDemoTwin\)/);
   assert.match(src, /digital_twin:'Gemelo Digital'/);
   assert.match(src, /digital_twin:'Digital Twin'/);
+  assert.match(src, /function circuitDemoTwinHtml\(loc\)/);
+  assert.match(src, /class="cp-twin"/);
+  assert.match(src, /class="circuit-point-row"/);
+  assert.match(src, /valid\(loc\.twin\)/);
 });
