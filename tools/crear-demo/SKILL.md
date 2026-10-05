@@ -12,7 +12,7 @@ cadena completa Admira para un cliente nuevo, con el patrón del hilo musical de
 | 4 | audio | admira.studio motores (api.admira.store) | 2 canciones EN+ES (Lyria 3) en Stock + hilo `store=<id>`; 2 locuciones ES+EN «hoy cerramos antes de las 20:00» (ElevenLabs) | POST /lyria3/generate · /hilomusical/push · /megafonia/push | NOTIFY_KEY (solo Lyria) |
 | 5 | xpl | xpl.admira.store | Playlist exacta `<id>.xpacio.hilomusical` (EN/ES + locuciones, activeLang) | POST /playlists (fusión, conserva las demás) | XPL_TOKEN |
 | 6 | book | api.admira.store GRID | Reservas «own» de las 4 piezas en la banda actual de cada Xpacio | POST /grid/book | GRID_KEY |
-| 7 | twins | admira.store | Gemelo por Xpacio: `admira.store/admira-xp/?autostart=xtanco&visual=matrix&marca=<id>&loc=<loc>&store=<id>` | campo `twin` del Xpacio + GET de comprobación | — |
+| 7 | twins | admira.store | Gemelo por Xpacio: `admira.store/admira-xp/?autostart=xtanco&visual=better&marca=<id>&loc=<loc>&store=<id>` | campo `twin` del Xpacio + GET de comprobación | — |
 | 8 | resumen | — | `~/Claude/demos/<id>/demo-<id>-RESUMEN.md` + estado JSON | — | — |
 
 ## Cómo se invoca
@@ -35,6 +35,12 @@ Un agente (GrokBot / Arquitecto / Smith) que reciba «créame demo de X» debe:
 2. Lanzar el comando en el Mac Mini (Shell con machineId del MacMini).
 3. Capturar evidencias en `/workspace/uploads/demo-<id>-*.png` (admira.biz con `?marca=<id>&circuit=demo_<id>`, marca blanca, feed, XPL, gemelo).
 4. Encargar verificación por MCP (agente_encargar) a Merovingio (XPL/GRID), Smith (deploy/rollback) y Morfeo (audio).
+
+## Gemelo
+
+`visual=better` y no `visual=matrix`: Matrix es la escena fotográfica de Starbucks y fuerza su marca.
+Con `visual=better` el gemelo genérico de XpaceOS se viste con `?marca=<id>`, el hilo y la megafonía
+leen `store=<id>` y el «Circuit tour» recorre los Xpacios `demo_<id>`.
 
 ## Sin tocar código
 
