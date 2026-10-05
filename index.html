@@ -263,6 +263,11 @@ addEventListener('resize',ccFitIntro);
   .circuit-point .cp-name{display:block;font-size:12px;font-weight:700;color:var(--ink);line-height:1.2}
   .circuit-point .cp-addr{display:block;font-size:10.5px;color:var(--mut);line-height:1.3;margin-top:2px}
   .circuit-point .cp-meta{font-family:monospace;font-size:10px;color:var(--brand);white-space:nowrap}
+  .circuit-point-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border-bottom:1px solid rgba(120,243,255,.07)}
+  .circuit-point-row:last-child{border-bottom:0}
+  .circuit-point-row > .circuit-point{border-bottom:0}
+  .cp-twin{margin-right:8px;font-family:monospace;font-size:10px;letter-spacing:.03em;color:var(--accent);text-decoration:none;white-space:nowrap}
+  .cp-twin:hover{color:var(--brand);text-decoration:underline}
   .circuit-demo-row{display:flex;flex-direction:column;gap:6px}
   .circuit-demo{height:36px;border-radius:7px;border:1px solid rgba(255,216,102,.52);background:rgba(255,216,102,.08);color:var(--accent);font-family:monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
   .circuit-demo:hover,.circuit-demo.active{background:var(--accent);border-color:var(--accent);color:#1a0e00}
@@ -1362,7 +1367,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="locations.js?v=cafebreria-independent-1"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20261005-demo-twin-1"></script><script defer src="app.js?v=20261005-demo-twin-1"></script><script defer src="intro.js?v=20261003-superpuestos-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20261005-demo-twin-1"></script><script defer src="app.js?v=20261005-demo-twin-list-1"></script><script defer src="intro.js?v=20261003-superpuestos-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
