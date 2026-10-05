@@ -161,7 +161,7 @@ def paso_marca(cfg, st):
 
 # ─── 2 · circuito (admira.biz / admira.app) ──────────────────────────────────
 def twin_url(cfg, loc_id):
-    return f"{STORE_TWIN}?autostart=xtanco&visual=matrix&marca={cfg['id']}&loc={loc_id}&store={cfg['store']}"
+    return f"{STORE_TWIN}?autostart=xtanco&visual=better&marca={cfg['id']}&loc={loc_id}&store={cfg['store']}"
 
 def construir_locations(cfg):
     out = []
