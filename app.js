@@ -333,7 +333,7 @@ const I18N = {
     wish_title:'¡Has atrapado una estrella fugaz!', wish_sub:'Cierra los ojos y pide un deseo…',
     wish_ok:'Pedido ✨', make_wish:'Pide un deseo',
     surfaces_available:'Dispositivos disponibles', live_bids:'Pujas en vivo', create_campaign:'➕ Crear campaña', ecosystem:'ecosistema',
-    how_auction:'Cómo funciona la subasta', view_twin:'Ver Gemelo Digital ↗', visit_twin:'Visita al Digital Twin ↗', navigation_menu:'Menú ☰', twin_hd:'🎥 Gemelo Hiperrealista ↗',
+    how_auction:'Cómo funciona la subasta', view_twin:'Ver Gemelo Digital ↗', visit_twin:'Visita al Digital Twin ↗', digital_twin:'Gemelo Digital', navigation_menu:'Menú ☰', twin_hd:'🎥 Gemelo Hiperrealista ↗',
     tour_start:'▶ Tour DooH', tour_stop:'⏸ Parar Tour DooH',
     tour_hint:'Tour DooH: vuela de punto en punto por el circuito y el target seleccionados.',
     map_preparing:'Preparando mapa · ', map_loading:'Cargando detalle · ',
@@ -467,7 +467,7 @@ const I18N = {
     wish_title:'You caught a shooting star!', wish_sub:'Close your eyes and make a wish…',
     wish_ok:'Wished ✨', make_wish:'Make a wish',
     surfaces_available:'Available devices', live_bids:'Live bids', create_campaign:'➕ Create campaign', ecosystem:'ecosystem',
-    how_auction:'How the auction works', view_twin:'View Digital Twin ↗', visit_twin:'Visit the Digital Twin ↗', navigation_menu:'Menu ☰', twin_hd:'🎥 Hyperrealistic Twin ↗',
+    how_auction:'How the auction works', view_twin:'View Digital Twin ↗', visit_twin:'Visit the Digital Twin ↗', digital_twin:'Digital Twin', navigation_menu:'Menu ☰', twin_hd:'🎥 Hyperrealistic Twin ↗',
     tour_start:'▶ Tour DooH', tour_stop:'⏸ Stop Tour DooH',
     tour_hint:'Tour DooH: fly between points in the selected circuit and target.',
     map_preparing:'Preparing map · ', map_loading:'Loading detail · ',
@@ -725,6 +725,17 @@ function stampAltadisTwin(loc) {
   return loc;
 }
 
+// Circuitos demo_<cliente> (crear-demo): el catálogo trae twin→admira.store.
+// Lo copiamos a xpaceUrl para que la ficha muestre «Gemelo Digital» / «Digital Twin».
+function stampDemoTwin(loc) {
+  if (!loc || !isDemoCircuitLocation(loc) || Object.prototype.hasOwnProperty.call(loc, 'xpaceUrl')) return loc;
+  const href = window.XpaceLinks && window.XpaceLinks.validXpaceUrl
+    ? window.XpaceLinks.validXpaceUrl(loc.twin)
+    : '';
+  if (href) loc.xpaceUrl = href;
+  return loc;
+}
+
 function segmentLocations(list) {
   const S = typeof window !== 'undefined' && window.AdmiraSegmento;
   return S && typeof S.filtrarActual === 'function' ? S.filtrarActual(list) : list;
@@ -735,6 +746,7 @@ function setLocations(nextLocations) {
   try { document.documentElement.dataset.segmentoPuntos = String(LOCATIONS.length); } catch (_) {}
   LOCATIONS.forEach(stampAlseaMexicoTwin);
   LOCATIONS.forEach(stampAltadisTwin);
+  LOCATIONS.forEach(stampDemoTwin);
   LOC_BY_ID = new Map(LOCATIONS.map(l => [l.id, l]));
   invalidateLocationsGeoJSON();
 }

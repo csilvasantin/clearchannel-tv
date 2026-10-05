@@ -179,6 +179,7 @@ def construir_locations(cfg):
             'external': {'brand': cfg['nombre'], 'network': f"{cfg['id']} demo", 'operator': 'Admira (demo)',
                          'source': 'crear-demo · Xpacio céntrico de demostración, no es una tienda oficial', 'url': cfg['web']},
             'twin': twin_url(cfg, lid),
+            'xpaceUrl': twin_url(cfg, lid),
             'hilomusical': {'store': cfg['store'], 'playlist': cfg['playlist'], 'langs': ['en', 'es']},
             'surfaces': [
                 {'name': 'Videowall escaparate', 'desc': 'LED de escaparate a pie de calle', 'status': 'sched', 'impr': 1800, 'cpm': '€9', 'surface': 'escaparate'},

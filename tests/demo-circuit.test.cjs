@@ -25,3 +25,11 @@ test('app.js define circuitos demo genéricos y los saca de retail', () => {
   assert.match(src, /\.\.\.demoDefs,/);
   assert.match(src, /\.filter\(l => !isDemoCircuitLocation\(l\)\)/);
 });
+
+test('app.js stamps demo twin xpaceUrl from loc.twin (admira.store)', () => {
+  const src = fs.readFileSync(require('path').join(__dirname, '..', 'app.js'), 'utf8');
+  assert.match(src, /function stampDemoTwin\(loc\)/);
+  assert.match(src, /LOCATIONS\.forEach\(stampDemoTwin\)/);
+  assert.match(src, /digital_twin:'Gemelo Digital'/);
+  assert.match(src, /digital_twin:'Digital Twin'/);
+});

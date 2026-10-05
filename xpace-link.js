@@ -16,7 +16,10 @@
     try {
       const url = new URL(value);
       const host = url.hostname.toLowerCase();
-      if (url.protocol !== 'https:' || (host !== 'xpaceos.com' && host !== 'www.xpaceos.com')) return '';
+      // XpaceOS host + admira.store twins (demo circuits / hilomusical).
+      const allowed = host === 'xpaceos.com' || host === 'www.xpaceos.com'
+        || host === 'admira.store' || host === 'www.admira.store';
+      if (url.protocol !== 'https:' || !allowed) return '';
       if (url.username || url.password || url.pathname === '/') return '';
       return url.href;
     } catch (_) {
@@ -43,9 +46,13 @@
     if (special) return { kind: 'special', href: special, label: String(location.flyLabel) };
     const href = associationUrl(location);
     if (!href) return null;
-    return location.id === STARBUCKS_PASEO_ID
-      ? { kind: 'xpacio', href, labelKey: 'visit_twin' }
-      : { kind: 'xpacio', href };
+    if (location.id === STARBUCKS_PASEO_ID) return { kind: 'xpacio', href, labelKey: 'visit_twin' };
+    // Demo circuits (and any admira.store twin): short EN/ES label.
+    const isDemo = /^demo_[a-z0-9_]{2,60}$/.test(String((location && location.circuit) || ''));
+    const host = (() => { try { return new URL(href).hostname.toLowerCase(); } catch (_) { return ''; } })();
+    const storeTwin = host === 'admira.store' || host === 'www.admira.store';
+    if (isDemo || storeTwin) return { kind: 'xpacio', href, labelKey: 'digital_twin' };
+    return { kind: 'xpacio', href };
   }
 
   const api = { associationUrl, panelNavigation, validXpaceUrl };
