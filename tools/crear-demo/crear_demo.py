@@ -27,7 +27,7 @@ ya está en el estado (--estado). Usa --pasos para repetir solo una parte, --dry
 
 Uso (Mac Mini):
   python3 tools/crear-demo/crear_demo.py --cliente "Lenovo" --web https://www.lenovo.com/ \
-      --color '#E2231A' --ciudades london,newyork,barcelona,madrid --cierre 20:00
+      --color '#E2231A' --xpacio-tipo demostore --ciudades london,newyork,barcelona,madrid --cierre 20:00
 """
 import argparse, base64, datetime, json, os, re, subprocess, sys, time, unicodedata, urllib.error, urllib.request
 
@@ -40,6 +40,29 @@ XPL = 'https://xpl.admira.store/playlists'
 STORE_TWIN = 'https://www.admira.store/admira-xp/'
 BIZ = 'https://www.admira.biz/'
 PASOS = ['marca', 'circuito', 'grid', 'audio', 'xpl', 'book', 'twins', 'resumen']
+
+# Tipo de Xpacio → escena del gemelo (autostart) y etiqueta en kind.
+# DemoStore (Lenovo, retail demo) ≠ Estanco (xtanco) ≠ Cafetería.
+# Autostart válido en admira.store/admira-xp hoy: xtanco, cafeteria, supermercado,
+# shoptalk, creator. demostore → shoptalk (escena retail/demo) hasta exista escena propia.
+XPACIO_TIPOS = {
+    'demostore': {
+        'autostart': 'shoptalk', 'label_es': 'DemoStore', 'label_en': 'DemoStore',
+        'sector': 'DemoStore · retail demo', 'kind': 'DemoStore',
+    },
+    'estanco': {
+        'autostart': 'xtanco', 'label_es': 'Estanco', 'label_en': 'Tobacconist',
+        'sector': 'Estanco · retail físico', 'kind': 'Estanco',
+    },
+    'cafeteria': {
+        'autostart': 'cafeteria', 'label_es': 'Cafetería', 'label_en': 'Café',
+        'sector': 'Cafetería · hospitality', 'kind': 'Cafetería',
+    },
+    'other': {
+        'autostart': 'xtanco', 'label_es': 'Otro', 'label_en': 'Other',
+        'sector': 'Retail físico', 'kind': 'Retail',
+    },
+}
 
 CIUDADES = {
     'london':    {'city': 'London',    'country': 'UK', 'tz': 'Europe/London',     'zona': 'Oxford Circus',     'addr': 'Oxford Circus · Regent Street · London W1B · United Kingdom', 'coords': [-0.1419, 51.5154]},
@@ -161,7 +184,8 @@ def paso_marca(cfg, st):
 
 # ─── 2 · circuito (admira.biz / admira.app) ──────────────────────────────────
 def twin_url(cfg, loc_id):
-    return f"{STORE_TWIN}?autostart=xtanco&visual=better&marca={cfg['id']}&loc={loc_id}&store={cfg['store']}"
+    as_ = cfg.get('autostart') or 'xtanco'
+    return f"{STORE_TWIN}?autostart={as_}&visual=better&marca={cfg['id']}&loc={loc_id}&store={cfg['store']}"
 
 def construir_locations(cfg):
     out = []
@@ -171,7 +195,7 @@ def construir_locations(cfg):
         out.append({
             'id': lid,
             'name': f"{cfg['nombre']} · {p['city']} {p['zona']}",
-            'kind': f"{cfg['sector']} · {cfg['nombre']} · Circuito demo Admira",
+            'kind': f"{cfg.get('xpacio_kind', cfg['sector'])} · {cfg['nombre']} · Circuito demo Admira",
             'addr': p['addr'], 'coords': p['coords'], 'city': p['city'], 'country': p['country'], 'tz': p['tz'],
             'music': 'lounge', 'cameras': False,
             'circuit': cfg['circuit'], 'circuitLabel': {'es': cfg['circuit_label_es'], 'en': cfg['circuit_label_en']},
@@ -180,7 +204,7 @@ def construir_locations(cfg):
                          'source': 'crear-demo · Xpacio céntrico de demostración, no es una tienda oficial', 'url': cfg['web']},
             'twin': twin_url(cfg, lid),
             'xpaceUrl': twin_url(cfg, lid),
-            'hilomusical': {'store': cfg['store'], 'playlist': cfg['playlist'], 'langs': ['en', 'es']},
+            'hilomusical': {'store': cfg['store'], 'playlist': cfg['playlist'], 'langs': list(cfg.get('idiomas') or ['en', 'es'])},
             'surfaces': [
                 {'name': 'Videowall escaparate', 'desc': 'LED de escaparate a pie de calle', 'status': 'sched', 'impr': 1800, 'cpm': '€9', 'surface': 'escaparate'},
                 {'name': 'Pantalla producto', 'desc': 'Pantalla junto a la mesa de producto', 'status': 'sched', 'impr': 900, 'cpm': '€7', 'surface': 'pantalla'},
@@ -433,9 +457,15 @@ def main():
     ap.add_argument('--web', required=True)
     ap.add_argument('--id', help='id de marca/circuito (por defecto slug del cliente)')
     ap.add_argument('--color', default='', help='color primario #RRGGBB (wordmark y marca)')
-    ap.add_argument('--sector', default='Retail físico')
+    ap.add_argument('--sector', default='', help='sector libre; por defecto el del --xpacio-tipo')
+    ap.add_argument('--xpacio-tipo', default='demostore',
+                    choices=sorted(XPACIO_TIPOS),
+                    help='tipo de Xpacio: demostore (Lenovo=DemoStores), estanco, cafeteria, other')
+    ap.add_argument('--xpacio-otro', default='', help='etiqueta si --xpacio-tipo=other')
+    ap.add_argument('--idiomas', default='en,es', help='idiomas del hilo/locuciones (en,es)')
     ap.add_argument('--ciudades', default='london,newyork,barcelona,madrid')
     ap.add_argument('--cierre', default='20:00', help='hora de cierre de la locución (HH:MM)')
+    ap.add_argument('--logo', default='', help='ruta local a logo opcional (data URL se genera)')
     ap.add_argument('--pasos', default=','.join(PASOS))
     ap.add_argument('--out', default=os.path.expanduser('~/Claude/demos'))
     ap.add_argument('--rehacer', action='store_true', help='regenera marca y audio aunque existan')
@@ -446,15 +476,29 @@ def main():
     for c in ciudades:
         if c not in CIUDADES: raise SystemExit(f'✗ ciudad sin preset: {c} (hay: {", ".join(CIUDADES)})')
     out = os.path.join(a.out, i); os.makedirs(out, exist_ok=True)
-    cfg = {'id': i, 'nombre': a.cliente.strip(), 'web': a.web, 'color': a.color, 'sector': a.sector, 'ciudades': ciudades,
+    tipo = a.xpacio_tipo
+    tip = dict(XPACIO_TIPOS[tipo])
+    if tipo == 'other' and a.xpacio_otro.strip():
+        tip['kind'] = a.xpacio_otro.strip()[:40]
+        tip['sector'] = a.xpacio_otro.strip()[:60]
+        tip['label_es'] = tip['kind']; tip['label_en'] = tip['kind']
+    sector = a.sector.strip() or tip['sector']
+    idiomas = [x.strip().lower() for x in a.idiomas.split(',') if x.strip()]
+    if not idiomas: idiomas = ['en', 'es']
+    cfg = {'id': i, 'nombre': a.cliente.strip(), 'web': a.web, 'color': a.color, 'sector': sector,
+           'xpacio_tipo': tipo, 'xpacio_kind': tip['kind'], 'autostart': tip['autostart'],
+           'xpacio_label_es': tip['label_es'], 'xpacio_label_en': tip['label_en'],
+           'idiomas': idiomas, 'logo_path': a.logo,
+           'ciudades': ciudades,
            'cierre': a.cierre, 'store': re.sub(r'[^a-z0-9_-]', '', i), 'playlist': f'{i}.xpacio.hilomusical',
            'circuit': 'demo_' + slug(i, '_'), 'out': out, 'estado': os.path.join(out, f'demo-{i}-estado.json'),
            'dry': a.dry_run, 'rehacer': a.rehacer,
-           'circuit_label_es': f"Circuito {a.cliente.strip()} · Demo {len(ciudades)} ciudades",
-           'circuit_label_en': f"{a.cliente.strip()} circuit · {len(ciudades)}-city demo"}
+           'circuit_label_es': f"Circuito {a.cliente.strip()} · {tip['label_es']} · Demo {len(ciudades)} ciudades",
+           'circuit_label_en': f"{a.cliente.strip()} {tip['label_en']} circuit · {len(ciudades)}-city demo"}
     st = json.load(open(cfg['estado'])) if os.path.exists(cfg['estado']) else {}
     st.update({'cliente': cfg['nombre'], 'id': i, 'circuit': cfg['circuit'], 'playlist': cfg['playlist'], 'store': cfg['store'],
-               'ciudades': ciudades, 'ultima_ejecucion': time.strftime('%Y-%m-%dT%H:%M:%S%z')})
+               'ciudades': ciudades, 'xpacio_tipo': cfg['xpacio_tipo'], 'autostart': cfg['autostart'],
+               'idiomas': cfg['idiomas'], 'ultima_ejecucion': time.strftime('%Y-%m-%dT%H:%M:%S%z')})
     fn = {'marca': paso_marca, 'circuito': paso_circuito, 'grid': paso_grid, 'audio': paso_audio,
           'xpl': paso_xpl, 'book': paso_book, 'twins': paso_twins, 'resumen': paso_resumen}
     for p in [x.strip() for x in a.pasos.split(',') if x.strip()]:
