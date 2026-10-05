@@ -12,7 +12,7 @@ cadena completa Admira para un cliente nuevo, con el patrón del hilo musical de
 | 4 | audio | admira.studio motores (api.admira.store) | 2 canciones EN+ES (Lyria 3) en Stock + hilo `store=<id>`; 2 locuciones ES+EN «hoy cerramos antes de las 20:00» (ElevenLabs) | POST /lyria3/generate · /hilomusical/push · /megafonia/push | NOTIFY_KEY (solo Lyria) |
 | 5 | xpl | xpl.admira.store | Playlist exacta `<id>.xpacio.hilomusical` (EN/ES + locuciones, activeLang) | POST /playlists (fusión, conserva las demás) | XPL_TOKEN |
 | 6 | book | api.admira.store GRID | Reservas «own» de las 4 piezas en la banda actual de cada Xpacio | POST /grid/book | GRID_KEY |
-| 7 | twins | admira.store | Gemelo por Xpacio: `admira.store/admira-xp/?autostart=xtanco&visual=better&marca=<id>&loc=<loc>&store=<id>` | campo `twin` del Xpacio + GET de comprobación | — |
+| 7 | twins | admira.store | Gemelo por Xpacio: `admira.store/admira-xp/?autostart=xtanco&visual=better&marca=<id>&loc=<loc>&store=<id>` | campos `twin` + `xpaceUrl` del Xpacio + GET de comprobación | — |
 | 8 | resumen | — | `~/Claude/demos/<id>/demo-<id>-RESUMEN.md` + estado JSON | — | — |
 
 ## Cómo se invoca
@@ -38,15 +38,18 @@ Un agente (GrokBot / Arquitecto / Smith) que reciba «créame demo de X» debe:
 
 ## Gemelo
 
-`visual=better` y no `visual=matrix`: Matrix es la escena fotográfica de Starbucks y fuerza su marca.
+`visual=better` y no `visual=better`: Matrix es la escena fotográfica de Starbucks y fuerza su marca.
 Con `visual=better` el gemelo genérico de XpaceOS se viste con `?marca=<id>`, el hilo y la megafonía
 leen `store=<id>` y el «Circuit tour» recorre los Xpacios `demo_<id>`.
 
-## Sin tocar código
+## Sin tocar código (casi)
 
 `app.js` pinta como circuito propio cualquier punto con `circuit: "demo_<id>"` (etiqueta en `circuitLabel`),
 y `cliente-segmento.js` lo asigna al cliente `<id>`, de modo que `?marca=<id>` filtra el globo a sus Xpacios.
-Ningún paso exige deploy para un cliente nuevo.
+La ficha de cada Xpacio muestra el enlace **Gemelo Digital** (ES) / **Digital Twin** (EN) hacia
+`admira.store/admira-xp/?…&visual=better&marca=<id>&loc=<loc>&store=<id>` gracias a `xpaceUrl`/`twin`
+(stampDemoTwin en `app.js` + `xpace-link.js` acepta `admira.store`). Un cliente nuevo no exige deploy
+si el catálogo ya lleva `twin`/`xpaceUrl`; el código base ya está en Pages.
 
 ## Deshacer una demo
 

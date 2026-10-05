@@ -43,3 +43,14 @@ test('Paseo de Gracia 103 opens Starbucks Matrix from slim and full records only
   const override='https://www.xpaceos.com/xpacios/custom/';
   assert.equal(associationUrl({id,xpaceUrl:override}), override);
 });
+
+test('admira.store twins enable Digital Twin control for demo circuits', () => {
+  const href = 'https://www.admira.store/admira-xp/?autostart=xtanco&visual=better&marca=lenovo&loc=lenovo-demo-london&store=lenovo';
+  const loc = { id: 'lenovo-demo-london', circuit: 'demo_lenovo', xpaceUrl: href };
+  assert.equal(associationUrl(loc), href);
+  assert.deepEqual(panelNavigation(loc), { kind: 'xpacio', href, labelKey: 'digital_twin' });
+  // twin alone still does not associate (explicit xpaceUrl required, stamped by app.js)
+  assert.equal(panelNavigation({ id: 'lenovo-demo-madrid', circuit: 'demo_lenovo', twin: href }), null);
+  assert.equal(panelNavigation({ xpaceUrl: 'https://www.admira.store/' }), null);
+  assert.equal(panelNavigation({ xpaceUrl: 'https://evil.admira.store/admira-xp/?loc=x' }), null);
+});
