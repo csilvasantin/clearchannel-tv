@@ -828,6 +828,35 @@ function isCorreosLocation(loc) {
   const network = loc.external && normText(loc.external.network);
   return brand === 'correos' || extBrand === 'correos' || network === 'correos espana' || hay.includes('correos');
 }
+// Circuitos de DEMO generados por «créame demo de <cliente>» (tools/crear-demo): cualquier punto
+// con circuit "demo_<cliente>" forma su propio circuito sin tocar este fichero. Etiqueta en
+// loc.circuitLabel (texto o {es,en}). Ámbito: global y todos. Ver tools/crear-demo/SKILL.md.
+function isDemoCircuitLocation(loc) { return /^demo_[a-z0-9_]{2,60}$/.test(String((loc && loc.circuit) || '')); }
+function demoCircuitLabel(loc, id) {
+  const raw = loc && loc.circuitLabel;
+  const lang = (typeof LANG === 'string' && LANG) || 'es';
+  if (raw && typeof raw === 'object') return String(raw[String(lang).slice(0, 2)] || raw.es || raw.en || id);
+  return String(raw || ('Circuito demo · ' + id.slice(5).replace(/_/g, ' ')));
+}
+function demoCircuitDefinitions() {
+  const out = {};
+  LOCATIONS.forEach(loc => {
+    if (!isDemoCircuitLocation(loc)) return;
+    const id = loc.circuit;
+    if (!out[id]) out[id] = {label: demoCircuitLabel(loc, id), items: [], demo: true};
+    out[id].items.push(loc);
+  });
+  Object.keys(out).forEach(id => {
+    out[id].items.sort((x, y) => (x.tourOrder || 99) - (y.tourOrder || 99));
+    out[id].segmentation = circuitSegmentationForItems(out[id].items);
+    ['all', 'global'].forEach(scope => {
+      const ids = CIRCUIT_IDS_BY_SCOPE[scope];
+      if (Array.isArray(ids) && !ids.includes(id)) ids.splice(scope === 'all' ? Math.max(1, ids.length - 1) : ids.length, 0, id);
+    });
+  });
+  return out;
+}
+
 function isMultiopticasLocation(loc) {
   const hay = normText([loc.id, loc.name, loc.kind].join(' '));
   const brand = loc.osm && normText(loc.osm.brand);
@@ -941,8 +970,10 @@ function circuitDefinitions() {
   const elcorteinglesItems = LOCATIONS.filter(isElCorteInglesLocation);
   const correosItems = LOCATIONS.filter(isCorreosLocation);
   const multiopticasItems = LOCATIONS.filter(isMultiopticasLocation);
-  const retailItems = LOCATIONS.filter(l => !isCafebreriaLocation(l) && !isJtiXtancoLocation(l) && !isAltadisBcnLocation(l) && !isAlseaStarbucksLocation(l) && !isAlseaMexicoLocation(l) && !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l));
+  const retailItems = LOCATIONS.filter(l => !isCafebreriaLocation(l) && !isJtiXtancoLocation(l) && !isAltadisBcnLocation(l) && !isAlseaStarbucksLocation(l) && !isAlseaMexicoLocation(l) && !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l)).filter(l => !isDemoCircuitLocation(l));
+  const demoDefs = demoCircuitDefinitions();
   return {
+    ...demoDefs,
     admiraxperience: {label:'AdmiraXperience',items:LOCATIONS.filter(isAdmiraXperienceLocation),segmentation:circuitSegmentationForItems(LOCATIONS.filter(isAdmiraXperienceLocation))},
     metro_bcn: {
       label: t('circuit_metro_bcn'),
