@@ -49,14 +49,25 @@ git archive main | tar -x -C "$TMP"
 
 # El sello también va en la puerta MCP propia de admira.app (mcp/admira-app/*).
 find "$TMP" -type f \( -name '*.html' -o -path '*/mcp/admira-app/*' \) -exec sed -i '' "s/__ADMIRANEXT_VERSION__/$VERSION/g" {} +
-jq -n \
+# NOVEDADES DEL SELLO (Merovingio, 06-10-2026 · sello con novedades en toda la suite).
+# novedades.json[sello] o .default → version.json.novedades[] (2-4 líneas en español). Las
+# pinta al pasar el ratón el cargador compartido https://www.admiranext.com/assets/sello-novedades.js
+NOVEDADES_JSON='[]'
+if [ -f novedades.json ]; then
+  NOVEDADES_JSON="$(jq -c --arg v "$VERSION" '
+    (if type=="object" then (.[$v] // .default // .novedades // []) elif type=="array" then . else [] end)
+    | if type=="array" then . else [] end | map(tostring) | map(select(length>0)) | .[0:4]
+  ' novedades.json 2>/dev/null || echo '[]')"
+fi
+[ -n "$NOVEDADES_JSON" ] || NOVEDADES_JSON='[]'
+jq -n --argjson novedades "$NOVEDADES_JSON" \
   --arg version "$VERSION" \
   --arg agent "$AGENT" \
   --arg machine "$MACHINE" \
   --arg signature "$SIGNATURE" \
   --arg gitShort "$GIT_SHORT" \
   --arg deployedAt "$DEPLOYED_AT" \
-  '{version:$version,agent:$agent,deployer:$agent,machine:$machine,signature:$signature,gitShort:$gitShort,deployedAt:$deployedAt,dirty:false,domains:["www.clearchannel.tv","www.admira.app","www.admira.biz"]}' \
+  '{version:$version,agent:$agent,deployer:$agent,machine:$machine,signature:$signature,gitShort:$gitShort,deployedAt:$deployedAt,dirty:false,novedades:$novedades,domains:["www.clearchannel.tv","www.admira.app","www.admira.biz"]}' \
   > "$TMP/version.json"
 
 npx --yes wrangler@latest pages deploy "$TMP" --project-name=clearchannel-tv --branch=main --commit-dirty=false
