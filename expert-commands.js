@@ -215,6 +215,34 @@
       },
     },
     {
+      id: 'idioma', command: '/idioma', aliases: ['language', 'languague'], attributes: [], requires: [],
+      es: 'Idioma de la interfaz (sin arg: alterna ESP↔ENG).',
+      en: 'Interface language (no arg: toggle ESP↔ENG).',
+      run(args, ctx, lang) {
+        const raw = String((args && (args.value != null ? args.value : args.idioma)) || '').trim();
+        const body = ('idioma ' + raw).trim();
+        const m = body.match(/^(idioma|language|languague)(?:[\s_-]*(.*))?$/i);
+        const token = (m ? String(m[2] || '') : raw).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]/g, '');
+        let next = '';
+        if (!token) next = lang === 'en' ? 'es' : 'en';
+        else if (/^(en|eng|english|ingles)$/.test(token)) next = 'en';
+        else if (/^(es|esp|spa|spanish|espanol|castellano)$/.test(token)) next = 'es';
+        else return fail(L(lang,
+          'Usa /idioma o /language (toggle), /idioma ESP|ENG. También idiomaESP, languageENG…',
+          'Use /idioma or /language (toggle), /idioma ESP|ENG. Also idiomaESP, languageENG…'));
+        try {
+          if (typeof window.setLang === 'function') window.setLang(next);
+          else if (typeof window.AdmiraSetLanguage === 'function') window.AdmiraSetLanguage(next);
+          else {
+            document.documentElement.lang = next;
+            try { localStorage.setItem('omnip-lang', next); } catch (_) {}
+          }
+        } catch (_) { document.documentElement.lang = next; }
+        try { document.dispatchEvent(new CustomEvent('admiranext:lang', {detail: {lang: next}})); } catch (_) {}
+        return done(next === 'en' ? 'Language: English' : 'Idioma: español');
+      },
+    },
+    {
       id: 'help', command: '/help', aliases: ['ayuda', 'h'], attributes: [], requires: [],
       es: 'Lista verbos, atributos y rutinas.',
       en: 'Lists verbs, attributes and routines.',
@@ -249,6 +277,12 @@
   function parse(input) {
     const raw = String(input == null ? '' : input).trim();
     if (!raw) return {ok: false, error: 'empty', raw};
+    // idiomaESP / languageENG / /languague ESP (Carlos 5-oct-2026)
+    const langGlue = raw.match(/^\/?(idioma|language|languague)(?:[\s_-]*(.*))?$/i);
+    if (langGlue) {
+      const verb = VERB_KEYS.get(key(langGlue[1]));
+      if (verb) return {ok: true, raw, verb, args: {value: (langGlue[2] || '').trim()}, command: verb.command + ((langGlue[2] || '').trim() ? ' ' + langGlue[2].trim() : '')};
+    }
     const m = raw.match(/^\/?(\S+)\s*([\s\S]*)$/);
     const verb = VERB_KEYS.get(key(m[1]));
     if (!verb) return {ok: false, error: 'unknown_verb', raw, input: m[1], suggestions: VERBS.filter(v => v.id.startsWith(key(m[1]).slice(0, 2))).map(v => v.command)};
