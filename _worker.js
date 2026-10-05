@@ -79,15 +79,18 @@ const AVATAR_TAG = '<script defer src="https://www.admiranext.com/assets/avatar.
 function wantsAvatar(url, response) {
   return response.status === 200 && !url.pathname.startsWith('/auth/');
 }
+// Sello de versión con novedades (Merovingio, 06-10-2026): mismo cargador común de admiranext.com,
+// que lee el /version.json de este sitio y enseña sus novedades al pasar el ratón.
+const SELLO_TAG = '<script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-sello-1" data-admira-sello-loader></script>';
 function avatarRewriter() {
-  return new HTMLRewriter().on('head', {element(el) {el.append(AVATAR_TAG, {html:true});}});
+  return new HTMLRewriter().on('head', {element(el) {el.append(AVATAR_TAG + SELLO_TAG, {html:true});}});
 }
 
 function admiraRewriter(pathname, apex, avatar) {
   apex = apex || 'admira.app';
   var homeTitle = 'Mapa de espacios comerciales | ' + apex;
   var rewriter = new HTMLRewriter()
-    .on('head', {element(el) {el.append('<script defer src="https://www.admiranext.com/assets/live-presence.js?v=2"></script>' + (avatar ? AVATAR_TAG : ''), {html:true});}})
+    .on('head', {element(el) {el.append('<script defer src="https://www.admiranext.com/assets/live-presence.js?v=2"></script>' + (avatar ? AVATAR_TAG + SELLO_TAG : ''), {html:true});}})
     .on('html', {
       element(element) {
         element.setAttribute('data-brand', 'admira');
@@ -210,4 +213,4 @@ export default {
   }
 };
 
-export { AVATAR_TAG, ADMIRA_HOST, AGENT_LOGIN_HOST, agentLogin, agentUpstream, ADMIRA_MCP_FILES, YOKUP_MOVED_HOST, admiraApex, isYokupPath, replaceBrand, yokupMoved };
+export { AVATAR_TAG, SELLO_TAG, ADMIRA_HOST, AGENT_LOGIN_HOST, agentLogin, agentUpstream, ADMIRA_MCP_FILES, YOKUP_MOVED_HOST, admiraApex, isYokupPath, replaceBrand, yokupMoved };
