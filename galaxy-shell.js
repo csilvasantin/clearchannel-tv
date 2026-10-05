@@ -226,7 +226,7 @@
   // ⌘ EXPERTO · CLI con el look de digitalavatar.ai (Carlos, 4-oct-2026): piel compartida de
   // la suite servida desde admiranext.com/suite. Reviste el panel; los verbos siguen siendo estos.
   (() => {
-    const EXPERTO = 'https://www.admiranext.com/suite/experto', V = '20261004-experto-da-1';
+    const EXPERTO = 'https://www.admiranext.com/suite/experto', V = '20261005-experto-idioma-1';
     const css = document.createElement('link');
     css.rel = 'stylesheet'; css.href = EXPERTO + '.css?v=' + V;
     document.head.append(css);
