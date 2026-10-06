@@ -190,9 +190,25 @@ def totales(plan):
         'piezas_unicas': len(piezas_unicas(plan)),
     }
 
+def nombre_ciudad(plan):
+    """La ciudad del plan es un texto o {nombre, pais, corta}. Nunca se imprime el diccionario."""
+    ciudad = plan.get('ciudad') or ''
+    if isinstance(ciudad, dict):
+        ciudad = ciudad.get('nombre') or ciudad.get('corta') or ''
+    elif not isinstance(ciudad, str):
+        ciudad = ''
+    ciudad = str(ciudad).strip()
+    if ciudad:
+        return ciudad
+    for est in plan.get('establecimientos') or []:
+        local = est.get('ciudad')
+        if isinstance(local, str) and local.strip():
+            return local.strip()
+    return ''
+
 def catalogo_stock(plan):
     return {'id': cd.slug(plan['circuito']), 'cliente': cd.slug(plan['marca_blanca']['id']),
-            'nombre': f"Demo {plan['marca_blanca']['nombre']} · {plan.get('ciudad') or 'circuito'}",
+            'nombre': f"Demo {plan['marca_blanca']['nombre']} · {nombre_ciudad(plan) or 'circuito'}",
             'proyecto': cd.slug(plan['circuito'])}
 
 # ─── contexto, estado y evidencia ────────────────────────────────────────────
@@ -246,7 +262,7 @@ def marca_body(plan, propuesta, color=''):
     m['id'] = mb['id']; m['nombre'] = mb['nombre']; m['nombreCorto'] = mb['nombre']
     m['sector'] = 'Panadería · cafetería' if plan['xpacio'].get('tipo') == 'cafeteria' else (m.get('sector') or 'Retail')
     m['descripcion'] = (f"{mb['nombre']} · marca real ({mb['web']}) como marca blanca de la demo Admira: "
-                        f"circuito {plan['circuito']} con {len(plan['establecimientos'])} locales en {plan.get('ciudad') or 'la ciudad'}.")
+                        f"circuito {plan['circuito']} con {len(plan['establecimientos'])} locales en {nombre_ciudad(plan) or 'la ciudad'}.")
     demo = m.setdefault('demo', {})
     demo.update({'titular': f"{mb['nombre']}, también en pantalla", 'cta': 'Descúbrelo',
                  'circuito': circuit_label(plan)['es'], 'puntos': len(plan['establecimientos']),
@@ -305,7 +321,7 @@ def paso_marca(ctx):
 # ─── 2 · circuito admira.biz ─────────────────────────────────────────────────
 def circuit_label(plan):
     mb, n = plan['marca_blanca']['nombre'], len(plan['establecimientos'])
-    ciudad = plan.get('ciudad') or ''
+    ciudad = nombre_ciudad(plan)
     kind = plan['xpacio'].get('kind', 'Cafetería')
     return {'es': f'Circuito {mb} · {kind} · {ciudad} ({n} locales)', 'en': f'{mb} café circuit · {ciudad} ({n} stores)'}
 
