@@ -1,0 +1,1256 @@
+{
+  "_nota": "Plan v2 que produce el formulario admiranext.com/demo#formulario para 365 · Barcelona con las decisiones de Carlos del 06-10-2026: por local 1 altavoz (2 playlists: hilomusical continua + locuciones bajo demanda disparadas desde el TPV) + pantalla vertical + pantalla horizontal = 3 equipos IoT y 4 playlists; marca blanca siempre con la marca real (365 · 365obrador.com) aplicada con /marca 365 en las 5 plataformas; contenido común de marca y desconexiones temporales por local preparadas (vacías, próximamente). DRY-RUN: no se ha creado nada. La v1 está en demo-365-bcn-plan.v1.json.",
+  "payload_formulario": {
+    "modo": "completa",
+    "cliente": "365",
+    "website": "https://365obrador.com/",
+    "color": "#1D1D1B",
+    "franquicia": true,
+    "ciudad": {
+      "nombre": "Barcelona",
+      "pais": "ES"
+    },
+    "n_establecimientos": 4,
+    "establecimientos": [
+      {
+        "ref": "365-wpsl-9559",
+        "nombre": "365 · Plaça de Tetuan, 3",
+        "direccion": "Plaça de Tetuan, 3",
+        "cp": "08010",
+        "ciudad": "Barcelona",
+        "pais": "ES",
+        "lat": 41.394094,
+        "lng": 2.176016,
+        "slug": "bcn-tetuan",
+        "barrio": "Eixample · Fort Pienc",
+        "fuente": "Localizador oficial 365 Obrador (WP Store Locator público)",
+        "fuente_url": "https://365obrador.com/es/encuentranos/"
+      },
+      {
+        "ref": "365-wpsl-9468",
+        "nombre": "365 · Ronda de la Universitat, 7",
+        "direccion": "Ronda de la Universitat, 7",
+        "cp": "08007",
+        "ciudad": "Barcelona",
+        "pais": "ES",
+        "lat": 41.386378,
+        "lng": 2.165318,
+        "slug": "bcn-universitat",
+        "barrio": "Eixample · Plaça Universitat",
+        "fuente": "Localizador oficial 365 Obrador (WP Store Locator público)",
+        "fuente_url": "https://365obrador.com/es/encuentranos/"
+      },
+      {
+        "ref": "365-wpsl-9587",
+        "nombre": "365 · Plaça de la Sagrada Família, 20",
+        "direccion": "Plaça de la Sagrada Família, 20",
+        "cp": "08013",
+        "ciudad": "Barcelona",
+        "pais": "ES",
+        "lat": 41.402198,
+        "lng": 2.173914,
+        "slug": "bcn-sagrada-familia",
+        "barrio": "Eixample · Sagrada Família",
+        "direccion_fuente": "Plaça de la Sagarada Familia, 20",
+        "fuente": "Localizador oficial 365 Obrador (WP Store Locator público)",
+        "fuente_url": "https://365obrador.com/es/encuentranos/"
+      },
+      {
+        "ref": "365-wpsl-9436",
+        "nombre": "365 · Carrer de Sants, 91",
+        "direccion": "Carrer de Sants, 91",
+        "cp": "08014",
+        "ciudad": "Barcelona",
+        "pais": "ES",
+        "lat": 41.37525,
+        "lng": 2.136099,
+        "slug": "bcn-sants",
+        "barrio": "Sants-Montjuïc · Sants",
+        "fuente": "Localizador oficial 365 Obrador (WP Store Locator público)",
+        "fuente_url": "https://365obrador.com/es/encuentranos/"
+      }
+    ],
+    "xpacio_tipo": "cafeteria",
+    "xpacio_subtipo": "Panadería",
+    "dispositivos": [
+      "altavoz",
+      "vertical",
+      "horizontal"
+    ],
+    "idiomas": [
+      "en",
+      "es"
+    ],
+    "contenidos_por_playlist": 3,
+    "cierre": "21:00",
+    "fuente_contenido": "pixeria",
+    "contenidos_compartidos": true,
+    "simulacion": true,
+    "notas": "Demo completa v2 · decisiones de Carlos (06-10-2026): 1 altavoz con hilo musical + locuciones TPV, marca blanca real /marca 365, contenido común de marca.",
+    "marca": {
+      "modo": "marca-blanca-cliente"
+    },
+    "desconexiones": []
+  },
+  "payload_cola_clasica": {
+    "cliente": "365",
+    "website": "https://365obrador.com/",
+    "color": "#1D1D1B",
+    "xpacio_tipo": "cafeteria",
+    "xpacio_otro": "",
+    "ciudades": [
+      "barcelona"
+    ],
+    "cierre": "21:00",
+    "idiomas": [
+      "en",
+      "es"
+    ],
+    "notas": "Demo completa v2 · decisiones de Carlos (06-10-2026): 1 altavoz con hilo musical + locuciones TPV, marca blanca real /marca 365, contenido común de marca."
+  },
+  "plan": {
+    "schema": "admiranext.demo-completa/2",
+    "generado": "2026-10-06T07:50:00+02:00",
+    "valido": true,
+    "errores": [],
+    "avisos": [],
+    "simulacion": true,
+    "cliente": {
+      "nombre": "365",
+      "id": "365",
+      "web": "https://365obrador.com/",
+      "color": "#1D1D1B",
+      "franquicia": true,
+      "marca": {
+        "modo": "marca-blanca-cliente",
+        "id": "365"
+      }
+    },
+    "marca_blanca": {
+      "modo": "marca-blanca-cliente",
+      "id": "365",
+      "nombre": "365",
+      "web": "https://365obrador.com/",
+      "tipo": "real",
+      "comando": "/marca 365",
+      "comando_off": "/marca off",
+      "plataformas": [
+        {
+          "id": "studio",
+          "nombre": "admira.studio · pixeria",
+          "url": "https://www.admira.studio/?marca=365",
+          "alt": "https://www.pixeria.com/?marca=365"
+        },
+        {
+          "id": "store",
+          "nombre": "admira.store",
+          "url": "https://www.admira.store/?marca=365"
+        },
+        {
+          "id": "tv",
+          "nombre": "admira.tv",
+          "url": "https://admira.tv/?marca=365"
+        },
+        {
+          "id": "app",
+          "nombre": "admira.app",
+          "url": "https://admira.app/?marca=365"
+        },
+        {
+          "id": "biz",
+          "nombre": "admira.biz",
+          "url": "https://www.admira.biz/?marca=365"
+        }
+      ],
+      "referencia": "https://www.admiranext.com/marcablanca/",
+      "catalogo": "https://www.admiranext.com/marcablanca/api/marcas/365",
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Analizar https://365obrador.com/ (logo, paleta, tipografía; no guarda nada)",
+          "endpoint": "POST https://www.admiranext.com/marcablanca/api/analizar {url}"
+        },
+        {
+          "n": 2,
+          "accion": "Guardar la marca «365» en el catálogo único (origen url, tipo real)",
+          "endpoint": "POST https://www.admiranext.com/presentaciones/api/marcas {marca, origen:\"url\", tipo:\"real\", web} · sesión del generador",
+          "escritura": "marca:365"
+        },
+        {
+          "n": 3,
+          "accion": "Aplicar /marca 365 en el CLI Experto: viste admira.studio/pixeria, admira.store, admira.tv, admira.app y admira.biz",
+          "endpoint": "https://www.admiranext.com/marcablanca/?marca=365"
+        }
+      ],
+      "estado_hoy": "PARCIAL",
+      "falta": "365 no está en el catálogo único (se crea en el paso 1). /marca <id> está en el CLI Experto (suite/experto.js) de las 5 plataformas."
+    },
+    "ciudad": {
+      "nombre": "Barcelona",
+      "pais": "ES",
+      "corta": "bcn"
+    },
+    "xpacio": {
+      "tipo": "cafeteria",
+      "subtipo": "panaderia",
+      "autostart": "cafeteria",
+      "kind": "Cafetería"
+    },
+    "circuito": "demo_365_bcn",
+    "minimos": {
+      "establecimientos": 4,
+      "dispositivos": 3,
+      "playlists": 4,
+      "contenidos": 3
+    },
+    "convencion": {
+      "xpacio": "<cliente>-demo-<ciudad>-<barrio>",
+      "playlist": "<cliente>.<xpacio>.<canal>  (canal: hilomusical | locuciones | vertical | horizontal | extras)",
+      "itil": "<CLI><CIU><NN>-<EQUIPO>-<NN>  (ALTV, PANV, PANH…)",
+      "pantalla": "<xpacio-id>-<dispositivo>",
+      "marca": "/marca <cliente>  (catálogo único admiranext.com/marcablanca)",
+      "legado": "365.xpacio.hilomusical (crear_demo.py, playlist única de cliente)"
+    },
+    "contenido": {
+      "fuente": "pixeria",
+      "por_playlist": 3,
+      "idiomas": [
+        "en",
+        "es"
+      ],
+      "cierre": "21:00",
+      "compartidos": true,
+      "modelo": "marca",
+      "eventos_tpv": [
+        {
+          "id": "cierre",
+          "nombre": "Aviso de cierre"
+        },
+        {
+          "id": "emergencia",
+          "nombre": "Emergencia · evacuación"
+        },
+        {
+          "id": "puntual",
+          "nombre": "Aviso puntual"
+        }
+      ],
+      "desconexiones": {
+        "activo": false,
+        "estado": "proximamente",
+        "descripcion": "Misma playlist de marca; durante una ventana [desde, hasta) un local inserta contenido propio en uno de sus canales y al acabar vuelve al contenido común.",
+        "esquema": {
+          "id": "dsc_<xpacio>_<canal>_<AAAAMMDD>",
+          "canal": "hilomusical | locuciones | vertical | horizontal | extras",
+          "desde": "ISO 8601 con zona (inclusive)",
+          "hasta": "ISO 8601 con zona (exclusiva)",
+          "modo": "insertar",
+          "contenidos": "[{tipo, kind, titulo, …}] piezas propias del local",
+          "motivo": "texto libre (fiesta del barrio, obra, promo local…)"
+        },
+        "total": 0
+      }
+    },
+    "establecimientos": [
+      {
+        "n": 1,
+        "id": "365-demo-bcn-tetuan",
+        "slug": "bcn-tetuan",
+        "nombre": "365 · Plaça de Tetuan, 3",
+        "direccion": "Plaça de Tetuan, 3",
+        "cp": "08010",
+        "barrio": "Eixample · Fort Pienc",
+        "ciudad": "Barcelona",
+        "pais": "ES",
+        "coords": [
+          2.176016,
+          41.394094
+        ],
+        "lat": 41.394094,
+        "lng": 2.176016,
+        "fuente": "Localizador oficial 365 Obrador (WP Store Locator público)",
+        "fuente_url": "https://365obrador.com/es/encuentranos/",
+        "ref": "365-wpsl-9559",
+        "gemelo": "https://www.admira.store/admira-xp/?autostart=cafeteria&visual=better&marca=365&loc=365-demo-bcn-tetuan&store=365-demo-bcn-tetuan",
+        "equipos": [
+          {
+            "dispositivo": "altavoz",
+            "nombre": "Altavoz (hilo musical + locuciones) · 365 · Plaça de Tetuan, 3",
+            "itil_code": "365BCN01-ALTV-01",
+            "categoria": "audio",
+            "rol": "audio",
+            "orientacion": null,
+            "pantalla_id": "365-demo-bcn-tetuan-altavoz",
+            "playlists": [
+              {
+                "canal": "hilomusical",
+                "playlist": "365.bcn-tetuan.hilomusical",
+                "playlist_id": "pl_365_bcn_tetuan_hilomusical",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "en",
+                    "titulo": "EN · 365 Hilo · Mañana de horno",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "es",
+                    "titulo": "ES · 365 Hilo · Café y conversación",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "en",
+                    "titulo": "EN · 365 Hilo · Tarde dulce",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  }
+                ]
+              },
+              {
+                "canal": "locuciones",
+                "playlist": "365.bcn-tetuan.locuciones",
+                "playlist_id": "pl_365_bcn_tetuan_locuciones",
+                "reproduccion": "bajo_demanda",
+                "bucle": false,
+                "disparo": {
+                  "origen": "tpv",
+                  "etiqueta": "POS/TPV",
+                  "eventos": [
+                    "cierre",
+                    "emergencia",
+                    "puntual"
+                  ],
+                  "endpoint": "https://api.admira.store/megafonia/push"
+                },
+                "prioridad": "sobre-hilomusical",
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "en",
+                    "titulo": "EN · Aviso de cierre 21:00 · 365",
+                    "evento_tpv": "cierre",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "es",
+                    "titulo": "ES · Emergencia · evacuación · 365",
+                    "evento_tpv": "emergencia",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "en",
+                    "titulo": "EN · Aviso puntual · 365",
+                    "evento_tpv": "puntual",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dispositivo": "vertical",
+            "nombre": "Pantalla vertical 9:16 · 365 · Plaça de Tetuan, 3",
+            "itil_code": "365BCN01-PANV-01",
+            "categoria": "pantalla",
+            "rol": "signage",
+            "orientacion": "vertical",
+            "pantalla_id": "365-demo-bcn-tetuan-vertical",
+            "playlists": [
+              {
+                "canal": "vertical",
+                "playlist": "365.bcn-tetuan.vertical",
+                "playlist_id": "pl_365_bcn_tetuan_vertical",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Pan recién hecho · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Café + bollería · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Bocadillo del día · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dispositivo": "horizontal",
+            "nombre": "Pantalla horizontal 16:9 · 365 · Plaça de Tetuan, 3",
+            "itil_code": "365BCN01-PANH-01",
+            "categoria": "pantalla",
+            "rol": "signage",
+            "orientacion": "horizontal",
+            "pantalla_id": "365-demo-bcn-tetuan-horizontal",
+            "playlists": [
+              {
+                "canal": "horizontal",
+                "playlist": "365.bcn-tetuan.horizontal",
+                "playlist_id": "pl_365_bcn_tetuan_horizontal",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Pan recién hecho · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Café + bollería · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Bocadillo del día · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "desconexiones": []
+      },
+      {
+        "n": 2,
+        "id": "365-demo-bcn-universitat",
+        "slug": "bcn-universitat",
+        "nombre": "365 · Ronda de la Universitat, 7",
+        "direccion": "Ronda de la Universitat, 7",
+        "cp": "08007",
+        "barrio": "Eixample · Plaça Universitat",
+        "ciudad": "Barcelona",
+        "pais": "ES",
+        "coords": [
+          2.165318,
+          41.386378
+        ],
+        "lat": 41.386378,
+        "lng": 2.165318,
+        "fuente": "Localizador oficial 365 Obrador (WP Store Locator público)",
+        "fuente_url": "https://365obrador.com/es/encuentranos/",
+        "ref": "365-wpsl-9468",
+        "gemelo": "https://www.admira.store/admira-xp/?autostart=cafeteria&visual=better&marca=365&loc=365-demo-bcn-universitat&store=365-demo-bcn-universitat",
+        "equipos": [
+          {
+            "dispositivo": "altavoz",
+            "nombre": "Altavoz (hilo musical + locuciones) · 365 · Ronda de la Universitat, 7",
+            "itil_code": "365BCN02-ALTV-01",
+            "categoria": "audio",
+            "rol": "audio",
+            "orientacion": null,
+            "pantalla_id": "365-demo-bcn-universitat-altavoz",
+            "playlists": [
+              {
+                "canal": "hilomusical",
+                "playlist": "365.bcn-universitat.hilomusical",
+                "playlist_id": "pl_365_bcn_universitat_hilomusical",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "en",
+                    "titulo": "EN · 365 Hilo · Mañana de horno",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "es",
+                    "titulo": "ES · 365 Hilo · Café y conversación",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "en",
+                    "titulo": "EN · 365 Hilo · Tarde dulce",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  }
+                ]
+              },
+              {
+                "canal": "locuciones",
+                "playlist": "365.bcn-universitat.locuciones",
+                "playlist_id": "pl_365_bcn_universitat_locuciones",
+                "reproduccion": "bajo_demanda",
+                "bucle": false,
+                "disparo": {
+                  "origen": "tpv",
+                  "etiqueta": "POS/TPV",
+                  "eventos": [
+                    "cierre",
+                    "emergencia",
+                    "puntual"
+                  ],
+                  "endpoint": "https://api.admira.store/megafonia/push"
+                },
+                "prioridad": "sobre-hilomusical",
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "en",
+                    "titulo": "EN · Aviso de cierre 21:00 · 365",
+                    "evento_tpv": "cierre",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "es",
+                    "titulo": "ES · Emergencia · evacuación · 365",
+                    "evento_tpv": "emergencia",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "en",
+                    "titulo": "EN · Aviso puntual · 365",
+                    "evento_tpv": "puntual",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dispositivo": "vertical",
+            "nombre": "Pantalla vertical 9:16 · 365 · Ronda de la Universitat, 7",
+            "itil_code": "365BCN02-PANV-01",
+            "categoria": "pantalla",
+            "rol": "signage",
+            "orientacion": "vertical",
+            "pantalla_id": "365-demo-bcn-universitat-vertical",
+            "playlists": [
+              {
+                "canal": "vertical",
+                "playlist": "365.bcn-universitat.vertical",
+                "playlist_id": "pl_365_bcn_universitat_vertical",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Pan recién hecho · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Café + bollería · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Bocadillo del día · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dispositivo": "horizontal",
+            "nombre": "Pantalla horizontal 16:9 · 365 · Ronda de la Universitat, 7",
+            "itil_code": "365BCN02-PANH-01",
+            "categoria": "pantalla",
+            "rol": "signage",
+            "orientacion": "horizontal",
+            "pantalla_id": "365-demo-bcn-universitat-horizontal",
+            "playlists": [
+              {
+                "canal": "horizontal",
+                "playlist": "365.bcn-universitat.horizontal",
+                "playlist_id": "pl_365_bcn_universitat_horizontal",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Pan recién hecho · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Café + bollería · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Bocadillo del día · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "desconexiones": []
+      },
+      {
+        "n": 3,
+        "id": "365-demo-bcn-sagrada-familia",
+        "slug": "bcn-sagrada-familia",
+        "nombre": "365 · Plaça de la Sagrada Família, 20",
+        "direccion": "Plaça de la Sagrada Família, 20",
+        "cp": "08013",
+        "barrio": "Eixample · Sagrada Família",
+        "ciudad": "Barcelona",
+        "pais": "ES",
+        "coords": [
+          2.173914,
+          41.402198
+        ],
+        "lat": 41.402198,
+        "lng": 2.173914,
+        "fuente": "Localizador oficial 365 Obrador (WP Store Locator público)",
+        "fuente_url": "https://365obrador.com/es/encuentranos/",
+        "ref": "365-wpsl-9587",
+        "gemelo": "https://www.admira.store/admira-xp/?autostart=cafeteria&visual=better&marca=365&loc=365-demo-bcn-sagrada-familia&store=365-demo-bcn-sagrada-familia",
+        "equipos": [
+          {
+            "dispositivo": "altavoz",
+            "nombre": "Altavoz (hilo musical + locuciones) · 365 · Plaça de la Sagrada Família, 20",
+            "itil_code": "365BCN03-ALTV-01",
+            "categoria": "audio",
+            "rol": "audio",
+            "orientacion": null,
+            "pantalla_id": "365-demo-bcn-sagrada-familia-altavoz",
+            "playlists": [
+              {
+                "canal": "hilomusical",
+                "playlist": "365.bcn-sagrada-familia.hilomusical",
+                "playlist_id": "pl_365_bcn_sagrada_familia_hilomusical",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "en",
+                    "titulo": "EN · 365 Hilo · Mañana de horno",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "es",
+                    "titulo": "ES · 365 Hilo · Café y conversación",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "en",
+                    "titulo": "EN · 365 Hilo · Tarde dulce",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  }
+                ]
+              },
+              {
+                "canal": "locuciones",
+                "playlist": "365.bcn-sagrada-familia.locuciones",
+                "playlist_id": "pl_365_bcn_sagrada_familia_locuciones",
+                "reproduccion": "bajo_demanda",
+                "bucle": false,
+                "disparo": {
+                  "origen": "tpv",
+                  "etiqueta": "POS/TPV",
+                  "eventos": [
+                    "cierre",
+                    "emergencia",
+                    "puntual"
+                  ],
+                  "endpoint": "https://api.admira.store/megafonia/push"
+                },
+                "prioridad": "sobre-hilomusical",
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "en",
+                    "titulo": "EN · Aviso de cierre 21:00 · 365",
+                    "evento_tpv": "cierre",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "es",
+                    "titulo": "ES · Emergencia · evacuación · 365",
+                    "evento_tpv": "emergencia",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "en",
+                    "titulo": "EN · Aviso puntual · 365",
+                    "evento_tpv": "puntual",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dispositivo": "vertical",
+            "nombre": "Pantalla vertical 9:16 · 365 · Plaça de la Sagrada Família, 20",
+            "itil_code": "365BCN03-PANV-01",
+            "categoria": "pantalla",
+            "rol": "signage",
+            "orientacion": "vertical",
+            "pantalla_id": "365-demo-bcn-sagrada-familia-vertical",
+            "playlists": [
+              {
+                "canal": "vertical",
+                "playlist": "365.bcn-sagrada-familia.vertical",
+                "playlist_id": "pl_365_bcn_sagrada_familia_vertical",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Pan recién hecho · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Café + bollería · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Bocadillo del día · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dispositivo": "horizontal",
+            "nombre": "Pantalla horizontal 16:9 · 365 · Plaça de la Sagrada Família, 20",
+            "itil_code": "365BCN03-PANH-01",
+            "categoria": "pantalla",
+            "rol": "signage",
+            "orientacion": "horizontal",
+            "pantalla_id": "365-demo-bcn-sagrada-familia-horizontal",
+            "playlists": [
+              {
+                "canal": "horizontal",
+                "playlist": "365.bcn-sagrada-familia.horizontal",
+                "playlist_id": "pl_365_bcn_sagrada_familia_horizontal",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Pan recién hecho · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Café + bollería · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Bocadillo del día · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "desconexiones": []
+      },
+      {
+        "n": 4,
+        "id": "365-demo-bcn-sants",
+        "slug": "bcn-sants",
+        "nombre": "365 · Carrer de Sants, 91",
+        "direccion": "Carrer de Sants, 91",
+        "cp": "08014",
+        "barrio": "Sants-Montjuïc · Sants",
+        "ciudad": "Barcelona",
+        "pais": "ES",
+        "coords": [
+          2.136099,
+          41.37525
+        ],
+        "lat": 41.37525,
+        "lng": 2.136099,
+        "fuente": "Localizador oficial 365 Obrador (WP Store Locator público)",
+        "fuente_url": "https://365obrador.com/es/encuentranos/",
+        "ref": "365-wpsl-9436",
+        "gemelo": "https://www.admira.store/admira-xp/?autostart=cafeteria&visual=better&marca=365&loc=365-demo-bcn-sants&store=365-demo-bcn-sants",
+        "equipos": [
+          {
+            "dispositivo": "altavoz",
+            "nombre": "Altavoz (hilo musical + locuciones) · 365 · Carrer de Sants, 91",
+            "itil_code": "365BCN04-ALTV-01",
+            "categoria": "audio",
+            "rol": "audio",
+            "orientacion": null,
+            "pantalla_id": "365-demo-bcn-sants-altavoz",
+            "playlists": [
+              {
+                "canal": "hilomusical",
+                "playlist": "365.bcn-sants.hilomusical",
+                "playlist_id": "pl_365_bcn_sants_hilomusical",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "en",
+                    "titulo": "EN · 365 Hilo · Mañana de horno",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "es",
+                    "titulo": "ES · 365 Hilo · Café y conversación",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "song",
+                    "lang": "en",
+                    "titulo": "EN · 365 Hilo · Tarde dulce",
+                    "motor": "lyria3",
+                    "endpoint": "https://api.admira.store/lyria3/generate → /hilomusical/push"
+                  }
+                ]
+              },
+              {
+                "canal": "locuciones",
+                "playlist": "365.bcn-sants.locuciones",
+                "playlist_id": "pl_365_bcn_sants_locuciones",
+                "reproduccion": "bajo_demanda",
+                "bucle": false,
+                "disparo": {
+                  "origen": "tpv",
+                  "etiqueta": "POS/TPV",
+                  "eventos": [
+                    "cierre",
+                    "emergencia",
+                    "puntual"
+                  ],
+                  "endpoint": "https://api.admira.store/megafonia/push"
+                },
+                "prioridad": "sobre-hilomusical",
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "en",
+                    "titulo": "EN · Aviso de cierre 21:00 · 365",
+                    "evento_tpv": "cierre",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "es",
+                    "titulo": "ES · Emergencia · evacuación · 365",
+                    "evento_tpv": "emergencia",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  },
+                  {
+                    "tipo": "audio",
+                    "kind": "voiceover",
+                    "lang": "en",
+                    "titulo": "EN · Aviso puntual · 365",
+                    "evento_tpv": "puntual",
+                    "disparo": "tpv",
+                    "motor": "elevenlabs",
+                    "endpoint": "https://api.admira.store/megafonia/push"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dispositivo": "vertical",
+            "nombre": "Pantalla vertical 9:16 · 365 · Carrer de Sants, 91",
+            "itil_code": "365BCN04-PANV-01",
+            "categoria": "pantalla",
+            "rol": "signage",
+            "orientacion": "vertical",
+            "pantalla_id": "365-demo-bcn-sants-vertical",
+            "playlists": [
+              {
+                "canal": "vertical",
+                "playlist": "365.bcn-sants.vertical",
+                "playlist_id": "pl_365_bcn_sants_vertical",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Pan recién hecho · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Café + bollería · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "9:16",
+                    "titulo": "365 · Bocadillo del día · 9:16",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dispositivo": "horizontal",
+            "nombre": "Pantalla horizontal 16:9 · 365 · Carrer de Sants, 91",
+            "itil_code": "365BCN04-PANH-01",
+            "categoria": "pantalla",
+            "rol": "signage",
+            "orientacion": "horizontal",
+            "pantalla_id": "365-demo-bcn-sants-horizontal",
+            "playlists": [
+              {
+                "canal": "horizontal",
+                "playlist": "365.bcn-sants.horizontal",
+                "playlist_id": "pl_365_bcn_sants_horizontal",
+                "reproduccion": "continua",
+                "bucle": true,
+                "disparo": null,
+                "origen_contenido": "marca",
+                "contenidos": [
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Pan recién hecho · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Café + bollería · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  },
+                  {
+                    "tipo": "video",
+                    "kind": "visual",
+                    "ratio": "16:9",
+                    "titulo": "365 · Bocadillo del día · 16:9",
+                    "motor": "imagen-4.0 → adaptador (imagen fija MP4)",
+                    "endpoint": "https://api.admira.store/imagen/generate → /stock/publish"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "desconexiones": []
+      }
+    ],
+    "pasos": [
+      {
+        "n": 1,
+        "componente": "admira.app",
+        "titulo": "Cliente franquicia + marca blanca",
+        "accion": "Cuenta de marca «365» (brand_key 365) en admira.app / Yokup y su marca real como marca blanca: catálogo de /marcablanca y /marca 365 en las 5 plataformas.",
+        "endpoint": "Yokup admira-xpacio-sync (external.brand) · https://www.admiranext.com/marcablanca/api/analizar · https://www.admiranext.com/presentaciones/api/marcas · CLI Experto /marca 365",
+        "escrituras": [
+          "brand_accounts:365",
+          "marca:365"
+        ],
+        "estado_hoy": "PARCIAL",
+        "falta": "La cuenta de marca nace sola en Yokup cuando sincroniza Xpacios con gemelo (external.brand); no hay alta directa de «cliente franquicia». La marca blanca real se crea en el catálogo de /marcablanca (analizar la web + guardar, con sesión del generador): hoy 365 no está (GET /marcablanca/api/marcas/365 → 404). `/marca 365` existe en el CLI Experto de las 5 plataformas."
+      },
+      {
+        "n": 2,
+        "componente": "admira.biz",
+        "titulo": "Establecimientos en el mapa",
+        "accion": "Circuito demo_365_bcn con 4 Xpacios reales (dirección + coordenadas).",
+        "endpoint": "GET → backup → unión → PUT https://brain.digitalavatar.ai/locations",
+        "escrituras": [
+          "location:365-demo-bcn-tetuan",
+          "location:365-demo-bcn-universitat",
+          "location:365-demo-bcn-sagrada-familia",
+          "location:365-demo-bcn-sants"
+        ],
+        "estado_hoy": "PARCIAL",
+        "falta": "PUT del catálogo listo (crear_demo.py paso circuito), pero hoy usa presets de ciudad (1 Xpacio céntrico por ciudad). Falta aceptar la lista de establecimientos reales."
+      },
+      {
+        "n": 3,
+        "componente": "admira.store",
+        "titulo": "Gemelos digitales",
+        "accion": "4 gemelos (autostart=cafeteria, marca=365).",
+        "endpoint": "https://www.admira.store/admira-xp/?autostart=cafeteria&loc=<id>",
+        "escrituras": [
+          "twin:365-demo-bcn-tetuan",
+          "twin:365-demo-bcn-universitat",
+          "twin:365-demo-bcn-sagrada-familia",
+          "twin:365-demo-bcn-sants"
+        ],
+        "estado_hoy": "LISTO",
+        "falta": "Gemelo por Xpacio vía campo twin. No hay escena «panadería»: 365 usa autostart=cafeteria."
+      },
+      {
+        "n": 4,
+        "componente": "admira.app",
+        "titulo": "Inventario ITIL (Yokup)",
+        "accion": "12 CIs: 3 equipos físicos por establecimiento (altavoz, vertical, horizontal).",
+        "endpoint": "https://yokup.com/mcp · itil_ci_upsert {admira_store_id, itil_code, name, category, role, orientation}",
+        "escrituras": [
+          "ci:365BCN01-ALTV-01",
+          "ci:365BCN01-PANV-01",
+          "ci:365BCN01-PANH-01",
+          "ci:365BCN02-ALTV-01",
+          "ci:365BCN02-PANV-01",
+          "ci:365BCN02-PANH-01",
+          "ci:365BCN03-ALTV-01",
+          "ci:365BCN03-PANV-01",
+          "ci:365BCN03-PANH-01",
+          "ci:365BCN04-ALTV-01",
+          "ci:365BCN04-PANV-01",
+          "ci:365BCN04-PANH-01"
+        ],
+        "estado_hoy": "PARCIAL",
+        "falta": "itil_ci_upsert (MCP de flota yokup.com/mcp) existe con categoría y orientación: 3 CIs por local (altavoz, pantalla V, pantalla H). crear_demo.py no lo llama y el Xpacio debe estar antes sincronizado en Yokup (cron 2 min, pasadas cada 15 min)."
+      },
+      {
+        "n": 5,
+        "componente": "admira.tv",
+        "titulo": "Playlists por canal",
+        "accion": "16 playlists (4 por local) 365.<xpacio>.<canal>; el altavoz lleva 2: hilomusical continuo y locuciones bajo demanda desde el TPV (4).",
+        "endpoint": "POST https://xpl.admira.store/playlists (lista completa, unión) · POST https://admira.tv/api/playlist {screen, items} · locuciones: TPV → https://api.admira.store/megafonia/push",
+        "escrituras": [
+          "playlist:365.bcn-tetuan.hilomusical",
+          "playlist:365.bcn-tetuan.locuciones",
+          "playlist:365.bcn-tetuan.vertical",
+          "playlist:365.bcn-tetuan.horizontal",
+          "playlist:365.bcn-universitat.hilomusical",
+          "playlist:365.bcn-universitat.locuciones",
+          "playlist:365.bcn-universitat.vertical",
+          "playlist:365.bcn-universitat.horizontal",
+          "playlist:365.bcn-sagrada-familia.hilomusical",
+          "playlist:365.bcn-sagrada-familia.locuciones",
+          "playlist:365.bcn-sagrada-familia.vertical",
+          "playlist:365.bcn-sagrada-familia.horizontal",
+          "playlist:365.bcn-sants.hilomusical",
+          "playlist:365.bcn-sants.locuciones",
+          "playlist:365.bcn-sants.vertical",
+          "playlist:365.bcn-sants.horizontal"
+        ],
+        "estado_hoy": "PARCIAL",
+        "falta": "XPL y /api/playlist por pantalla existen; crear_demo.py crea UNA playlist <id>.xpacio.hilomusical. Faltan locuciones/vertical/horizontal por Xpacio y el disparo de locuciones desde el TPV (hoy megafonia/push + megafonia/next, sin evento de TPV)."
+      },
+      {
+        "n": 6,
+        "componente": "pixeria",
+        "titulo": "Contenidos de marca",
+        "accion": "3 por playlist · 48 huecos · 12 piezas únicas comunes a toda la marca · idiomas en/es · locuciones: cierre, emergencia, aviso puntual.",
+        "endpoint": "https://api.admira.store/lyria3/generate · /hilomusical/push · /megafonia/push · /imagen/generate · /stock/publish",
+        "escrituras": [
+          "stock:12 piezas"
+        ],
+        "estado_hoy": "PARCIAL",
+        "falta": "Motores listos (lyria3, megafonia/push, imagen/generate 9:16/16:9, stock/publish). crear_demo.py hace 2 canciones + 2 locuciones; faltan la 3.ª de cada (cierre · emergencia · aviso puntual) y los 6 visuales. Contenido común de marca: 12 piezas."
+      },
+      {
+        "n": 7,
+        "componente": "admira.app",
+        "titulo": "Comprobación final",
+        "accion": "Equipos online (o simulados), playlists asignadas, hilo y pantallas emitiendo y una locución de prueba disparada (simulada) desde el TPV.",
+        "endpoint": "https://data.yokup.com/api/itil/xpacios/<id> · https://admira.tv/api/playlist?screen=<pantalla> · https://api.admira.store/grid/day?screen=<id>",
+        "escrituras": [],
+        "estado_hoy": "FALTA",
+        "falta": "Hay lecturas públicas (ITIL, playlist, grid/day) pero no un comprobador único ni players virtuales registrables sin sesión."
+      }
+    ],
+    "estado_extra": {
+      "marca_blanca": {
+        "estado": "PARCIAL",
+        "falta": "365 no está en el catálogo único (se crea en el paso 1). /marca <id> está en el CLI Experto (suite/experto.js) de las 5 plataformas."
+      },
+      "disparo_tpv": {
+        "estado": "FALTA",
+        "falta": "No hay integración TPV → locución. megafonia/push existe; falta el evento del TPV (cierre, emergencia, aviso puntual)."
+      },
+      "desconexiones": {
+        "estado": "PROXIMAMENTE",
+        "falta": "Modelo de datos preparado (desconexiones[] por local con ventana desde/hasta), vacío y apagado."
+      }
+    },
+    "estado_fecha": "06-10-2026",
+    "totales": {
+      "establecimientos": 4,
+      "gemelos": 4,
+      "equipos": 12,
+      "altavoces": 4,
+      "pantallas": 8,
+      "playlists": 16,
+      "playlists_continuas": 12,
+      "playlists_bajo_demanda": 4,
+      "huecos_contenido": 48,
+      "piezas_unicas": 12,
+      "plataformas_marca": 5,
+      "desconexiones": 0
+    },
+    "notas": "Demo completa v2 · decisiones de Carlos (06-10-2026): 1 altavoz con hilo musical + locuciones TPV, marca blanca real /marca 365, contenido común de marca."
+  }
+}
