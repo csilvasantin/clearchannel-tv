@@ -497,7 +497,13 @@ function setLang(lang){
 // ─── Google login: verified server-side session and scoped demo access ────
 // /api/demo-session verifies Google identity and demo permissions.
 // Publishing still requires the independent omnipublicity-api write authorization.
-const GOOGLE_CLIENT_ID = '861856772040-quq6ut76k4mqj3fdq87h6g6caht3nm4l.apps.googleusercontent.com';
+// Cliente OAuth por dominio (mismo proyecto Google 861856772040). El del sitio solo tiene
+// como orígenes JS clearchannel.tv y admira.app; en admira.biz Google respondía
+// «origin_mismatch». admira.biz entra con el cliente de la suite AdmiraNeXT, que sí lo
+// tiene autorizado; /api/demo-session y omnipublicity-api aceptan las dos audiencias.
+const GOOGLE_SITE_CLIENT_ID = '861856772040-quq6ut76k4mqj3fdq87h6g6caht3nm4l.apps.googleusercontent.com';
+const GOOGLE_SUITE_CLIENT_ID = '861856772040-e1ri6kpu6maagtb6crdfbb923hsaalgb.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = /(^|\.)admira\.biz$/i.test(location.hostname) ? GOOGLE_SUITE_CLIENT_ID : GOOGLE_SITE_CLIENT_ID;
 let verifiedSession = null;
 let sessionExpiryTimer;
 const GTOK_KEY = 'omnip-bo-gtoken';
