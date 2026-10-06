@@ -133,3 +133,15 @@ test('Options footer stops above a visibly minimized shared dock even with nativ
  assert.equal(values.get('--expert-panel-height'),'64px','the visible minimized dock still occupies 64px');
  assert.match(read('responsive-shell.css'),/\.options-panel,\.advanced-panel\{bottom:var\(--expert-panel-height,0px\)\}/);
 });
+
+// El modo experto solo se ve al invocarlo (Carlos, 6-oct-2026): la piel de la suite dejaba la
+// línea «› /help» anclada abajo en cada página. Cerrado = oculto del todo (data-min="hide"),
+// siempre cerrado al entrar, y un solo estado: la tecla ⌘, la × y Escape piden abrir y cerrar a
+// la suite desde responsive-shell.js (data-toggle="" evita que ella atienda la tecla por su lado).
+test('the expert CLI is fully hidden when closed and only its ⌘ key brings it up', () => {
+  const index = read('index.html'), shell = read('galaxy-shell.js');
+  assert.match(index, /suite\/experto\.js\?v=[^"]+" data-min="hide" data-toggle=""/, 'portada');
+  assert.match(shell, /js\.dataset\.min = 'hide'; js\.dataset\.toggle = '';/, 'common shell');
+  for (const src of [index, shell]) assert.match(src, /sessionStorage\.removeItem\('ax-experto-abierto'\)/);
+  assert.match(read('responsive-shell.js'), /suite\(\)\[open\?'open':'close'\]\(\)/);
+});

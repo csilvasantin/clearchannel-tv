@@ -745,15 +745,20 @@ addEventListener('resize',ccFitIntro);
   @media (max-width:640px){ .pv-head{padding-right:48px;gap:8px} .pv-titles{flex-basis:100%} }
 </style>
 <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
-<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20261006-version-options-1">
+<link rel="stylesheet" href="cenital-panel.css?v=destinations-2"><link rel="stylesheet" href="responsive-shell.css?v=20261006-experto-tecla-1">
 <script defer src="cliente-segmento.js?v=20261006-demo-365-ficha-1"></script>
-<script defer src="marca-blanca.js?v=20261006-version-options-1"></script>
-<script defer src="responsive-shell.js?v=20261006-version-options-1"></script>
-<script defer src="expert-commands.js?v=20261006-version-options-1"></script>
-<script defer src="expert-panel.js?v=20261006-version-options-1"></script>
+<script defer src="marca-blanca.js?v=20261006-experto-tecla-1"></script>
+<script defer src="responsive-shell.js?v=20261006-experto-tecla-1"></script>
+<script defer src="expert-commands.js?v=20261006-experto-tecla-1"></script>
+<script defer src="expert-panel.js?v=20261006-experto-tecla-1"></script>
 <!-- ⌘ EXPERTO · CLI con el look de digitalavatar.ai: piel compartida de la suite (admiranext.com/suite). -->
 <link rel="stylesheet" href="https://www.admiranext.com/suite/experto.css?v=20261005-experto-idioma-1">
-<script defer src="https://www.admiranext.com/suite/experto.js?v=20261005-experto-idioma-1"></script>
+<!-- Cerrado = oculto del todo (Carlos, 6-oct-2026): sin la línea «› /help» anclada abajo; solo se ve al
+     invocarlo con su tecla ⌘ de la cabecera. Y siempre cerrado al entrar, como el resto de paneles del
+     armazón: se olvida el «abierto» que la suite recordaría en la pestaña. data-toggle="": la tecla ⌘
+     la atiende responsive-shell.js, que es quien pide abrir y cerrar a la suite (un solo estado). -->
+<script>try{sessionStorage.removeItem('ax-experto-abierto')}catch(_){}</script>
+<script defer src="https://www.admiranext.com/suite/experto.js?v=20261005-experto-idioma-1" data-min="hide" data-toggle=""></script>
 </head>
 <body>
 
@@ -1367,7 +1372,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="locations.js?v=cafebreria-independent-1"></script>
 <script defer src="planner-core.js?v=20260905-1"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20261005-demo-twin-1"></script><script defer src="app.js?v=20261006-demo-365-ficha-1"></script><script defer src="intro.js?v=20261006-version-options-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=destinations-2"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20261005-demo-twin-1"></script><script defer src="app.js?v=20261006-demo-365-ficha-1"></script><script defer src="intro.js?v=20261006-experto-tecla-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {

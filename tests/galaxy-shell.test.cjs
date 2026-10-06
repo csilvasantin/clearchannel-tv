@@ -15,9 +15,9 @@ const backoffice = read('backoffice.html');
 // de página que cambiaron con el shell (FLT-101311 c) y sello común de los ficheros de
 // comportamiento de la portada (responsive-shell, expert-*, intro.js), que con la marca
 // blanca (FLT-101331) suben a la vez.
-const STAMP = '20261006-version-options-1';
-const PAGES_STAMP = '20261006-version-options-1';
-const PORTADA_STAMP = '20261006-version-options-1';
+const STAMP = '20261006-experto-tecla-1';
+const PAGES_STAMP = '20261006-experto-tecla-1';
+const PORTADA_STAMP = '20261006-experto-tecla-1';
 const squash = html => html.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
 const memory = () => {
   const mem = new Map();

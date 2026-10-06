@@ -8,18 +8,24 @@
   if(!header||Object.values(panels).some(p=>!p))return;
   const es=()=>document.documentElement.lang!=='en';
   const text=(a,b)=>es()?a:b;
-  const isOpen=mode=>mode==='advanced'?panels[mode].open:!panels[mode].hidden;
+  // The expert panel is painted by the suite skin (admiranext.com/suite/experto.js). Once it has docked
+  // the panel, open/closed is ITS state and the shell only asks for it: two separate states meant the
+  // panel's own × did nothing (Carlos, 6-oct-2026). Without the skin, `hidden` rules as before.
+  const suite=()=>panels.expert.classList.contains?.('ax-dock')&&globalThis.AdmiraExperto||null;
+  const isOpen=mode=>mode==='advanced'?panels[mode].open:mode==='expert'&&suite()?suite().isOpen():!panels[mode].hidden;
   const measure=()=>{
     document.documentElement.style.setProperty('--app-header-height',Math.ceil(header.getBoundingClientRect().height)+'px');
     const visibleDock=panels.expert.classList.contains?.('ax-dock') && !panels.expert.classList.contains('ax-hide');
     document.documentElement.style.setProperty('--expert-panel-height',((isOpen('expert')||visibleDock)?Math.ceil(panels.expert.getBoundingClientRect().height):0)+'px');
   };
   function sync(){
+    if(suite())panels.expert.hidden=!suite().isOpen();
     for(const mode of Object.keys(panels)){const open=isOpen(mode);toggles[mode].setAttribute('aria-expanded',String(open));toggles[mode].setAttribute('aria-pressed',String(open));document.body.classList.toggle('mode-'+mode+'-open',open);}
     measure();
   }
   function setOpen(mode,open,{focus=false}={}){
     if(mode==='advanced')panels[mode].open=open;else panels[mode].hidden=!open;
+    if(mode==='expert'&&suite())suite()[open?'open':'close']();
     sync();if(open&&focus){if(mode==='expert')document.getElementById('expert-command').focus();else (panels[mode].querySelector('a,button')||panels[mode]).focus();}
   }
   for(const [mode,button] of Object.entries(toggles))button.addEventListener('click',()=>setOpen(mode,!isOpen(mode),{focus:true}));
@@ -100,5 +106,7 @@
   new MutationObserver(translate).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
   // Every load starts with the three panels closed; drop the open state older versions stored.
   for(const mode of Object.keys(panels)){if(isOpen(mode))setOpen(mode,false);try{localStorage.removeItem('admira_panel_'+mode);}catch(_){}}
+  // The skin announces every open/close (its own fold button included) with a resize event.
+  addEventListener('resize',sync);
   new ResizeObserver(measure).observe(header);translate();sync();
 })();

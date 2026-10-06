@@ -22,8 +22,8 @@ El comportamiento es el de la portada porque es el mismo código: `responsive-sh
 En el `<head>`, después de `brand.js`/`brand.css` y de los estilos propios:
 
 ```html
-<link rel="stylesheet" href="/galaxy-shell.css?v=20261006-version-options-1">
-<script defer src="/galaxy-shell.js?v=20261006-version-options-1" data-section="/ nombre-de-la-página"></script>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
+<script defer src="/galaxy-shell.js?v=20261006-experto-tecla-1" data-section="/ nombre-de-la-página"></script>
 ```
 
 Opcionalmente, antes del script, `window.ADMIRA_SHELL = {...}`:

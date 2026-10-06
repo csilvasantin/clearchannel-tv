@@ -232,6 +232,11 @@
     document.head.append(css);
     const js = document.createElement('script');
     js.src = EXPERTO + '.js?v=' + V; js.defer = true;
+    // Cerrado = oculto del todo y siempre cerrado al entrar (Carlos, 6-oct-2026): sin la línea
+    // «› /help» anclada abajo. La tecla ⌘ la atiende responsive-shell.js, que pide abrir y cerrar
+    // a la suite (data-toggle="": un solo estado, no dos que se pisan). Igual que la portada.
+    js.dataset.min = 'hide'; js.dataset.toggle = '';
+    try { sessionStorage.removeItem('ax-experto-abierto'); } catch (_) {}
     document.head.append(js);
   })();
   load('responsive-shell.js')
