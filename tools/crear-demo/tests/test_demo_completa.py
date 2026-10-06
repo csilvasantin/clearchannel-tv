@@ -184,6 +184,11 @@ class Plan(Base):
             self.assertEqual(l['external']['operator'], '365')
             self.assertEqual(len(l['surfaces']), 3)
             self.assertTrue(all(isinstance(s.get('impr'), int) and s['impr'] > 0 and s.get('cpm') for s in l['surfaces']))
+            self.assertEqual(l['circuitLabel']['es'], 'Circuito 365 · Cafetería · Barcelona (4 locales)')
+            self.assertNotIn('{', l['circuitLabel']['es'])
+            self.assertNotIn('{', l['circuitLabel']['en'])
+        self.assertEqual(dc.nombre_ciudad(self.plan), 'Barcelona')
+        self.assertEqual(dc.catalogo_stock(self.plan)['nombre'], 'Demo 365 · Barcelona')
 
     def test_ci_args_validos(self):
         import re
