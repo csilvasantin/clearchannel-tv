@@ -88,7 +88,7 @@ que genera www.admiranext.com/demo (copia en `planes/demo-365-bcn-plan.json`: 36
 | 3 | gemelos | nada (comprueba gemelo + campo twin) | — | cualquiera |
 | 4 | itil | `itil_ci_upsert` ×12 (MCP yokup.com/mcp) cuando Yokup ya sincronizó el Xpacio | `YOKUP_MCP_CREDENTIAL` (fichero ykm_, scopes read,itil,itil:write) | Mac Mini |
 | 5 | playlists | 16 playlists en xpl.admira.store (unión) + 12 borradores admira.tv | XPL_TOKEN, NOTIFY_KEY | Mac Mini |
-| 6 | piezas | 3 canciones (Lyria 3) + 3 locuciones (/tts) + 6 visuales (Imagen 4 Ultra, `imagen-4.0-ultra-generate-001`, 2K → MP4) en el Stock, catálogo `demo-365-bcn`; asigna los 48 huecos | NOTIFY_KEY, XPL_TOKEN | Mac Mini (de pago) |
+| 6 | piezas | 3 canciones (Lyria 3) + 3 locuciones (/tts) + 6 visuales (`GET imagen.admira.store/img`, Gemini Pro y si falla Flash → MP4) en el Stock, catálogo `demo-365-bcn`; asigna los 48 huecos. `POST /imagen/generate` quedó en 404: Imagen 4 se apagó el 17-ago-2026 | NOTIFY_KEY, XPL_TOKEN | Mac Mini (de pago) |
 | 7 | checker | nada (lecturas) + presencia SIMULADA local | — (`--presencia yokup`: INSTALLER_ADMIRA_SECRET) | cualquiera |
 
 ```bash

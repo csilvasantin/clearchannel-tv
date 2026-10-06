@@ -30,7 +30,7 @@ Uso
   python3 tools/crear-demo/demo_completa.py --hasta 3 --real      # pasos 1..3
   python3 tools/crear-demo/demo_completa.py --paso 4 --hasta 6    # ensayo de 4..6
 """
-import argparse, base64, datetime, hashlib, hmac, json, os, subprocess, sys, tempfile, time, uuid
+import argparse, base64, datetime, hashlib, hmac, json, os, subprocess, sys, tempfile, time, urllib.parse, uuid
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, AQUI)
@@ -42,6 +42,10 @@ YOKUP_DATA = 'https://data.yokup.com/api/itil/xpacios/'
 YOKUP_MCP = 'https://yokup.com/mcp'
 YOKUP_EVENTS = 'https://api.yokup.com/api/installer/events'
 PIXERIA = 'https://www.pixeria.com'
+# Imagen 4 (generate y ultra) responde 404 en la API de Gemini desde el 17-ago-2026.
+# La ruta viva de Pixeria es GET imagen.admira.store/img. Pro releva a Ultra; Flash es el modelo por defecto.
+IMAGEN = 'https://imagen.admira.store/img'
+IMAGEN_MODELOS = ('gemini-3-pro-image', 'gemini-2.5-flash-image')
 PLAN_DEFECTO = os.path.join(AQUI, 'planes', 'demo-365-bcn-plan.json')
 VOCES = {'es': 'EXAVITQu4vr4xnSDxMaL', 'en': 'ErXwobaYiN019PkySvjV'}
 VAULT = cd.VAULT
@@ -68,8 +72,8 @@ NECESITA = {
         'lecturas': ['GET xpl.admira.store/playlists', 'GET admira.tv/api/playlist?screen='],
         'escrituras': ['POST xpl.admira.store/playlists (lista completa, unión)', 'POST admira.tv/api/playlist (X-Notify-Key = STOCK_NOTIFY_KEY)']},
     6: {'secretos': ['NOTIFY_KEY', 'XPL_TOKEN'],
-        'lecturas': ['GET api.admira.store/stock/list?catalogo=', 'POST /imagen/generate con X-Auth-Probe (no genera)'],
-        'escrituras': ['POST /lyria3/generate, /tts, /imagen/generate (de pago, X-Notify-Key)',
+        'lecturas': ['GET api.admira.store/stock/list?catalogo=', 'POST /imagen/generate con X-Auth-Probe (no genera; la ruta de Imagen 4 está en 404)'],
+        'escrituras': ['POST /lyria3/generate, /tts (X-Notify-Key)', 'GET imagen.admira.store/img (Gemini, Referer pixeria.com)',
                        'POST /stock/publish (catálogo de la demo)', 'POST xpl + admira.tv (asignación de huecos)']},
     7: {'secretos': [],
         'lecturas': ['todas las anteriores'],
@@ -601,13 +605,28 @@ def prompt_pieza(plan, c):
         return {'prompt': estilo, 'lyrics': letra, 'model': 'lyria-3-clip-preview'}
     if c.get('kind') == 'visual':
         tema = c['titulo'].split(' · ')[1] if ' · ' in c['titulo'] else c['titulo']
-        # Sin model el worker pide imagen-4.0-generate-001 y Google responde 404.
-        # Pixeria publica con Ultra a 2K, que es el modelo que sigue vivo.
         return {'prompt': (f"Fotografía publicitaria premium para digital signage de la panadería-cafetería {mb} (Barcelona): {tema}. "
                            'Luz natural cálida, obrador artesano, producto protagonista, mucho espacio negativo, sin texto ni logotipos.'),
-                'aspectRatio': c.get('ratio', '9:16'), 'numberOfImages': 1,
-                'model': 'imagen-4.0-ultra-generate-001', 'imageSize': '2K'}
+                'aspectRatio': c.get('ratio', '9:16')}
     return {}
+
+def url_visual(prompt, ratio, model):
+    q = urllib.parse.urlencode({'prompt': (prompt or '')[:1200], 'ar': ratio or '9:16', 'model': model})
+    return f'{IMAGEN}?{q}'
+
+def bajar_visual(prompt, ratio):
+    """Bytes de la imagen por la ruta viva. Prueba Pro y, si no hay imagen, Flash."""
+    fallo = 'sin respuesta'
+    for model in IMAGEN_MODELOS:
+        code, data = http('GET', url_visual(prompt, ratio, model),
+                          headers={'Referer': PIXERIA + '/', 'Origin': PIXERIA}, timeout=180, raw=True)
+        if code == 200 and isinstance(data, (bytes, bytearray)) and len(data) > 500:
+            return bytes(data), model
+        txt = data.decode('utf-8', 'replace')[:160] if isinstance(data, (bytes, bytearray)) else str(data)[:160]
+        fallo = f'{model} HTTP {code} {txt}'
+        if code in (401, 403):
+            break
+    raise RuntimeError(fallo)
 
 def a_mp4(png, segundos=10):
     """Adaptador imagen fija → MP4 (ffmpeg). None si no hay ffmpeg."""
@@ -647,14 +666,14 @@ def generar_pieza(ctx, pid, c):
         extra = {'texto': texto, 'evento_tpv': c['evento_tpv']}
     else:
         body = prompt_pieza(ctx.plan, c)
-        code, d = http('POST', f'{API}/imagen/generate', body, hdr, timeout=180)
-        pred = ((d or {}).get('predictions') or [{}])[0]
-        b64 = pred.get('bytesBase64Encoded') or pred.get('image')
-        if code != 200 or not b64:
-            raise RuntimeError(f'imagen «{c["titulo"]}» → HTTP {code}')
-        png = base64.b64decode(b64); mp4 = a_mp4(png)
+        try:
+            png, modelo = bajar_visual(body['prompt'], c.get('ratio', '9:16'))
+        except RuntimeError as e:
+            raise RuntimeError(f'imagen «{c["titulo"]}» → {e}') from e
+        mp4 = a_mp4(png)
         tipo, mime, data = ('video', 'video/mp4', mp4) if mp4 else ('image', 'image/png', png)
         prompt = body['prompt']
+        extra = {'modelo': modelo}
     pub = {'type': tipo, 'motor': f"{c.get('motor', kind)} · demo-completa", 'title': c['titulo'][:80], 'mime': mime,
            'base64': base64.b64encode(data).decode(), 'prompt': prompt[:900], 'quality': 'better',
            'tags': [ctx.plan['marca_blanca']['id'], 'demo', kind][:3], 'catalogo': catalogo_stock(ctx.plan)}
@@ -684,7 +703,7 @@ def paso_piezas(ctx):
     if hay('NOTIFY_KEY'):   # sonda de autorización sin generar nada (X-Auth-Probe)
         c2, pr = http('POST', f'{API}/imagen/generate', {'prompt': 'probe'}, {'X-Notify-Key': secreto('NOTIFY_KEY'), 'X-Auth-Probe': '1'})
         r['comprobaciones']['sonda_pago'] = {'http': c2, 'ok': bool((pr or {}).get('ok'))}
-    coste = {'song': 'Lyria 3', 'voiceover': 'ElevenLabs', 'visual': 'Imagen 4 Ultra'}
+    coste = {'song': 'Lyria 3', 'voiceover': 'ElevenLabs', 'visual': 'Gemini imagen'}
     for pid in faltan_piezas:
         c = unicas[pid]
         r['acciones'].append(f"generar {c.get('kind')} «{c['titulo']}» ({coste.get(c.get('kind'), '?')}, de pago) → stock/publish")

@@ -70,6 +70,10 @@ class Mundo:
             return 200, {'items': list(self.stock), 'total': len(self.stock)}
         if u == dc.API + '/imagen/generate' and (headers or {}).get('X-Auth-Probe'):
             return 200, {'ok': True, 'via': 'fleet'}
+        if u == dc.IMAGEN:
+            if 'model=gemini-3-pro-image' in url and not getattr(self, 'pro_ok', True):
+                return 404, b'gemini 404: model not found'
+            return 200, b'\x89PNG' + b'x' * 600
         raise AssertionError(f'llamada no prevista: {method} {url}')
 
     def escrituras(self):
@@ -135,18 +139,26 @@ class Plan(Base):
         self.assertIn('21', dc.textos_locucion(self.plan)['cierre']['es'])
         self.assertIn('9 PM', dc.textos_locucion(self.plan)['cierre']['en'])
 
-    def test_visual_pide_imagen_ultra(self):
+    def test_visual_usa_la_ruta_viva(self):
         vis = [c for c in dc.piezas_unicas(self.plan).values() if c['kind'] == 'visual']
         self.assertEqual(len(vis), 6)
-        ratios = set()
-        for c in vis:
-            body = dc.prompt_pieza(self.plan, c)
-            self.assertEqual(body['model'], 'imagen-4.0-ultra-generate-001')
-            self.assertEqual(body['imageSize'], '2K')
-            self.assertEqual(body['numberOfImages'], 1)
-            self.assertNotIn('imagen-4.0-generate-001', json.dumps(body))
-            ratios.add(body['aspectRatio'])
+        ratios = {dc.prompt_pieza(self.plan, c)['aspectRatio'] for c in vis}
         self.assertEqual(ratios, {'9:16', '16:9'})
+        url = dc.url_visual('pan recién hecho', '9:16', 'gemini-3-pro-image')
+        self.assertTrue(url.startswith('https://imagen.admira.store/img?'))
+        self.assertIn('model=gemini-3-pro-image', url)
+        self.assertIn('ar=9%3A16', url)
+        self.assertNotIn('imagen-4.0', url)
+
+    def test_visual_cae_a_flash_si_pro_no_responde(self):
+        self.mundo.pro_ok = False
+        png, model = dc.bajar_visual('pan recién hecho', '9:16')
+        self.assertEqual(model, 'gemini-2.5-flash-image')
+        self.assertTrue(png.startswith(b'\x89PNG'))
+        pro = [u for _, u, *_ in self.mundo.llamadas if 'model=gemini-3-pro-image' in u]
+        flash = [u for _, u, *_ in self.mundo.llamadas if 'model=gemini-2.5-flash-image' in u]
+        self.assertEqual(len(pro), 1)
+        self.assertEqual(len(flash), 1)
 
     def test_schema_obligatorio(self):
         f = os.path.join(self.tmp.name, 'malo.json')
