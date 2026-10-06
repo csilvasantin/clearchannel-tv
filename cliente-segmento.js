@@ -48,7 +48,11 @@
     var kind = fold(loc.kind), name = fold(loc.name);
     // 0 · Demos de «créame demo de <cliente>» (tools/crear-demo): circuit demo_<cliente> o loc.client.
     var demo = /^demo_([a-z0-9_]{2,60})$/.exec(circuit);
-    if (demo) return demo[1].replace(/_/g, '-');
+    // demo_365_bcn lleva el cliente en loc.client (365). El sufijo del circuito es la ciudad.
+    if (demo) {
+      if (loc.client && /^[a-z0-9-]{2,60}$/.test(String(loc.client))) return String(loc.client);
+      return demo[1].replace(/_/g, '-');
+    }
     if (loc.client && /^[a-z0-9-]{2,60}$/.test(String(loc.client))) return String(loc.client);
     // 1 · Circuitos con dueño explícito (Altadis y JTI primero: nunca se mezclan).
     if (/^altadis-bcn-/i.test(id) || circuit === 'altadis_bcn' || sponsor === 'altadis' || /circuito dooh altadis/.test(kind)) return 'altadis';

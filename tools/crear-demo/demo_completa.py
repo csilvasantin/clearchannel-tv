@@ -309,6 +309,14 @@ def circuit_label(plan):
     kind = plan['xpacio'].get('kind', 'Cafetería')
     return {'es': f'Circuito {mb} · {kind} · {ciudad} ({n} locales)', 'en': f'{mb} café circuit · {ciudad} ({n} stores)'}
 
+def audiencia_equipo(q):
+    """Impactos al día y CPM de la ficha. Sin número, el mapa pintaba NaN y undefined."""
+    if q.get('categoria') == 'audio':
+        return 1200, '€3'
+    if q.get('orientacion') == 'vertical':
+        return 1800, '€9'
+    return 900, '€7'
+
 def construir_locations(plan):
     mb = plan['marca_blanca']; cont = plan.get('contenido') or {}
     out = []
@@ -317,7 +325,9 @@ def construir_locations(plan):
         surf = []
         for q in e['equipos']:
             audio = q['categoria'] == 'audio'
+            impr, cpm = audiencia_equipo(q)
             surf.append({'name': q['nombre'].split(' · ')[0], 'desc': q['nombre'], 'status': 'sched',
+                         'impr': impr, 'cpm': cpm,
                          'surface': 'audio' if audio else 'pantalla', 'device': q['pantalla_id'], 'itil_code': q['itil_code'],
                          **({'orientation': q['orientacion']} if q.get('orientacion') else {}),
                          'playlists': [p['playlist'] for p in q['playlists']]})
@@ -329,7 +339,7 @@ def construir_locations(plan):
             'music': 'lounge', 'cameras': False,
             'circuit': plan['circuito'], 'circuitLabel': circuit_label(plan),
             'client': mb['id'], 'demo': True, 'tourOrder': e['n'],
-            'external': {'brand': mb['nombre'], 'network': f"{mb['nombre']} demo", 'operator': 'Admira (demo)',
+            'external': {'brand': mb['nombre'], 'network': f"{mb['nombre']} demo", 'operator': mb['nombre'],
                          'source': f"demo-completa v2 · dirección real ({e.get('fuente', 'localizador oficial')})",
                          'url': e.get('fuente_url') or mb['web'], 'ref': e.get('ref')},
             'twin': e['gemelo'], 'xpaceUrl': e['gemelo'],

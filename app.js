@@ -1215,8 +1215,17 @@ function formatImpr(n) {
   return String(n);
 }
 
+function finiteImpr(v) {
+  const n = Number(v);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+function surfaceCpmText(v) {
+  if (v == null || v === '' || v === 'undefined') return '—';
+  const n = parseFloat(String(v).replace(/[^\d.]/g, ''));
+  return Number.isFinite(n) ? String(v) : '—';
+}
 function locationDailyImpr(loc) {
-  return loc.surfaces.reduce((a, s) => a + (Number(s.impr) || 0), 0);
+  return loc.surfaces.reduce((a, s) => a + (finiteImpr(s.impr) || 0), 0);
 }
 
 function locationCpmValues(loc) {
@@ -1622,7 +1631,7 @@ function zoomToSelectedCircuit() {
   }
   const bounds = new maplibregl.LngLatBounds();
   locs.forEach(loc => bounds.extend(loc.coords));
-  map.fitBounds(bounds, {padding:{top:120,bottom:90,left:380,right:420}, duration:1200, maxZoom:6});
+  map.fitBounds(bounds, {padding:{top:120,bottom:90,left:380,right:420}, duration:1200, maxZoom:14});
   setStatus(tf('status_selection', {points: locs.length}));
 }
 
@@ -3514,8 +3523,9 @@ function renderPanel(loc) {
     confChip.title = show ? String(loc.alcampo?.motivo || '') : '';
   }
   document.getElementById('p-surfaces').textContent = loc.surfaces.length;
-  const totalImpr = loc.surfaces.reduce((a,s)=>a+s.impr, 0);
-  document.getElementById('p-impr').textContent = loc.surfaces.length ? '~' + (totalImpr/1000).toFixed(1) + 'K' : '—';
+  const imprVals = loc.surfaces.map(s => finiteImpr(s.impr)).filter(n => n != null);
+  const totalImpr = imprVals.reduce((a, n) => a + n, 0);
+  document.getElementById('p-impr').textContent = imprVals.length ? '~' + (totalImpr/1000).toFixed(1) + 'K' : '—';
   document.getElementById('p-cpm').textContent = '—';
   const cpms = loc.surfaces.map(s => parseFloat(String(s.cpm).replace(/[^\d.]/g,''))).filter(Boolean);
   if (cpms.length) {
@@ -3534,7 +3544,7 @@ function renderPanel(loc) {
           <div class="status ${s.status}">${s.status === 'live' ? t('surf_live') : s.status === 'sched' ? t('surf_sched') : t('surf_idle')}</div>
         </div>
         <div class="desc">${escHtml(s.desc)}</div>
-        <div class="stats"><span>${s.impr}</span> ${t('meta_imprday')} · <span>${escHtml(s.cpm)}</span> CPM · <span>${escHtml(s.surface)}</span></div>
+        <div class="stats"><span>${finiteImpr(s.impr) == null ? '—' : finiteImpr(s.impr)}</span> ${t('meta_imprday')} · <span>${surfaceCpmText(s.cpm) === '—' ? '—' : escHtml(surfaceCpmText(s.cpm))}</span> CPM · <span>${escHtml(s.surface)}</span></div>
         ${s.screen ? `<div class="surf-seg" hidden></div>` : ''}
         <button type="button" class="walk-preview" data-walk-preview="${i}">${t('walk_preview')}</button>
         ${hasTwin ? `<button class="twin-launch" data-surf-idx="${i}">${t('twin_launch')}</button>` : ''}
@@ -4036,6 +4046,38 @@ document.getElementById('pegman')?.addEventListener('pointerdown', stopMapNaviga
 ['pointerdown', 'wheel', 'keydown'].forEach(type => {
   map.getCanvas().addEventListener(type, stopMapNavigation, {passive:true});
 });
+function circuitParam() {
+  try { return new URLSearchParams(location.search || '').get('circuit') || ''; } catch (_) { return ''; }
+}
+// ?circuit= llega antes de que el catálogo cree los circuitos demo. Se reintenta hasta que existen y se encuadra.
+function applyCircuitDeepLink() {
+  const c = circuitParam();
+  if (!c) return false;
+  const def = circuitDefinitions()[c];
+  if (!def || !Array.isArray(def.items) || !def.items.length) return false;
+  selectedCircuitId = c;
+  selectedMetroLine = 'all';
+  circuitAutoSelect = true;
+  selectedLocationIds = new Set(def.items.map(l => l.id));
+  circuitMapFilterActive = true;
+  const panelEl = document.getElementById('circuit-panel');
+  const headerBtn = document.getElementById('header-circuit-btn');
+  const toggle = document.getElementById('circuit-toggle');
+  if (panelEl) { panelEl.hidden = false; panelEl.classList.remove('collapsed'); }
+  if (headerBtn) headerBtn.classList.add('active');
+  if (toggle) toggle.textContent = '−';
+  renderCircuitSelector();
+  const go = () => { try { zoomToSelectedCircuit(); } catch (_) {} };
+  if (map && map.loaded && map.loaded()) go();
+  else if (map && map.once) map.once('load', go);
+  return true;
+}
+function watchCircuitDeepLink() {
+  if (!circuitParam()) return;
+  let tries = 0;
+  const tick = () => { if (applyCircuitDeepLink() || ++tries > 24) return; setTimeout(tick, 500); };
+  setTimeout(tick, 400);
+}
 function wireTour() {
   const b = document.getElementById('p-tour');
   if (b) b.onclick = (e) => { e.preventDefault(); tourToggle(b); };
@@ -4050,6 +4092,7 @@ function wireTour() {
         sel.value = c; sel.dispatchEvent(new Event('change', { bubbles: true }));
       }
     }
+    watchCircuitDeepLink();
     if (q.get('tour') === '1' && b) setTimeout(() => { if (!tourRun) tourToggle(b); }, 1200);
     // Previo DooH: ?circuit=alcampo&previo=1 → tour con previo; ?previo=<id>[&vista=detalle|interior-1] → previo de una tienda.
     const pv = q.get('previo');
@@ -4346,7 +4389,8 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
       if (changed) { setLocations(next); updateLocationsSource(); if (brandSegmentActive()) { try { renderCircuitSelector(); } catch (_) {} } }
     }
   } catch {}
-  const whenIdle = (cb) => (typeof window.requestIdleCallback === 'function' ? window.requestIdleCallback(cb, { timeout: 8000 }) : setTimeout(cb, 3000));
+  const circuitAsked = circuitParam();
+  const whenIdle = (cb) => circuitAsked ? setTimeout(cb, 0) : (typeof window.requestIdleCallback === 'function' ? window.requestIdleCallback(cb, { timeout: 8000 }) : setTimeout(cb, 3000));
   whenIdle(async () => {
   try {
     const res = await window.loadOmnipLocationsAsync(4500);
@@ -4367,6 +4411,7 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
   } catch {}
   finally {
     plannerCatalogReady = true;
+    try { applyCircuitDeepLink(); } catch (_) {}
     if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();
     if (!document.getElementById('buy-modal').hidden) updateBuyQuote();
   }
@@ -4426,6 +4471,7 @@ function applyBrandSegment(fit) {
   try { updateBiddingLiveCounters(); } catch (_) {}
   document.documentElement.dataset.segmentoPuntos = String(LOCATIONS.length);
   if (fit) { if (map.loaded()) fitBrandSegment(); else map.once('load', fitBrandSegment); }
+  try { applyCircuitDeepLink(); } catch (_) {}
 }
 document.addEventListener('admira:segmento', () => applyBrandSegment(true));
 document.documentElement.dataset.segmentoPuntos = String(LOCATIONS.length);
