@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { GOOGLE_CLIENT_ID, sessionFromClaims, handleDemoSession } from '../server/demo-session.mjs';
+import { GOOGLE_CLIENT_ID, GOOGLE_SUITE_CLIENT_ID, sessionFromClaims, handleDemoSession } from '../server/demo-session.mjs';
 const claims = { aud: GOOGLE_CLIENT_ID, iss: 'https://accounts.google.com', sub: 'user-1', exp: Date.now() / 1000 + 3600, email_verified: true, email: 'csilva@admira.com' };
 test('both Carlos identities receive separate JTI, Alsea and Cafebrería demos; Gmail does not gain catalog write access', () => {
   for (const email of ['csilva@admira.com', 'csilvasantin@gmail.com']) {
@@ -42,4 +42,19 @@ test('the demo session does not depend on the host: it works the same on admira.
     assert.equal(res.status, 200, host);
     assert.equal((await res.json()).email, 'csilva@admira.com', host);
   }
+});
+test('admira.biz signs in with the suite client: both audiences of the project are accepted, any other is not', () => {
+  assert.equal(sessionFromClaims({ ...claims, aud: GOOGLE_SUITE_CLIENT_ID }).email, 'csilva@admira.com');
+  assert.equal(sessionFromClaims({ ...claims, aud: GOOGLE_CLIENT_ID }).email, 'csilva@admira.com');
+  assert.equal(sessionFromClaims({ ...claims, aud: '861856772040-otro.apps.googleusercontent.com' }), null);
+});
+test('the backoffice picks the suite client only on admira.biz (the site client has no admira.biz origin)', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const html = await readFile(new URL('../backoffice.html', import.meta.url), 'utf8');
+  const m = html.match(/const GOOGLE_CLIENT_ID = (\/.*?\/i)\.test\(location\.hostname\) \? GOOGLE_SUITE_CLIENT_ID : GOOGLE_SITE_CLIENT_ID;/);
+  assert.ok(m, 'host-based client selection present');
+  const re = eval(m[1]);
+  for (const h of ['admira.biz', 'www.admira.biz', 'WWW.ADMIRA.BIZ']) assert.equal(re.test(h), true, h);
+  for (const h of ['www.clearchannel.tv', 'clearchannel.tv', 'www.admira.app', 'admira.biz.evil.test', 'fakeadmira.biz.example']) assert.equal(re.test(h), false, h);
+  assert.ok(html.includes(GOOGLE_SUITE_CLIENT_ID) && html.includes(GOOGLE_CLIENT_ID));
 });
