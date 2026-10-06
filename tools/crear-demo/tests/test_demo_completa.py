@@ -181,7 +181,9 @@ class Plan(Base):
             self.assertEqual(l['coords'], [e['lng'], e['lat']])
             self.assertEqual(l['circuit'], 'demo_365_bcn'); self.assertEqual(l['twin'], e['gemelo'])
             self.assertEqual(l['external']['brand'], '365')
+            self.assertEqual(l['external']['operator'], '365')
             self.assertEqual(len(l['surfaces']), 3)
+            self.assertTrue(all(isinstance(s.get('impr'), int) and s['impr'] > 0 and s.get('cpm') for s in l['surfaces']))
 
     def test_ci_args_validos(self):
         import re

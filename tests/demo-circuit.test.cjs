@@ -11,6 +11,9 @@ test('demo_<cliente> se asigna al cliente sin tocar ALIAS', () => {
   assert.equal(S.visible(loc, 'lenovo'), true);
   assert.equal(S.visible(loc, 'starbucks'), false);
   assert.equal(S.clienteDe({id: 'x', circuit: 'demo_el_corte'}), 'el-corte');
+  const bcn = {id: '365-demo-bcn-tetuan', circuit: 'demo_365_bcn', client: '365'};
+  assert.equal(S.clienteDe(bcn), '365');
+  assert.equal(S.visible(bcn, '365'), true);
 });
 
 test('los puntos demo no se cuelan en Starbucks ni en Altadis', () => {
@@ -22,6 +25,8 @@ test('los puntos demo no se cuelan en Starbucks ni en Altadis', () => {
 test('app.js define circuitos demo genéricos y los saca de retail', () => {
   const src = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
   assert.match(src, /function isDemoCircuitLocation\(loc\)/);
+  assert.match(src, /function applyCircuitDeepLink\(/);
+  assert.match(src, /maxZoom:14/);
   assert.match(src, /\.\.\.demoDefs,/);
   assert.match(src, /\.filter\(l => !isDemoCircuitLocation\(l\)\)/);
 });
