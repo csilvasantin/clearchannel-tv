@@ -22,8 +22,8 @@ El comportamiento es el de la portada porque es el mismo código: `responsive-sh
 En el `<head>`, después de `brand.js`/`brand.css` y de los estilos propios:
 
 ```html
-<link rel="stylesheet" href="/galaxy-shell.css?v=20261003-superpuestos-1">
-<script defer src="/galaxy-shell.js?v=20261003-superpuestos-1" data-section="/ nombre-de-la-página"></script>
+<link rel="stylesheet" href="/galaxy-shell.css?v=20261006-version-options-1">
+<script defer src="/galaxy-shell.js?v=20261006-version-options-1" data-section="/ nombre-de-la-página"></script>
 ```
 
 Opcionalmente, antes del script, `window.ADMIRA_SHELL = {...}`:
@@ -103,3 +103,13 @@ Las dos presentaciones y los visores (`store-3d`, `walk`, `players`) **sí** lle
 ---
 
 **Rule: every new admira.app / clearchannel.tv page uses the four-band shell.** Load `/galaxy-shell.css` and `/galaxy-shell.js` (snippet above), declare the page section, actions and links in `window.ADMIRA_SHELL` or with `data-shell-slot`, and the page gets the portada's exact header and Options, Advanced and Expert panels. Map verbs (`/demo`, `/circuito`, `/buscar`) are handed to the portada through `sessionStorage` and run there on load. Every page of the site already does (table above); the only exceptions are two redirects and the compiled Wututu kiosk bundle, and `tests/galaxy-shell.test.cjs` fails if a new page skips the shell. Navigation goes to ☰ Options, page work and section shortcuts to ▤ Advanced, there is a single language switch (per-brand `<brand>-lang` key), and the bar always wears the portada colours.
+
+## Versión en Opciones / Version in Options
+
+ES: La versión aparece al pie de Opciones y desaparece al plegarlo. Sólo la primera novedad sin reconocer permite un aviso exterior; abrir Opciones o leer y cerrar el aviso lo reconoce por navegador y dominio. El pie queda sobre la barra inferior de Experto, incluso minimizada. Pasar el ratón sobre el sello muestra novedades; una versión pendiente mantiene Recargar.
+
+EN: The version appears at the bottom of Options and disappears when collapsed. Only the first unacknowledged news allows an outside notice; opening Options or reading and closing the notice acknowledges it per browser and domain. The footer remains above the bottom Expert bar, including its minimized state. Hovering over the stamp shows news; a pending version retains Reload.
+
+Shared loader / Cargador: https://www.admiranext.com/assets/sello-novedades.js · /version.json · No new MCP tools / Sin herramientas MCP nuevas.
+
+Tutorial ES: ☰ Opciones → sello inferior → pasar el ratón → plegar Opciones. EN: ☰ Options → bottom stamp → hover → collapse Options.

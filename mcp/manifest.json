@@ -145,5 +145,12 @@
     "es": "Cafebrería es un proyecto independiente: Avanzado → Seleccionar circuito → Todos/Ciudad/Local → Cafebrería, o Experto → /circuito cafebreria. La ficha conserva su gemelo Pixeria, 81 objetos, libros y vinilos. Wallapop prepara un anuncio sin publicarlo; eBay no está integrado en las fuentes recuperadas. Los estados ITIL son DEMO y la dirección es de referencia.",
     "en": "Cafebrería is an independent project: Advanced → Select circuit → All/City/Local → Cafebrería, or Expert → /circuito cafebreria. Its profile keeps the Pixeria twin, 81 objects, books and vinyl records. Wallapop prepares a listing without publishing; no eBay integration was found in the recovered sources. ITIL states are DEMO and the address is a reference.",
     "mini_tutorial": "https://api.yokup.com/media/fleet/229e706ba84f6952.mp4"
+  },
+  "version_options": {
+    "id": "version-options",
+    "loader": "https://www.admiranext.com/assets/sello-novedades.js",
+    "es": "La versión aparece al pie de Opciones y desaparece al plegarlo. Sólo la primera novedad sin reconocer permite un aviso exterior; abrir Opciones o leer y cerrar el aviso lo reconoce por navegador y dominio. El pie queda sobre la barra inferior de Experto, incluso minimizada. Pasar el ratón sobre el sello muestra novedades; una versión pendiente mantiene Recargar.",
+    "en": "The version appears at the bottom of Options and disappears when collapsed. Only the first unacknowledged news allows an outside notice; opening Options or reading and closing the notice acknowledges it per browser and domain. The footer remains above the bottom Expert bar, including its minimized state. Hovering over the stamp shows news; a pending version retains Reload.",
+    "docs": "https://www.clearchannel.tv/help/#version-options"
   }
 }

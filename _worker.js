@@ -81,7 +81,7 @@ function wantsAvatar(url, response) {
 }
 // Sello de versión con novedades (Merovingio, 06-10-2026): mismo cargador común de admiranext.com,
 // que lee el /version.json de este sitio y enseña sus novedades al pasar el ratón.
-const SELLO_TAG = '<script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-sello-1" data-admira-sello-loader></script>';
+const SELLO_TAG = '<script defer src="https://www.admiranext.com/assets/sello-novedades.js?v=20261006-options-sello-4" data-admira-sello-loader></script>';
 function avatarRewriter() {
   return new HTMLRewriter().on('head', {element(el) {el.append(AVATAR_TAG + SELLO_TAG, {html:true});}});
 }

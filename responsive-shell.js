@@ -11,7 +11,8 @@
   const isOpen=mode=>mode==='advanced'?panels[mode].open:!panels[mode].hidden;
   const measure=()=>{
     document.documentElement.style.setProperty('--app-header-height',Math.ceil(header.getBoundingClientRect().height)+'px');
-    document.documentElement.style.setProperty('--expert-panel-height',(isOpen('expert')?Math.ceil(panels.expert.getBoundingClientRect().height):0)+'px');
+    const visibleDock=panels.expert.classList.contains?.('ax-dock') && !panels.expert.classList.contains('ax-hide');
+    document.documentElement.style.setProperty('--expert-panel-height',((isOpen('expert')||visibleDock)?Math.ceil(panels.expert.getBoundingClientRect().height):0)+'px');
   };
   function sync(){
     for(const mode of Object.keys(panels)){const open=isOpen(mode);toggles[mode].setAttribute('aria-expanded',String(open));toggles[mode].setAttribute('aria-pressed',String(open));document.body.classList.toggle('mode-'+mode+'-open',open);}

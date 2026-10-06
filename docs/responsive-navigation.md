@@ -46,3 +46,13 @@ Cafebrería tiene circuito propio: `/circuito cafebreria` y las rutinas Demo/Cir
 Las demás páginas (empezando por el backoffice) cargan `galaxy-shell.css` + `galaxy-shell.js` y obtienen exactamente esta barra y estos tres paneles; ver `docs/galaxy-shell.md`. Fuera de la portada, `/demo`, `/circuito` y `/buscar` abren la portada y se ejecutan allí; `/help` y `/limpiar` funcionan en sitio. El backoffice añade el verbo local `/nuevo` (alta de un Xpace).
 
 Other pages (starting with the backoffice) load `galaxy-shell.css` + `galaxy-shell.js` and get exactly this header and these three panels; see `docs/galaxy-shell.md`. Away from the home page, `/demo`, `/circuito` and `/buscar` open the home map and run there; `/help` and `/limpiar` run in place. The backoffice adds the page-local verb `/nuevo` (register an Xpace).
+
+## Versión en Opciones / Version in Options
+
+ES: La versión aparece al pie de Opciones y desaparece al plegarlo. Sólo la primera novedad sin reconocer permite un aviso exterior; abrir Opciones o leer y cerrar el aviso lo reconoce por navegador y dominio. El pie queda sobre la barra inferior de Experto, incluso minimizada. Pasar el ratón sobre el sello muestra novedades; una versión pendiente mantiene Recargar.
+
+EN: The version appears at the bottom of Options and disappears when collapsed. Only the first unacknowledged news allows an outside notice; opening Options or reading and closing the notice acknowledges it per browser and domain. The footer remains above the bottom Expert bar, including its minimized state. Hovering over the stamp shows news; a pending version retains Reload.
+
+Shared loader / Cargador: https://www.admiranext.com/assets/sello-novedades.js · /version.json · No new MCP tools / Sin herramientas MCP nuevas.
+
+Tutorial ES: ☰ Opciones → sello inferior → pasar el ratón → plegar Opciones. EN: ☰ Options → bottom stamp → hover → collapse Options.

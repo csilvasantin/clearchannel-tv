@@ -111,3 +111,13 @@ Cafebrería is an independent project: Advanced → Select circuit → All/City/
 
 handON: https://admira.app/cafebreria/
 Manifiesto: https://admira.app/data/projects/cafebreria.json
+
+## Versión en Opciones / Version in Options
+
+ES: La versión aparece al pie de Opciones y desaparece al plegarlo. Sólo la primera novedad sin reconocer permite un aviso exterior; abrir Opciones o leer y cerrar el aviso lo reconoce por navegador y dominio. El pie queda sobre la barra inferior de Experto, incluso minimizada. Pasar el ratón sobre el sello muestra novedades; una versión pendiente mantiene Recargar.
+
+EN: The version appears at the bottom of Options and disappears when collapsed. Only the first unacknowledged news allows an outside notice; opening Options or reading and closing the notice acknowledges it per browser and domain. The footer remains above the bottom Expert bar, including its minimized state. Hovering over the stamp shows news; a pending version retains Reload.
+
+Shared loader / Cargador: https://www.admiranext.com/assets/sello-novedades.js · /version.json · No new MCP tools / Sin herramientas MCP nuevas.
+
+Tutorial ES: ☰ Opciones → sello inferior → pasar el ratón → plegar Opciones. EN: ☰ Options → bottom stamp → hover → collapse Options.

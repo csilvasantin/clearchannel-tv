@@ -122,3 +122,14 @@ test('the docs state the overlay principle', () => {
     assert.ok(!text.includes('var(--shell-bottom'), doc);
   }
 });
+
+
+test('Options footer stops above a visibly minimized shared dock even with native hidden=true',()=>{
+ const {context,panels}=fakeDom({store:memoryStore({})});const values=new Map();
+ context.document.documentElement.style.setProperty=(k,v)=>values.set(k,v);
+ panels['expert-panel'].classList.contains=(name)=>name==='ax-dock';
+ vm.runInNewContext(read('responsive-shell.js'),context);
+ assert.equal(panels['expert-panel'].hidden,true,'native Expert starts closed');
+ assert.equal(values.get('--expert-panel-height'),'64px','the visible minimized dock still occupies 64px');
+ assert.match(read('responsive-shell.css'),/\.options-panel,\.advanced-panel\{bottom:var\(--expert-panel-height,0px\)\}/);
+});
