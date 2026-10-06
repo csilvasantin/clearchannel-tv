@@ -66,3 +66,41 @@ Un agente (GrokBot / Arquitecto / Smith) que reciba «créame demo de X» debe:
 - XPL: quitar playlist `<id>.xpacio.hilomusical` y volver a POST.
 - Marca: PUT otra versión o retirar desde /marcablanca.
 - Código: `git checkout retorno/pre-demo-<id>-AAAAMMDD` (o `retorno/pre-demo-form-20261005` para el form) y redeploy.
+
+## Demo completa v2 · ejecutor paso a paso (`demo_completa.py`, 06-10-2026)
+
+«Preparalo y aprendemos a medida que hacemos» (Carlos). Ejecuta el plan `admiranext.demo-completa/2`
+que genera www.admiranext.com/demo (copia en `planes/demo-365-bcn-plan.json`: 365 Barcelona,
+4 locales reales, 12 equipos ITIL, 16 playlists, 48 huecos, 12 piezas compartidas).
+
+- **Ensayo por defecto** (solo lecturas públicas). Escribir exige `--real`.
+- `--paso N` (uno) · `--hasta N` (1..N) · `--paso A --hasta B` (A..B). En `--real` la cadena se
+  para en el primer paso bloqueado o con error.
+- Idempotente: cada paso comprueba antes de crear. Estado en `~/Claude/demos/365-bcn/365-bcn-estado.json`
+  y evidencias (solo se añaden) en `365-bcn-evidencias.jsonl`.
+- Secretos: variable de entorno con su nombre o la bóveda; nunca se imprimen ni se guardan.
+  `--preflight` enseña qué hay (solo nombres) y dónde puede correr cada paso.
+
+| # | Paso | Escribe | Credencial | Dónde |
+|---|------|---------|------------|-------|
+| 1 | marca | catálogo /marcablanca (`tipo real`, `propuesta:false`) → `/marca 365` | ADMIRANEXT_PRESENTACIONES_MACHINE_KEY | Mac Mini |
+| 2 | circuito | `demo_365_bcn` en brain.digitalavatar.ai/locations (coords reales, copia previa) | ADMIN_TOKEN | Mac Mini |
+| 3 | gemelos | nada (comprueba gemelo + campo twin) | — | cualquiera |
+| 4 | itil | `itil_ci_upsert` ×12 (MCP yokup.com/mcp) cuando Yokup ya sincronizó el Xpacio | `YOKUP_MCP_CREDENTIAL` (fichero ykm_, scopes read,itil,itil:write) | Mac Mini |
+| 5 | playlists | 16 playlists en xpl.admira.store (unión) + 12 borradores admira.tv | XPL_TOKEN, NOTIFY_KEY | Mac Mini |
+| 6 | piezas | 3 canciones (Lyria 3) + 3 locuciones (/tts) + 6 visuales (Imagen 4 → MP4) en el Stock, catálogo `demo-365-bcn`; asigna los 48 huecos | NOTIFY_KEY, XPL_TOKEN | Mac Mini (de pago) |
+| 7 | checker | nada (lecturas) + presencia SIMULADA local | — (`--presencia yokup`: INSTALLER_ADMIRA_SECRET) | cualquiera |
+
+```bash
+python3 tools/crear-demo/demo_completa.py --preflight
+python3 tools/crear-demo/demo_completa.py                    # ensayo de los 7 pasos
+python3 tools/crear-demo/demo_completa.py --paso 1 --real    # marca blanca real 365
+python3 tools/crear-demo/demo_completa.py --paso 4 --real    # re-lanzar hasta que Yokup sincronice (≤15 min)
+python3 tools/crear-demo/demo_completa.py --disparar cierre --sitio bcn-tetuan --lang es --real   # TPV manual
+python3 -m unittest discover -s tools/crear-demo/tests
+```
+
+Riesgos: `--presencia yokup` deja los equipos vigilados (si dejan de latir, Yokup abre «Equipo sin
+conexión» y avisa a instaladores): solo si Carlos lo pide. El disparo desde el TPV real aún no existe
+(`--disparar` es el sustituto manual vía /megafonia/push). Paso 4 depende de la sincronización de Yokup
+(cron 2 min, tanda ≤15 min, solo Xpacios con gemelo).
