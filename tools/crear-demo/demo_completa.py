@@ -601,9 +601,12 @@ def prompt_pieza(plan, c):
         return {'prompt': estilo, 'lyrics': letra, 'model': 'lyria-3-clip-preview'}
     if c.get('kind') == 'visual':
         tema = c['titulo'].split(' · ')[1] if ' · ' in c['titulo'] else c['titulo']
+        # Sin model el worker pide imagen-4.0-generate-001 y Google responde 404.
+        # Pixeria publica con Ultra a 2K, que es el modelo que sigue vivo.
         return {'prompt': (f"Fotografía publicitaria premium para digital signage de la panadería-cafetería {mb} (Barcelona): {tema}. "
                            'Luz natural cálida, obrador artesano, producto protagonista, mucho espacio negativo, sin texto ni logotipos.'),
-                'aspectRatio': c.get('ratio', '9:16'), 'numberOfImages': 1}
+                'aspectRatio': c.get('ratio', '9:16'), 'numberOfImages': 1,
+                'model': 'imagen-4.0-ultra-generate-001', 'imageSize': '2K'}
     return {}
 
 def a_mp4(png, segundos=10):
@@ -681,7 +684,7 @@ def paso_piezas(ctx):
     if hay('NOTIFY_KEY'):   # sonda de autorización sin generar nada (X-Auth-Probe)
         c2, pr = http('POST', f'{API}/imagen/generate', {'prompt': 'probe'}, {'X-Notify-Key': secreto('NOTIFY_KEY'), 'X-Auth-Probe': '1'})
         r['comprobaciones']['sonda_pago'] = {'http': c2, 'ok': bool((pr or {}).get('ok'))}
-    coste = {'song': 'Lyria 3', 'voiceover': 'ElevenLabs', 'visual': 'Imagen 4.0'}
+    coste = {'song': 'Lyria 3', 'voiceover': 'ElevenLabs', 'visual': 'Imagen 4 Ultra'}
     for pid in faltan_piezas:
         c = unicas[pid]
         r['acciones'].append(f"generar {c.get('kind')} «{c['titulo']}» ({coste.get(c.get('kind'), '?')}, de pago) → stock/publish")

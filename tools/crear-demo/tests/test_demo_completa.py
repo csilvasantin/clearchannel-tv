@@ -135,6 +135,19 @@ class Plan(Base):
         self.assertIn('21', dc.textos_locucion(self.plan)['cierre']['es'])
         self.assertIn('9 PM', dc.textos_locucion(self.plan)['cierre']['en'])
 
+    def test_visual_pide_imagen_ultra(self):
+        vis = [c for c in dc.piezas_unicas(self.plan).values() if c['kind'] == 'visual']
+        self.assertEqual(len(vis), 6)
+        ratios = set()
+        for c in vis:
+            body = dc.prompt_pieza(self.plan, c)
+            self.assertEqual(body['model'], 'imagen-4.0-ultra-generate-001')
+            self.assertEqual(body['imageSize'], '2K')
+            self.assertEqual(body['numberOfImages'], 1)
+            self.assertNotIn('imagen-4.0-generate-001', json.dumps(body))
+            ratios.add(body['aspectRatio'])
+        self.assertEqual(ratios, {'9:16', '16:9'})
+
     def test_schema_obligatorio(self):
         f = os.path.join(self.tmp.name, 'malo.json')
         dc.escribir_json(f, {'plan': {'schema': 'admiranext.demo-completa/1'}})
