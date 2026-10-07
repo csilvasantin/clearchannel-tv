@@ -19,6 +19,14 @@ console.log('brand worker: ok');
 import { readFile } from 'node:fs/promises';
 import worker, { ADMIRA_MCP_FILES, AVATAR_TAG, SELLO_TAG } from '../_worker.js';
 
+// The native HTML injection must fetch the ACK-capable avatar after a reload,
+// without relying on an expired edge/browser cache of the old pill query.
+const avatarUrl = new URL(AVATAR_TAG.match(/src="([^"]+)"/)[1]);
+assert.equal(avatarUrl.origin, 'https://www.admiranext.com');
+assert.equal(avatarUrl.pathname, '/assets/avatar.js');
+assert.equal(avatarUrl.searchParams.get('v'), '20261007-demo-ack-1');
+assert.doesNotMatch(AVATAR_TAG, /20261007-pill-1/);
+
 assert.equal(ADMIRA_MCP_FILES['/mcp/manifest.json'], '/mcp/admira-app/manifest.json');
 assert.equal(ADMIRA_MCP_FILES['/mcp/llms.txt'], '/mcp/admira-app/llms.txt');
 
