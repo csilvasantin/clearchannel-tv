@@ -9,7 +9,7 @@
   // Curated association by stable location ID, including slim/detail API records.
   // An explicit backend/backoffice value (even empty) still takes precedence.
   const STARBUCKS_PASEO_ID = 'alsea-sbux-021';
-  const STARBUCKS_PASEO_TWIN = 'https://www.xpaceos.com/admira-xp/?autostart=xtanco&visual=matrix&loc=alsea-sbux-021';
+  const STARBUCKS_PASEO_TWIN = 'https://www.admira.store/admira-xp/?quality=matrix&loc=alsea-sbux-021&project=starbucks&circuit=alsea_starbucks';
 
   function validXpaceUrl(value) {
     if (typeof value !== 'string' || !value.trim()) return '';
