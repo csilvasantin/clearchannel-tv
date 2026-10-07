@@ -758,7 +758,28 @@ addEventListener('resize',ccFitIntro);
      armazón: se olvida el «abierto» que la suite recordaría en la pestaña. data-toggle="": la tecla ⌘
      la atiende responsive-shell.js, que es quien pide abrir y cerrar a la suite (un solo estado). -->
 <script>try{sessionStorage.removeItem('ax-experto-abierto')}catch(_){}</script>
-<script defer src="https://www.admiranext.com/suite/experto.js?v=20261007-pill-1" data-min="hide" data-toggle=""></script>
+<script data-admira-suite-bootstrap>
+(function () {
+  var demo = '';
+  try {
+    var requested = new URLSearchParams(location.search).get('ax_demo');
+    if (requested === 'app' && /^(www\.)?admira\.app$/.test(location.hostname)) demo = 'app';
+    if (requested === 'biz' && /^(www\.)?(admira\.biz|clearchannel\.tv)$/.test(location.hostname)) demo = 'biz';
+  } catch (_) {}
+  if (document.querySelector('script[src^="https://www.admiranext.com/suite/experto.js"]')) return;
+  var engine = document.createElement('script');
+  engine.defer = true;
+  engine.async = false;
+  engine.src = 'https://www.admiranext.com/suite/experto.js?v=' + (demo ? '20261007-native-demo-control-1' : '20261007-pill-1');
+  engine.setAttribute('data-min', 'hide');
+  engine.setAttribute('data-toggle', '');
+  if (demo) {
+    engine.setAttribute('data-admira-demo-engine', '');
+    engine.setAttribute('data-pata', 'admira.' + demo);
+  }
+  document.head.appendChild(engine);
+})();
+</script>
 </head>
 <body>
 
