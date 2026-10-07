@@ -705,7 +705,7 @@ function normText(s) {
 // Gemelo compartido de los 10 Starbucks Alsea México (FLT-101244).
 // Apunta al de Paseo de Gracia 103 (alsea-sbux-021). El vertical `cafeteria`
 // aún no existe en admira-xp y cae a Xtanco: no se construye aquí, solo se enlaza.
-const ALSEA_MEXICO_TWIN = 'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021';
+const ALSEA_MEXICO_TWIN = 'https://www.admira.store/admira-xp/?quality=matrix&loc=alsea-sbux-021&project=starbucks&circuit=alsea_starbucks';
 function stampAlseaMexicoTwin(loc) {
   if (!loc || !isAlseaMexicoLocation(loc)) return loc;
   loc.twin = ALSEA_MEXICO_TWIN;
