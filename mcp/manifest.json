@@ -2,7 +2,7 @@
   "name": "clearchannel-tv-audience",
   "title": "Clear Channel · clearchannel.tv — Audiencia & Emisión",
   "description": "Hub MCP de clearchannel.tv: datos verificados de Emisión × Audiencia de pantallas retail-media. Cruza el proof-of-play de admira.tv (QUÉ se emitió) con la cámara on-device del gemelo XpaceOS (QUIÉN lo vio: presencia, género, edad, franja horaria). Interoperabilidad agente-a-agente para silicio y carbono.",
-  "version": "v.08.10.2026.r9.23:57",
+  "version": "__ADMIRANEXT_VERSION__",
   "site": "https://www.clearchannel.tv",
   "hub": "https://www.clearchannel.tv/mcp/",
   "llms_txt": "https://www.clearchannel.tv/mcp/llms.txt",

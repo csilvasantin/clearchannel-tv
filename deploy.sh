@@ -48,7 +48,7 @@ trap 'rm -rf "$TMP"' EXIT
 git archive main | tar -x -C "$TMP"
 
 # El sello también va en la puerta MCP propia de admira.app (mcp/admira-app/*).
-find "$TMP" -type f \( -name '*.html' -o -path '*/mcp/admira-app/*' \) -exec sed -i '' "s/__ADMIRANEXT_VERSION__/$VERSION/g" {} +
+find "$TMP" -type f \( -name '*.html' -o -path '*/mcp/admira-app/*' -o -path '*/mcp/manifest.json' \) -exec sed -i '' "s/__ADMIRANEXT_VERSION__/$VERSION/g" {} +
 # NOVEDADES DEL SELLO (Merovingio, 06-10-2026 · sello con novedades en toda la suite).
 # novedades.json[sello] o .default → version.json.novedades[] (2-4 líneas en español). Las
 # pinta al pasar el ratón el cargador compartido https://www.admiranext.com/assets/sello-novedades.js
