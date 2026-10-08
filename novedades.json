@@ -23,5 +23,10 @@
     "SneakerStore: el videowall Jordan muestra su imagen en cinco paneles a partir de la fotografía original de IEU.",
     "Jordan + LCD abre la pared de frente, con la pantalla gigante a la derecha de Jordan y la playlist Pixeria activa.",
     "Tutorial, ayuda ES/EN y contratos actualizados; las distribuciones guardadas conservan las ediciones explícitas."
+  ],
+  "v.08.10.2026.r8.23:53": [
+    "SneakerStore separa la playlist horizontal de la vertical, conservando los IDs compartidos.",
+    "Preparar playlists por formato valida los tags de Pixeria y rechaza formatos incompatibles o desconocidos.",
+    "La guía reutilizable incluye los dos canales y sus contenidos."
   ]
 }
