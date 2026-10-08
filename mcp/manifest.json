@@ -2,7 +2,7 @@
   "name": "clearchannel-tv-audience",
   "title": "Clear Channel · clearchannel.tv — Audiencia & Emisión",
   "description": "Hub MCP de clearchannel.tv: datos verificados de Emisión × Audiencia de pantallas retail-media. Cruza el proof-of-play de admira.tv (QUÉ se emitió) con la cámara on-device del gemelo XpaceOS (QUIÉN lo vio: presencia, género, edad, franja horaria). Interoperabilidad agente-a-agente para silicio y carbono.",
-  "version": "v.08.10.2026.r6.23:32",
+  "version": "v.08.10.2026.r7.23:44",
   "site": "https://www.clearchannel.tv",
   "hub": "https://www.clearchannel.tv/mcp/",
   "llms_txt": "https://www.clearchannel.tv/mcp/llms.txt",
@@ -172,7 +172,7 @@
     "editable_model": "?view=model",
     "measurements": "approximate, not surveyed",
     "photo_screens": "captured content; active playlist in View screen / 3D side display",
-    "layout_revision": "door-to-rear-v3; real-store-v2 backed up once; untouched defaults corrected; explicit edits retained",
+    "layout_revision": "jordan-wall-v4; previous real-store-v2 state backed up once; untouched defaults corrected; explicit edits retained",
     "scene_links": {
       "entrada": "https://www.admira.store/xpacios/sneakerstore/?scene=entrada",
       "centro": "https://www.admira.store/xpacios/sneakerstore/?scene=centro",
@@ -181,6 +181,7 @@
     "orientation": {
       "basis": "street door towards rear checkout",
       "left": [
+        "Jordan videowall, five panels",
         "giant LCD",
         "entrance portrait display",
         "iPad",
@@ -199,6 +200,13 @@
         "right_x": 0
       },
       "dimensions": "interpreted units, not measured metres"
+    },
+    "wall_view": {
+      "url": "https://www.admira.store/xpacios/sneakerstore/?view=jordan",
+      "basis": "facing the display wall",
+      "left": "Jordan videowall, five panels; captured IEU Entrada still",
+      "right": "giant LCD; active Pixeria playlist",
+      "source": "jordan-reference.mjs; UV quadrilaterals from original entrada.jpg"
     }
   }
 }
