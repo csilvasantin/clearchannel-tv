@@ -1,5 +1,6 @@
 import { handleOrders } from './server/orders.mjs';
 import { handleDemoSession } from './server/demo-session.mjs';
+import {handleGlobalDemo} from './server/global-demo.mjs';
 import {onRequest as avatarAsk} from './avatar-ask.js';
 
 // admira.app (hoy) y admira.biz (tras el intercambio de dominios con Yokup, oct-2026)
@@ -192,6 +193,7 @@ async function agentLogin(request, url) {
 export default {
   async fetch(request, env) {
     if (new URL(request.url).pathname === '/avatar-ask') return avatarAsk({request});
+    if (new URL(request.url).pathname === '/api/demo-global') return handleGlobalDemo(request, env);
     if (new URL(request.url).pathname === '/api/demo-session') return handleDemoSession(request);
     if (new URL(request.url).pathname.startsWith('/api/orders')) return handleOrders(request, env);
     var url = new URL(request.url);

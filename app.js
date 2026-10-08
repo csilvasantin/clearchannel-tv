@@ -854,7 +854,7 @@ function isCorreosLocation(loc) {
 // Circuitos de DEMO generados por «créame demo de <cliente>» (tools/crear-demo): cualquier punto
 // con circuit "demo_<cliente>" forma su propio circuito sin tocar este fichero. Etiqueta en
 // loc.circuitLabel (texto o {es,en}). Ámbito: global y todos. Ver tools/crear-demo/SKILL.md.
-function isDemoCircuitLocation(loc) { return /^demo_[a-z0-9_]{2,60}$/.test(String((loc && loc.circuit) || '')); }
+function isDemoCircuitLocation(loc) { if(loc?.circuit==='sneakerstore')return true; return /^demo_[a-z0-9_]{2,60}$/.test(String((loc && loc.circuit) || '')); }
 function demoCircuitLabel(loc, id) {
   const raw = loc && loc.circuitLabel;
   const lang = (typeof LANG === 'string' && LANG) || 'es';

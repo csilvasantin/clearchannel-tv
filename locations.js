@@ -1381,6 +1381,7 @@ window.mergeOmnipLocations = function(base, extra) {
     if (l.id !== cafeIdentity.id) return;
     ['project_id', 'referenceLocationId', 'circuit', 'network', 'kind'].forEach(k => { l[k] = cafeIdentity[k]; });
   });
+  out.forEach(l=>{if(l.id==='sneakers-store-santa-rosa-19'){l.project_id='sneakers-store';l.project='sneakers-store';l.circuit='sneakerstore';l.circuitLabel='Sneakers Store';l.network='Sneakers Store';}});
   return out;
 };
 

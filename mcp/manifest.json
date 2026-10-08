@@ -152,5 +152,13 @@
     "es": "La versión aparece al pie de Opciones y desaparece al plegarlo. Sólo la primera novedad sin reconocer permite un aviso exterior; abrir Opciones o leer y cerrar el aviso lo reconoce por navegador y dominio. El pie queda sobre la barra inferior de Experto, incluso minimizada. Pasar el ratón sobre el sello muestra novedades; una versión pendiente mantiene Recargar.",
     "en": "The version appears at the bottom of Options and disappears when collapsed. Only the first unacknowledged news allows an outside notice; opening Options or reading and closing the notice acknowledges it per browser and domain. The footer remains above the bottom Expert bar, including its minimized state. Hovering over the stamp shows news; a pending version retains Reload.",
     "docs": "https://www.clearchannel.tv/help/#version-options"
+  },
+  "global_demo": {
+    "url": "https://www.admira.biz/demo/",
+    "contract": "https://www.admira.biz/docs/demo-global.md",
+    "state": "https://www.admira.biz/api/demo-global?project=sneakers-store",
+    "project_id": "sneakers-store",
+    "location_id": "sneakers-store-santa-rosa-19",
+    "camera": "manual IEU tab sharing"
   }
 }

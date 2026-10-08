@@ -2,11 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { GOOGLE_CLIENT_ID, GOOGLE_SUITE_CLIENT_ID, sessionFromClaims, handleDemoSession } from '../server/demo-session.mjs';
 const claims = { aud: GOOGLE_CLIENT_ID, iss: 'https://accounts.google.com', sub: 'user-1', exp: Date.now() / 1000 + 3600, email_verified: true, email: 'csilva@admira.com' };
-test('both Carlos identities receive separate JTI, Alsea and Cafebrería demos; Gmail does not gain catalog write access', () => {
+test('both Carlos identities receive separate JTI, Alsea and Cafebrería demos; both verified identities can edit the catalogue', () => {
   for (const email of ['csilva@admira.com', 'csilvasantin@gmail.com']) {
     const session = sessionFromClaims({ ...claims, email });
     assert.deepEqual(session.demos.map(d => d.id), ['jti', 'alsea', 'cafebreria']);
-    assert.equal(session.canManageCatalog, email.endsWith('@admira.com'));
+    assert.equal(session.canManageCatalog, true);
     assert.equal(session.demos[1].locationId, 'alsea-sbux-021');
     assert.equal(session.demos[1].circuit, 'alsea_starbucks');
     assert.equal(session.demos[2].locationId, 'cafebreria-barcelona');

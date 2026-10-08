@@ -365,6 +365,11 @@
     });
   }
   function execute(input, ctx, lang = 'es') {
+    if (/^\/?demo\s+global\s*$/i.test(String(input||'').trim())) {
+      const url='https://www.admira.biz/demo/?lang='+lang;
+      if(typeof window!=='undefined')window.location.assign(url);
+      return {ok:true,lines:[L(lang,'Abriendo demo global · Sneakers Store','Opening global demo · Sneakers Store')],command:'/demo global',parsed:{verb:{id:'demo',local:true}}};
+    }
     if (isAvatarCommand(input)) {
       const en = lang === 'en';
       const later = loadAvatar()

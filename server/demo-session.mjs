@@ -18,7 +18,8 @@ export const DEMOS = [
 export function sessionFromClaims(claims, now = Date.now()) {
   if (!claims || !GOOGLE_CLIENT_IDS.has(claims.aud) || !['accounts.google.com', 'https://accounts.google.com'].includes(claims.iss) || !claims.sub || !Number.isFinite(Number(claims.exp)) || Number(claims.exp) * 1000 <= now || ![true, 'true'].includes(claims.email_verified)) return null;
   const email = String(claims.email || '').toLowerCase();
-  const canManageCatalog = email.endsWith('@admira.com');
+  // Carlos explicitly authorized this verified identity for catalogue editing.
+  const canManageCatalog = email.endsWith('@admira.com') || email === 'csilvasantin@gmail.com';
   if (!canManageCatalog && !DEMO_EMAILS.has(email)) return null;
   return { email, expiresAt: Number(claims.exp) * 1000, canManageCatalog, demos: DEMO_EMAILS.has(email) ? DEMOS : [] };
 }
