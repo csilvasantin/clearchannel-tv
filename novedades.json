@@ -28,5 +28,10 @@
     "SneakerStore separa la playlist horizontal de la vertical, conservando los IDs compartidos.",
     "Preparar playlists por formato valida los tags de Pixeria y rechaza formatos incompatibles o desconocidos.",
     "La guía reutilizable incluye los dos canales y sus contenidos."
+  ],
+  "v.08.10.2026.r9.23:57": [
+    "Demo SneakerStore: dos playlists verificadas, horizontal en LCD y vertical en la entrada.",
+    "El tutorial y el contrato incluyen los IDs de ambos canales y sus piezas de Pixeria.",
+    "Preparación comprobada con el Gmail autorizado de Carlos."
   ]
 }

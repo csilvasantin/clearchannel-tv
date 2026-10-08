@@ -2,7 +2,7 @@
   "name": "clearchannel-tv-audience",
   "title": "Clear Channel · clearchannel.tv — Audiencia & Emisión",
   "description": "Hub MCP de clearchannel.tv: datos verificados de Emisión × Audiencia de pantallas retail-media. Cruza el proof-of-play de admira.tv (QUÉ se emitió) con la cámara on-device del gemelo XpaceOS (QUIÉN lo vio: presencia, género, edad, franja horaria). Interoperabilidad agente-a-agente para silicio y carbono.",
-  "version": "v.08.10.2026.r8.23:53",
+  "version": "v.08.10.2026.r9.23:57",
   "site": "https://www.clearchannel.tv",
   "hub": "https://www.clearchannel.tv/mcp/",
   "llms_txt": "https://www.clearchannel.tv/mcp/llms.txt",
@@ -240,7 +240,9 @@
           640
         ]
       ],
-      "state": "https://www.admira.biz/api/demo-global?project=sneakers-store&channel=vertical"
+      "state": "https://www.admira.biz/api/demo-global?project=sneakers-store&channel=vertical",
+      "playlist_id": "playlist-cadea3fa-89fe-40f9-828f-bd37ce4720db",
+      "playlist": "https://mcp.admira.store/playlists/playlist-cadea3fa-89fe-40f9-828f-bd37ce4720db"
     },
     "validation": "Current Pixeria orientation tags required; actual decoded dimensions checked before playback; incompatible/unknown/conflicting formats blocked; square assets blocked on both channels",
     "jordan": "captured still across five portrait panels; not a live playlist"
