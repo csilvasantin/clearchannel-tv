@@ -13,3 +13,8 @@ EN: Launch https://www.admira.biz/demo/. Real project `sneakers-store`, circuit 
 Create playlist from admira.biz using verified Google catalogue access: published Pixeria Stock #990 and #964, canonical shared playlist service at mcp.admira.store. D1 stores the association and private owner token; repeat creation reuses the playlist. Public GET /api/demo-global?project=sneakers-store returns current content, never ownership. POST requires verified identity; updates require action=update and expected_revision. Unknown creation outcomes require administrator recovery instead of creating duplicates.
 
 Five-step guide opens the real tools and checks published records; includes playlist/twin previews, 18-second walkthrough, pause/back/next and a credential-free JSON recipe for the next project. It does not silently recreate projects or venues. IEU remains manual and external. Camera ROI uses two corners; iPad/screen placement is optional. Automatic IEU opening awaits its team. The interpretative demo scene needs measured geometry; furniture edits are browser-local; only the virtual screen is connected.
+
+
+## Playlist verificada / Verified playlist
+
+Identificador compartido / shared ID: playlist-be8a1e99-1cce-4818-a796-da3372216d1e. Lectura pública / public read: https://mcp.admira.store/playlists/playlist-be8a1e99-1cce-4818-a796-da3372216d1e. Creada con dos vídeos publicados de Pixeria, Stock 990 y 964. / Created with two published Pixeria videos, Stock 990 and 964.
