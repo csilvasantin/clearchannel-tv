@@ -35,3 +35,10 @@ Screen formats: the landscape LCD uses Stock 665 (1280×720, horizontal/landscap
 GET /api/demo-global?project=sneakers-store&channel=horizontal (default) or channel=vertical. POST: stock_ids + action=update + expected_revision for existing playlists; identity and catalogue permissions required. Raw track IDs resolve back to published Stock; supplied URLs must match. Tags and format are refreshed on public reads; unknown metadata blocks playback.
 
 Canal vertical / Portrait channel: playlist-cadea3fa-89fe-40f9-828f-bd37ce4720db, revisión / revision 1; horizontal conserva / retains playlist-be8a1e99-1cce-4818-a796-da3372216d1e, revisión / revision 2. Preparación real verificada con Gmail de Carlos. / Real preparation verified using Carlos’s Gmail catalogue access.
+
+
+## Fondo LED, puerta y mesa / Rear LED, door and table
+
+Fondo LED abre el fondo 3D con una pantalla LED continua interrumpida por una puerta central real del modelo y la mesa de caja pegada a la pared derecha, mirando desde la entrada. Está también en Avanzado → Fondo · LED, puerta y mesa y en ?view=rear. El LED comparte la playlist horizontal de la LCD; tres superficies conservan un único lienzo y sus proporciones, con el hueco físico de la puerta. rear-led-door-v5 respalda una vez el estado jordan-wall-v4 y mueve sólo la mesa que conserva su posición predeterminada; mantiene ediciones, historial, bloqueos, visibilidad y borrados. La geometría sigue siendo aproximada, pendiente de medidas.
+
+Rear LED opens the 3D rear with a continuous LED screen interrupted by a central model door and the checkout table against the right wall, looking from the entrance. It is also in Advanced → Rear · LED, door and table and at ?view=rear. The LED shares the LCD landscape playlist; three surfaces preserve one canvas and its aspect ratio around the physical door opening. rear-led-door-v5 backs up jordan-wall-v4 once and moves only a checkout table still at its default position; edits, history, locks, visibility and deletions are retained. Geometry remains approximate, awaiting measurements.

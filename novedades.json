@@ -1,9 +1,9 @@
 {
   "_como": "Novedades del sello (2-4 líneas, español). Clave = sello exacto (v.DD.MM.AAAA.rN.HH:MM); .default si el sello aún no tiene entrada. El deploy las escribe en /version.json.novedades[] y el cargador común https://www.admiranext.com/assets/sello-novedades.js las enseña al pasar el ratón por el sello.",
   "default": [
-    "Demo SneakerStore: dos playlists verificadas, horizontal en LCD y vertical en la entrada.",
-    "El tutorial y el contrato incluyen los IDs de ambos canales y sus piezas de Pixeria.",
-    "Preparación comprobada con el Gmail autorizado de Carlos."
+    "SneakerStore: fondo con pantalla LED y puerta central; mesa de caja pegada a la pared derecha.",
+    "El LED comparte el canal horizontal validado; nueva vista Fondo LED y migración conservando las ediciones.",
+    "Guía ES/EN, tutorial y contratos MCP actualizados."
   ],
   "v.08.10.2026.r2.22:22": [
     "/demo global: Sneakers Store conecta proyecto, Xpacio, playlist Pixeria y gemelo.",

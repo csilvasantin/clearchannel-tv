@@ -154,12 +154,115 @@
     "docs": "https://www.clearchannel.tv/help/#version-options"
   },
   "global_demo": {
-    "url": "https://www.admira.biz/demo/",
-    "contract": "https://www.admira.biz/docs/demo-global.md",
-    "state": "https://www.admira.biz/api/demo-global?project=sneakers-store",
     "project_id": "sneakers-store",
+    "circuit": "sneakerstore",
     "location_id": "sneakers-store-santa-rosa-19",
-    "camera": "manual IEU tab sharing"
+    "category": "SneakerStore",
+    "guide": "https://www.admira.biz/demo/",
+    "twin": "https://www.admira.store/xpacios/sneakerstore/",
+    "state": "https://www.admira.biz/api/demo-global?project=sneakers-store",
+    "playlist_id": "playlist-be8a1e99-1cce-4818-a796-da3372216d1e",
+    "playlist": "https://mcp.admira.store/playlists/playlist-be8a1e99-1cce-4818-a796-da3372216d1e",
+    "virtual_screen": "sneakers-store-santa-rosa-19-screen",
+    "camera": "manual IEU Puerta Cam; 2-point camera crop; optional iPad/screen corners",
+    "physical_control": false,
+    "representation": {
+      "default": "photographic-360",
+      "scenes": [
+        "entrada",
+        "centro",
+        "fondo"
+      ],
+      "source": "IEU Store · 2026-10-08",
+      "editable_model": "?view=model",
+      "measurements": "approximate, not surveyed",
+      "photo_screens": "captured content; active playlist in View screen / 3D side display",
+      "layout_revision": "rear-led-door-v5; previous jordan-wall-v4 backed up once; only default counter corrected; explicit edits retained",
+      "scene_links": {
+        "entrada": "https://www.admira.store/xpacios/sneakerstore/?scene=entrada",
+        "centro": "https://www.admira.store/xpacios/sneakerstore/?scene=centro",
+        "fondo": "https://www.admira.store/xpacios/sneakerstore/?scene=fondo"
+      },
+      "orientation": {
+        "basis": "street door towards rear checkout",
+        "left": [
+          "Jordan videowall, five panels",
+          "giant LCD",
+          "entrance portrait display",
+          "iPad",
+          "rear bench"
+        ],
+        "right": [
+          "long shoe display",
+          "vertical LED column",
+          "Star Wars arcade",
+          "Super Mario arcade"
+        ],
+        "coordinates": {
+          "entrance_z": 0,
+          "checkout_z": 14,
+          "left_x": 4,
+          "right_x": 0
+        },
+        "dimensions": "interpreted units, not measured metres"
+      },
+      "wall_view": {
+        "url": "https://www.admira.store/xpacios/sneakerstore/?view=jordan",
+        "basis": "facing the display wall",
+        "left": "Jordan videowall, five panels; captured IEU Entrada still",
+        "right": "giant LCD; active Pixeria playlist",
+        "source": "jordan-reference.mjs; UV quadrilaterals from original entrada.jpg"
+      },
+      "rear_view": {
+        "url": "https://www.admira.store/xpacios/sneakerstore/?view=rear",
+        "basis": "street entrance towards rear; right is x=0",
+        "led": "back-wall; one landscape video canvas split around central doorway; same validated playlist as LCD",
+        "door": "rear-door; central physical model door, not painted into video",
+        "counter": "counter; right wall, countertop edge x=0; only default pose migrated",
+        "measurements": "approximate, not surveyed"
+      }
+    },
+    "screen_formats": {
+      "horizontal": {
+        "screen_id": "sneakers-store-santa-rosa-19-screen",
+        "playlist_id": "playlist-be8a1e99-1cce-4818-a796-da3372216d1e",
+        "stock_numbers": [
+          665
+        ],
+        "verified_dimensions": [
+          [
+            1280,
+            720
+          ]
+        ],
+        "state": "https://www.admira.biz/api/demo-global?project=sneakers-store&channel=horizontal",
+        "additional_screen_ids": [
+          "sneakers-store-santa-rosa-19-rear-led"
+        ]
+      },
+      "vertical": {
+        "screen_id": "sneakers-store-santa-rosa-19-entry-display",
+        "stock_numbers": [
+          990,
+          964
+        ],
+        "verified_dimensions": [
+          [
+            1080,
+            1920
+          ],
+          [
+            360,
+            640
+          ]
+        ],
+        "state": "https://www.admira.biz/api/demo-global?project=sneakers-store&channel=vertical",
+        "playlist_id": "playlist-cadea3fa-89fe-40f9-828f-bd37ce4720db",
+        "playlist": "https://mcp.admira.store/playlists/playlist-cadea3fa-89fe-40f9-828f-bd37ce4720db"
+      },
+      "validation": "Current Pixeria orientation tags required; actual decoded dimensions checked before playback; incompatible/unknown/conflicting formats blocked; square assets blocked on both channels",
+      "jordan": "captured still across five portrait panels; not a live playlist"
+    }
   },
   "sneakerstore_representation": {
     "default": "photographic-360",
@@ -172,7 +275,7 @@
     "editable_model": "?view=model",
     "measurements": "approximate, not surveyed",
     "photo_screens": "captured content; active playlist in View screen / 3D side display",
-    "layout_revision": "jordan-wall-v4; previous real-store-v2 state backed up once; untouched defaults corrected; explicit edits retained",
+    "layout_revision": "rear-led-door-v5; previous jordan-wall-v4 backed up once; only default counter corrected; explicit edits retained",
     "scene_links": {
       "entrada": "https://www.admira.store/xpacios/sneakerstore/?scene=entrada",
       "centro": "https://www.admira.store/xpacios/sneakerstore/?scene=centro",
@@ -207,6 +310,14 @@
       "left": "Jordan videowall, five panels; captured IEU Entrada still",
       "right": "giant LCD; active Pixeria playlist",
       "source": "jordan-reference.mjs; UV quadrilaterals from original entrada.jpg"
+    },
+    "rear_view": {
+      "url": "https://www.admira.store/xpacios/sneakerstore/?view=rear",
+      "basis": "street entrance towards rear; right is x=0",
+      "led": "back-wall; one landscape video canvas split around central doorway; same validated playlist as LCD",
+      "door": "rear-door; central physical model door, not painted into video",
+      "counter": "counter; right wall, countertop edge x=0; only default pose migrated",
+      "measurements": "approximate, not surveyed"
     }
   },
   "sneakerstore_screen_formats": {
