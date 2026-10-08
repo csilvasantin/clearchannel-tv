@@ -6,15 +6,21 @@ Playlist: el botón «Crear playlist en admira.biz» requiere sesión Google ver
 
 La guía tiene cinco pasos con accesos a las herramientas reales, comprobación de altas publicadas, previsualización de playlist y gemelo 3D. Recorrido avanza cada 18 segundos; permite pausa, anterior y siguiente. Descargar guía genera JSON sin credenciales para el próximo proyecto. Repetir la guía no vuelve a crear proyecto/local ni realiza compras. El alta del proyecto y local sigue el backoffice real; no se simula como escritura.
 
-Gmail de Carlos tiene la excepción exacta de catálogo autorizada; no concede control de hardware. IEU sigue externo: abrir Store → Entrada → Puerta Cam → Ver stream; después compartir en https://admira.tv/videoanalytics/xtore/ y delimitar cámara con dos esquinas. iPad/pantalla opcionales. Apertura automática de IEU pendiente de su equipo. Escena Sneakers Store interpretativa, pendiente de medidas; editor guarda mobiliario en este navegador. Sólo pantalla virtual.
+Gmail de Carlos tiene la excepción exacta de catálogo autorizada; no concede control de hardware. IEU sigue externo: abrir Store → Entrada → Puerta Cam → Ver stream; después compartir en https://admira.tv/videoanalytics/xtore/ y delimitar cámara con dos esquinas. iPad/pantalla opcionales. Apertura automática de IEU pendiente de su equipo. La planta 3D de Sneakers Store tiene proporciones aproximadas; editor guarda mobiliario en este navegador. Sólo pantalla virtual.
 
 EN: Launch https://www.admira.biz/demo/. Real project `sneakers-store`, circuit `sneakerstore`, venue `sneakers-store-santa-rosa-19`, Santa Rosa 19, Barcelona. Projects use the central AdmiraNext registry; the commercial record lives in admira.biz. SneakerStore opens the editable 3D twin at https://www.admira.store/xpacios/sneakerstore/.
 
 Create playlist from admira.biz using verified Google catalogue access: published Pixeria Stock #990 and #964, canonical shared playlist service at mcp.admira.store. D1 stores the association and private owner token; repeat creation reuses the playlist. Public GET /api/demo-global?project=sneakers-store returns current content, never ownership. POST requires verified identity; updates require action=update and expected_revision. Unknown creation outcomes require administrator recovery instead of creating duplicates.
 
-Five-step guide opens the real tools and checks published records; includes playlist/twin previews, 18-second walkthrough, pause/back/next and a credential-free JSON recipe for the next project. It does not silently recreate projects or venues. IEU remains manual and external. Camera ROI uses two corners; iPad/screen placement is optional. Automatic IEU opening awaits its team. The interpretative demo scene needs measured geometry; furniture edits are browser-local; only the virtual screen is connected.
+Five-step guide opens the real tools and checks published records; includes playlist/twin previews, 18-second walkthrough, pause/back/next and a credential-free JSON recipe for the next project. It does not silently recreate projects or venues. IEU remains manual and external. Camera ROI uses two corners; iPad/screen placement is optional. Automatic IEU opening awaits its team. The 3D floor plan needs measured geometry; furniture edits are browser-local; only the virtual screen is connected.
 
 
 ## Playlist verificada / Verified playlist
 
 Identificador compartido / shared ID: playlist-be8a1e99-1cce-4818-a796-da3372216d1e. Lectura pública / public read: https://mcp.admira.store/playlists/playlist-be8a1e99-1cce-4818-a796-da3372216d1e. Creada con dos vídeos publicados de Pixeria, Stock 990 y 964. / Created with two published Pixeria videos, Stock 990 and 964.
+
+## Tienda real / Real store
+
+SneakerStore incorpora las fotografías 360 originales de IEU (Entrada, Centro y Fondo, 8-10-2026) y una planta editable adaptada al local. Las proporciones 3D quedan pendientes de medición. Ver pantalla y la pantalla lateral 3D reproducen la playlist; las pantallas de la fotografía muestran la captura. Los cambios nuevos de mobiliario se guardan en real-store-v2; los anteriores se conservan.
+
+SneakerStore includes the original IEU 360 photographs (Entrance, Centre and Rear, 8 October 2026) and a floor plan adapted to the venue. 3D proportions await measurement. View screen and the 3D side display play the playlist; photographic screens show captured content. New furniture edits use real-store-v2; previous edits are retained.

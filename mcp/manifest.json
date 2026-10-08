@@ -160,5 +160,23 @@
     "project_id": "sneakers-store",
     "location_id": "sneakers-store-santa-rosa-19",
     "camera": "manual IEU tab sharing"
+  },
+  "sneakerstore_representation": {
+    "default": "photographic-360",
+    "scenes": [
+      "entrada",
+      "centro",
+      "fondo"
+    ],
+    "source": "IEU Store · 2026-10-08",
+    "editable_model": "?view=model",
+    "measurements": "approximate, not surveyed",
+    "photo_screens": "captured content; active playlist in View screen / 3D side display",
+    "layout_revision": "real-store-v2; previous browser layout retained",
+    "scene_links": {
+      "entrada": "https://www.admira.store/xpacios/sneakerstore/?scene=entrada",
+      "centro": "https://www.admira.store/xpacios/sneakerstore/?scene=centro",
+      "fondo": "https://www.admira.store/xpacios/sneakerstore/?scene=fondo"
+    }
   }
 }
