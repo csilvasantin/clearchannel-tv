@@ -1,0 +1,24 @@
+{
+  "preservedRevision": "2f32976651fb3a66f8060d568348da654fbe47bf",
+  "preservedVersion": {
+    "version": "v.09.10.2026.r2.00:09",
+    "agent": "OraculoMacMini",
+    "deployer": "OraculoMacMini",
+    "machine": "MacMini",
+    "signature": "OraculoMacMini · MacMini",
+    "gitShort": "2f32976",
+    "deployedAt": "2026-10-09T00:09:34+0200",
+    "dirty": false,
+    "novedades": [
+      "SneakerStore: fondo con pantalla LED y puerta central; mesa de caja pegada a la pared derecha.",
+      "El LED comparte el canal horizontal validado; nueva vista Fondo LED y migración conservando las ediciones.",
+      "Guía ES/EN, tutorial y contratos MCP actualizados."
+    ],
+    "domains": ["www.clearchannel.tv", "www.admira.app", "www.admira.biz"]
+  },
+  "novedades": [
+    "Xtanco Barcelona distingue demostración, estimaciones del catálogo y conexión sin verificar.",
+    "Buscador, ficha, detalle y previsualización usan los mismos criterios de evidencia.",
+    "La conexión requiere telemetría reciente del dispositivo; ayuda en español e inglés."
+  ]
+}

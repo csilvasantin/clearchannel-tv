@@ -75,7 +75,12 @@ test('execute dispatches verbs to the injected actions with resolved attributes'
   const honest = C.execute('/demo alcampo', fakeCtx({demo: () => ({ok: false, reason: 'no_xpacio'})}));
   assert.equal(honest.ok, false); assert.match(honest.lines[0], /no tiene ningún Xpacio de Alcampo/);
   const sched = C.execute('/demo alcampo', fakeCtx({demo: () => ({ok: true, name: 'Alcampo Z', live: false})}));
-  assert.match(sched.lines[0], /pantallas programadas, aún no en directo/);
+  assert.match(sched.lines[0], /pantallas programadas; conexión no verificada/);
+  const registered = C.execute('/demo alcampo', fakeCtx({demo: () => ({ok:true,name:'Alcampo Z',live:true})}));
+  assert.match(registered.lines[0], /pantallas registradas; conexión no verificada/);
+  const registeredEn = C.execute('/demo alcampo', fakeCtx({demo: () => ({ok:true,name:'Alcampo Z',live:true})}), 'en');
+  assert.match(registeredEn.lines[0], /registered screens; connection unverified/);
+  assert.doesNotMatch(registered.lines[0] + registeredEn.lines[0], /en directo|live screens/);
   assert.match(C.execute('/demo', fakeCtx({demo: () => ({ok: false, reason: 'loading'})})).lines[0], /cargando/);
 });
 
@@ -136,7 +141,7 @@ test('Tab completion finishes verbs and client values', () => {
   assert.deepEqual(C.complete('/help ').options, []);
 });
 
-test('demo Xpacio prefers live, priced and grid-linked screens; falls back to scheduled', () => {
+test('demo Xpacio prefers registered, priced and grid-linked screens; falls back to scheduled without proving connection', () => {
   const live = {id: 'a', coords: [0, 0], surfaces: [{status: 'live', surface: 'pantalla', impr: 100, cpm: '€5', screen: 'a-1'}]};
   const unlinked = {id: 'b', coords: [0, 0], surfaces: [{status: 'live', surface: 'pantalla', impr: 100, cpm: '€5'}]};
   const sched = {id: 'c', coords: [0, 0], surfaces: [{status: 'sched', surface: 'pantalla', impr: 100, cpm: '€5'}]};
@@ -145,6 +150,8 @@ test('demo Xpacio prefers live, priced and grid-linked screens; falls back to sc
   assert.equal(C.pickDemoXpacio([sched, unlinked]).id, 'b');
   assert.equal(C.pickDemoXpacio([pwaOnly, sched]).id, 'c');
   assert.equal(C.demoSurfaces(sched).live, false);
+  assert.equal(C.demoSurfaces(sched).catalogueState, 'scheduled');
+  assert.equal(C.demoSurfaces(live).catalogueState, 'registered');
   assert.equal(C.pickDemoXpacio([pwaOnly]), null);
   assert.equal(C.pickDemoXpacio([]), null);
   assert.deepEqual(C.demoScreens({surfaces: [{screen: 'x'}, {pixerScreens: ['y', 'x']}]}), ['x', 'y']);

@@ -51,3 +51,30 @@ test('map-enriched screen identities survive the selection handoff', () => {
   assert.equal(snapshot.surfaces[0].irrelevant,undefined);
   assert.equal(selectionSnapshot({id:'empty'}),null);
 });
+test('preview handoff keeps scene association and demo evidence without copying connection claims', () => {
+  const snapshot=selectionSnapshot({
+    id:'test-space', circuit:'demo_retail', demo:true, testCircuit:false,
+    xpaceUrl:'https://www.xpaceos.com/xpacios/test-space/',
+    external:{testCircuit:true,source:'nominatim-osm',online:true,token:'omit'},
+    online:true, status:'live', telemetry:{online:true},
+    surfaces:[{id:'screen-1',name:'Window',demo:true,testCircuit:true,online:true,status:'live',checkedAt:Date.now()}]
+  });
+  assert.equal(snapshot.xpaceUrl,'https://www.xpaceos.com/xpacios/test-space/');
+  assert.equal(snapshot.circuit,'demo_retail');
+  assert.equal(snapshot.demo,true);
+  assert.equal(snapshot.testCircuit,false);
+  assert.deepEqual(snapshot.external,{testCircuit:true,source:'nominatim-osm'});
+  assert.deepEqual(snapshot.surfaces[0],{id:'screen-1',name:'Window',demo:true,testCircuit:true});
+  for (const field of ['online','status','telemetry']) assert.equal(Object.hasOwn(snapshot,field),false);
+});
+test('preview preserves explicit scene removal and rejects unsafe scene URLs', () => {
+  const base={id:'alsea-sbux-021',surfaces:[{name:'Screen'}]};
+  assert.equal(Object.hasOwn(selectionSnapshot(base),'xpaceUrl'),false);
+  assert.equal(selectionSnapshot({...base,xpaceUrl:''}).xpaceUrl,'');
+  assert.equal(selectionSnapshot({...base,xpaceUrl:'javascript:alert(1)'}).xpaceUrl,'');
+  assert.equal(selectionSnapshot({...base,xpaceUrl:'https://user:secret@www.xpaceos.com/xpacios/private/'}).xpaceUrl,'');
+});
+test('surface-specific demo provenance survives the handoff without its telemetry or private metadata', () => {
+  const snapshot = selectionSnapshot({id:'venue',surfaces:[{name:'Screen',external:{testCircuit:true,source:'demo-catalogue',online:true,token:'omit'}}]});
+  assert.deepEqual(snapshot.surfaces[0].external, {testCircuit:true,source:'demo-catalogue'});
+});

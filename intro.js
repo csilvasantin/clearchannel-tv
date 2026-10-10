@@ -94,7 +94,8 @@
           ${demo.client ? `<p><b>${esc(p.loc?.name)}</b>${p.loc?.addr ? ' · ' + esc(p.loc.addr) : ''}</p>
           <p class="demo-note">${L(`Xpacio real del circuito ${esc(clientName())}, elegido del catálogo cargado.`, `Real Xpacio from the ${esc(clientName())} circuit, picked from the loaded catalogue.`)}</p>`
           : `<p><b>Xtanco Valencia</b> · ${L('Carrer de Colón 22, València', 'Carrer de Colón 22, Valencia')}</p>`}
-          <p>${demo.client && !XC().demoSurfaces(p.loc).live ? L(`Campaña de ${DAYS} días en sus pantallas programadas (aún no emiten en directo):`, `A ${DAYS}-day campaign on its scheduled screens (not live yet):`) : L(`Campaña de ${DAYS} días en sus pantallas en directo:`, `A ${DAYS}-day campaign on its live screens:`)}</p>
+          <p>${demo.client && XC().demoSurfaces(p.loc).catalogueState === 'scheduled' ? L(`Campaña de ${DAYS} días en sus pantallas programadas:`, `A ${DAYS}-day campaign on its scheduled screens:`) : L(`Campaña de ${DAYS} días en sus pantallas registradas en el catálogo:`, `A ${DAYS}-day campaign on its catalogue-registered screens:`)}</p>
+          <p class="demo-note">${L('El estado del catálogo no acredita conexión del player, emisión ni audiencia medida.', 'Catalogue status does not verify player connection, delivery or measured audience.')}</p>
           <ul class="demo-plan">${rows}</ul>
           <p class="demo-total">${L('Presupuesto', 'Budget')} <b>${money(p.total)}</b> <span class="demo-tag est">${L('estimado', 'estimate')}</span></p>
           <p class="demo-note">${L('Impresiones/día estimadas de la ficha del Xpacio × CPM publicado.', 'Estimated impressions/day from the Xpacio sheet × published CPM.')}</p>${demo.client && !p.rows.some(r => r.cost > 0) ? `<p class="demo-note">${L('La ficha de este Xpacio no publica impresiones ni CPM: el presupuesto no es una estimación real.', 'This Xpacio sheet publishes no impressions or CPM: the budget is not a real estimate.')}</p>` : ''}${waiting}`;
@@ -105,7 +106,7 @@
       title: () => L('Compra', 'Buy'),
       body: () => {
         const p = demo.plan || plan();
-        return `<p>${L('Un clic y la campaña queda comprada.', 'One click and the campaign is bought.')}</p>
+        return `<p>${L('Un clic simula la compra de la campaña.', 'One click simulates buying the campaign.')}</p>
           <button type="button" class="demo-buy" id="demo-buy">${L('Comprar', 'Buy')} · ${money(p.total)}</button>
           <p class="demo-bought" id="demo-bought" hidden></p>
           <p class="demo-note"><span class="demo-tag sim">${L('SIMULADA', 'SIMULATED')}</span> ${L('Hoy no hay pasarela de pago activa: no se cobra, no se guarda ninguna solicitud y no se reserva parrilla.', 'No payment gateway is live today: nothing is charged, no request is stored and no airtime is booked.')}</p>`;
@@ -128,8 +129,8 @@
         <p>🎵 ${L('Cápsula sonora en el hilo musical', 'Audio capsule in the music feed')}: <i>Vida mía (${L('versión', 'version')} Admira)</i>
           <button type="button" class="demo-audio" id="demo-audio">❚❚</button></p>
         <p class="demo-note">${L('Las cápsulas reales de la demo de Xtanco Valencia.', 'The real capsules from the Xtanco Valencia demo.')}
-          <a href="https://admira.tv/canal.html?screen=xtanco-valencia-a" target="_blank" rel="noopener">${L('Ver pantalla A en vivo', 'Watch screen A live')} ↗</a> ·
-          <a href="https://admira.tv/canal.html?screen=xtanco-valencia-musica" target="_blank" rel="noopener">${L('hilo musical en vivo', 'live music feed')} ↗</a></p>`),
+          <a href="https://admira.tv/canal.html?screen=xtanco-valencia-a" target="_blank" rel="noopener">${L('Abrir canal de pantalla A', 'Open screen A channel')} ↗</a> ·
+          <a href="https://admira.tv/canal.html?screen=xtanco-valencia-musica" target="_blank" rel="noopener">${L('abrir hilo musical', 'open music feed')} ↗</a></p>`),
       enter: () => {
         if (demo.client) return;
         if (!demo.audio) { demo.audio = new Audio('https://api.admira.store/stock/asset/1788556467836-r1j7ic?v=1685901'); demo.audio.preload = 'auto'; demo.audio.volume = 0.8; }
@@ -144,9 +145,9 @@
     {
       title: () => L('El euro que entra', 'The euro coming in'),
       body: () => `<div class="demo-counter"><b id="demo-euro">${money(0)}</b></div>
-        <p>${demo.client ? L(`Vendido hoy de verdad en la parrilla de ${esc(xpacio()?.name)}`, `Actually sold today on the ${esc(xpacio()?.name)} grid`) : L('Vendido hoy de verdad en la parrilla de Xtanco Valencia', 'Actually sold today on the Xtanco Valencia grid')}: <b id="demo-real">…</b>${demo.client && !XC().demoScreens(xpacio()).length ? '' : ` <span class="demo-tag real">${L('real · sin cobrar', 'real · not charged')}</span>`}</p>
+        <p>${demo.client ? L(`Registro de hoy en la parrilla de ${esc(xpacio()?.name)}`, `Today's grid records for ${esc(xpacio()?.name)}`) : L('Registro de hoy en la parrilla demo de Xtanco Valencia', 'Today’s Xtanco Valencia demo grid records')}: <b id="demo-real">…</b>${demo.client && !XC().demoScreens(xpacio()).length ? '' : ` <span class="demo-tag real">${L('parrilla · sin cobrar', 'grid · not charged')}</span>`}</p>
         <p>${L('Esta demo', 'This demo')}: <b>${money(demo.simulated)}</b> <span class="demo-tag sim">${L('SIMULADO', 'SIMULATED')}</span></p>
-        <p class="demo-note">${L('El contador suma las dos cifras y las muestra separadas: la real viene de /grid/sales; la simulada no se guarda.', 'The counter adds both and shows them apart: the real one comes from /grid/sales; the simulated one is not stored.')}</p>`,
+        <p class="demo-note">${L('El contador suma los registros de /grid/sales y el importe simulado de esta visita, mostrados por separado. No acredita cobros, emisión ni audiencia.', 'The counter adds grid records from /grid/sales and this visit’s simulated amount, shown separately. It does not verify payments, delivery or audience.')}</p>`,
       enter: async () => {
         let real = null;
         // Con cliente, las pantallas del Xpacio enlazadas a la parrilla; si no tiene, no hay ventas que mostrar.
@@ -158,7 +159,7 @@
         } catch (_) {}
         if (demo.step !== 3 || !demo.running) return;
         const realEl = document.getElementById('demo-real');
-        if (realEl) realEl.textContent = !screens.length ? L('sin pantallas enlazadas a la parrilla: no hay ventas reales que mostrar', 'no screens linked to the grid: no real sales to show')
+        if (realEl) realEl.textContent = !screens.length ? L('sin pantallas enlazadas a la parrilla: no hay registros que mostrar', 'no screens linked to the grid: no records to show')
           : real == null ? L('parrilla no disponible', 'grid unavailable') : money(real);
         try { refreshRevenue(); } catch (_) {}
         const target = (real || 0) + demo.simulated, el = document.getElementById('demo-euro'), t0 = performance.now(), dur = 2200;
@@ -173,12 +174,13 @@
     },
   ];
 
-  // Paso 3 con cliente: sus superficies en directo; sin cápsula grabada no se inventa imagen ni audio.
+  // Step 3 uses registered/scheduled catalogue surfaces, without making a connection claim.
   function clientScreensBody() {
-    const loc = xpacio(), {live, surfaces} = XC().demoSurfaces(loc);
+    const loc = xpacio(), {catalogueState, surfaces} = XC().demoSurfaces(loc);
     const link = window.XpaceLinks?.associationUrl?.(loc);
-    return `<p>${live ? L(`La campaña se emitiría en las superficies en directo de ${esc(loc?.name)}:`, `The campaign would air on the live surfaces of ${esc(loc?.name)}:`)
-        : L(`La campaña iría a las superficies programadas de ${esc(loc?.name)}; aún no emiten en directo:`, `The campaign would go to the scheduled surfaces of ${esc(loc?.name)}; they are not live yet:`)}</p>
+    return `<p>${catalogueState === 'registered' ? L(`Planificación sobre las superficies registradas de ${esc(loc?.name)}:`, `Planning on the registered surfaces of ${esc(loc?.name)}:`)
+        : L(`Planificación sobre las superficies programadas de ${esc(loc?.name)}:`, `Planning on the scheduled surfaces of ${esc(loc?.name)}:`)}</p>
+      <p class="demo-note">${L('La conexión del player y la emisión no se verifican en este recorrido.', 'Player connection and delivery are not verified in this walkthrough.')}</p>
       <ul class="demo-plan">${surfaces.map(s => `<li><span>${esc(s.name)}</span><small>${esc(s.desc || '')}</small></li>`).join('')}</ul>
       <p class="demo-note">${L(`La demo no tiene cápsula grabada para ${esc(clientName())}: no mostramos imagen ni audio inventados.`, `The demo has no recorded capsule for ${esc(clientName())}: no made-up image or audio is shown.`)}${link ? ` <a href="${esc(link)}" target="_blank" rel="noopener">${L('Ver el Xpacio', 'Open the Xpacio')} ↗</a>` : ''}</p>`;
   }

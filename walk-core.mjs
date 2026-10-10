@@ -45,8 +45,28 @@ export function previewUrl(location, surface, index, lang, search = '') {
 export function placementKey(locationId, surfaceId) { return JSON.stringify([locationId, surfaceId]); }
 export function selectionSnapshot(raw) {
   if (!raw?.id || !Array.isArray(raw.surfaces)) return null;
-  return {
+  const snapshot = {
     id:String(raw.id).slice(0, 200), name:String(raw.name || '').slice(0, 200), addr:String(raw.addr || '').slice(0, 400), twin:httpsUrl(raw.twin),
     surfaces:raw.surfaces.slice(0, 200).filter(s => s && typeof s === 'object').map(s => Object.fromEntries(['id','name','desc','screen','surface','orientation'].filter(k => s[k] != null).map(k => [k,String(s[k]).slice(0, 500)])))
   };
+  // Keep catalogue evidence, never a connection state copied from another page.
+  // An own empty xpaceUrl explicitly removes a curated association.
+  if (Object.hasOwn(raw, 'xpaceUrl')) snapshot.xpaceUrl = httpsUrl(raw.xpaceUrl);
+  if (typeof raw.circuit === 'string') snapshot.circuit = raw.circuit.slice(0, 200);
+  for (const flag of ['demo', 'testCircuit']) if (typeof raw[flag] === 'boolean') snapshot[flag] = raw[flag];
+  if (raw.external && typeof raw.external === 'object') {
+    snapshot.external = {};
+    if (typeof raw.external.testCircuit === 'boolean') snapshot.external.testCircuit = raw.external.testCircuit;
+    if (typeof raw.external.source === 'string') snapshot.external.source = raw.external.source.slice(0, 200);
+  }
+  raw.surfaces.slice(0, 200).filter(s => s && typeof s === 'object').forEach((s, index) => {
+    for (const flag of ['demo', 'testCircuit']) if (typeof s[flag] === 'boolean') snapshot.surfaces[index][flag] = s[flag];
+    if (s.external && typeof s.external === 'object') {
+      const external = {};
+      if (typeof s.external.testCircuit === 'boolean') external.testCircuit = s.external.testCircuit;
+      if (typeof s.external.source === 'string') external.source = s.external.source.slice(0, 200);
+      if (Object.keys(external).length) snapshot.surfaces[index].external = external;
+    }
+  });
+  return snapshot;
 }
