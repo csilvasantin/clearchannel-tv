@@ -20,11 +20,14 @@ test('expert panel has three blocks in order: CLI, Verbos, Rutinas', () => {
   assert.match(panel, /data-close-mode="expert"/);
 });
 
-test('scripts load registry before panel and share one cache-busting stamp', () => {
+test('scripts load registry before panel and version the updated catalogue handlers together', () => {
   const order = ['responsive-shell.js', 'expert-commands.js', 'expert-panel.js'].map(f => html.indexOf(f + '?v='));
   assert.ok(order.every(i => i > 0) && order[0] < order[1] && order[1] < order[2]);
   const stamp = html.match(/expert-panel\.js\?v=([^"]+)"/)[1];
-  assert.ok(html.includes('expert-commands.js?v=' + stamp) && html.includes('responsive-shell.css?v=' + stamp) && html.includes('intro.js?v=' + stamp));
+  assert.ok(html.includes('responsive-shell.css?v=' + stamp));
+  const evidenceStamp = html.match(/expert-commands\.js\?v=([^\"]+)\"/)[1];
+  assert.equal(evidenceStamp, '20261010-evidence-1');
+  assert.ok(html.includes('intro.js?v=' + evidenceStamp));
   const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
   const shell = new RegExp(sw.match(/const SHELL_CODE = \/(.+)\/;/)[1]);
   for (const f of ['/expert-commands.js', '/expert-panel.js', '/responsive-shell.js', '/intro.js']) assert.ok(shell.test(f), f);

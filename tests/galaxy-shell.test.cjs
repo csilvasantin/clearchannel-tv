@@ -16,6 +16,7 @@ const backoffice = read('backoffice.html');
 // comportamiento de la portada (responsive-shell, expert-*, intro.js), que con la marca
 // blanca (FLT-101331) suben a la vez.
 const STAMP = '20261006-experto-tecla-1';
+const EVIDENCE_STAMP = '20261010-evidence-1';
 const PAGES_STAMP = '20261006-experto-tecla-1';
 const PORTADA_STAMP = '20261006-experto-tecla-1';
 const squash = html => html.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
@@ -130,7 +131,7 @@ test('galaxy-shell.css reuses responsive-shell.css and the service worker keeps 
   const js = read('galaxy-shell.js');
   const order = ["load('responsive-shell.js')", "load('expert-commands.js')", "load('expert-panel.js')"].map(s => js.indexOf(s));
   assert.ok(order.every(i => i > 0) && order[0] < order[1] && order[1] < order[2]);
-  assert.ok(index.includes(`expert-panel.js?v=${PORTADA_STAMP}`) && index.includes(`expert-commands.js?v=${PORTADA_STAMP}`));
+  assert.ok(index.includes(`expert-panel.js?v=${PORTADA_STAMP}`) && index.includes(`expert-commands.js?v=${EVIDENCE_STAMP}`));
   assert.ok(index.includes(`responsive-shell.css?v=${PORTADA_STAMP}`) && index.includes(`responsive-shell.js?v=${PORTADA_STAMP}`));
 });
 
@@ -240,7 +241,8 @@ test('every page loads the four-band shell, is the portada, or is a listed excep
     const html = read(page);
     const css = `<link rel="stylesheet" href="/galaxy-shell.css?v=${STAMP}">`;
     assert.equal(html.split(css).length - 1, 1, `${page}: galaxy-shell.css?v=${STAMP} exactly once`);
-    assert.match(html, new RegExp(`<script defer src="/galaxy-shell\\.js\\?v=${STAMP}"[^>]*></script>`), `${page}: galaxy-shell.js?v=${STAMP}`);
+    const scriptStamp = ['walk.html', 'help/index.html'].includes(page) ? EVIDENCE_STAMP : STAMP;
+    assert.match(html, new RegExp(`<script defer src="/galaxy-shell\\.js\\?v=${scriptStamp}"[^>]*></script>`), `${page}: galaxy-shell.js?v=${scriptStamp}`);
     assert.equal((html.match(/galaxy-shell\.(?:css|js)\?v=/g) || []).length, 2, `${page}: one stamp for both files`);
     // The component's stylesheet goes after the page's own styles, so the shell wins ties.
     const at = html.indexOf(css), end = headEnd(html);

@@ -4,6 +4,12 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# The domains are frozen independently. Never publish the corrected biz UI to
+# every alias of the shared Pages project by archiving main at the root.
+if [ -f deployment-biz.json ]; then
+  exec bash ./deploy-biz.sh
+fi
+
 # La firma se DECLARA, no se hereda (norma 08). Antes, sin variables, firmaba en silencio
 # como OraculoMBAPlata: el 1-oct-2026 una publicación de MorfeoMacMini salió con firma ajena.
 # Acepta el par de la flota (ADMIRA_RELEASE_*) o el histórico (ADMIRANEXT_*); sin ninguno, aborta.

@@ -1,4 +1,4 @@
-import { previewUrl, selectionSnapshot, STORAGE_PREFIX } from './walk-core.mjs';
+import { previewUrl, selectionSnapshot, STORAGE_PREFIX } from './walk-core.mjs?v=20261010-evidence-1';
 
 document.addEventListener('click', event => {
   const button = event.target.closest('[data-walk-preview]');

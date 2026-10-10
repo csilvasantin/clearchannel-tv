@@ -2,6 +2,7 @@ import { handleOrders } from './server/orders.mjs';
 import { handleDemoSession } from './server/demo-session.mjs';
 import {handleGlobalDemo} from './server/global-demo.mjs';
 import {onRequest as avatarAsk} from './avatar-ask.js';
+import { bizAssetPath, BIZ_ASSET_PREFIX } from './server/biz-assets.mjs';
 
 // admira.app (hoy) y admira.biz (tras el intercambio de dominios con Yokup, oct-2026)
 // son la misma cara Admira de este proyecto: la marca sale del apex del Host.
@@ -206,7 +207,17 @@ export default {
       twin.pathname = ADMIRA_MCP_FILES[url.pathname];
       return env.ASSETS.fetch(new Request(twin.toString(), request));
     }
-    var response = await env.ASSETS.fetch(request);
+    // Internal release assets are selected by Host, never by a visitor-supplied
+    // prefix. Keep other customer domains on their preserved release.
+    if (url.pathname.startsWith(BIZ_ASSET_PREFIX + '/')) return new Response('Not found', {status:404});
+    var assetPath = bizAssetPath(url, request.method);
+    var assetRequest = request;
+    if (assetPath) {
+      var assetUrl = new URL(request.url);
+      assetUrl.pathname = assetPath;
+      assetRequest = new Request(assetUrl, request);
+    }
+    var response = await env.ASSETS.fetch(assetRequest);
     var contentType = response.headers.get('content-type') || '';
     if (!contentType.includes('text/html')) return response;
     var avatar = wantsAvatar(url, response);

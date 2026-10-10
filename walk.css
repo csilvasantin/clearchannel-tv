@@ -6,5 +6,6 @@
 @media(max-width:1000px){.workspace{grid-template-columns:minmax(0,1fr) 270px;gap:16px}.stage{height:420px}.screen-placement{left:40%;right:6%}.inspector{padding:17px}}
 @media(max-width:760px){.workspace{grid-template-columns:1fr}.intro{align-items:start;flex-direction:column}.campaign-name{max-width:none}.stage{height:420px}.intro h1 br{display:none}.intro h1{font-size:43px;letter-spacing:-2px}.screen-placement{left:45%}.library-head{align-items:start}.library h2{font-size:24px}.library-head button{font-size:12px}footer{flex-direction:column;gap:8px}.assets{grid-template-columns:repeat(auto-fill,minmax(135px,1fr))}}
 .intro h1,#empty-media strong{white-space:pre-line}
+.data-evidence{padding:12px;border:1px solid var(--line);border-radius:9px;margin:16px 0;background:var(--bg);overflow-wrap:anywhere}.data-evidence strong{font-size:12px;color:var(--brand);font-weight:600}.data-evidence p{font-size:11px;line-height:1.55;color:var(--mut);margin:8px 0}.data-evidence .text-link{font-size:11px;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:760px){.screen.wide #empty-media .empty-mark,.screen.wide #empty-media>span:last-child{display:none}.screen.wide #empty-media{padding:8px;gap:0}.screen.wide #empty-media strong{font-size:18px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}

@@ -118,10 +118,12 @@
         const r = ctx.demo(client ? client.id : null) || {};
         if (r.ok === false) {
           if (r.reason === 'loading') return fail(L(lang, 'La demo está cargando. Vuelve a ejecutar la orden.', 'The demo is loading. Run the command again.'));
-          if (r.reason === 'no_xpacio') return fail(L(lang, `El catálogo cargado no tiene ningún Xpacio de ${clientName(client, lang)} con pantallas en directo o programadas: no hay recorrido que mostrar.`, `The loaded catalogue has no ${clientName(client, lang)} Xpacio with live or scheduled screens: there is no tour to show.`));
+          if (r.reason === 'no_xpacio') return fail(L(lang, `El catálogo cargado no tiene ningún Xpacio de ${clientName(client, lang)} con pantallas registradas o programadas: no hay recorrido que mostrar.`, `The loaded catalogue has no ${clientName(client, lang)} Xpacio with registered or scheduled screens: there is no tour to show.`));
           return fail(L(lang, 'No se pudo iniciar la demo.', 'The demo could not start.'));
         }
-        const where = (r.name ? ' · ' + r.name : '') + (r.live === false ? L(lang, ' (pantallas programadas, aún no en directo)', ' (scheduled screens, not live yet)') : '');
+        const where = (r.name ? ' · ' + r.name : '') + (r.live === false
+          ? L(lang, ' (pantallas programadas; conexión no verificada)', ' (scheduled screens; connection unverified)')
+          : L(lang, ' (pantallas registradas; conexión no verificada)', ' (registered screens; connection unverified)'));
         return done(client
           ? L(lang, `Demo de ${clientName(client, lang)} iniciada${where}. Compra simulada.`, `${clientName(client, lang)} demo started${where}. Simulated purchase.`)
           : L(lang, `Demo guiada iniciada${where || ' · Xtanco Valencia'}. Compra simulada.`, `Guided demo started${where || ' · Xtanco Valencia'}. Simulated purchase.`));
@@ -499,15 +501,16 @@
     ];
   }
 
-  // Xpacio de demo de un circuito: el que tenga pantallas en directo, mejor si
-  // están enlazadas a la parrilla (ventas reales) y tiene Xpacio 3D asociado.
-  // Si el circuito solo tiene pantallas programadas (sched), se usan esas y la
-  // demo lo dice: nunca se presentan como emisión en directo.
+  // Catalogue selection for a demo: prefer registered surfaces with planning
+  // data and grid IDs, falling back to scheduled ones. Neither status proves a
+  // player connection. The legacy `live` return field remains for older callers.
   const surfacesWith = (loc, status) => (loc && Array.isArray(loc.surfaces) ? loc.surfaces : []).filter(s => s && s.status === status && s.surface !== 'pwa');
-  const liveSurfaces = loc => surfacesWith(loc, 'live');
+  const registeredSurfaces = loc => surfacesWith(loc, 'live');
+  const liveSurfaces = registeredSurfaces;
   function demoSurfaces(loc) {
-    const live = surfacesWith(loc, 'live');
-    return live.length ? {live: true, surfaces: live} : {live: false, surfaces: surfacesWith(loc, 'sched')};
+    const registered = registeredSurfaces(loc);
+    return registered.length ? {live: true, catalogueState:'registered', surfaces: registered}
+      : {live: false, catalogueState:'scheduled', surfaces: surfacesWith(loc, 'sched')};
   }
   function demoScreens(loc) {
     const ids = new Set();
@@ -520,10 +523,10 @@
   function pickDemoXpacio(items) {
     let best = null, bestScore = -1;
     for (const loc of Array.isArray(items) ? items : []) {
-      const {live, surfaces} = demoSurfaces(loc);
+      const {catalogueState, surfaces} = demoSurfaces(loc);
       if (!surfaces.length || !Array.isArray(loc.coords)) continue;
       const priced = surfaces.some(s => Number(s.impr) > 0 && Number(String(s.cpm || '').replace(/[^\d.]/g, '')) > 0);
-      const score = (live ? 16 : 0) + Math.min(3, surfaces.length) + (priced ? 8 : 0) + (demoScreens(loc).length ? 4 : 0) + (loc.xpaceUrl ? 2 : 0);
+      const score = (catalogueState === 'registered' ? 16 : 0) + Math.min(3, surfaces.length) + (priced ? 8 : 0) + (demoScreens(loc).length ? 4 : 0) + (loc.xpaceUrl ? 2 : 0);
       if (score > bestScore) { best = loc; bestScore = score; }
     }
     return best;
@@ -532,7 +535,7 @@
   const api = Object.freeze({
     CLIENTS, ATTRIBUTES, VERBS, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, parse, execute, isAvatarCommand, errorLines, usage,
     complete, defaultRoutines, sanitizeRoutines, loadRoutines, saveRoutines, addRoutine, removeRoutine, helpLines,
-    pickDemoXpacio, demoScreens, liveSurfaces, demoSurfaces,
+    pickDemoXpacio, demoScreens, registeredSurfaces, liveSurfaces, demoSurfaces,
   });
   root.AdmiraExpertCommands = api;
   if (typeof document !== 'undefined') {

@@ -502,19 +502,29 @@ let LANG = (function(){
   try { const saved = localStorage.getItem(BRAND_LANGUAGE_KEY); if (['en', 'es'].includes(saved)) return saved; } catch(_) {}
   return window.ADMIRA_SITE_BRAND?.defaultLanguage || 'en';
 })();
-Object.assign(I18N.es, {live_bidding_label:'Pujas en vivo',neo_label:'Habla con Neo',neo_open:'Habla con Neo, asistente en vivo'});
-Object.assign(I18N.en, {live_bidding_label:'Live bidding',neo_label:'Talk to Neo',neo_open:'Talk to Neo, live assistant'});
+Object.assign(I18N.es, {live_bidding_label:'Actividad del motor · demo',neo_label:'Habla con Neo',neo_open:'Habla con Neo, asistente en vivo'});
+Object.assign(I18N.en, {live_bidding_label:'Engine activity · demo',neo_label:'Talk to Neo',neo_open:'Talk to Neo, live assistant'});
 Object.assign(I18N.es, {
-  language_group:'Idioma', zoom_in:'Acercar', zoom_out:'Alejar', simulate_traffic:'▶ Simular tráfico', stop_traffic:'⏸ Parar tráfico', one_impression:'🎲 1 impresión',
-  traffic_hint:'Subastas reales cada 15 s en el circuito demo; consumen presupuesto demo.', impression_hint:'Subastar una impresión real y mostrar el ganador y su segundo precio.',
-  traffic_running:'subastando impresiones reales cada 15 s…', auction_wins:' gana ', auction_price:' · 2º precio €', auction_no_demand:'· sin demanda para ', auction_exhausted:' (presupuesto agotado)', auction_network:'⚠️ error de red al subastar',
-  revenue_hint:'Vendido hoy en la parrilla de Xtanco Valencia. Sin cobro: la pasarela de pago no está activa', screens_hint:'Estimación simulada: el catálogo no trae el nº real de pantallas por punto', impressions_hint:'Impresiones reales del último minuto', no_rtb_data:'Sin datos del motor RTB',
+  language_group:'Idioma', zoom_in:'Acercar', zoom_out:'Alejar', simulate_traffic:'▶ Tráfico de prueba', stop_traffic:'⏸ Parar tráfico', one_impression:'🎲 1 prueba RTB',
+  traffic_hint:'Subastas de prueba cada 15 s en el circuito demo; consumen presupuesto demo.', impression_hint:'Subastar una impresión de prueba y mostrar el ganador y su segundo precio.',
+  traffic_running:'subastando impresiones de prueba cada 15 s…', auction_wins:' gana ', auction_price:' · 2º precio €', auction_no_demand:'· sin demanda para ', auction_exhausted:' (presupuesto agotado)', auction_network:'⚠️ error de red al subastar',
+  revenue_hint:'Vendido hoy en la parrilla demo de Xtanco Valencia. Sin cobro: la pasarela de pago no está activa', screens_hint:'Cifra simulada a partir del catálogo; no acredita pantallas instaladas ni conectadas', impressions_hint:'Eventos del motor y confirmaciones de player en el último minuto; incluye pruebas del circuito demo, no mide audiencia', no_rtb_data:'Sin datos actuales del motor RTB',
+  screens_sim:'pantallas simuladas', revenue_today:'€ parrilla demo (sin cobrar)', engine_events:'eventos/min', live_bids:'Actividad del motor', rtb_scope:'Circuito demo · actividad global', meta_cpm:'CPM orientativo',
+  ed_on_air:'REGISTROS API · origen sin verificar',
+  stores_bidding_1:'Xpace del catálogo', stores_bidding_n:'Xpaces del catálogo', connected_count:'conectadas', evidence_unknown:'Conexión sin verificar', evidence_offline:'Sin conexión verificada', evidence_demo:'DEMO',
+  evidence_estimates:'Impresiones estimadas y CPM orientativo del catálogo; no son audiencia medida ni una oferta confirmada.', evidence_no_signal:'No hay una conexión acreditada por señal reciente para estos dispositivos.', evidence_signal:'Estado de conexión por señal reciente; no acredita audiencia medida.', evidence_demo_note:'Demostración: la actividad de prueba no acredita emisión física ni audiencia real.', evidence_source:'Fuente de conexión: /signage/screens · comprobada',
+  linked_scene:'Explorar escena vinculada ↗', evidence_help:'Cómo leer estos datos', waiting_bid:'// actividad global del motor · esperando eventos…',
 });
 Object.assign(I18N.en, {
-  language_group:'Language', zoom_in:'Zoom in', zoom_out:'Zoom out', simulate_traffic:'▶ Simulate traffic', stop_traffic:'⏸ Stop traffic', one_impression:'🎲 1 impression',
-  traffic_hint:'Real auctions every 15 s in the demo circuit; they spend demo budget.', impression_hint:'Auction one real impression and show the winner and second price.',
-  traffic_running:'auctioning real impressions every 15 s…', auction_wins:' wins ', auction_price:' · second price €', auction_no_demand:'· no demand for ', auction_exhausted:' (budget exhausted)', auction_network:'⚠️ network error during auction',
-  revenue_hint:'Sold today in the Xtanco Valencia schedule. Not charged: payment gateway is inactive', screens_hint:'Simulated estimate: the catalogue does not include actual screen counts per location', impressions_hint:'Actual impressions in the last minute', no_rtb_data:'No RTB engine data',
+  language_group:'Language', zoom_in:'Zoom in', zoom_out:'Zoom out', simulate_traffic:'▶ Test traffic', stop_traffic:'⏸ Stop traffic', one_impression:'🎲 1 RTB test',
+  traffic_hint:'Test auctions every 15 s in the demo circuit; they spend demo budget.', impression_hint:'Auction one test impression and show the winner and second price.',
+  traffic_running:'auctioning test impressions every 15 s…', auction_wins:' wins ', auction_price:' · second price €', auction_no_demand:'· no demand for ', auction_exhausted:' (budget exhausted)', auction_network:'⚠️ network error during auction',
+  revenue_hint:'Sold today in the Xtanco Valencia demo schedule. Not charged: payment gateway is inactive', screens_hint:'Simulated catalogue count; it does not verify installed or connected screens', impressions_hint:'Engine events and player acknowledgements in the last minute; includes demo circuit tests and does not measure audience', no_rtb_data:'No current RTB engine data',
+  screens_sim:'simulated screens', revenue_today:'€ demo grid (not charged)', engine_events:'events/min', live_bids:'Engine activity', rtb_scope:'Demo circuit · global activity', meta_cpm:'Indicative CPM',
+  ed_on_air:'API RECORDS · origin unverified',
+  stores_bidding_1:'catalogue Xpace', stores_bidding_n:'catalogue Xpaces', connected_count:'connected', evidence_unknown:'Connection unverified', evidence_offline:'Verified offline', evidence_demo:'DEMO',
+  evidence_estimates:'Estimated catalogue impressions and indicative CPM; these are not measured audience or a confirmed offer.', evidence_no_signal:'These devices have no connection verified by a recent signal.', evidence_signal:'Connection state uses a recent signal; it does not verify measured audience.', evidence_demo_note:'Demonstration: test activity does not verify physical delivery or real audience.', evidence_source:'Connection source: /signage/screens · checked',
+  linked_scene:'Explore linked scene ↗', evidence_help:'How to read these data', waiting_bid:'// global engine activity · awaiting events…',
 });
 function locationKindLabel(kind) {
   if (LANG !== 'en') return kind;
@@ -660,24 +670,52 @@ const RTB_DEMO_CIRCUIT = 'sim-gracia';
 // `loc` (Xpacio). Aquí descubrimos esas pantallas vivas y las enlazamos a la
 // surface de su Xpacio → cualquier gemelo encendido pasa a ser VENDIBLE/targetable,
 // sin tener que hardcodear su screenId en locations.js (campo pixerScreens).
-window.LIVE_SCREENS = { byLoc: Object.create(null), online: 0, fetchedAt: 0 };
+window.LIVE_SCREENS = { byLoc: Object.create(null), byScreen: Object.create(null), online: 0, fetchedAt: 0, error: 'unavailable' };
 async function loadLiveScreens() {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 6000);
   try {
-    const r = await fetch(PIXER + '/signage/screens', { cache: 'no-store' });
+    const r = await fetch(PIXER + '/signage/screens', { cache: 'no-store', signal: controller.signal });
+    if (!r.ok) throw new Error('http ' + r.status);
     const d = await r.json();
-    const byLoc = Object.create(null); let online = 0;
-    (d.screens || []).forEach(s => {
-      if (!s || !s.online || !s.loc) return;            // solo pantallas online con Xpacio conocido
-      (byLoc[s.loc] = byLoc[s.loc] || []).push(s.screen);
+    if (!d || d.ok === false || !Array.isArray(d.screens)) throw new Error('invalid schema');
+    const byLoc = Object.create(null), byScreen = Object.create(null); let online = 0;
+    d.screens.forEach(s => {
+      if (!s || typeof s.screen !== 'string' || !s.screen || typeof s.online !== 'boolean'
+        || Object.prototype.hasOwnProperty.call(byScreen, s.screen)) throw new Error('invalid screen');
+      byScreen[s.screen] = { online: s.online };
+      if (!s.online) return;
       online++;
+      if (typeof s.loc === 'string' && s.loc) (byLoc[s.loc] = byLoc[s.loc] || []).push(s.screen);
     });
-    window.LIVE_SCREENS = { byLoc, online, fetchedAt: Date.now() };
-  } catch (e) { /* red/CORS: el loop sigue con los pixerScreens hardcodeados */ }
+    window.LIVE_SCREENS = { byLoc, byScreen, online, fetchedAt: Date.now(), error: '' };
+  } catch (e) {
+    // A failed request invalidates the previous signal instead of retaining a connected label.
+    window.LIVE_SCREENS = { byLoc: Object.create(null), byScreen: Object.create(null), online: 0, fetchedAt: 0, error: 'unavailable' };
+  } finally { clearTimeout(timeout); }
 }
 function liveScreensForLoc(locId) {
-  const m = window.LIVE_SCREENS && window.LIVE_SCREENS.byLoc;
+  const data = window.LIVE_SCREENS;
+  const m = data && !data.error && Date.now() - data.fetchedAt <= 120000 && data.byLoc;
   return (m && locId && m[locId]) ? m[locId] : [];
 }
+function inventorySurfaceState(loc, surf) {
+  return window.InventoryEvidence.surface(loc, surf, window.LIVE_SCREENS);
+}
+function inventorySummary(loc) {
+  const states = (Array.isArray(loc.surfaces) ? loc.surfaces : []).map(s => inventorySurfaceState(loc, s));
+  return { states, online: states.filter(s => s.connection === 'online').length,
+    offline: states.filter(s => s.connection === 'offline').length,
+    demo: window.InventoryEvidence.surface(loc, null, null).demo || states.some(s => s.demo) };
+}
+function inventoryBadgeHTML(loc) {
+  const summary = inventorySummary(loc);
+  const label = summary.online ? `● ${summary.online} ${t('connected_count')}`
+    : summary.states.length && summary.offline === summary.states.length ? t('evidence_offline') : t('evidence_unknown');
+  return ` <span class="inventory-badge ${summary.online ? 'verified' : 'unknown'}">${escHtml(label)}</span>`
+    + (summary.demo ? ` <span class="inventory-badge demo">${t('evidence_demo')}</span>` : '');
+}
+function inventoryKindLabel(loc) { return window.InventoryEvidence.kindLabel(loc, LANG); }
 // Pantallas targetables de una surface = pixerScreens fijas ∪ pantallas vivas del Xpacio.
 function screensForSurface(loc, surf) {
   const fixed = Array.isArray(surf && surf.pixerScreens) ? surf.pixerScreens : [];
@@ -725,14 +763,13 @@ function stampAltadisTwin(loc) {
   return loc;
 }
 
-// Circuitos demo_<cliente> (crear-demo): el catálogo trae twin→admira.store.
-// Si xpaceUrl falta o no es una URL válida, lo copiamos para que la ficha
-// y la lista del circuito muestren «Gemelo Digital» / «Digital Twin».
+// Existing demo circuits curate a valid scene link; this never proves measured geometry or connection.
 function stampDemoTwin(loc) {
   if (!loc || !isDemoCircuitLocation(loc)) return loc;
   const valid = window.XpaceLinks && window.XpaceLinks.validXpaceUrl;
   if (typeof valid !== 'function') return loc;
-  if (valid(loc.xpaceUrl)) return loc;
+  // An own empty value is an explicit removal and must not be promoted from a legacy link.
+  if (Object.prototype.hasOwnProperty.call(loc, 'xpaceUrl')) return loc;
   const href = valid(loc.twin);
   if (href) loc.xpaceUrl = href;
   return loc;
@@ -742,9 +779,9 @@ function stampDemoTwin(loc) {
 // para que el clic no marque el checkbox.
 function circuitDemoTwinHtml(loc) {
   if (!isDemoCircuitLocation(loc) || !window.XpaceLinks || typeof window.XpaceLinks.associationUrl !== 'function') return '';
-  const href = window.XpaceLinks.associationUrl(loc);
+  const href = window.InventoryEvidence.scene(loc).url;
   if (!href) return '';
-  return `<a class="cp-twin" data-i18n="digital_twin" href="${escHtml(href)}" target="_blank" rel="noopener noreferrer">${escHtml(t('digital_twin'))}</a>`;
+  return `<a class="cp-twin" data-i18n="linked_scene" href="${escHtml(href)}" target="_blank" rel="noopener noreferrer">${escHtml(t('linked_scene'))}</a>`;
 }
 
 function segmentLocations(list) {
@@ -1449,7 +1486,7 @@ function renderCircuitSelector() {
   const renderedItems = items.slice(0, MAX_CIRCUIT_LIST_RENDER);
   list.innerHTML = renderedItems.map(loc => {
     const surfaces = Array.isArray(loc.surfaces) ? loc.surfaces : [];
-    const live = surfaces.filter(s => s.status === 'live').length;
+    const live = surfaces.filter(s => inventorySurfaceState(loc, s).connection === 'online').length;
     const checked = selectedLocationIds.has(loc.id) ? ' checked' : '';
     const activeDemo = circuitDemo.running && circuitDemo.items[circuitDemo.index] && circuitDemo.items[circuitDemo.index].id === loc.id;
     const label = `<label class="circuit-point${activeDemo ? ' demo-active' : ''}" data-loc-id="${escHtml(loc.id)}">
@@ -2589,7 +2626,7 @@ function locationsGeoJSON() {
           color: circuitColorHex(circuitLabel(l)),
           scope,
           selected: selectedLocationIds && selectedLocationIds.has(l.id) ? 1 : 0,
-          live: surfaces.filter(s=>s.status==='live').length,
+          live: surfaces.filter(s=>inventorySurfaceState(l, s).connection === 'online').length,
           total: surfaces.length,
           screen: emitScreenOf(l),
           emit: emitStatusOf(l),
@@ -2643,7 +2680,7 @@ function locationsGeoJSON_old() {
         id: l.id, name: l.name, kind: l.kind, addr: l.addr,
         circuit: circuitLabel(l),
         selected: selectedLocationIds && selectedLocationIds.has(l.id) ? 1 : 0,
-        live: l.surfaces.filter(s=>s.status==='live').length,
+        live: l.surfaces.filter(s=>inventorySurfaceState(l, s).connection === 'online').length,
         total: l.surfaces.length,
       },
     })),
@@ -2773,7 +2810,8 @@ function addLocationsLayer() {
     const f = e.features && e.features[0]; if (!f) return;
     const p = f.properties || {};
     const live = +p.live || 0, total = +p.total || 0;
-    const estado = live > 0 ? '<span class="xp-live">● LIVE</span>' : '<span class="xp-idle">○ idle</span>';
+    const loc = LOC_BY_ID.get(p.id);
+    const estado = loc ? inventoryBadgeHTML(loc) : '<span class="xp-idle">' + escHtml(t('evidence_unknown')) + '</span>';
     const html = '<div class="xp-name">' + escHtml(p.name || 'Xpacio') + '</div>'
       + '<div class="xp-circuit">' + escHtml(p.circuit || 'Retail') + '</div>'
       + (p.addr ? '<div class="xp-addr">' + escHtml(p.addr) + '</div>' : '')
@@ -3499,7 +3537,9 @@ function renderPanel(loc) {
   activeLocation = loc;
   document.getElementById('p-name').textContent = loc.name;
   document.getElementById('p-addr').textContent = loc.addr;
-  document.getElementById('p-kind').textContent = locationKindLabel(loc.kind);
+  document.getElementById('p-kind').textContent = inventoryKindLabel(loc);
+  const evidenceStatus = document.getElementById('p-evidence-status');
+  if (evidenceStatus) evidenceStatus.innerHTML = inventoryBadgeHTML(loc);
   const projectNote = document.getElementById('p-project-note');
   if (projectNote) {
     projectNote.hidden = !isCafebreriaLocation(loc);
@@ -3532,19 +3572,32 @@ function renderPanel(loc) {
     const lo = Math.min(...cpms), hi = Math.max(...cpms);
     document.getElementById('p-cpm').textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
   }
+  const evidenceNote = document.getElementById('p-evidence-note');
+  const summary = inventorySummary(loc);
+  if (evidenceNote) {
+    evidenceNote.textContent = t('evidence_estimates') + ' ' + t(summary.online || summary.offline ? 'evidence_signal' : 'evidence_no_signal')
+      + (summary.demo ? ' ' + t('evidence_demo_note') : '');
+    const help = document.createElement('a');
+    help.href = '/help/?lang=' + LANG + '#data-evidence';
+    help.textContent = t('evidence_help');
+    evidenceNote.append(document.createTextNode(' '), help);
+  }
   const list = document.getElementById('surfaces');
   list.innerHTML = loc.surfaces.map((s, i) => {
     const hasTwin = screensForSurface(loc, s).length;   // pantalla fija o gemelo vivo del Xpacio
+    const evidence = inventorySurfaceState(loc, s), labels = window.InventoryEvidence.copy(evidence, LANG);
+    const signalTime = evidence.checkedAt ? new Date(evidence.checkedAt).toLocaleTimeString(LANG === 'en' ? 'en-GB' : 'es-ES', {hour:'2-digit', minute:'2-digit', second:'2-digit'}) : '';
     return `
     <div class="surface" data-surface="${s.surface}">
-      <div class="thumb ${s.status==='live'?'live':''} ${s.screen?'feed':''} ${(s.orientation==='landscape'||s.orient==='horizontal')?'landscape':''}">${s.screen ? `<div class="surf-mirror" data-screen="${escHtml(s.screen)}"${surfMediaUrl(s) ? ` data-media="${escHtml(surfMediaUrl(s))}"` : ''}><div class="surf-off">○ conectando…</div></div>` : thumbFor(s.surface, s.status)}</div>
+      <div class="thumb ${evidence.connection==='online'?'live':''} ${s.screen?'feed':''} ${(s.orientation==='landscape'||s.orient==='horizontal')?'landscape':''}">${s.screen ? `<div class="surf-mirror" data-screen="${escHtml(s.screen)}"${surfMediaUrl(s) ? ` data-media="${escHtml(surfMediaUrl(s))}"` : ''}><div class="surf-off">${escHtml(t('evidence_unknown'))}</div></div>` : thumbFor(s.surface, evidence.connection === 'online' ? 'live' : 'idle')}</div>
       <div class="info">
         <div class="top">
           <div class="name">${escHtml(s.name)}</div>
-          <div class="status ${s.status}">${s.status === 'live' ? t('surf_live') : s.status === 'sched' ? t('surf_sched') : t('surf_idle')}</div>
+          <div class="status ${evidence.connection}">${escHtml(labels.connectionLabel)}${evidence.demo ? ' · DEMO' : ''}</div>
         </div>
         <div class="desc">${escHtml(s.desc)}</div>
-        <div class="stats"><span>${finiteImpr(s.impr) == null ? '—' : finiteImpr(s.impr)}</span> ${t('meta_imprday')} · <span>${surfaceCpmText(s.cpm) === '—' ? '—' : escHtml(surfaceCpmText(s.cpm))}</span> CPM · <span>${escHtml(s.surface)}</span></div>
+        <div class="stats"><span>${finiteImpr(s.impr) == null ? '—' : finiteImpr(s.impr)}</span> ${t('meta_imprday')} · <span>${surfaceCpmText(s.cpm) === '—' ? '—' : escHtml(surfaceCpmText(s.cpm))}</span> ${t('meta_cpm')} · <span>${escHtml(s.surface)}</span></div>
+        ${signalTime ? `<div class="evidence-source">${escHtml(t('evidence_source'))} ${escHtml(signalTime)}</div>` : ''}
         ${s.screen ? `<div class="surf-seg" hidden></div>` : ''}
         <button type="button" class="walk-preview" data-walk-preview="${i}">${t('walk_preview')}</button>
         ${hasTwin ? `<button class="twin-launch" data-surf-idx="${i}">${t('twin_launch')}</button>` : ''}
@@ -3572,7 +3625,9 @@ function renderPanel(loc) {
   const panelEl = document.getElementById('panel');
   pTwin.classList.remove('launch');
   pTwin.onclick = null;
-  const navigation = window.XpaceLinks && window.XpaceLinks.panelNavigation(loc);
+  const linkedScene = window.InventoryEvidence.scene(loc);
+  const candidateNavigation = window.XpaceLinks && window.XpaceLinks.panelNavigation(loc);
+  const navigation = candidateNavigation && (candidateNavigation.kind === 'special' || linkedScene.kind === 'linked') ? candidateNavigation : null;
   pTwin.hidden = !navigation;
   if (!navigation) pTwin.removeAttribute('href');
   if (navigation) {
@@ -3583,8 +3638,8 @@ function renderPanel(loc) {
       pTwin.removeAttribute('data-i18n');
       pTwin.textContent = navigation.label;
     } else {
-      pTwin.setAttribute('data-i18n', navigation.labelKey || 'view_twin');
-      pTwin.textContent = t(navigation.labelKey || 'view_twin');
+      pTwin.setAttribute('data-i18n', 'linked_scene');
+      pTwin.textContent = t('linked_scene');
     }
     const reduceTwin = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
     pTwin.onclick = function(e){
@@ -3630,13 +3685,15 @@ let bidFeedItems = [];
 // Sin fuente alcanzable se muestra «—», nunca una cifra estimada.
 let realImprTs = [];
 let realImprSourceOk = false;
+let realImprFetchedAt = 0;
 function noteRealImpr(ts) { realImprTs.push(Number(ts) || Date.now()); }
 function renderImprPerMin() {
   const cut = Date.now() - 60000;
   realImprTs = realImprTs.filter(ts => ts >= cut);
   const ti = document.getElementById('t-impr'); if (!ti) return;
-  ti.textContent = realImprSourceOk ? realImprTs.length.toLocaleString('es') : '—';
-  ti.title = t(realImprSourceOk ? 'impressions_hint' : 'no_rtb_data');
+  const current = realImprSourceOk && Date.now() - realImprFetchedAt <= 120000;
+  ti.textContent = current ? realImprTs.length.toLocaleString('es') : '—';
+  ti.title = t(current ? 'impressions_hint' : 'no_rtb_data');
 }
 setInterval(renderImprPerMin, 5000);
 
@@ -3650,7 +3707,7 @@ async function refreshRevenue() {
     const d = await (await fetch(`${PIXER}/grid/sales?screens=${REVENUE_SCREENS.join(',')}&from=${day}&to=${day}`, { cache: 'no-store' })).json();
     if (!d || !d.ok) throw Error();
     el.textContent = formatMoney(d.revenue);
-    el.title = `${d.count} ${LANG === 'en' ? 'passes sold today in Xtanco Valencia · not charged' : 'pases vendidos hoy en Xtanco Valencia · sin cobrar'}`;
+    el.title = `${d.count} ${LANG === 'en' ? 'passes in today’s Xtanco Valencia demo grid · not charged' : 'pases en la parrilla demo de hoy de Xtanco Valencia · sin cobrar'}`;
   } catch { el.textContent = '—'; el.title = LANG === 'en' ? 'Grid unavailable' : 'Parrilla no disponible'; }
 }
 refreshRevenue();
@@ -3664,12 +3721,12 @@ function renderBidFeed() {
   el.innerHTML = bidFeedItems.map((b,i) => {
     const where = b.circuit ? (b.circuit + (b.screen ? ' · ' + b.screen.replace(b.circuit + '-','') : '')) : b.surface;
     const tip = b.cpm != null
-      ? `${b.advertiser}${b.title ? ' — ' + b.title : ''} · puja CPM €${b.cpm} → paga 2º precio €${b.price}${b.seg ? ' · seg ' + b.seg : ''}${b.circuit ? ' · ' + b.circuit : ''}`
+      ? `${b.advertiser}${b.title ? ' — ' + b.title : ''} · CPM €${b.cpm} · ${b.price == null ? (LANG === 'en' ? 'price not supplied' : 'precio no facilitado') : (LANG === 'en' ? 'second price €' : '2º precio €') + b.price}${b.seg ? ' · seg ' + b.seg : ''}${b.circuit ? ' · ' + b.circuit : ''}`
       : (b.advertiser + (b.surface ? ' · ' + b.surface : ''));
     return `
     <div class="bid-row${i===0?' fresh':''}${b.real?' real':''}${b.win?' win':''}" title="${escHtml(tip)}">
-      <span class="bf-price">€${escHtml(b.price)}</span>
-      <span class="bf-adv">${b.win?'🔨 ':''}${b.real&&!b.win?'<span class="bf-live">LIVE</span>':''}${escHtml(b.advertiser)}</span>
+      <span class="bf-price">${b.price == null ? '—' : '€' + escHtml(b.price)}</span>
+      <span class="bf-adv">${b.win?'🔨 ':''}${b.real&&!b.win?`<span class="bf-live">${b.eventKind === 'player' ? 'PLAYER' : 'RTB'}${b.demo ? ' · DEMO' : ''}</span>`:''}${escHtml(b.advertiser)}</span>
       <span class="bf-surf">${escHtml(where)}</span>
       <span class="bf-ts">${escHtml(b.ts)}</span>
     </div>`;
@@ -3688,17 +3745,20 @@ let rtbBootstrapped = false;
 function rtbKey(d) { return String(d.id) + ':' + String(d.ts); }
 function decisionToRow(d) {
   const ts = new Date(Number(d.ts) || Date.now()).toLocaleTimeString('es-ES', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  const price = (Number(d.price) || 0).toFixed(2);
+  const price = d.price != null && d.price !== '' && Number.isFinite(Number(d.price)) ? Number(d.price).toFixed(2) : null;
   return { advertiser: d.advertiser || 'campaña', title: d.title || '', surface: d.screen || d.circuit || '',
-           screen: d.screen || '', circuit: d.circuit || '', seg: d.seg || '', cpm: d.cpm, price, ts, real: true };
+           screen: d.screen || '', circuit: d.circuit || '', seg: d.seg || '', cpm: d.cpm, price, ts, real: true,
+           demo: window.InventoryEvidence.surface({ circuit: d.circuit }, null, null).demo };
 }
 async function pollRtbFeed() {
   try {
     const r = await fetch(RTB_BASE + '/rtb/feed?limit=20', {cache:'no-store'});
-    if (!r.ok) return;
+    if (!r.ok) throw new Error('rtb http ' + r.status);
     const d = await r.json();
-    const decisions = Array.isArray(d && d.decisions) ? d.decisions : [];
+    if (!d || d.ok === false || !Array.isArray(d.decisions)) throw new Error('invalid rtb schema');
+    const decisions = d.decisions;
     realImprSourceOk = true;
+    realImprFetchedAt = Date.now();
     if (!rtbBootstrapped) {
       // Primera carga: sembramos el feed con las últimas reales para que se vea
       // actividad al abrir, marcándolas como vistas (no las volvemos a inyectar).
@@ -3726,7 +3786,7 @@ async function pollRtbFeed() {
     if (rtbSeen.size > 600) { const arr = Array.from(rtbSeen); rtbSeen = new Set(arr.slice(-400)); }
     renderBidFeed();
     renderImprPerMin();
-  } catch { /* motor dormido — conservamos las últimas conocidas, sin inventar */ }
+  } catch { realImprSourceOk = false; realImprFetchedAt = 0; renderImprPerMin(); }
 }
 pollRtbFeed();
 setInterval(pollRtbFeed, 6000);
@@ -3897,13 +3957,12 @@ function findSurfaceByPixerScreen(screenId) {
 }
 
 function spawnRealBid(loc, surf, item) {
-  const cpm = parseFloat(String(surf.cpm).replace(/[^\d.]/g, '')) || 1;
-  const winCents = Math.max(0.0008, (cpm * (0.6 + Math.random() * 0.45) / 1000));
   const advRaw = String(item.title || 'creativo').replace(/^Clear Channel\s*\/\/\s*/i, '').trim();
   const advertiser = advRaw.length > 28 ? advRaw.slice(0, 26) + '…' : (advRaw || 'creativo');
   const tsMs = Number(item.acked_at || item.ts) || Date.now();
   const ts = new Date(tsMs).toLocaleTimeString('es-ES', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  bidFeedItems.unshift({ advertiser, surface: surf.name, price: winCents.toFixed(4), ts, real: true });
+  // A player acknowledgement provides no clearing price. Do not invent one from the catalogue CPM.
+  bidFeedItems.unshift({ advertiser, surface: surf.name, price: null, ts, real: true, eventKind: 'player', demo: inventorySurfaceState(loc, surf).demo });
   if (bidFeedItems.length > 12) bidFeedItems.pop();
   renderBidFeed();
 }
@@ -4182,9 +4241,8 @@ function showAddrCard(lon, lat, label) {
   const nearEl = document.getElementById('ac-near');
   if (near.length) {
     nearEl.innerHTML = '<div class="near-head">' + escHtml(t('nearest_inventory')) + '</div>' + near.map(n => {
-      const live = n.l.surfaces.filter(s => s.status === 'live').length;
       return `<div class="near-item" data-id="${escHtml(n.l.id)}">
-        <span class="ni-name">${escHtml(n.l.name)}${live ? `<b>● ${live} ${escHtml(t('live_tag'))}</b>` : ''}</span>
+        <span class="ni-name">${escHtml(n.l.name)}${inventoryBadgeHTML(n.l)}</span>
         <span class="ni-dist">${fmtDist(n.d)} →</span>
       </div>`;
     }).join('');
@@ -4211,16 +4269,15 @@ function findMatches(q) {
   return LOCATIONS.filter(l =>
     l.name.toLowerCase().includes(norm) ||
     l.addr.toLowerCase().includes(norm) ||
-    l.kind.toLowerCase().includes(norm) ||
+    inventoryKindLabel(l).toLowerCase().includes(norm) ||
     l.id.toLowerCase().includes(norm)
   );
 }
 function storeItemsHTML(list) {
   return list.map(l => {
-    const live = l.surfaces.filter(s=>s.status==='live').length;
     return `<div class="item" data-id="${escHtml(l.id)}">
-      <div class="kind">${escHtml(l.kind)}</div>
-      <div class="name">${escHtml(l.name)}${live?` <span class="badge-live">● ${live} LIVE</span>`:''}</div>
+      <div class="kind">${escHtml(inventoryKindLabel(l))}</div>
+      <div class="name">${escHtml(l.name)}${inventoryBadgeHTML(l)}</div>
       <div class="addr">${escHtml(l.addr)}</div>
     </div>`;
   }).join('');
@@ -4481,15 +4538,15 @@ if (window.AdmiraSegmento && window.AdmiraSegmento.actual()) { if (map.loaded())
 // Descubrir gemelos ONLINE (pantallas vivas) y refrescar cada 60s → el inventario
 // vendible se mantiene al día sin hardcodear screenIds. Cierra el loop hacia "vender".
 (async () => {
-  await loadLiveScreens();
-  try { if (typeof activeLocation !== 'undefined' && activeLocation) renderPanel(activeLocation); } catch {}
-  setInterval(async () => {
-    const before = JSON.stringify(window.LIVE_SCREENS.byLoc);
+  const refresh = async () => {
     await loadLiveScreens();
-    if (JSON.stringify(window.LIVE_SCREENS.byLoc) !== before) {
-      try { if (typeof activeLocation !== 'undefined' && activeLocation) renderPanel(activeLocation); } catch {}
-    }
-  }, 60000);
+    try { updateLocationsSource(); } catch {}
+    try { renderCircuitSelector(); } catch {}
+    try { if (activeLocation) renderPanel(activeLocation); } catch {}
+    try { if (!suggest.hidden) renderSuggest(searchInput.value); } catch {}
+  };
+  await refresh();
+  setInterval(refresh, 60000);
 })();
 
 // ─── Auto-rotación lenta del globo ────────────────────────────────

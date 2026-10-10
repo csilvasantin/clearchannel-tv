@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Walk the campaign · Clear Channel</title>
-  <meta name="description" content="Preview your Pixeria creative on a selected retail surface and explore its registered digital twin.">
+  <meta name="description" content="Preview your creative on an illustrative retail surface and explore its linked scene, with catalogue estimates and demo data clearly identified.">
   <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
   <link rel="canonical" href="https://www.clearchannel.tv/walk.html">
-  <link rel="stylesheet" href="walk.css?v=20261006-experto-tecla-1">
+  <link rel="stylesheet" href="walk.css?v=20261006-experto-tecla-1&amp;evidence=20261010-1">
   <link rel="stylesheet" href="brand.css">
   <script src="brand.js"></script>
   <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
@@ -15,9 +15,11 @@
   // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones manda; walk.mjs escucha admira:lang.
   window.ADMIRA_SHELL = { section: { es: '/ recorre tu campaña', en: '/ walk the campaign' }, setLang() {} };
   </script>
-  <script defer src="/galaxy-shell.js?v=20261006-experto-tecla-1"></script>
+  <script defer src="/galaxy-shell.js?v=20261010-evidence-1"></script>
   <script defer src="locations.js?v=circuits-20260907-2"></script>
-  <script type="module" src="walk.mjs?v=20261006-experto-tecla-1"></script>
+  <script defer src="xpace-link.js?v=20261010-data-evidence-1"></script>
+  <script defer src="inventory-evidence.js?v=20261010-data-evidence-1"></script>
+  <script type="module" src="walk.mjs?v=20261006-experto-tecla-1&amp;evidence=20261010-1"></script>
 </head>
 <body>
   <main>
@@ -40,10 +42,11 @@
           <span class="eyebrow" data-copy="placement">Your placement</span>
           <label for="surface" data-copy="surface">Surface</label><select id="surface"></select>
           <p id="surface-description"></p>
+          <div class="data-evidence"><strong id="evidence-label"></strong><p data-copy="dataNote">Planning metrics are catalogue estimates. Player connection is not checked in this preview.</p><p data-copy="dataSource">Source: catalogue. Connection check: not performed here.</p><a id="evidence-help" class="text-link" href="/help/#data-evidence" data-copy="dataHelp">How to read these data</a></div>
           <div class="selection-detail"><span data-copy="format">Format</span><strong id="format-detail"></strong></div>
           <div class="selection-detail"><span data-copy="creative">Creative</span><strong id="asset-title" data-copy="none">Not selected</strong></div>
           <div class="selection-detail"><span data-copy="version">Asset version</span><strong id="asset-version">—</strong></div>
-          <div class="connected"><span class="eyebrow" data-copy="connected">Connected workspace</span><a id="twin" class="action" target="_blank" rel="noopener noreferrer" hidden data-copy="openTwin">Explore the registered twin ↗</a><p id="twin-note"></p><a id="studio" class="action secondary" target="_blank" rel="noopener noreferrer" data-copy="openStudio">Create in Pixeria ↗</a><p data-copy="keepHere">Your selection stays here while you work in the other tab. Choose the finished asset from the shared library when you return.</p><a id="spaces" class="text-link" target="_blank" rel="noopener noreferrer"></a></div>
+          <div class="connected"><span class="eyebrow" data-copy="connected">Linked workspace</span><a id="twin" class="action" target="_blank" rel="noopener noreferrer" hidden data-copy="openTwin">Explore the linked scene ↗</a><p id="twin-note"></p><a id="studio" class="action secondary" target="_blank" rel="noopener noreferrer" data-copy="openStudio">Create in Pixeria ↗</a><p data-copy="keepHere">Your selection stays here while you work in the other tab. Choose the finished asset from the shared library when you return.</p><a id="spaces" class="text-link" target="_blank" rel="noopener noreferrer"></a></div>
           <button id="clear" type="button" class="clear" data-copy="clear">Remove creative from this surface</button>
         </aside>
       </div>
