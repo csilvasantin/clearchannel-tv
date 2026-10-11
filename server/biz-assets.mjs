@@ -6,7 +6,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'index.html', 'app.js', 'inventory-evidence.js', 'expert-commands.js', 'intro.js', 'detail.html',
   'walk.html', 'walk.mjs', 'walk-launch.mjs', 'walk-core.mjs', 'walk.css', 'help/index.html',
   'about.html', 'marketplace.html', 'players/index.html', 'page-language.css',
-  'backoffice.html', 'central-project-backoffice.mjs', 'version.json'
+  'backoffice.html', 'central-project-backoffice.mjs', 'tutorial/index.html',
+  'demo/index.html', 'demo/demo.mjs', 'version.json'
 ]);
 const assets = new Set(BIZ_ASSET_FILES);
 
@@ -15,8 +16,7 @@ export function bizAssetPath(url, method = 'GET') {
   if (!/^(?:www\.)?admira\.biz$/i.test(url.hostname)
       && !/(?:^|\.)clearchannel-tv\.pages\.dev$/i.test(url.hostname)) return '';
   let file = url.pathname === '/' ? 'index.html' : url.pathname.slice(1);
-  if (file === 'help' || file === 'help/') file = 'help/index.html';
-  if (file === 'players' || file === 'players/') file = 'players/index.html';
+  if (/^(help|players|tutorial|demo)\/?$/.test(file)) file = file.replace(/\/$/, '') + '/index.html';
   if (['walk', 'detail', 'about', 'marketplace', 'backoffice'].includes(file)) file += '.html';
   if (!assets.has(file)) return '';
   // Pages' clean URLs serve HTML without exposing the internal namespace in a

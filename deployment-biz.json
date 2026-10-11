@@ -21,9 +21,10 @@
     ]
   },
   "novedades": [
-    "Ayuda, presentación, marketplace y player virtual responden al selector castellano/inglés.",
+    "Ayuda, presentación, marketplace, player virtual y tutorial responden al selector castellano/inglés.",
     "La portada actualiza el título y la descripción con el idioma seleccionado.",
     "Backoffice: navegación, panel central y botón de Google siguen el idioma; marca Admira.biz corregida.",
+    "Detalle y demo: etiquetas, encabezados y títulos localizados; filtros traducidos incluso sin ubicación.",
     "Revisión de enlaces y recursos; publicación aislada de admira.biz con etiqueta de vuelta atrás."
   ]
 }

@@ -143,5 +143,8 @@ test('an uncached exact location resolves via API and never borrows the first ca
     assert.match(missing.nodes.get('location-status').textContent, /requested location is unavailable/);
     assert.equal(missing.requests.length, 0, 'unresolved locations must not request reports for a different store');
     assert.notEqual(missing.nodes.get('name').textContent, 'Test shop');
+    assert.ok(missing.translated.every(node => node.textContent === node.dataset.detailEn), 'static page labels localize even when the requested location is unavailable');
+    missing.events.get('admira:lang')({detail:{lang:'es'}});
+    assert.ok(missing.translated.every(node => node.textContent === node.dataset.detailEs), 'static page labels still follow ENG/ESP while the location is unavailable');
   }
 });

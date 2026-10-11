@@ -88,8 +88,8 @@
   <main>
     <div class="topbar">
       <div class="filters" aria-hidden="true">
-        <span class="filter">Hoy</span>
-        <span class="filter">Todos los sitios</span>
+        <span class="filter" data-detail-es="Hoy" data-detail-en="Today">Hoy</span>
+        <span class="filter" data-detail-es="Todos los sitios" data-detail-en="All sites">Todos los sitios</span>
       </div>
     </div>
 
@@ -127,7 +127,7 @@
 
     <section class="report">
       <div class="panel">
-        <h2>📡 Emisión × Audiencia <small id="rep-loc" style="opacity:.6;font-weight:400"></small></h2>
+        <h2><span data-detail-es="📡 Emisión × Audiencia" data-detail-en="📡 Playback × Audience">📡 Emisión × Audiencia</span> <small id="rep-loc" style="opacity:.6;font-weight:400"></small></h2>
         <p class="evidence-note" style="margin:0 0 12px" data-detail-es="Fuente: registros de /emit y /audience. El origen físico o demo y la coincidencia temporal no se han verificado." data-detail-en="Source: /emit and /audience records. Physical or demo origin and matching timestamps have not been verified.">Fuente: registros de /emit y /audience. El origen físico o demo y la coincidencia temporal no se han verificado.</p>
         <div id="rep-body"><p class="addr" data-detail-es="Cargando registros de emisión y audiencia…" data-detail-en="Loading emission and audience records…">Cargando registros de emisión y audiencia…</p></div>
       </div>
@@ -148,10 +148,10 @@
       <div class="panel campaigns">
         <h2 data-detail-es="Ejemplo ilustrativo de programación" data-detail-en="Illustrative schedule example">Ejemplo ilustrativo de programación</h2>
         <div class="bars">
-          <div class="bar"><span>Lanzamiento verano</span><div class="track"><div class="fill"></div></div><b>12:00</b></div>
+          <div class="bar"><span data-detail-es="Lanzamiento verano" data-detail-en="Summer launch">Lanzamiento verano</span><div class="track"><div class="fill"></div></div><b>12:00</b></div>
           <div class="bar"><span>Back to School</span><div class="track"><div class="fill"></div></div><b>16:00</b></div>
-          <div class="bar"><span>Promos fin de semana</span><div class="track"><div class="fill"></div></div><b>20:00</b></div>
-          <div class="bar"><span>Marca awareness</span><div class="track"><div class="fill"></div></div><b>24:00</b></div>
+          <div class="bar"><span data-detail-es="Promos fin de semana" data-detail-en="Weekend promotions">Promos fin de semana</span><div class="track"><div class="fill"></div></div><b>20:00</b></div>
+          <div class="bar"><span data-detail-es="Marca awareness" data-detail-en="Brand awareness">Marca awareness</span><div class="track"><div class="fill"></div></div><b>24:00</b></div>
         </div>
       </div>
     </section>
@@ -207,6 +207,7 @@ function setText(id, value) {
 }
 
 function renderDetail() {
+  renderEvidenceCopy();
   document.getElementById('detail-content').hidden = !loc;
   setText('location-status', loc ? '' : locationState === 'loading'
     ? T('Consultando la ubicación solicitada…', 'Looking up the requested location…')
@@ -265,7 +266,6 @@ function renderDetail() {
     row.append(text, pill);
     list.append(row);
   });
-  renderEvidenceCopy();
 }
 
 // RTB engine records establish a decision, not physical delivery or payment.
