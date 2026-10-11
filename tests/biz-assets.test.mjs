@@ -13,6 +13,11 @@ test('only admira.biz and its Pages verification host select the corrected asset
     assert.equal(bizAssetPath(new URL('https://' + host + '/')), '/__admira_biz/');
     assert.equal(bizAssetPath(new URL('https://' + host + '/walk?locationId=xtanco-bcn')), '/__admira_biz/walk');
     assert.equal(bizAssetPath(new URL('https://' + host + '/help/')), '/__admira_biz/help/');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/players/')), '/__admira_biz/players/');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/players')), '/__admira_biz/players/');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/about.html')), '/__admira_biz/about');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/marketplace')), '/__admira_biz/marketplace');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/page-language.css')), '/__admira_biz/page-language.css');
     assert.equal(bizAssetPath(new URL('https://' + host + '/expert-commands.js?v=20261010-evidence-1')), '/__admira_biz/expert-commands.js');
     assert.equal(bizAssetPath(new URL('https://' + host + '/intro.js?v=20261010-evidence-1')), '/__admira_biz/intro.js');
   }
@@ -20,6 +25,8 @@ test('only admira.biz and its Pages verification host select the corrected asset
     assert.equal(bizAssetPath(new URL('https://' + host + '/app.js')), '');
     assert.equal(bizAssetPath(new URL('https://' + host + '/version.json')), '');
     assert.equal(bizAssetPath(new URL('https://' + host + '/expert-commands.js')), '');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/about')), '');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/players/')), '');
   }
 });
 test('API/auth and mutations keep their existing routing', () => {

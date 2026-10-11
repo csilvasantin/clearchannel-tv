@@ -1,0 +1,5 @@
+/* Follow the language selected by the shared ENG/ESP control. */
+html[lang="en"] [lang="es"],
+html[lang="es"] [lang="en"] {
+  display: none !important;
+}

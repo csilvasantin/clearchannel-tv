@@ -586,6 +586,18 @@ function applyI18n(){
     langToggle.setAttribute('aria-label', t('lang_toggle_aria'));
   }
   document.documentElement.lang = LANG;
+  const siteName = window.ADMIRA_SITE_BRAND?.name || 'Clear Channel';
+  const pageTitle = `${LANG === 'en' ? 'Commercial spaces map' : 'Mapa de espacios comerciales'} | ${siteName}`;
+  const description = LANG === 'en'
+    ? `Commercial spaces map from ${siteName}. Find a location, view its screens and plan campaigns.`
+    : `Mapa de espacios comerciales de ${siteName}. Busca un punto, consulta sus pantallas y planifica campañas.`;
+  document.title = pageTitle;
+  document.querySelectorAll('meta[property="og:title"], meta[name="twitter:title"]').forEach(el => el.content = pageTitle);
+  document.querySelectorAll('meta[name="description"], meta[property="og:description"], meta[name="twitter:description"]').forEach(el => el.content = description);
+  const locale = document.querySelector('meta[property="og:locale"]');
+  if (locale) locale.content = LANG === 'en' ? 'en_GB' : 'es_ES';
+  const alternateLocale = document.querySelector('meta[property="og:locale:alternate"]');
+  if (alternateLocale) alternateLocale.content = LANG === 'en' ? 'es_ES' : 'en_GB';
 }
 function setLang(lang){
   LANG = (lang === 'en') ? 'en' : 'es';

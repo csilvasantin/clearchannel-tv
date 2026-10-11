@@ -14,11 +14,15 @@
       "El LED comparte el canal horizontal validado; nueva vista Fondo LED y migración conservando las ediciones.",
       "Guía ES/EN, tutorial y contratos MCP actualizados."
     ],
-    "domains": ["www.clearchannel.tv", "www.admira.app", "www.admira.biz"]
+    "domains": [
+      "www.clearchannel.tv",
+      "www.admira.app",
+      "www.admira.biz"
+    ]
   },
   "novedades": [
-    "Xtanco Barcelona distingue demostración, estimaciones del catálogo y conexión sin verificar.",
-    "Buscador, ficha, detalle y previsualización usan los mismos criterios de evidencia.",
-    "La conexión requiere telemetría reciente del dispositivo; ayuda en español e inglés."
+    "Ayuda, presentación, marketplace y player virtual responden al selector castellano/inglés.",
+    "La portada actualiza el título y la descripción con el idioma seleccionado.",
+    "Revisión de enlaces y recursos; publicación aislada de admira.biz con etiqueta de vuelta atrás."
   ]
 }
