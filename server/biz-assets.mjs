@@ -5,7 +5,8 @@ export const BIZ_ASSET_PREFIX = '/__admira_biz';
 export const BIZ_ASSET_FILES = Object.freeze([
   'index.html', 'app.js', 'inventory-evidence.js', 'expert-commands.js', 'intro.js', 'detail.html',
   'walk.html', 'walk.mjs', 'walk-launch.mjs', 'walk-core.mjs', 'walk.css', 'help/index.html',
-  'about.html', 'marketplace.html', 'players/index.html', 'page-language.css', 'version.json'
+  'about.html', 'marketplace.html', 'players/index.html', 'page-language.css',
+  'backoffice.html', 'central-project-backoffice.mjs', 'version.json'
 ]);
 const assets = new Set(BIZ_ASSET_FILES);
 
@@ -16,7 +17,7 @@ export function bizAssetPath(url, method = 'GET') {
   let file = url.pathname === '/' ? 'index.html' : url.pathname.slice(1);
   if (file === 'help' || file === 'help/') file = 'help/index.html';
   if (file === 'players' || file === 'players/') file = 'players/index.html';
-  if (['walk', 'detail', 'about', 'marketplace'].includes(file)) file += '.html';
+  if (['walk', 'detail', 'about', 'marketplace', 'backoffice'].includes(file)) file += '.html';
   if (!assets.has(file)) return '';
   // Pages' clean URLs serve HTML without exposing the internal namespace in a
   // redirect (a direct fetch of an .html asset may redirect to its clean URL).

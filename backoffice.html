@@ -193,7 +193,7 @@ window.ADMIRA_SHELL = {
 <!-- Login gate -->
 <div class="gate" id="gate">
   <div class="gbox">
-    <div class="glogo">CLEAR<span class="dot">·</span>CHANNEL</div>
+    <div class="glogo" data-brand-wordmark>CLEAR<span class="dot">·</span>CHANNEL</div>
     <h2 data-i18n="gate_title">Backoffice</h2>
     <p class="gsub" data-i18n-html="gate_sub">Inicia sesión con Google. Gestión para <b>@admira.com</b> y demos para las cuentas autorizadas de Carlos.</p>
     <div id="g-signin" style="display:flex;justify-content:center;margin:8px 0 4px"></div>
@@ -205,7 +205,7 @@ window.ADMIRA_SHELL = {
 <!-- Lo propio del backoffice dentro del shell: trabajo → ▤ Avanzado, navegación → ☰ Opciones. -->
 <div data-shell-slots hidden>
   <span class="bo-status" id="badge-mode" data-shell-slot="advanced" title="Sync status with omnipublicity-api">CARGANDO…</span>
-  <a href="#central-project-panel" data-shell-slot="advanced">Proyectos · AdmiraNext</a><a href="https://www.admiranext.com/xpace/manage" target="_blank" rel="noopener" data-shell-slot="advanced">Gestionar locales ↗</a>
+  <a href="#central-project-panel" data-shell-slot="advanced" data-i18n="nav_central">Proyectos · AdmiraNext</a><a href="https://www.admiranext.com/xpace/manage" target="_blank" rel="noopener" data-shell-slot="advanced" data-i18n="nav_manage_venues">Gestionar locales ↗</a>
   <a href="target/" data-shell-slot="advanced" data-i18n="nav_target">Target Model</a>
   <a href="#demo-access" id="nav-demos" data-shell-slot="advanced" hidden data-i18n="nav_demos">Mis demos</a>
   <a href="../xpace-os/" data-shell-slot="advanced">Xpace OS</a>
@@ -213,7 +213,17 @@ window.ADMIRA_SHELL = {
   <a href="about.html" data-shell-slot="options" data-i18n="nav_rtb">Concepto RTB</a>
 </div>
 
-<section class="demo-access" id="central-project-panel" aria-labelledby="central-project-heading"><h2 id="central-project-heading">Proyectos y locales · AdmiraNext</h2><p>Consulta los proyectos autorizados y sus gemelos desde la gestión central de usuarios. / Read permitted projects and twins from central user management.</p><button id="central-connect" type="button">Conectar con AdmiraNext / Connect</button> <button id="central-refresh" type="button">Actualizar / Refresh</button> <button id="central-disconnect" type="button">Desconectar / Disconnect</button><p id="central-status" role="status"></p><div id="central-projects" class="demo-cards"></div><a href="https://www.admiranext.com/xpace/manage" target="_blank" rel="noopener">Gestionar proyectos, locales y permisos / Manage projects, venues and permissions ↗</a> · <a href="/help/central-projects.md">Contrato API ES / EN ↗</a></section>
+<section class="demo-access" id="central-project-panel" aria-labelledby="central-project-heading">
+  <h2 id="central-project-heading" data-i18n="central_title">Proyectos y locales · AdmiraNext</h2>
+  <p data-i18n="central_intro">Consulta los proyectos autorizados y sus gemelos desde la gestión central de usuarios.</p>
+  <button id="central-connect" type="button" data-i18n="central_connect">Conectar con AdmiraNext</button>
+  <button id="central-refresh" type="button" data-i18n="central_refresh">Actualizar</button>
+  <button id="central-disconnect" type="button" data-i18n="central_disconnect">Desconectar</button>
+  <p id="central-status" role="status"></p>
+  <div id="central-projects" class="demo-cards"></div>
+  <a href="https://www.admiranext.com/xpace/manage" target="_blank" rel="noopener" data-i18n="central_manage">Gestionar proyectos, locales y permisos ↗</a> ·
+  <a href="/help/central-projects.md" data-i18n="central_api">Contrato API ES / EN ↗</a>
+</section>
 <section class="demo-access" id="demo-access" hidden aria-labelledby="demo-title">
   <h2 id="demo-title" data-i18n="demo_title">Demos JTI y Alsea</h2>
   <p id="demo-account"></p>
@@ -382,6 +392,10 @@ window.ADMIRA_SHELL = {
 const I18N = {
   es: {
     bo_sub:'/ backoffice',
+    nav_central:'Proyectos · AdmiraNext', nav_manage_venues:'Gestionar locales ↗',
+    central_title:'Proyectos y locales · AdmiraNext', central_intro:'Consulta los proyectos autorizados y sus gemelos desde la gestión central de usuarios.',
+    central_connect:'Conectar con AdmiraNext', central_refresh:'Actualizar', central_disconnect:'Desconectar',
+    central_manage:'Gestionar proyectos, locales y permisos ↗', central_api:'Contrato API ES / EN ↗',
     nav_demos:'Mis demos', demo_title:'Demos JTI, Alsea y Cafebrería', demo_cafebreria:'Cafebrería · Proyecto independiente', demo_map:'Ver ficha', demo_tour:'Tour DooH', demo_twin:'Ver Gemelo Digital ↗', demo_note:'Escenarios de demostración. Abrir el gemelo no confirma emisión en dispositivos físicos.', label_xpace:'Xpacio asociado', xpace_note:'URL del Xpacio en XpaceOS. Déjala vacía para ocultar el botón de gemelo digital.',
     gate_title:'Backoffice',
     gate_sub:'Inicia sesión con Google. Gestión para <b>@admira.com</b> y demos para las cuentas autorizadas de Carlos.',
@@ -426,6 +440,10 @@ const I18N = {
   },
   en: {
     bo_sub:'/ backoffice',
+    nav_central:'Projects · AdmiraNext', nav_manage_venues:'Manage venues ↗',
+    central_title:'Projects and venues · AdmiraNext', central_intro:'View authorized projects and their digital twins through central user management.',
+    central_connect:'Connect with AdmiraNext', central_refresh:'Refresh', central_disconnect:'Disconnect',
+    central_manage:'Manage projects, venues and permissions ↗', central_api:'API contract ES / EN ↗',
     nav_demos:'My demos', demo_title:'JTI, Alsea and Cafebrería demos', demo_cafebreria:'Cafebrería · Independent project', demo_map:'View location', demo_tour:'DooH Tour', demo_twin:'View Digital Twin ↗', demo_note:'Demo scenarios. Opening the twin does not confirm playback on physical devices.', label_xpace:'Linked Xpace', xpace_note:'Xpace URL on XpaceOS. Leave empty to hide the digital twin button.',
     gate_title:'Backoffice',
     gate_sub:'Sign in with Google. Management for <b>@admira.com</b> and demos for Carlos’s authorized accounts.',
@@ -491,6 +509,7 @@ function setLang(lang){
   try { localStorage.setItem(BRAND_LANGUAGE_KEY, LANG); } catch(_){}
   applyI18n();
   renderDemoAccess();
+  renderGoogleButton();
   try { if (typeof renderList === 'function') renderList(); } catch(_){}
   try { if (typeof refreshBadge === 'function') refreshBadge(); } catch(_){}
 }
@@ -583,6 +602,16 @@ async function onGoogleCredential(resp) {
   }
 }
 
+function renderGoogleButton() {
+  if (!(window.google && google.accounts && google.accounts.id)) return;
+  const host = document.getElementById('g-signin');
+  if (!host) return;
+  try {
+    host.replaceChildren();
+    google.accounts.id.renderButton(host, { theme:'filled_blue', size:'large', shape:'pill', text:'signin_with', logo_alignment:'center', width:260, locale:LANG });
+  } catch (_) { /* GIS no disponible */ }
+}
+
 function initGoogleGate() {
   if (!(window.google && google.accounts && google.accounts.id)) return;
   try {
@@ -592,8 +621,7 @@ function initGoogleGate() {
       auto_select: true,
       cancel_on_tap_outside: false,
     });
-    const host = document.getElementById('g-signin');
-    if (host) google.accounts.id.renderButton(host, { theme:'filled_blue', size:'large', shape:'pill', text:'signin_with', logo_alignment:'center', width:260 });
+    renderGoogleButton();
     if (!isAuthed()) { try { google.accounts.id.prompt(); } catch {} }
   } catch (e) { /* GIS no disponible */ }
 }
@@ -1382,6 +1410,6 @@ if (_badgeEl) _badgeEl.textContent = t('badge_loading');
 setLang(LANG);
 </script>
 
-<script type="module" src="/central-project-backoffice.mjs?v=central-3"></script>
+<script type="module" src="/central-project-backoffice.mjs?v=20261011-audit-2"></script>
 </body>
 </html>
