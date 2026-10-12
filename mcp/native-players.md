@@ -76,6 +76,8 @@ El Fold reproduce los medios de la selección. El Watch usa una instantánea loc
 
 **Estado de esta revisión:** las tres órdenes (`/demo android`, `/demo android Fold8`, `/demo android watch`) se ejecutaron mediante el puente real con la playlist Starbucks. Se verificó la misma importación en los destinos seleccionados y se conservaron el manifiesto y la configuración de sincronía de los players `.dev`. La QA usó `--no-present`, sin abrir ventanas. Versión web __ADMIRANEXT_VERSION__; estas pruebas de demo virtual son distintas de las mediciones físicas r9 anteriores.
 
+Fuentes de las demos virtuales (independientes de la beta de sincronía anterior): Android `cf5feb5b13445b41ed3552e2464885964c122f5b`; puente Mac `9420d2e233e2683581878a6ac3244294cdc882d1`. Las apps `.demo` tienen code1, `v.12.10.2026.r1.15:56`; [CI Android de las demos correcto](https://github.com/csilvasantin/admira-signage-app/actions/runs/38259980115). Las versiones `.dev` y las métricas físicas de sincronía conservan sus fuentes propias descritas arriba.
+
 ## MCP: documentación frente a ejecución
 
 Esta página documenta el contrato; no añade herramientas al servidor MCP. Descubre `tools/list` en el endpoint vivo antes de llamar una herramienta. Un comando de Experto no es por sí solo una herramienta MCP. Los métodos autenticados y SSE conservan el servidor existente.
