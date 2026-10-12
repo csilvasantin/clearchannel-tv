@@ -1,3 +1,4 @@
+import {clearChannelNativePath,CC_NATIVE_PREFIX} from './server/native-clear-channel.mjs';
 import { handleOrders } from './server/orders.mjs';
 import { handleDemoSession } from './server/demo-session.mjs';
 import {handleGlobalDemo} from './server/global-demo.mjs';
@@ -209,8 +210,10 @@ export default {
     }
     // Internal release assets are selected by Host, never by a visitor-supplied
     // prefix. Keep other customer domains on their preserved release.
-    if (url.pathname.startsWith(BIZ_ASSET_PREFIX + '/')) return new Response('Not found', {status:404});
-    var assetPath = bizAssetPath(url, request.method);
+    let publicPath=url.pathname;
+    try {publicPath=decodeURIComponent(publicPath);} catch (_) {}
+    if ([BIZ_ASSET_PREFIX,CC_NATIVE_PREFIX].some(prefix=>publicPath===prefix||publicPath.startsWith(prefix+'/'))) return new Response('Not found', {status:404});
+    var assetPath = bizAssetPath(url, request.method) || clearChannelNativePath(url, request.method);
     var assetRequest = request;
     if (assetPath) {
       var assetUrl = new URL(request.url);

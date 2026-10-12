@@ -1238,7 +1238,7 @@
     "doc": "https://www.admira.biz/mcp/native-players.md",
     "help": "https://www.admira.biz/help/#native-players",
     "updated": "2026-10-12",
-    "mission": "DCL-a429dbe77fb06903dcf19abc",
+    "mission": "DCL-4fde5a5d6275b52660b49e8e",
     "sync_mission": "DCL-db715cdd09c9d69097f0bbb6",
     "platforms": [
       "Android Fold native Media3",
@@ -1256,7 +1256,7 @@
       "https://www.admira.biz/mcp/player-sync-evidence/reapertura.json",
       "https://www.admira.biz/mcp/player-sync-evidence/por-pieza.json"
     ],
-    "demo_commands_status": "real bridge QA passed for all three commands with Starbucks; documentation released in v.12.10.2026.r2.16:02",
+    "demo_commands_status": "five-pillar release v.12.10.2026.r3.16:20",
     "demo_commands": {
       "both": "/demo android",
       "fold": "/demo android Fold8",
@@ -1270,10 +1270,17 @@
       "preservation": "physical .dev playlist and sync configuration verified unchanged"
     },
     "demo_tutorial": {
-      "url": "https://api.yokup.com/media/fleet/69c96fb629d6b4f8.mp4",
-      "sha256": "5415f88f677be93a01ba46f8396f1177c139f6aacf86502d5cc2609d1de4de45",
+      "url": "https://api.yokup.com/media/fleet/dddb19c869cc0feb.mp4",
+      "sha256": "2ad8e76ef4d3bedcbf8e1a44ecd4fdb1cbd04d60deb464f4a9aac38d9e34f9b0",
       "kind": "verified explanatory animation, not a screen recording"
     },
-    "evidence_bundle": "https://www.admira.biz/mcp/player-sync-evidence/evidencias.zip"
+    "evidence_bundle": "https://www.admira.biz/mcp/player-sync-evidence/evidencias.zip",
+    "pillars": [
+      "admira.biz",
+      "pixeria.com",
+      "xpaceos.com",
+      "yokup.com",
+      "clearchannel.tv"
+    ]
   }
 }

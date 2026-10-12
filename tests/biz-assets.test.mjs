@@ -1,3 +1,4 @@
+import {clearChannelNativePath,CC_NATIVE_PREFIX,CC_NATIVE_FILES} from '../server/native-clear-channel.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { bizAssetPath, BIZ_ASSET_FILES } from '../server/biz-assets.mjs';
@@ -48,6 +49,9 @@ test('the worker serves JS/version by host and denies direct internal paths', as
   assert.equal(await (await worker.fetch(new Request('https://www.clearchannel.tv/app.js'), env)).text(), '/app.js');
   assert.equal(await (await worker.fetch(new Request('https://admira.biz/version.json'), env)).text(), '/__admira_biz/version.json');
   assert.equal((await worker.fetch(new Request('https://www.clearchannel.tv/__admira_biz/app.js'), env)).status, 404);
+  for(const prefix of ['__admira_biz','__admira_cc_native','%5f%5fadmira_biz','%5f%5fadmira_cc_native']) {
+    for(const suffix of ['','/','/index.html']) assert.equal((await worker.fetch(new Request('https://www.clearchannel.tv/'+prefix+suffix),env)).status,404);
+  }
 });
 test('the built release serves corrected biz assets while preserving the other domains', async () => {
   const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -69,6 +73,11 @@ test('the built release serves corrected biz assets while preserving the other d
       const baseline = execFileSync('git', ['show', config.preservedRevision + ':' + file], {cwd:root, encoding:'utf8'});
       assert.equal(readFileSync(join(output, file), 'utf8'), baseline.replaceAll('__ADMIRANEXT_VERSION__', config.preservedVersion.version), `preserved ${file}`);
     }
+    for (const file of ['index.html','help/index.html','mcp/index.html']) {
+      const text=readFileSync(join(output,'__admira_cc_native',file),'utf8');
+      assert.ok(!/galaxy-shell\.js\?v=20261006/.test(text), 'modified loader cache pin is fresh: '+file);
+      if (text.includes('galaxy-shell.js')) assert.ok(text.includes('galaxy-shell.js?v=20261012-android-five-1'));
+    }
     const baselineHeaders = execFileSync('git', ['show', config.preservedRevision + ':_headers'], {cwd:root, encoding:'utf8'});
     const builtHeaders = readFileSync(join(output, '_headers'), 'utf8');
     assert.ok(builtHeaders.startsWith(baselineHeaders), 'existing domain cache rules are preserved');
@@ -86,8 +95,18 @@ test('the built release serves corrected biz assets while preserving the other d
       for (const [route, file] of routes) {
         const response = await worker.fetch(new Request('https://' + host + route), env);
         assert.equal(response.status, 200, host + route);
-        assert.equal(await response.text(), readFileSync(join(output, scoped ? '__admira_biz' : '', file), 'utf8'), host + route);
+        assert.equal(await response.text(), readFileSync(join(output, scoped ? '__admira_biz' : host==='www.clearchannel.tv' && CC_NATIVE_FILES.includes(file) ? '__admira_cc_native' : '', file), 'utf8'), host + route);
       }
     }
   } finally { rmSync(output, {recursive:true, force:true}); }
+});
+
+test('ClearChannel native overlay is limited to authorized hosts, methods and files',()=>{
+ for(const host of ['clearchannel.tv','www.clearchannel.tv']){
+  assert.equal(clearChannelNativePath(new URL('https://'+host+'/suite/demo-android.mjs')),CC_NATIVE_PREFIX+'/suite/demo-android.mjs');
+  assert.equal(clearChannelNativePath(new URL('https://'+host+'/mcp/native-players.md')),CC_NATIVE_PREFIX+'/mcp/native-players.md');
+  for(const path of ['/app.js','/api/orders','/auth/agente','/backoffice','/walk'])assert.equal(clearChannelNativePath(new URL('https://'+host+path)), '');
+  assert.equal(clearChannelNativePath(new URL('https://'+host+'/'), 'POST'),'');
+ }
+ for(const host of ['admira.biz','admira.app','fakeclearchannel.tv.example','xpaceos.com'])assert.equal(clearChannelNativePath(new URL('https://'+host+'/')),'');
 });

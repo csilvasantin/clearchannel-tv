@@ -1,3 +1,4 @@
+import {buildNativeClearChannel} from './build-native-clear-channel.mjs';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, copyFileSync, unlinkSync } from 'node:fs';
 import { dirname, resolve, join } from 'node:path';
@@ -39,6 +40,8 @@ const headersPath = join(out, '_headers');
 writeFileSync(headersPath, readFileSync(headersPath, 'utf8') + '\n' + BIZ_ASSET_PREFIX + '/version.json\n  Cache-Control: no-store\n');
 copyFileSync(join(root, '_worker.js'), join(out, '_worker.js'));
 copyFileSync(join(root, 'server/biz-assets.mjs'), join(out, 'server/biz-assets.mjs'));
+copyFileSync(join(root, 'server/native-clear-channel.mjs'), join(out, 'server/native-clear-channel.mjs'));
+buildNativeClearChannel({root,out,config,revision,agent,machine});
 const scoped = join(out, BIZ_ASSET_PREFIX.slice(1));
 for (const file of BIZ_ASSET_FILES.filter(file => file !== 'version.json')) {
   mkdirSync(dirname(join(scoped, file)), {recursive:true});

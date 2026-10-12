@@ -24,6 +24,11 @@
     "Players nativos: /demo android, /demo android Fold8 y /demo android watch desde Experto.",
     "Help y MCP conservan guía, evidencias, versiones y minitutoriales de iOS, Android y sincronía.",
     "Demo Wear OS aislada: imágenes y vídeos silenciosos; audios como título. Fold8 es perfil compatible sin firmware Samsung.",
-    "Publicación aislada de admira.biz; los clones conservan su revisión."
-  ]
+    "Tres comandos y documentación de players nativos compartidos en los cinco pilares; ClearChannel conserva el resto de su revisión."
+  ],
+  "nativeClearChannel": {
+    "enabled": true,
+    "version": "v.12.10.2026.r1.16:20",
+    "authorization": "Carlos explicitly authorized this improvement in all five pillars on 12-Oct-2026; exception limited to native Android demos and Help/MCP."
+  }
 }
