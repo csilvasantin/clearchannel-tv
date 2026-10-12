@@ -225,28 +225,26 @@
     renderRoutines();
     return result;
   }
-  function run(command, {echo = true} = {}) {
-    const text = String(command || '').trim();
-    if (!text) return;
-    return record(text, C.execute(text, ctx, lang()), echo);
+  function suiteAction(engine,def){
+    const attrs=(def.attributes||[]).map(id=>Object.assign({},C.ATTRIBUTES[id],{key:id,required:(def.requires||[]).includes(id),normalize:value=>{if(C.ATTRIBUTES[id].values){const client=C.resolveClient(value);if(!client)throw Error('Cliente no reconocido: '+value);return client.id;}if(C.ATTRIBUTES[id].brands){const brand=C.parseBrand(value);if(!brand)throw Error('Marca no válida');return brand;}return value;}}));
+    const action={name:def.id,alias:def.aliases||[],desc:[def.es||def.id,def.en||def.es||def.id],attributes:attrs,run:(args,output,command)=>{
+      const parsed={ok:true,verb:def,args,raw:command.raw,command:command.raw};
+      let result;if(def.map&&away){ctx.handoff(command.raw);result={ok:true,lines:['Abriendo mapa…']};}else result=def.run(args,ctx,lang())||{ok:true,lines:[]};
+      return record(command.raw,Object.assign({},result,{parsed,command:command.raw}),false);
+    }};
+    if(def.id==='demo'){
+      engine.registerAdapter({id:'biz-map-demo',demos:[{name:'mapa',run:(args,output)=>action.run({cliente:args.join(' ')},output,{raw:'/demo mapa '+args.join(' ')})}].concat(C.CLIENTS.map(client=>({name:client.id,run:(args,output)=>action.run({cliente:client.id},output,{raw:'/demo '+client.id})})))});
+    }else engine.registerAdapter({id:'biz-action-'+def.id,verbs:[action]});
   }
-  // Portada: ejecuta la orden que otra página del shell dejó pendiente. Mientras
-  // la demo o el selector de circuitos aún cargan, reintenta sin ensuciar la salida.
-  function runPending() {
-    let command = null;
-    try { command = C.takePending(root.sessionStorage); } catch (_) {}
-    if (!command) return;
-    const deadline = Date.now() + 20000;
-    const attempt = () => {
-      let retry = false;
-      const watch = fn => (...args) => { const r = fn(...args); if (r && r.ok === false && (r.reason === 'loading' || r.reason === 'not_ready')) retry = true; return r; };
-      const probe = Object.assign({}, ctx, {demo: watch(ctx.demo), circuit: watch(ctx.circuit)});
-      const result = C.execute(command, probe, lang());
-      if (retry && Date.now() < deadline) { setTimeout(attempt, 400); return; }
-      record(command, result);
-    };
-    attempt();
+  document.addEventListener('admira:verb-registered',event=>{if(root.AdmiraExperto)suiteAction(root.AdmiraExperto,event.detail);});
+  function connectSuiteCommands(engine){engine.registerAdapter({id:'biz'});C.VERBS.forEach(def=>suiteAction(engine,def));}
+  (root.AdmiraCommandAdapters=root.AdmiraCommandAdapters||[]).push(connectSuiteCommands);
+  if(root.AdmiraExperto)connectSuiteCommands(root.AdmiraExperto);
+  function run(command,{echo=true}={}){
+    if(root.AdmiraExperto)return root.AdmiraExperto.exec(command,log,{echo});
+    print('', ['Motor de comandos cargando. Inténtalo de nuevo.'],false);
   }
+  function runPending(){let command;try{command=C.takePending(root.sessionStorage);}catch(_){}if(command){if(root.AdmiraExperto)run(command);else root.addEventListener('admira:commands-ready',()=>run(command),{once:true});}}
   if (!away) {
     if (document.readyState === 'complete') setTimeout(runPending, 0);
     else root.addEventListener('load', runPending, {once: true});
@@ -375,3 +373,5 @@
   render(); translate();
   root.AdmiraExpert = Object.freeze({run, layout: () => normalizeLayout(state)});
 })(typeof window === 'undefined' ? globalThis : window);
+
+;(function(){if(!document.querySelector('script[src*="/suite/experto.js"]')){var s=document.createElement("script");s.src="https://www.admiranext.com/suite/loader.js?v=20261012-unified-1";document.head.appendChild(s);}})();

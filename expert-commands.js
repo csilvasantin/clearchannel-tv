@@ -268,6 +268,7 @@
       es: String(def.es || def.en || ''), en: String(def.en || def.es || ''), run: def.run};
     VERBS.push(verb);
     for (const alias of [id, ...aliases]) VERB_KEYS.set(key(alias), verb);
+    if(typeof document!=='undefined')document.dispatchEvent(new CustomEvent('admira:verb-registered',{detail:verb}));
     return verb;
   }
 
