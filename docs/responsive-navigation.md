@@ -56,3 +56,6 @@ EN: The version appears at the bottom of Options and disappears when collapsed. 
 Shared loader / Cargador: https://www.admiranext.com/assets/sello-novedades.js · /version.json · No new MCP tools / Sin herramientas MCP nuevas.
 
 Tutorial ES: ☰ Opciones → sello inferior → pasar el ratón → plegar Opciones. EN: ☰ Options → bottom stamp → hover → collapse Options.
+
+
+`/idioma` alterna ESP/ENG; `/idioma ESP` y `/idioma ENG` eligen el idioma. El modo nativo comparte `/demo ios` y `/demo android [Fold8|watch]` y requiere proyecto activo, puente Mac y simuladores/emuladores. Ver `/help/#native-players`.

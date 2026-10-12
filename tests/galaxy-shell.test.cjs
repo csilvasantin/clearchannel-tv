@@ -200,6 +200,7 @@ test('pages can register their own verbs without clobbering shared ones or share
 // (que lo trae en línea) o figura aquí con el motivo concreto por el que queda fuera.
 // Una página nueva que no cargue el shell hace fallar este test.
 const SHELL_EXCEPTIONS = {
+  'tools/biz-player-mcp/assets/hub.html': 'Instantánea del hub MCP existente servida por un Worker documental independiente; conserva su navegación y servidor originales, fuera del shell de Pages.',
   'backoffice/index.html': 'Redirección inmediata a /backoffice.html (location.replace + meta refresh); no pinta nada.',
   'presentation/cc/index.html': 'Redirección inmediata a /presentation/ (location.replace + meta refresh); no pinta nada.',
   'wututu/index.html': 'Bundle Vite compilado fuera de este repo: demo de contador de audiencias para iPad que se proyecta en un MUPI a pantalla completa (100vh, overflow oculto); una barra encima cortaría el escenario y el HTML se regenera en cada build.',

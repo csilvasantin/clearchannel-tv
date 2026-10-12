@@ -71,6 +71,8 @@
 <body>
 <!-- Shell cuadrático (FLT-101311): atajos a las secciones en ▤ Avanzado. -->
 <div data-shell-slots hidden>
+  <a href="#native-players" data-shell-slot="advanced" data-shell-text-es="Players nativos" data-shell-text-en="Native players">Players nativos</a>
+
   <a href="#pasos" data-shell-slot="advanced" data-shell-text-es="3 pasos" data-shell-text-en="3 steps">3 pasos</a>
   <a href="#piezas" data-shell-slot="advanced" data-shell-text-es="Las piezas" data-shell-text-en="The pieces">Las piezas</a>
   <a href="#bucle" data-shell-slot="advanced" data-shell-text-es="Bucle agéntico" data-shell-text-en="Agentic loop">Bucle agéntico</a>
@@ -341,5 +343,25 @@
 }());
 </script>
 <section id="demo-engine"><h2>Demos · motor compartido / Shared engine</h2><p><code>/demo lista</code> · <code>/demo editor</code> · <code>/demo studio|store|tv|app|biz</code> · <code>/demo ios [iphone|watch] [playlist|#tag]</code></p><p>El editor publica para las cinco aplicaciones y sus páginas interiores. / The editor publishes across all five applications and their interior pages.</p><p><a href="https://www.admiranext.com/mcp/DEMO-ENGINE.md">Contrato ES/EN / ES/EN contract</a></p></section>
+<!-- Los comandos nativos comparten el selector de idioma del modo Experto. -->
+<section id="native-players" style="max-width:960px;margin:24px auto;padding:24px;border:1px solid var(--line2,#d7e2c8);border-radius:14px;overflow-wrap:anywhere">
+<style>#native-players p{margin:14px 0}#native-players a{color:var(--acc,#78f3ff)}#native-players code{white-space:normal}</style>
+<h2><span lang="es">Players nativos · Fold, Watch e iPhone</span><span lang="en">Native players · Fold, Watch and iPhone</span></h2>
+<p><span lang="es"><code>/idioma</code> alterna ESP/ENG; <code>/idioma ESP</code> y <code>/idioma ENG</code> eligen el idioma.</span><span lang="en"><code>/idioma</code> toggles ESP/ENG; <code>/idioma ESP</code> and <code>/idioma ENG</code> select the language.</span></p>
+<p lang="es">En ⌘ Experto: <code>/demo android</code> abre los dos virtuales; <code>/demo android Fold8</code> sólo el plegable y <code>/demo android watch</code> sólo el reloj. Puedes añadir <code>playlist NOMBRE_O_ID</code> o <code>#tag</code>. Requiere el puente del Mac y los emuladores de la flota; las tres órdenes verificadas con el puente real; versión web __ADMIRANEXT_VERSION__.</p>
+<p lang="en">In ⌘ Expert, <code>/demo android</code> selects both virtual devices; <code>/demo android Fold8</code> selects the foldable and <code>/demo android watch</code> the watch. Append <code>playlist NAME_OR_ID</code> or <code>#tag</code>. The installed Mac bridge and fleet emulators are required; all three commands passed real bridge QA; web version __ADMIRANEXT_VERSION__.</p>
+<p lang="es">Fold8 es un alias de Pixel Fold Android 16, sin Samsung One UI. Las apps de demo son independientes de los players físicos. El Watch muestra imágenes y vídeos silenciados; los audios aparecen como título, sin sonido. Esta demo no utiliza el enlace privado del visor ni activa sincronía de audio.</p>
+<p lang="en">Fold8 is a Pixel Fold Android 16 alias without Samsung One UI. Demo apps are isolated from physical players. The Watch shows images and muted videos; audio items are titles without sound. This demo uses neither the private viewer link nor a shared audio clock.</p>
+<p lang="es">En Admira Fold: <b>Configurar → ID de pantalla → Guardar y reproducir</b>. <b>Demo sin conexión</b> prueba los medios incluidos; <b>Reintentar</b> vuelve a cargar. iPhone y Fold mantienen despierta la pantalla mientras están activos y adaptan el contenido a la orientación real. Salir, bloquear, pausar y silenciar sigue permitido.</p>
+<p lang="en">In Admira Fold: <b>Configure → screen ID → Save and play</b>. The offline demo tests bundled media; Retry reloads. iPhone and Fold keep the screen awake while active and adapt content to the actual window orientation. Exit, lock, pause and mute remain available.</p>
+<p lang="es">La beta de sincronía física Starbucks comparte cuatro audios y un reloj: ciclo editorial de 610 s, con cuñas de 8 s sobre ficheros de unos 22 s. Prueba final: 174 pares, p95 global 72,04 ms de posiciones software; cuña 3: p95 165,96 ms con 6 pares; pieza 2: máximo 229,53 ms. Reapertura: 60 pares, p95 65,52 ms, máximo 270,39 ms incluido el arranque. No son milisegundos acústicos garantizados.</p>
+<p lang="en">The separate physical Starbucks sync beta shares four audio items and a clock: a 610 s editorial cycle with 8 s slots cut from roughly 22 s files. Final transport results include 174 pairs, global p95 72.04 ms; slot 3 p95 165.96 ms from 6 pairs and item 2 maximum 229.53 ms. Reopening: 60 pairs, p95 65.52 ms, maximum 270.39 ms including startup. These are software positions, not guaranteed acoustic precision.</p>
+<p><a href="https://api.yokup.com/media/fleet/69c96fb629d6b4f8.mp4"><span lang="es">Minitutorial oficial: comandos Android</span><span lang="en">Official tutorial: Android commands</span></a></p>
+<p lang="es">Las tres órdenes se ejecutaron mediante el puente real con la playlist Starbucks; la importación conservó los players físicos y su configuración de sincronía. El comando humano abre el panel en segundo plano; la prueba automatizada sin presentación no abre ventanas.</p>
+<p lang="en">All three commands ran through the real bridge with the Starbucks playlist; physical players and their sync configuration were preserved. A human command opens the panel in the background; QA without presentation opens no windows.</p>
+<p><a href="/mcp/native-players.md"><span lang="es">Guía, MCP y pruebas completas</span><span lang="en">Guide, MCP and full evidence</span></a> · <a href="https://api.yokup.com/media/fleet/9efeb654b5ab0dbe.mp4"><span lang="es">Minitutorial oficial de sincronía</span><span lang="en">Official sync tutorial</span></a></p>
+<p lang="es">Tutorial exportado y verificado: animación explicativa, no grabación de pantalla. «Los oigo juntos» fue la aceptación cualitativa de Carlos en Android r8; la medición final corresponde a r9. No hay captura acústica calibrada. La guía conserva el desglose y los rechazos.</p>
+<p lang="en">Verified explanatory animation, not a screen recording. Carlos’s qualitative listening acceptance concerned Android r8; final transport measurements use r9. No calibrated acoustic recording was made. The guide preserves slot statistics and rejected observations.</p>
+</section>
 </body>
 </html>

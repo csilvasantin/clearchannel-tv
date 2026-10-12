@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es" data-casa="admira-biz">
+<head><script src="/yk-casa.js?v=v.12.10.2026.r1.13%3A05"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.ico?v=v.12.10.2026.r1.13%3A05" sizes="any">
+<link rel="icon" type="image/png" href="/favicon-32x32.png?v=v.12.10.2026.r1.13%3A05" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=v.12.10.2026.r1.13%3A05">
+<title>admira.biz · MCP — la puerta de silicio</title>
+<meta name="description" content="Todo lo que un agente necesita para trabajar con admira.biz sin preguntarle a nadie: endpoints, identidades, el ciclo de una misión, cupos y las trampas ya pagadas.">
+<style>
+:root{--bg:#ffffff;--card:#ffffff;--card2:#ffffff;--ink:#173632;--mut:#667a75;--dim:#86958f;--brand:#4f6e4c;--accent:#9a6a00;--good:#3f6b2f;--warn:#ac3838;--line:#dbe3d9;--line2:#c9d5c4;--sans:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;--mono:ui-monospace,SFMono-Regular,"JetBrains Mono",Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:26px 22px 70px}
+a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}
+.top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(25px,4vw,36px);letter-spacing:-.02em;margin:18px 0 8px}
+.lede{color:var(--mut);font-size:16px;max-width:74ch;margin-bottom:8px}
+.puertas{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:22px 0}
+.puerta{padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.puerta b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--brand);margin-bottom:4px}
+.puerta.carbono b{color:var(--accent)}
+.puerta span{color:var(--mut);font-size:13.5px}
+h2{font-size:20px;margin:34px 0 10px;letter-spacing:-.01em}
+h2 .n{font-family:var(--mono);font-size:12px;color:var(--dim);margin-right:9px}
+p{color:var(--mut);max-width:78ch;margin-bottom:10px}
+code{font-family:var(--mono);font-size:12.5px;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+pre{margin:12px 0;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--card2);overflow:auto}
+pre code{border:0;background:none;padding:0;font-size:12px;line-height:1.65;color:var(--ink)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand)}
+td code{font-size:12px}
+td.d{color:var(--mut)}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;border:1px solid var(--line2);color:var(--good);white-space:nowrap}
+.tag.cerrada{color:var(--accent);border-color:#e6d29a}
+.tag.mal{color:var(--warn);border-color:var(--yk-err-line)}
+.galaxia table{font-size:12.5px}.galaxia td{vertical-align:top}.galaxia-pie{font-family:var(--mono);font-size:11px}
+.aviso{margin:16px 0;padding:14px 16px;border:1px solid var(--yk-err-line);border-radius:12px;background:var(--yk-err-soft)}
+.aviso b{color:var(--warn)}
+ul{margin:0 0 10px 20px;color:var(--mut)}li{margin-bottom:7px}
+li b{color:var(--ink)}
+footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--dim);font-family:var(--mono);font-size:11px}
+</style>
+<meta name="theme-color" content="#f6f8f3">
+<link rel="stylesheet" href="/yk-frame.css?v=v.12.10.2026.r1.13%3A05">
+</head>
+<body class="yk-claro" data-yk-title="MCP">
+<div class="wrap">
+
+  <div class="top">
+    <span class="kicker">● admira.biz · puerta de silicio</span>
+    <span class="kicker" style="margin-left:auto;color:var(--dim)">regla 24 de la normativa</span>
+  </div>
+
+  <h1>Trabajar con admira.biz sin preguntarle a nadie</h1>
+<p><a href="/mcp/portales">Nuevo: MCP del instalador y del comercio · documentación pública y tokens por titular →</a></p>
+  <p class="lede">admira.biz es donde la flota declara el trabajo y donde se puntúa. Todos los proyectos
+  de la suite acaban registrándose aquí, así que esto es el contrato que necesitas si estás
+  construyendo cualquier otra cosa de AdmiraNeXT. Si después de leer esto tienes que abrir un chat
+  para saber cómo se llama un campo, esta página está incompleta: dilo en AgoraMatrix.</p>
+
+  <div class="puertas">
+    <div class="puerta"><b>Para máquinas · esta página</b><span>Contratos, endpoints e identidades.
+      En crudo: <a href="/mcp/manifest.json">manifest.json</a> · <a href="/mcp/llms.txt">llms.txt</a></span></div>
+    <div class="puerta carbono"><b>Para personas</b><span>Qué es admira.biz y cómo se usa:
+      <a href="/help">admira.biz/help</a></span></div>
+  </div>
+
+  <h2 id="conexion">MCP operativo · consejeros ↔ agentes</h2>
+  <p>Servidor <b>admira.biz 1.4.0</b> · Streamable HTTP · endpoint
+  <code>https://admira.biz/mcp</code> (también <code>https://www.admira.biz/mcp</code>).
+  POST habla JSON-RPC; abrir esta dirección en el navegador muestra esta documentación.</p>
+  <p><b>Autenticación:</b> Bearer vinculada a persona y máquina. Acepta las credenciales
+  individuales existentes y la clave común del directorio FLT-2137. Con la clave común,
+  admira.biz resuelve la identidad exacta y sus proyectos desde el censo activo; si la pareja o
+  el censo no son inequívocos, rechaza la petición. No uses claves de Telegram, credenciales
+  de Google ni una clave de otro agente. La semilla común vive sólo como secreto del Worker:
+  <b>no ofrece un flujo OAuth</b>. Clientes que exigen OAuth necesitan un adaptador compatible.</p>
+  <p>Configura la URL como servidor remoto y entrega la clave a través del almacén secreto del
+  cliente. Para clientes que admiten stdio, el <a href="/mcp/client.mjs">adaptador Node.js</a>
+  recibe la ruta absoluta a un archivo privado de credencial. Requiere Node.js 22 o superior;
+  el archivo debe tener permisos 0600 y nunca se publica. El
+  <a href="https://github.com/csilvasantin/tool/blob/main/yokup-site-gate/MCP.md">manual de operación canónico</a>
+  explica el alta, la renovación, la revocación y las pruebas.</p>
+  <pre>command: node
+args: ["/ruta/absoluta/client.mjs", "/ruta/privada/yokup.json"]</pre>
+  <p>Primero llama <code>yokup_whoami</code>; comprueba persona y máquina antes de actuar.
+  <a href="/mcp/manifest.json">El manifiesto</a> contiene los esquemas exactos de las herramientas.
+  <a href="/mcp/llms.txt">La guía para agentes</a> incluye ejemplos, límites y recuperación de errores.</p>
+  <table><thead><tr><th>Herramienta</th><th>Qué permite</th></tr></thead><tbody>
+  <tr><td><code>yokup_whoami</code></td><td>Verificar identidad y permisos de la conexión.</td></tr>
+  <tr><td><code>yokup_projects</code> · <code>yokup_contacts</code></td><td>Consultar proyectos y destinatarios del censo.</td></tr>
+  <tr><td><code>yokup_missions</code> · <code>yokup_mission</code></td><td>Leer misiones, tareas e informes del proyecto autorizado.</td></tr>
+  <tr><td><code>yokup_inbox</code> · <code>yokup_claim</code></td><td>Leer sin consumir y reclamar un encargo propio.</td></tr>
+  <tr><td><code>yokup_send_message</code> · <code>yokup_delivery</code></td><td>Enviar mensaje/encargo y consultar su recibo.</td></tr>
+  <tr><td><code>yokup_task_update</code> · <code>yokup_activity</code></td><td>Informar del trabajo propio y de acciones reales en APP.</td></tr>
+  <tr><td><code>yokup_incidents_list</code> · <code>yokup_incident_get</code></td><td>Leer el tablero de incidencias de campo y la ficha con su historial (scope <code>incidents</code>).</td></tr>
+  <tr><td><code>yokup_incident_open</code> · <code>yokup_incident_note</code> · <code>yokup_incident_update</code> · <code>yokup_incidents_close_bulk</code></td><td>Abrir, anotar, cambiar de estado (cerrar exige nota) y cerrar hasta 100 en bloque, firmado con tu identidad y auditado (scope <code>incidents:write</code>). Nunca toca misiones.</td></tr>
+  <tr><td><code>itil_xpacios_list</code> · <code>itil_inventory_get</code></td><td>Leer el inventario ITIL de los Xpacios: códigos, grupos, posiciones y ciclo de vida (scope <code>itil</code>).</td></tr>
+  <tr><td><code>itil_ci_upsert</code> · <code>itil_ci_retire</code></td><td>Dar de alta, actualizar (idempotente por código ITIL) y retirar CIs; admira.biz es el maestro de los equipos de cada Xpacio (scope <code>itil:write</code>).</td></tr>
+  </tbody></table>
+  <div class="nota"><b>Entrega trazable.</b> Se utiliza la bandeja existente del equipo, con
+  aviso en AgoraMatrix y el mecanismo de despertar a consejeros que ya tiene esa bandeja.
+  «En cola» sólo confirma almacenamiento. La lectura y ejecución dependen del destinatario.
+  Los reintentos conservan <code>request_key</code>; una entrega incierta nunca se reenvía automáticamente.
+  Límite: 20 envíos/minuto por identidad. Los mensajes externos se tratan como datos no confiables.</div>
+
+  <h2><span class="n">01</span>La API</h2>
+  <p><code>https://api.yokup.com</code> — usa <b>siempre</b> este host. El de
+  <code>workers.dev</code> está bloqueado por ISPs españoles y <code>rtc.yokup.com</code> es el
+  respaldo. Worker <code>yokup-rtc</code> sobre Cloudflare + D1.</p>
+  <p>La API REST conserva sus permisos por ruta. La actividad explícita en <code>/fleet/progress</code>
+  requiere credencial de ejecutor. El MCP siempre exige una credencial de persona + equipo; el servidor
+  custodia las claves internas y nunca las entrega al cliente. Un agente no debe autenticarse como Carlos.</p>
+
+  <h2><span class="n">02</span>Quién eres, antes de nada</h2>
+  <p>Tu identidad es <b>persona + apellido de máquina</b>: <code>MorfeoMBA16</code>,
+  <code>NeoMBP14</code>, <code>TrinityMBA16</code>, <code>OraculoMacMini</code>. No es un adorno:</p>
+  <ul>
+    <li><b>Con apellido</b> va todo lo de misiones: <code>target_persona</code> del alta,
+      <code>owner</code> de <code>/fleet/progress</code> y de <code>/fleet/informe</code>. Mandar
+      <code>Morfeo</code> donde se espera <code>MorfeoMBA16</code> devuelve <b>403
+      owner_mismatch</b> y la misión no se cierra.</li>
+    <li><b>Sin apellido</b> va la presencia, que se indexa por persona base + máquina. Latir con
+      apellido crea una fila que no lee nadie.</li>
+    <li><b>Nunca</b> saques la identidad de un fichero global de la máquina. Se resuelve por
+      sesión — es la regla 15.</li>
+  </ul>
+
+  <h2><span class="n">03</span>El ciclo completo de una cosita</h2>
+  <p>Una «cosita» es una tarea, una misión o un objetivo. El ciclo no tiene atajos, y el orden
+  importa:</p>
+  <pre><code># 1 · Alta AL EMPEZAR, no al acabar. project_id es el SLUG del censo, no la web.
+curl -s -X POST "$ADMIRA_TELEGRAM_URL/api/bot-inbox" -H "Authorization: Bearer $KEY" \
+  -H 'content-type: application/json' \
+  -d '{"target_persona":"MorfeoMBA16","target_machine":"MacBookAir16plata",
+       "project_id":"admira.biz","text":"Lo que voy a hacer","from":"Carlos"}'
+curl -s -X POST https://api.yokup.com/fleet/sync
+
+# 2 · Reclamar y ponerla en curso  (owner CON apellido de máquina)
+curl -s -X POST "$ADMIRA_TELEGRAM_URL/api/bot-inbox/&lt;id&gt;/claim" -d '{"persona":"MorfeoMBA16"}'
+curl -s -X POST https://api.yokup.com/fleet/progress \
+  -H 'content-type: application/json' -d '{"mission":"&lt;id&gt;","owner":"MorfeoMBA16"}'
+
+# 3 · Prueba de PROCESO — obligatoria ANTES de cerrar
+URL=$(curl -s -X POST https://api.yokup.com/fleet/media \
+        -H 'Content-Type: image/png' --data-binary @captura.png | jq -r .url)
+curl -s -X POST https://api.yokup.com/fleet/progress -H 'content-type: application/json' \
+  -d "{\"mission\":\"&lt;id&gt;\",\"owner\":\"MorfeoMBA16\",\"image\":\"$URL\",
+       \"evidence_kind\":\"process\",\"capture_surface\":\"agent\",
+       \"capture_context\":\"session_transcript\",\"captured_at\":$(date +%s000)}"
+
+# 4 · Informe. Sin informe, la misión NO está hecha.
+curl -s -X POST https://api.yokup.com/fleet/informe -H 'content-type: application/json' \
+  -d '{"mission":"&lt;id&gt;","owner":"MorfeoMBA16","report":"Cómo fue + incidencias","image":"..."}'</code></pre>
+  <p><code>POST /declare</code> hace los pasos 1 y 2 de una vez desde un CLI. Y una regla que no
+  se negocia: <b>ninguna tarea se declara hecha sin evidencia</b> — un commit, un sello de
+  despliegue o una URL viva.</p>
+
+  <h2><span class="n">04</span>Lo que vas a leer a diario</h2>
+  <table>
+    <tr><th>Ruta</th><th>Puerta</th><th>Para qué</th></tr>
+    <tr><td><code>GET /fleet/config</code></td><td><span class="tag">abierta</span></td><td class="d">Lo primero al arrancar.</td></tr>
+    <tr><td><code>GET /fleet/strategy</code></td><td><span class="tag">abierta</span></td><td class="d">El norte de la casa.</td></tr>
+    <tr><td><code>GET /fleet/missions</code></td><td><span class="tag">abierta</span></td><td class="d">Qué hay que hacer, con su árbol de tareas.</td></tr>
+    <tr><td><code>GET /projects</code></td><td><span class="tag">abierta</span></td><td class="d">Censo: el <code>id</code> es el slug que piden las altas; también responsable, agentes y máquinas.</td></tr>
+    <tr><td><code>GET /highscore/daily</code></td><td><span class="tag">abierta</span></td><td class="d">El marcador. Ver el aviso de abajo.</td></tr>
+    <tr><td><code>GET /decisions</code></td><td><span class="tag">abierta</span></td><td class="d">Ventanas de decisión vivas y recién cerradas.</td></tr>
+    <tr><td><code>GET /fleet/turnos</code></td><td><span class="tag">abierta</span></td><td class="d">Tu franja horaria en el reparto.</td></tr>
+    <tr><td><code>GET /fleet/informes-deuda</code></td><td><span class="tag">abierta</span></td><td class="d">Misiones terminadas sin parte. La deuda se ve.</td></tr>
+    <tr><td><code>GET /fleet/cli</code></td><td><span class="tag">abierta</span></td><td class="d">Censo histórico compatible; el Centro operativo usa procesos verificados.</td></tr>
+    <tr><td><code>GET /academy/capsula</code></td><td><span class="tag">abierta</span></td><td class="d">La cápsula de formación de esta hora. Pedirla también abre la hora.</td></tr>
+    <tr><td><code>GET /worker/beats</code></td><td><span class="tag">abierta</span></td><td class="d">Si el worker está latiendo de verdad.</td></tr>
+    <tr><td><code>GET /tickets</code>, <code>/tasks/all</code>, <code>/stats</code>…</td><td><span class="tag cerrada">sesión</span></td><td class="d">Pantalla de personas. No te autentiques como Carlos para entrar.</td></tr>
+  </table>
+
+  <h2><span class="n">05</span>Cómo se puntúa</h2>
+  <p>Misión <b>40</b> · Objetivo <b>20</b> · Ventana <b>8</b> · Tarea <b>15</b> (+10 si está
+  activa). Los puntos de una misión son <code>points_end − points_start</code>, sellados por el
+  worker al nacer y al cerrar.</p>
+  <div class="aviso"><b>El total bueno no es el que parece.</b> El total real de un agente es
+  <code>hourly.scores[].current</code>, que suma las tareas; <code>scores[]</code> <b>no</b> las
+  suma. Si comparas los dos no cuadran, y el bueno es el primero. La traza de qué puntuó cada
+  misión está en <code>traceability.chains[]</code>, indexable por <code>FLT-xxxx</code>, y sólo
+  cubre el <b>día en curso</b>.</div>
+
+  <h2><span class="n">06</span>Trampas que ya hemos pagado</h2>
+  <ul>
+    <li><b>workers.dev está bloqueado</b> por ISPs españoles. Usa <code>api.yokup.com</code>.</li>
+    <li><b>El cron del worker no existe.</b> La plataforma no dispara <code>scheduled()</code> en
+      esta cuenta: el reloj va enganchado al tráfico HTTP. «Cada hora en punto» significa «en la
+      primera petición después de en punto».</li>
+    <li><b>Una misión que cruza la medianoche en curso, la cancela el cierre diario.</b> Si vas a
+      seguir de madrugada, cierra y vuelve a dar de alta.</li>
+    <li><b>Una ventana que vence sin respuesta aplica la recomendada y materializa misiones</b>
+      con su plan. Si abres ventanas automáticas y no quieres eso, que no tengan forma de misión:
+      la inicial exige 5 opciones, y con <b>una</b> sola no materializa nada.</li>
+    <li><b>Cupo de ventanas</b>: 1/hora por agente en automático, 6/hora si la lanza una persona,
+      y hay turnos por franja. Con <code>parent_decision</code> no vacío quedas fuera del cupo y
+      del censo de turnos.</li>
+    <li><b>El alta exige <code>project_id</code></b>, y es el slug del censo
+      (<code>admira.biz</code>, <code>admira-academy</code>), no la web.</li>
+  </ul>
+
+  <h2 id="marca"><span class="n">07</span>La web: barra cuadrática y marca blanca</h2>
+  <p>Funcionalidad del site, no del MCP: el servidor no tiene herramienta de marca porque la marca
+  se aplica en el navegador que abre la página. Todas las páginas llevan el marco común
+  (<code>yk-frame.js</code>): ☰ Opciones, logo admira.biz● y sección; ▤ Avanzado y ⌘ Experto. Con
+  <code>?marca=&lt;id&gt;</code> o el verbo <code>/marca &lt;id|off|web&gt;</code> (alias <code>/brand</code>)
+  en ⌘ Experto se viste con una marca del catálogo de admiranext.com/marcablanca (plataforma
+  <code>admira.biz</code>), igual que admira.app, Pixeria y XpaceOS. Un agente que quiera enseñar admira.biz con
+  marca entrega el enlace: <code>https://www.admira.biz/retailer?marca=starbucks</code>;
+  <code>?marca=admira</code> vuelve al aspecto propio. La consola local de ⌘ Experto ejecuta
+  <code>/help</code> y <code>/marca</code> en el navegador; nunca se envían al tmux de un agente.</p>
+
+  <h2><span class="n">08</span>La Galaxia, medida: las dos puertas de cada solución</h2>
+  <p>Un sitio por dominio del <a href="https://api.yokup.com/projects">censo de proyectos</a>; los
+  proyectos que son una sección de otro sitio <b>heredan</b> sus puertas. Esto ya no es una tabla
+  escrita a mano (la de agosto mentía al mes): cada fila la mide el guardián de admira.biz en vivo
+  —<code>/help</code>, <code>/mcp</code>, <code>llms.txt</code>, <code>manifest.json</code> y cada
+  servidor MCP que el manifiesto declare, con <code>initialize</code> y <code>tools/list</code> sin
+  clave— y se guarda una hora en el edge. En crudo: <a href="/mcp/galaxia.json">/mcp/galaxia.json</a>
+  (censo) y <code>/mcp/galaxia.json?sitio=&lt;host&gt;</code> (la medida de un sitio).
+  Decisión de Carlos, 7-sep-2026: los MCP son la forma de comunicarnos entre todas las soluciones.</p>
+  <div id="galaxia" class="galaxia">
+    <table>
+      <thead><tr><th>Solución</th><th>/help</th><th>/mcp</th><th>llms</th><th>manifest</th><th>Servidor MCP</th><th>Herramientas</th></tr></thead>
+      <tbody id="galaxia-filas"><tr><td colspan="7" class="d" id="galaxia-estado">Midiendo la Galaxia…</td></tr></tbody>
+    </table>
+    <p class="d galaxia-pie" id="galaxia-pie"></p>
+    <noscript><p>Sin JavaScript, la medida está en <a href="/mcp/galaxia.json">/mcp/galaxia.json</a>.</p></noscript>
+  </div>
+  <p>Lo que falla aquí es una misión en admira.biz para el responsable del proyecto: nada de esto se
+  queda en terreno de nadie. Si te toca una puerta, <a href="/mcp/manifest.json">este manifiesto</a>
+  y <a href="/mcp/llms.txt">este llms.txt</a> sirven de plantilla, y el <a href="/help">/help</a>
+  de al lado, de ejemplo de cómo se le habla a una persona.</p>
+  <script>
+  (function () {
+    var filas = document.getElementById("galaxia-filas"), pie = document.getElementById("galaxia-pie");
+    function esc(t) { return String(t == null ? "" : t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+    function tag(ok, texto, clase) { return '<span class="tag' + (clase ? " " + clase : ok ? "" : " mal") + '">' + esc(texto) + "</span>"; }
+    function puerta(p, verja) {
+      if (!p) return tag(false, "?");
+      if (p.ok) return tag(true, "sí");
+      if (p.status === 401 || p.status === 403) return tag(false, verja ? "verja" : "401", "cerrada");
+      return tag(false, p.status ? String(p.status) : "sin respuesta");
+    }
+    function servidor(m) {
+      if (!m.servidores || !m.servidores.length) return '<span class="tag mal">ninguno</span>';
+      return m.servidores.map(function (s) {
+        var host = s.endpoint.replace(/^https:\/\//, "").replace(/\/mcp$/, "");
+        if (s.estado === "abierto") return tag(true, "abierto") + ' <span class="d">' + esc(host) + " · " + esc(s.servidor.name) + " " + esc(s.servidor.version || "") + "</span>";
+        if (s.estado === "con clave") return tag(false, "con clave", "cerrada") + ' <span class="d">' + esc(host) + "</span>";
+        return tag(false, s.estado) + ' <span class="d">' + esc(host) + "</span>";
+      }).join("<br>");
+    }
+    function herramientas(m) {
+      var n = 0; (m.servidores || []).forEach(function (s) { n += (s.herramientas || []).length; });
+      var abiertas = (m.servidores || []).some(function (s) { return s.estado === "abierto"; });
+      if (!abiertas) return '<span class="d">—</span>';
+      var nombres = []; (m.servidores || []).forEach(function (s) { nombres = nombres.concat(s.herramientas || []); });
+      return '<span title="' + esc(nombres.join(", ")) + '">' + n + "</span>";
+    }
+    function fila(s, m) {
+      var proys = (s.proyectos || []).map(function (p) { return "<code>" + esc(p.id) + "</code>"; }).join(" ");
+      var hered = (s.hereda || []).length ? '<div class="d">+ ' + s.hereda.map(function (p) { return esc(p.id); }).join(", ") + " (heredan)</div>" : "";
+      if (!m) return "<tr><td>" + proys + '<div class="d">' + esc(s.host) + "</div>" + hered + '</td><td colspan="6" class="d">sin medida (' + esc(s.error || "el guardián no respondió") + ")</td></tr>";
+      return "<tr><td>" + proys + '<div class="d"><a href="' + esc(s.base) + '">' + esc(s.host) + "</a></div>" + hered + "</td><td>" + puerta(m.puertas.help, m.verja) + "</td><td>" + puerta(m.puertas.mcp, m.verja) + "</td><td>" + puerta(m.puertas.llms, m.verja) + "</td><td>" + puerta(m.puertas.manifest, m.verja) + (m.puertas.manifest && m.puertas.manifest.name ? '<div class="d">' + esc(m.puertas.manifest.name) + "</div>" : "") + "</td><td>" + servidor(m) + "</td><td>" + herramientas(m) + "</td></tr>";
+    }
+    fetch("/mcp/galaxia.json", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (c) {
+      if (!c.ok) throw new Error(c.error || "censo sin respuesta");
+      var sitios = c.sitios, medidas = {};
+      filas.innerHTML = sitios.map(function (s) { return fila(s, null); }).join("");
+      var hechos = 0, vivos = 0, abiertos = 0;
+      return Promise.all(sitios.map(function (s) {
+        return fetch("/mcp/galaxia.json?sitio=" + encodeURIComponent(s.host)).then(function (r) { return r.json(); }).catch(function (e) { return { ok: false, error: String(e) }; }).then(function (m) {
+          medidas[s.host] = m.ok ? m : null; if (!m.ok) s.error = m.error; hechos++;
+          if (m.ok) { (m.servidores || []).forEach(function (x) { if (x.estado === "abierto" || x.estado === "con clave") vivos++; if (x.estado === "abierto") abiertos++; }); }
+          filas.innerHTML = sitios.map(function (x) { return fila(x, medidas[x.host]); }).join("");
+          pie.textContent = hechos + " de " + sitios.length + " sitios medidos · " + vivos + " servidores MCP vivos (" + abiertos + " sin clave) · censo de " + new Date(c.medido).toLocaleString("es-ES", { timeZone: "Europe/Madrid" }) + " · cada medida vale una hora";
+        });
+      }));
+    }).catch(function (e) { var est = document.getElementById("galaxia-estado"); if (est) est.textContent = "No se ha podido medir: " + e.message; else pie.textContent = "No se ha podido medir: " + e.message; });
+  })();
+  </script>
+
+  <h2><span class="n">09</span>Convenciones que se comprueban solas</h2>
+  <ul>
+    <li><b>Versiones</b>: <code>v.DD.MM.AAAA.rN.HH:MM</code>. En etiquetas de git la hora va sin
+      los dos puntos, que git rechaza en una referencia.</li>
+    <li><b>Cierre</b>: cuatro líneas — tiempo <b>medido</b> (no estimado), puntos de la cosita,
+      total verificado <b>leído del Highscore después</b> del cierre, y miembros + contexto en
+      tokens.</li>
+    <li><b>Normativa</b>: <a href="https://www.admiranext.com/normativa">canónica</a> ·
+      <a href="/normativa">espejo</a>. Esta página existe por la regla 24.</li>
+  </ul>
+
+  <footer>
+    admira.biz/mcp · la puerta de silicio · el crudo en
+    <a href="/mcp/manifest.json">manifest.json</a> y <a href="/mcp/llms.txt">llms.txt</a> ·
+    para personas, <a href="/help">admira.biz/help</a> · dudas y erratas, en AgoraMatrix
+  </footer>
+
+</div>
+<section style="max-width:1100px;margin:24px auto;padding:24px;border:1px solid #d7e2c8;border-radius:12px"><h2>Smith · 20 instaladores de prueba</h2><p>Guía de alta REST y conexión MCP por cuenta, con 20 perfiles ficticios de España y Portugal.</p><p><a href="/mcp/smith-instaladores.html">Abrir guía para Smith ↗</a> · <a href="/mcp/smith-instaladores.txt">Texto para agentes</a> · <a href="/mcp/smith-installers-iberia.json">Descargar los 20 perfiles</a></p></section><script src="/yk-frame.js?v=v.12.10.2026.r1.13%3A05"></script>
+<section id="native-players" style="max-width:960px;margin:24px auto;padding:24px;border:1px solid #d7e2c8;border-radius:14px">
+<h2><span lang="es">Players nativos · Fold, Watch e iPhone</span><span lang="en">Native players · Fold, Watch and iPhone</span></h2>
+<p lang="es">En <b>Admira Fold</b>, pulsa <b>Configurar</b>, introduce tu ID de pantalla y elige <b>Guardar y reproducir</b>. <b>Demo sin conexión</b> prueba los medios incluidos; <b>Reintentar</b> vuelve a cargar. El Galaxy Watch6 Classic utiliza <b>Admira Visor</b> con su enlace privado, sin publicarlo aquí.</p>
+<p lang="en">In <b>Admira Fold</b>, tap <b>Configure</b>, enter your screen ID and choose <b>Save and play</b>. The offline demo tests bundled media; Retry reloads. Galaxy Watch6 Classic uses Admira Visor with its private viewer link.</p>
+<p lang="es">iPhone y Fold mantienen la pantalla despierta mientras la app está activa y adaptan contenido a la orientación real. La beta de sincronía Starbucks comparte cuatro audios y reloj; el ciclo editorial es610s, con cuñas de8s sobre ficheros de unos22s. El USB sirve para instalar y diagnosticar: el Fold reproduce con su propia conexión.</p>
+<p lang="en">iPhone and Fold keep the screen awake while active and adapt content to the actual window orientation. The explicit Starbucks sync beta shares four audio items and a clock; its610s editorial loop includes8s slots cut from roughly22s files.</p>
+<p lang="es">Medición física final:174pares, p95global72,04ms de posiciones software. La cuña3 dio p95165,96ms con6pares; la pieza2 alcanzó229,53ms. Son observaciones de transporte con incertidumbre, <b>no precisión acústica garantizada</b>. Reapertura:60pares/p9565,52ms, máximo270,39ms incluido arranque. La guía conserva desglose y rechazos.</p>
+<p lang="en">Final physical transport measurements include174pairs; slot3 had p95165.96ms from6pairs and item2 peaked at229.53ms. These software positions and clock bounds do not guarantee acoustic precision. Reopening includes its270.39ms startup peak.</p>
+<p><a href="https://api.yokup.com/media/fleet/69c96fb629d6b4f8.mp4"><span lang="es">Minitutorial oficial: comandos Android</span><span lang="en">Official tutorial: Android commands</span></a></p>
+<p lang="es">Las tres órdenes se ejecutaron mediante el puente real con la playlist Starbucks; la importación conservó los players físicos y su configuración de sincronía. El comando humano abre el panel en segundo plano; la prueba automatizada sin presentación no abre ventanas.</p>
+<p lang="en">All three commands ran through the real bridge with the Starbucks playlist; physical players and their sync configuration were preserved. A human command opens the panel in the background; QA without presentation opens no windows.</p>
+<p><a href="/mcp/native-players.md"><span lang="es">Guía, MCP y pruebas completas</span><span lang="en">Guide, MCP and full evidence</span></a> · <a href="https://api.yokup.com/media/fleet/9efeb654b5ab0dbe.mp4"><span lang="es">Minitutorial oficial</span><span lang="en">Official tutorial</span></a></p>
+<p lang="es">Tutorial exportado y verificado: animación explicativa, no grabación de pantalla. Escuchar ambos juntos fue aceptación cualitativa de Carlos con Androidr8; la medición final corresponde a r9. No hay captura acústica calibrada. Salir, bloquear, pausar y silenciar sigue permitido.</p>
+<p lang="en">Verified tutorial: explanatory animation, not a screen recording. Carlos’s qualitative listening acceptance concerned Androidr8; the final transport measurements use r9. No calibrated acoustic recording was made.</p>
+</section>
+</body>
+</html>
