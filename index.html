@@ -760,6 +760,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="marca-blanca.js?v=20261006-experto-tecla-1"></script>
 <script defer src="responsive-shell.js?v=20261006-experto-tecla-1"></script>
 <script defer src="expert-commands.js?v=20261010-evidence-1"></script>
+<script defer src="/suite/biz-native-context.js?v=20261012-1"></script>
 <script defer src="expert-panel.js?v=20261006-experto-tecla-1"></script>
 <!-- ⌘ EXPERTO · CLI con el look de digitalavatar.ai: piel compartida de la suite (admiranext.com/suite). -->
 <link rel="stylesheet" href="https://www.admiranext.com/suite/experto.css?v=20261005-experto-idioma-1">
@@ -776,11 +777,11 @@ addEventListener('resize',ccFitIntro);
     if (requested === 'app' && /^(www\.)?admira\.app$/.test(location.hostname)) demo = 'app';
     if (requested === 'biz' && /^(www\.)?(admira\.biz|clearchannel\.tv)$/.test(location.hostname)) demo = 'biz';
   } catch (_) {}
-  if (document.querySelector('script[src^="https://www.admiranext.com/suite/experto.js"]')) return;
+  if (document.querySelector('script[src^="/suite/experto.js"]')) return;
   var engine = document.createElement('script');
   engine.defer = true;
   engine.async = false;
-  engine.src = 'https://www.admiranext.com/suite/experto.js?v=' + (demo ? '20261007-native-demo-control-1' : '20261007-pill-1');
+  engine.src = '/suite/experto.js?v=' + (demo ? '20261007-native-demo-control-1' : '20261012-android-1');
   engine.setAttribute('data-min', 'hide');
   engine.setAttribute('data-toggle', '');
   if (demo) {
