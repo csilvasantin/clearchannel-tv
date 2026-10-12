@@ -1,3 +1,4 @@
+import {clearChannelNativePath,CC_NATIVE_PREFIX,CC_NATIVE_FILES} from '../server/native-clear-channel.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { bizAssetPath, BIZ_ASSET_FILES } from '../server/biz-assets.mjs';
@@ -86,8 +87,18 @@ test('the built release serves corrected biz assets while preserving the other d
       for (const [route, file] of routes) {
         const response = await worker.fetch(new Request('https://' + host + route), env);
         assert.equal(response.status, 200, host + route);
-        assert.equal(await response.text(), readFileSync(join(output, scoped ? '__admira_biz' : '', file), 'utf8'), host + route);
+        assert.equal(await response.text(), readFileSync(join(output, scoped ? '__admira_biz' : host==='www.clearchannel.tv' && CC_NATIVE_FILES.includes(file) ? '__admira_cc_native' : '', file), 'utf8'), host + route);
       }
     }
   } finally { rmSync(output, {recursive:true, force:true}); }
+});
+
+test('ClearChannel native overlay is limited to authorized hosts, methods and files',()=>{
+ for(const host of ['clearchannel.tv','www.clearchannel.tv']){
+  assert.equal(clearChannelNativePath(new URL('https://'+host+'/suite/demo-android.mjs')),CC_NATIVE_PREFIX+'/suite/demo-android.mjs');
+  assert.equal(clearChannelNativePath(new URL('https://'+host+'/mcp/native-players.md')),CC_NATIVE_PREFIX+'/mcp/native-players.md');
+  for(const path of ['/app.js','/api/orders','/auth/agente','/backoffice','/walk'])assert.equal(clearChannelNativePath(new URL('https://'+host+path)), '');
+  assert.equal(clearChannelNativePath(new URL('https://'+host+'/'), 'POST'),'');
+ }
+ for(const host of ['admira.biz','admira.app','fakeclearchannel.tv.example','xpaceos.com'])assert.equal(clearChannelNativePath(new URL('https://'+host+'/')),'');
 });

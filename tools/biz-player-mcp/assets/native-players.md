@@ -1,11 +1,11 @@
 # Players nativos: Android Fold, Wear OS e iPhone
 
-Revisión 12-10-2026 · Trinity MBP14 · misión Help/MCP Hoy 144 (DCL-a429dbe77fb06903dcf19abc).
+Revisión 12-10-2026 · Trinity MBP14 · misión cinco pilares Hoy 148 (DCL-4fde5a5d6275b52660b49e8e).
 Medición y tutorial de sincronía: Hoy 139 (DCL-db715cdd09c9d69097f0bbb6).
 
 ## Para personas: dónde está y cómo usarlo
 
-En admira.biz, abre **☰ Opciones → Ayuda → Players nativos**. El Fold reproduce contenidos; el Galaxy Watch6 Classic utiliza un visor Wear OS. El visor no sustituye al player ni se ha incluido en la medición de audio conjunta.
+En los cinco pilares (Admira.biz, Pixeria, XpaceOS, Yokup y ClearChannel), abre **☰ Opciones → Ayuda → Players nativos**. El Fold reproduce contenidos; el Galaxy Watch6 Classic utiliza un visor Wear OS. El visor no sustituye al player ni se ha incluido en la medición de audio conjunta.
 
 En **Admira Fold**, pulsa **Configurar**: introduce el ID de pantalla y elige **Guardar y reproducir**. **Demo sin conexión** permite probar medios incluidos; **Reintentar** vuelve a cargar. Una pulsación larga sobre el contenido abre Configurar. En **Admira Visor**, utiliza su enlace privado HTTPS de visor; no lo publiques en Help ni lo copies como ID del Fold.
 
@@ -52,7 +52,7 @@ Rechazos: 10 por búsqueda/corrección, 1 por estado no READY y 1 por separació
 
 Carlos confirmó **«Los oigo juntos»** escuchando ambos altavoces propios con iOS r13 / Android r8: aceptación auditiva cualitativa de esa ronda. No asigna milisegundos acústicos ni se convierte en una prueba r9. Las cifras anteriores son de transporte, no de llegada del sonido al aire; no se realizó captura acústica calibrada de dos canales. Bluetooth, mezclador, altavoz y sala pueden añadir retardos. No se promete ausencia de eco ni precisión exacta.
 
-[JSON de fronteras](/mcp/player-sync-evidence/fronteras.json) · [JSON de reapertura](/mcp/player-sync-evidence/reapertura.json) · [Desglose](/mcp/player-sync-evidence/por-pieza.json) · [Captura física verificada](https://api.yokup.com/media/fleet/b9d879f90e7f9b2f.png).
+[JSON de fronteras](https://www.admira.biz/mcp/player-sync-evidence/fronteras.json) · [JSON de reapertura](https://www.admira.biz/mcp/player-sync-evidence/reapertura.json) · [Desglose](https://www.admira.biz/mcp/player-sync-evidence/por-pieza.json) · [Captura física verificada](https://api.yokup.com/media/fleet/b9d879f90e7f9b2f.png).
 
 ## Demos Android desde Experto
 
@@ -74,7 +74,7 @@ Las demos usan paquetes aislados `com.admira.nativeplayer.fold.demo` y `com.admi
 
 El Fold reproduce los medios de la selección. El Watch usa una instantánea local: descarga imágenes y vídeos de hasta 8 MiB por fichero (caché total de 24 MiB) y los vídeos se muestran silenciados; los audios aparecen como título y símbolo musical, sin descargar ni emitir ese audio. Esta demo del reloj es independiente del visor privado. Compartir playlist no activa un reloj común ni demuestra sincronía de audio: la medición iPhone/Fold descrita arriba corresponde a otra configuración explícita.
 
-**Estado de esta revisión:** las tres órdenes (`/demo android`, `/demo android Fold8`, `/demo android watch`) se ejecutaron mediante el puente real con la playlist Starbucks. Se verificó la misma importación en los destinos seleccionados y se conservaron el manifiesto y la configuración de sincronía de los players `.dev`. La QA usó `--no-present`, sin abrir ventanas. Versión web v.12.10.2026.r2.16:02; estas pruebas de demo virtual son distintas de las mediciones físicas r9 anteriores.
+**Estado de esta revisión:** las tres órdenes (`/demo android`, `/demo android Fold8`, `/demo android watch`) se ejecutaron mediante el puente real con la playlist Starbucks. Se verificó la misma importación en los destinos seleccionados y se conservaron el manifiesto y la configuración de sincronía de los players `.dev`. La QA usó `--no-present`, sin abrir ventanas. Versión web v.12.10.2026.r3.16:20; estas pruebas de demo virtual son distintas de las mediciones físicas r9 anteriores.
 
 Fuentes de las demos virtuales (independientes de la beta de sincronía anterior): Android `cf5feb5b13445b41ed3552e2464885964c122f5b`; puente Mac `9420d2e233e2683581878a6ac3244294cdc882d1`. Las apps `.demo` tienen code1, `v.12.10.2026.r1.15:56`; [CI Android de las demos correcto](https://github.com/csilvasantin/admira-signage-app/actions/runs/38259980115). Las versiones `.dev` y las métricas físicas de sincronía conservan sus fuentes propias descritas arriba.
 
@@ -84,7 +84,7 @@ Esta página documenta el contrato; no añade herramientas al servidor MCP. Desc
 
 ## Tutorial oficial de los comandos Android
 
-[Ver minitutorial de las tres órdenes](https://api.yokup.com/media/fleet/69c96fb629d6b4f8.mp4): generador oficial AdmiraNeXT TikTok, animación explicativa, **no grabación de pantalla**. H264/AAC, 1080×1920, 15,116 s; decodificación, revisión visual y redescarga SHA256 verificadas. SHA256 `5415f88f677be93a01ba46f8396f1177c139f6aacf86502d5cc2609d1de4de45`. Indica dónde está Experto, qué selecciona cada comando y los límites de Fold8/Watch.
+[Ver minitutorial de las tres órdenes](https://api.yokup.com/media/fleet/dddb19c869cc0feb.mp4): generador oficial AdmiraNeXT TikTok, animación explicativa, **no grabación de pantalla**. H264/AAC, 1080×1920, 15,116 s; decodificación, revisión visual y redescarga SHA256 verificadas. SHA256 `2ad8e76ef4d3bedcbf8e1a44ecd4fdb1cbd04d60deb464f4a9aac38d9e34f9b0`. Indica dónde está Experto, qué selecciona cada comando y los límites de Fold8/Watch.
 
 ## Tutorial oficial de sincronía y validación
 
@@ -94,7 +94,10 @@ Software: Android 157 pruebas/lint/build y [CI final correctos](https://github.c
 
 ## EN · summary
 
-Native Fold and Wear OS apps are distinct from the older WebView APK. The explicit four-audio iPhone/Fold beta keeps a 610 s editorial cycle. Final physical transport measurements include individual slot statistics, startup peaks, rejected observations and clock uncertainty. They do not establish calibrated acoustic precision. Carlos’s “I hear them together” was qualitative acceptance of the earlier Androidr8 round. The tutorial is a verified explanatory animation, not a screen recording. Discover live MCP tools before invoking them; Android demo commands use isolated virtual apps and require the installed Mac bridge; all three commands passed real bridge QA with Starbucks while physical configurations were preserved; web version v.12.10.2026.r2.16:02.
+Native Fold and Wear OS apps are distinct from the older WebView APK. The explicit four-audio iPhone/Fold beta keeps a 610 s editorial cycle. Final physical transport measurements include individual slot statistics, startup peaks, rejected observations and clock uncertainty. They do not establish calibrated acoustic precision. Carlos’s “I hear them together” was qualitative acceptance of the earlier Androidr8 round. The tutorial is a verified explanatory animation, not a screen recording. Discover live MCP tools before invoking them; Android demo commands use isolated virtual apps and require the installed Mac bridge; all three commands passed real bridge QA with Starbucks while physical configurations were preserved; web version v.12.10.2026.r3.16:20.
 
+## Cinco pilares / Five pillars
 
-[Descargar guía, informes y registros reales de sincronía](/mcp/player-sync-evidence/evidencias.zip).
+Sintaxis común en Admira.biz, Pixeria, XpaceOS, Yokup y ClearChannel. Selecciona un proyecto explícito o indica `?project=ID`; Pixeria conserva su sesión obligatoria. El puente del Mac resuelve asociaciones por proyecto. / Shared syntax across all five pillars; an explicit project is required, Pixeria requires sign-in, and the installed Mac bridge resolves project playlist associations.
+
+[Descargar paquete de evidencias](https://www.admira.biz/mcp/player-sync-evidence/evidencias.zip).
