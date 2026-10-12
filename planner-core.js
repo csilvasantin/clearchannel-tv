@@ -38,6 +38,19 @@
     const price=Math.max(0,Math.round(estimatedImpr/1000*cpm*demand*durationFactor));
     return {days,dailyImpr,surfaces,cpm,demand,passFactor,durationFactor,estimatedImpr,price,points:unique.length};
   }
+  // Estimación rápida al crear campaña (#5804): mismos factores que quote(), con un plan por defecto
+  // (7 días desde `today`, 1000 pases/día, 15 s) y un margen ±15 % por la demanda de la fecha.
+  function estimate(items, today, opts) {
+    const o = opts || {};
+    const start = day(today) !== null ? today : new Date().toISOString().slice(0,10);
+    const n = Math.max(1, Math.min(366, Math.round(o.days || 7)));
+    const end = new Date(Date.parse(start + 'T00:00:00Z') + (n-1)*86400000).toISOString().slice(0,10);
+    const q = quote(items, {start, end, passesDay:o.passesDay || 1000, durationSec:o.durationSec || 15});
+    const spread = 0.15;
+    return {days:q.days, points:q.points, surfaces:q.surfaces, cpm:q.cpm, impressions:q.estimatedImpr,
+      impressionsMin:Math.round(q.estimatedImpr*(1-spread)), impressionsMax:Math.round(q.estimatedImpr*(1+spread)),
+      price:q.price, priceMin:Math.round(q.price*(1-spread)), priceMax:Math.round(q.price*(1+spread)), start, end};
+  }
   function normalizePlan(raw) {
     if (!raw || raw.version !== 1 || !validSettings(raw) || !scopes.includes(raw.scope) || typeof raw.circuitId !== 'string' || raw.circuitId.length>80) return null;
     if (!Array.isArray(raw.ids) || !raw.ids.length || raw.ids.length>10000 || raw.ids.some(id=>typeof id!=='string'||!id.length||id.length>160)) return null;
@@ -55,5 +68,5 @@
   function reconcile(plan, available) {
     const set=new Set(available);return {ids:plan.ids.filter(id=>set.has(id)),missing:plan.ids.filter(id=>!set.has(id))};
   }
-  return {KEY,quote,validSettings,normalizePlan,read,save,reconcile};
+  return {KEY,quote,estimate,validSettings,normalizePlan,read,save,reconcile};
 });

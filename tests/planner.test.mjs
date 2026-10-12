@@ -25,3 +25,17 @@ test('saved plan restores exact subset and reports removed catalogue points',()=
  assert.throws(()=>planner.save({setItem(){throw Error('quota')}},plan),/quota/);
  assert.throws(()=>planner.save(storage,{...plan,ids:[]}),/invalid_plan/);
 });
+
+test('estimate (#5804): alcance y precio por defecto, con margen ±15 % y sin puntos = 0', async () => {
+  const { createRequire } = await import('node:module');
+  const CampaignPlanner = createRequire(import.meta.url)('../planner-core.js');
+  const items = [{id:'a', impr:1000, surfaces:2, cpm:4}, {id:'b', impr:3000, surfaces:1, cpm:6}];
+  const e = CampaignPlanner.estimate(items, '2026-10-12');
+  assert.equal(e.days, 7); assert.equal(e.points, 2); assert.equal(e.surfaces, 3);
+  assert.equal(e.end, '2026-10-18');
+  assert.equal(e.impressions, 28000); // (1000+3000) × 7 días × 1000/1000 pases
+  assert.ok(e.price > 0 && e.priceMin < e.price && e.priceMax > e.price);
+  assert.equal(e.impressionsMin, Math.round(28000 * 0.85));
+  const vacio = CampaignPlanner.estimate([], '2026-10-12');
+  assert.equal(vacio.points, 0); assert.equal(vacio.price, 0);
+});
