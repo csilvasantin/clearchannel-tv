@@ -49,6 +49,9 @@ test('the worker serves JS/version by host and denies direct internal paths', as
   assert.equal(await (await worker.fetch(new Request('https://www.clearchannel.tv/app.js'), env)).text(), '/app.js');
   assert.equal(await (await worker.fetch(new Request('https://admira.biz/version.json'), env)).text(), '/__admira_biz/version.json');
   assert.equal((await worker.fetch(new Request('https://www.clearchannel.tv/__admira_biz/app.js'), env)).status, 404);
+  for(const prefix of ['__admira_biz','__admira_cc_native','%5f%5fadmira_biz','%5f%5fadmira_cc_native']) {
+    for(const suffix of ['','/','/index.html']) assert.equal((await worker.fetch(new Request('https://www.clearchannel.tv/'+prefix+suffix),env)).status,404);
+  }
 });
 test('the built release serves corrected biz assets while preserving the other domains', async () => {
   const root = dirname(dirname(fileURLToPath(import.meta.url)));

@@ -210,7 +210,9 @@ export default {
     }
     // Internal release assets are selected by Host, never by a visitor-supplied
     // prefix. Keep other customer domains on their preserved release.
-    if ((url.pathname.startsWith(BIZ_ASSET_PREFIX + '/') || url.pathname.startsWith(CC_NATIVE_PREFIX + '/'))) return new Response('Not found', {status:404});
+    let publicPath=url.pathname;
+    try {publicPath=decodeURIComponent(publicPath);} catch (_) {}
+    if ([BIZ_ASSET_PREFIX,CC_NATIVE_PREFIX].some(prefix=>publicPath===prefix||publicPath.startsWith(prefix+'/'))) return new Response('Not found', {status:404});
     var assetPath = bizAssetPath(url, request.method) || clearChannelNativePath(url, request.method);
     var assetRequest = request;
     if (assetPath) {
