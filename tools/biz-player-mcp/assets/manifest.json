@@ -1256,7 +1256,7 @@
       "https://www.admira.biz/mcp/player-sync-evidence/reapertura.json",
       "https://www.admira.biz/mcp/player-sync-evidence/por-pieza.json"
     ],
-    "demo_commands_status": "real bridge QA passed for all three commands with Starbucks; web publication pending",
+    "demo_commands_status": "real bridge QA passed for all three commands with Starbucks; documentation released in v.12.10.2026.r2.16:02",
     "demo_commands": {
       "both": "/demo android",
       "fold": "/demo android Fold8",
