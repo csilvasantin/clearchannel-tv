@@ -25,3 +25,22 @@ test('saved plan restores exact subset and reports removed catalogue points',()=
  assert.throws(()=>planner.save({setItem(){throw Error('quota')}},plan),/quota/);
  assert.throws(()=>planner.save(storage,{...plan,ids:[]}),/invalid_plan/);
 });
+
+test('estimate (#5804): alcance y precio por defecto, con margen ±15 % y sin puntos = 0', () => {
+  const items = [{id:'a', impr:1000, surfaces:2, cpm:4}, {id:'b', impr:3000, surfaces:1, cpm:6}];
+  const e = planner.estimate(items, '2026-10-12');
+  assert.equal(e.days, 7); assert.equal(e.points, 2); assert.equal(e.surfaces, 3);
+  assert.equal(e.start, '2026-10-12'); assert.equal(e.end, '2026-10-18');
+  assert.equal(e.impressions, 28000); // (1000+3000) × 7 días × 1000/1000 pases
+  assert.equal(e.impressionsMin, Math.round(28000 * 0.85));
+  assert.equal(e.impressionsMax, Math.round(28000 * 1.15));
+  assert.equal(e.priceMin, Math.round(e.price * 0.85));
+  assert.equal(e.priceMax, Math.round(e.price * 1.15));
+  assert.ok(e.price > 0 && e.priceMin < e.price && e.priceMax > e.price);
+  const quoted = planner.quote(items, {start:'2026-10-12', end:'2026-10-18', passesDay:1000, durationSec:15});
+  assert.equal(e.price, quoted.price);
+  assert.equal(e.cpm, quoted.cpm);
+  const vacio = planner.estimate([], '2026-10-12');
+  assert.equal(vacio.points, 0); assert.equal(vacio.impressions, 0); assert.equal(vacio.price, 0);
+  assert.equal(planner.estimate(items, 'no-es-fecha', {days:1, passesDay:250, durationSec:30}).days, 1);
+});

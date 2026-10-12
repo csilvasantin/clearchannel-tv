@@ -25,6 +25,8 @@ test('only admira.biz and its Pages verification host select the corrected asset
     assert.equal(bizAssetPath(new URL('https://' + host + '/page-language.css')), '/__admira_biz/page-language.css');
     assert.equal(bizAssetPath(new URL('https://' + host + '/expert-commands.js?v=20261010-evidence-1')), '/__admira_biz/expert-commands.js');
     assert.equal(bizAssetPath(new URL('https://' + host + '/intro.js?v=20261010-evidence-1')), '/__admira_biz/intro.js');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/planner-core.js?v=20261012-5804')), '/__admira_biz/planner-core.js');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/app.js?v=20261012-5804')), '/__admira_biz/app.js');
   }
   for (const host of ['clearchannel.tv','www.clearchannel.tv','admira.app','fakeadmira.biz.example']) {
     assert.equal(bizAssetPath(new URL('https://' + host + '/app.js')), '');
@@ -78,7 +80,7 @@ test('the built release serves corrected biz assets while preserving the other d
       const target = join(output, path);
       return existsSync(target) ? new Response(readFileSync(target), {headers:{'content-type':'application/octet-stream'}}) : new Response('Not found', {status:404});
     }}};
-    const routes = [['/','index.html'],['/app.js?v=truth','app.js'],['/walk','walk.html'],['/walk.html','walk.html'],['/walk-core.mjs?v=truth','walk-core.mjs'],['/walk-launch.mjs?v=truth','walk-launch.mjs'],['/detail','detail.html'],['/help/','help/index.html'],['/version.json','version.json']];
+    const routes = [['/','index.html'],['/app.js?v=truth','app.js'],['/planner-core.js?v=20261012-5804','planner-core.js'],['/walk','walk.html'],['/walk.html','walk.html'],['/walk-core.mjs?v=truth','walk-core.mjs'],['/walk-launch.mjs?v=truth','walk-launch.mjs'],['/detail','detail.html'],['/help/','help/index.html'],['/version.json','version.json']];
     for (const host of ['admira.biz','www.admira.biz','preview.clearchannel-tv.pages.dev','www.clearchannel.tv','admira.app']) {
       const scoped = ['admira.biz','www.admira.biz','preview.clearchannel-tv.pages.dev'].includes(host);
       for (const [route, file] of routes) {

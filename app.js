@@ -166,8 +166,22 @@ function comboLabel(combo) {
   return CAMPAIGN_DIM_ORDER.filter(k => combo[k])
     .map(k => (CAMPAIGN_DIM_LABELS[k] && CAMPAIGN_DIM_LABELS[k][combo[k]]) || combo[k]).join(' · ');
 }
+// #5804: estimación de alcance y precio según circuito + target elegidos (puntos seleccionados, o todo el circuito).
+function campaignEstimate() {
+  if (typeof CampaignPlanner === 'undefined' || typeof CampaignPlanner.estimate !== 'function') throw new Error('estimate_unavailable');
+  const circuitItems = currentCircuitItems().filter(loc => loc && Array.isArray(loc.surfaces));
+  const circuitIds = new Set(circuitItems.map(loc => loc.id));
+  const picked = selectedLocations().filter(loc => loc && circuitIds.has(loc.id));
+  const locs = picked.length ? picked : circuitItems;
+  const items = locs.map(loc => {
+    const cpms = locationCpmValues(loc);
+    return {id:loc.id, impr:locationDailyImpr(loc), surfaces:locationSurfaceCount(loc), cpm:cpms.length ? cpms.reduce((a,b)=>a+b,0)/cpms.length : 5};
+  });
+  const est = CampaignPlanner.estimate(items, isoDateLocal(new Date()));
+  return {...est, circuit: currentCircuitLabel(), scope: circuitScopeLabel(), target: circuitTargetSummary(), fromSelection: picked.length > 0};
+}
 function openCampaignModal() {
-  const isEs = (typeof lang === 'undefined') || lang !== 'en';
+  const isEs = LANG !== 'en';
   document.getElementById('campaign-modal')?.remove();
   const ov = document.createElement('div');
   ov.id = 'campaign-modal';
@@ -184,6 +198,7 @@ function openCampaignModal() {
         </label>
         <div style="font-size:12.5px;color:#75aab9">${isEs?'Se generará UNA versión por cada combinación de los criterios del circuito (los que el dueño haya activado en Target):':'One version per combination of the circuit criteria (those the owner enabled in Target):'}</div>
         <div id="campaign-matrix" style="background:#02080d;border:1px solid rgba(120,243,255,.18);border-radius:9px;padding:12px"></div>
+        <div id="campaign-estimate" style="background:#02080d;border:1px solid rgba(255,216,102,.28);border-radius:9px;padding:12px"></div>
         <button id="campaign-go" style="padding:12px;border:0;border-radius:9px;background:linear-gradient(90deg,#78f3ff,#ffd866);color:#02141c;font-weight:800;font-size:15px;cursor:pointer">${isEs?'Generar en PixerIA →':'Generate in PixerIA →'}</button>
         <div style="font-size:11px;color:#5e8595">${isEs?'PixerIA crea cada versión etiquetada por segmento y vuelve a clearchannel.tv para venderse a su público.':'PixerIA creates each segment-tagged version and returns to clearchannel.tv to be sold to its audience.'}</div>
       </div>
@@ -204,6 +219,23 @@ function openCampaignModal() {
       + (ctx ? `<div style="margin-top:9px;padding-top:8px;border-top:1px solid rgba(120,243,255,.14);font-size:11.5px;color:#9ad8ff">${isEs?'Contexto en todas':'Context on all'}: <span style="color:#ffd866">${ctx}</span></div>` : '');
     return combos;
   }
+  function refreshEstimate() {
+    const box = ov.querySelector('#campaign-estimate');
+    if (!box) return;
+    let e;
+    try { e = campaignEstimate(); } catch (_) {
+      box.innerHTML = `<div style="font-size:12px;color:#75aab9">${isEs?'No se ha podido calcular la estimación.':'The estimate could not be calculated.'}</div>`;
+      return;
+    }
+    if (!e.points) { box.innerHTML = `<div style="font-size:12px;color:#75aab9">${isEs?'Elige un circuito con puntos para ver la estimación.':'Pick a circuit with points to see the estimate.'}</div>`; return; }
+    const rng = (a, b, f) => `${f(a)} – ${f(b)}`;
+    box.innerHTML = `<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#ffd866;font-family:monospace">${isEs?'Estimación':'Estimate'} · ${e.days} ${isEs?'días':'days'} · ${escHtml(e.circuit)}</div>`
+      + `<div style="display:flex;gap:18px;margin-top:6px;flex-wrap:wrap">`
+      + `<div><div style="font-size:11px;color:#75aab9">${isEs?'Alcance (impresiones)':'Reach (impressions)'}</div><div style="font-size:20px;font-weight:800;color:#78f3ff">${rng(e.impressionsMin, e.impressionsMax, formatInt)}</div></div>`
+      + `<div><div style="font-size:11px;color:#75aab9">${isEs?'Precio estimado':'Estimated price'}</div><div style="font-size:20px;font-weight:800;color:#ffd866">${rng(e.priceMin, e.priceMax, formatMoney)}</div></div></div>`
+      + `<div style="font-size:11px;color:#5e8595;margin-top:6px">${e.points} ${isEs?'puntos':'points'} · ${e.surfaces} ${isEs?'dispositivos':'devices'} · CPM €${e.cpm.toFixed(2)} · ${escHtml(e.target)}. ${isEs?'Impresiones = oportunidades, no personas únicas. Sin cargo ni emisión; precio sujeto a confirmación.':'Impressions = opportunities, not unique people. No charge or emission; price subject to confirmation.'}</div>`;
+  }
+  refreshEstimate();
   let combos = refresh();
   ov.querySelector('#campaign-go').addEventListener('click', () => {
     const product = (ov.querySelector('#campaign-product').value || '').trim();
