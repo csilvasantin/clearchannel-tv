@@ -70,6 +70,11 @@ test('the built release serves corrected biz assets while preserving the other d
       const baseline = execFileSync('git', ['show', config.preservedRevision + ':' + file], {cwd:root, encoding:'utf8'});
       assert.equal(readFileSync(join(output, file), 'utf8'), baseline.replaceAll('__ADMIRANEXT_VERSION__', config.preservedVersion.version), `preserved ${file}`);
     }
+    for (const file of ['index.html','help/index.html','mcp/index.html']) {
+      const text=readFileSync(join(output,'__admira_cc_native',file),'utf8');
+      assert.ok(!/galaxy-shell\.js\?v=20261006/.test(text), 'modified loader cache pin is fresh: '+file);
+      if (text.includes('galaxy-shell.js')) assert.ok(text.includes('galaxy-shell.js?v=20261012-android-five-1'));
+    }
     const baselineHeaders = execFileSync('git', ['show', config.preservedRevision + ':_headers'], {cwd:root, encoding:'utf8'});
     const builtHeaders = readFileSync(join(output, '_headers'), 'utf8');
     assert.ok(builtHeaders.startsWith(baselineHeaders), 'existing domain cache rules are preserved');
