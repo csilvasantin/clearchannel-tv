@@ -181,7 +181,7 @@ function campaignEstimate() {
   return {...est, circuit: currentCircuitLabel(), scope: circuitScopeLabel(), target: circuitTargetSummary(), fromSelection: picked.length > 0};
 }
 function openCampaignModal() {
-  const isEs = (typeof lang === 'undefined') || lang !== 'en';
+  const isEs = LANG !== 'en';
   document.getElementById('campaign-modal')?.remove();
   const ov = document.createElement('div');
   ov.id = 'campaign-modal';
