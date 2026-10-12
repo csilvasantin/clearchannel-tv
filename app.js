@@ -168,8 +168,11 @@ function comboLabel(combo) {
 }
 // #5804: estimación de alcance y precio según circuito + target elegidos (puntos seleccionados, o todo el circuito).
 function campaignEstimate() {
-  const picked = selectedLocations();
-  const locs = picked.length ? picked : currentCircuitItems();
+  if (typeof CampaignPlanner === 'undefined' || typeof CampaignPlanner.estimate !== 'function') throw new Error('estimate_unavailable');
+  const circuitItems = currentCircuitItems().filter(loc => loc && Array.isArray(loc.surfaces));
+  const circuitIds = new Set(circuitItems.map(loc => loc.id));
+  const picked = selectedLocations().filter(loc => loc && circuitIds.has(loc.id));
+  const locs = picked.length ? picked : circuitItems;
   const items = locs.map(loc => {
     const cpms = locationCpmValues(loc);
     return {id:loc.id, impr:locationDailyImpr(loc), surfaces:locationSurfaceCount(loc), cpm:cpms.length ? cpms.reduce((a,b)=>a+b,0)/cpms.length : 5};
@@ -220,7 +223,10 @@ function openCampaignModal() {
     const box = ov.querySelector('#campaign-estimate');
     if (!box) return;
     let e;
-    try { e = campaignEstimate(); } catch (_) { box.innerHTML = ''; return; }
+    try { e = campaignEstimate(); } catch (_) {
+      box.innerHTML = `<div style="font-size:12px;color:#75aab9">${isEs?'No se ha podido calcular la estimación.':'The estimate could not be calculated.'}</div>`;
+      return;
+    }
     if (!e.points) { box.innerHTML = `<div style="font-size:12px;color:#75aab9">${isEs?'Elige un circuito con puntos para ver la estimación.':'Pick a circuit with points to see the estimate.'}</div>`; return; }
     const rng = (a, b, f) => `${f(a)} – ${f(b)}`;
     box.innerHTML = `<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#ffd866;font-family:monospace">${isEs?'Estimación':'Estimate'} · ${e.days} ${isEs?'días':'days'} · ${escHtml(e.circuit)}</div>`

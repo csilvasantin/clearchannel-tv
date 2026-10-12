@@ -38,8 +38,9 @@
     const price=Math.max(0,Math.round(estimatedImpr/1000*cpm*demand*durationFactor));
     return {days,dailyImpr,surfaces,cpm,demand,passFactor,durationFactor,estimatedImpr,price,points:unique.length};
   }
-  // Estimación rápida al crear campaña (#5804): mismos factores que quote(), con un plan por defecto
-  // (7 días desde `today`, 1000 pases/día, 15 s) y un margen ±15 % por la demanda de la fecha.
+  // Estimación rápida al crear campaña (#5804): mismos factores que quote() (la demanda de la
+  // fecha ya va dentro del precio), plan por defecto 7 días desde `today`, 1000 pases/día, 15 s,
+  // y una banda de incertidumbre ±15 % sobre impresiones y precio. No cobra ni emite.
   function estimate(items, today, opts) {
     const o = opts || {};
     const start = day(today) !== null ? today : new Date().toISOString().slice(0,10);

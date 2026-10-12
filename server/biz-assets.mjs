@@ -3,7 +3,7 @@
 // admira.biz (and the Pages preview used to verify that release).
 export const BIZ_ASSET_PREFIX = '/__admira_biz';
 export const BIZ_ASSET_FILES = Object.freeze([
-  'index.html', 'app.js', 'inventory-evidence.js', 'expert-commands.js', 'intro.js', 'detail.html',
+  'index.html', 'app.js', 'planner-core.js', 'inventory-evidence.js', 'expert-commands.js', 'intro.js', 'detail.html',
   'walk.html', 'walk.mjs', 'walk-launch.mjs', 'walk-core.mjs', 'walk.css', 'help/index.html',
   'about.html', 'marketplace.html', 'players/index.html', 'page-language.css',
   'backoffice.html', 'central-project-backoffice.mjs', 'tutorial/index.html',
