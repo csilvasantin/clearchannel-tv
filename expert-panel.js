@@ -374,4 +374,4 @@
   root.AdmiraExpert = Object.freeze({run, layout: () => normalizeLayout(state)});
 })(typeof window === 'undefined' ? globalThis : window);
 
-;(function(){if(typeof document!=='undefined'&&!document.querySelector('script[src*="/suite/experto.js"]')){var s=document.createElement("script");s.src="/suite/experto.js?v=20261012-android-1";document.head.appendChild(s);}})();
+;(function(){if(typeof document!=='undefined'&&!document.querySelector('script[src*="/suite/experto.js"]')){var s=document.createElement("script");s.src="https://www.admiranext.com/suite/experto.js?v=20261013-alsea-1";document.head.appendChild(s);}})();
