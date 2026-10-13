@@ -21,10 +21,9 @@
     ]
   },
   "novedades": [
-    "Players nativos: /demo android, /demo android Fold8 y /demo android watch desde Experto.",
-    "Help y MCP conservan guía, evidencias, versiones y minitutoriales de iOS, Android y sincronía.",
-    "Demo Wear OS aislada: imágenes y vídeos silenciosos; audios como título. Fold8 es perfil compatible sin firmware Samsung.",
-    "Tres comandos y documentación de players nativos compartidos en los cinco pilares; ClearChannel conserva el resto de su revisión."
+    "/demo alsea abre la presentación privada desde el motor común de las cinco plataformas.",
+    "Biz conserva sus demos iOS y Android y recibe los comandos compartidos desde AdmiraNeXT.",
+    "Entrada de agentes visible en /auth/agente, con la credencial de servicio existente."
   ],
   "nativeClearChannel": {
     "enabled": true,
