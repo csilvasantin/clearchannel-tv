@@ -173,7 +173,7 @@ function agentUpstream(hostname) {
 }
 
 async function agentLogin(request, url) {
-  if (url.pathname !== '/auth/agente' || request.method === 'GET' || request.method === 'HEAD') return null;
+  if (url.pathname !== '/auth/agente') return null;
   var target = agentUpstream(url.hostname);
   if (!target) return null;
   var headers = new Headers();
@@ -183,7 +183,7 @@ async function agentLogin(request, url) {
   });
   headers.set('Origin', target.origin);
   var init = { method: request.method, headers: headers, redirect: 'manual' };
-  if (request.method !== 'OPTIONS') init.body = await request.arrayBuffer();
+  if (!['GET','HEAD','OPTIONS'].includes(request.method)) init.body = await request.arrayBuffer();
   var response = await fetch(new URL('/auth/agente' + url.search, target.api), init);
   var out = new Headers(response.headers);
   out.set('Cache-Control', 'no-store');
