@@ -18,9 +18,9 @@ const textos = {
   es: {
     title: 'Creador de incidencias', hint: 'Envía un fallo a una pantalla de laboratorio y comprueba que el agente lo detecta y abre la incidencia en Yokup.',
     screen: 'Pantalla', type: 'Incidencia', send: 'Enviar al player', clear: 'Volver a la normalidad',
-    note: 'Sólo pantallas de laboratorio (MBP16 y players virtuales): el mando rechaza cualquier otra. El fallo caduca solo a los 30 min.',
+    note: 'Sólo players virtuales de laboratorio (virtual-lab-*): el mando rechaza cualquier otra pantalla. El fallo caduca solo a los 30 min.',
     loading: 'Cargando las pantallas del plano…', noPlan: 'Este Xpacio no tiene plano publicado.',
-    noLab: 'Este Xpacio no tiene pantallas de laboratorio: el Creador de incidencias sólo actúa sobre el MBP16 del laboratorio de Gran de Gràcia 51 y los players virtuales.',
+    noLab: 'Este Xpacio no tiene pantallas de laboratorio: el Creador de incidencias sólo actúa sobre players virtuales de laboratorio (virtual-lab-*). El MBP16 (GDG51-PAN-07) entrará cuando tenga un id de pantalla dedicado.',
     enviada: 'Orden enviada', acuse: 'Acuse del player', detectada: 'Detectada', abierta: 'Incidencia abierta', resuelta: 'Resuelta',
     sending: 'Enviando…', sent: c => `Orden «${c}» en la cola del player.`, rejected: r => `El mando la rechaza: ${r}.`, netError: 'Sin conexión con el mando.',
     waitAck: 'esperando al player…', noAck: 'sin acuse: ¿está el player encendido?', ackOk: 'ejecutada', ackFail: 'el player no la pudo ejecutar',
@@ -29,14 +29,15 @@ const textos = {
     noData: 'el player no declara la orientación pintada (versión anterior del canal)',
     suspect: s => `no casa · abre la incidencia en ${s} s`, failing: 'no casa', recovering: s => `vuelve a casar · se cierra en ${s} s`, matches: 'casa con el plano',
     opened: id => `Incidencia ${id} abierta en Yokup.`, closed: id => `Incidencia ${id || ''} cerrada: vuelve a casar.`, yokupError: e => `Yokup no responde: ${e}.`,
+    held: id => `Vuelve a casar, pero la incidencia ${id || ''} la lleva un técnico del portal: se cierra allí con evidencia.`,
     stage: { abierta: 'abierta', en_curso: 'en curso', recuperada: 'recuperada', cerrada: 'cerrada' }, lab: 'laboratorio'
   },
   en: {
     title: 'Incident creator', hint: 'Send a fault to a lab screen and check that the agent detects it and opens the incident in Yokup.',
     screen: 'Screen', type: 'Incident', send: 'Send to player', clear: 'Back to normal',
-    note: 'Lab screens only (MBP16 and virtual players): the remote rejects any other. The fault expires by itself after 30 min.',
+    note: 'Lab virtual players only (virtual-lab-*): the remote rejects any other screen. The fault expires by itself after 30 min.',
     loading: 'Loading the plan screens…', noPlan: 'This Xpace has no published floor plan.',
-    noLab: 'This Xpace has no lab screens: the incident creator only acts on the Gran de Gràcia 51 lab MBP16 and on virtual players.',
+    noLab: 'This Xpace has no lab screens: the incident creator only acts on lab virtual players (virtual-lab-*). The MBP16 (GDG51-PAN-07) will join once it has a dedicated screen id.',
     enviada: 'Order sent', acuse: 'Player receipt', detectada: 'Detected', abierta: 'Incident opened', resuelta: 'Resolved',
     sending: 'Sending…', sent: c => `Order “${c}” queued for the player.`, rejected: r => `The remote rejects it: ${r}.`, netError: 'No connection to the remote.',
     waitAck: 'waiting for the player…', noAck: 'no receipt: is the player on?', ackOk: 'executed', ackFail: 'the player could not run it',
@@ -45,6 +46,7 @@ const textos = {
     noData: 'the player does not report its painted orientation (older channel release)',
     suspect: s => `mismatch · opens the incident in ${s} s`, failing: 'mismatch', recovering: s => `matches again · closes in ${s} s`, matches: 'matches the plan',
     opened: id => `Incident ${id} opened in Yokup.`, closed: id => `Incident ${id || ''} closed: it matches again.`, yokupError: e => `Yokup is not answering: ${e}.`,
+    held: id => `It matches again, but incident ${id || ''} is held by a portal technician: it is closed there with evidence.`,
     stage: { abierta: 'open', en_curso: 'in progress', recuperada: 'recovered', cerrada: 'closed' }, lab: 'lab'
   }
 };
@@ -151,8 +153,15 @@ function vuelta() {
   if (!enCurso) enCurso = vueltaUnica().finally(() => { enCurso = null; });
   return enCurso;
 }
+// El detector de esta pestaña sólo corre con la sección ▤ a la vista: el panel abierto y la
+// pestaña visible. Siempre encendido está el agente de consola (tools/agente-incidencias.mjs).
+function activo() {
+  if (document.hidden) return false;
+  const panel = raiz.closest('details');
+  return !panel || panel.open;
+}
 async function vueltaUnica() {
-  const p = sel(); if (!p || document.hidden) return;
+  const p = sel(); if (!p || !activo()) return;
   const c = tipo(), ahora = Date.now();
   try { lectura = lecturaSenal(await red.mando.senal(p.screen), { ahora }); } catch { lectura = { estado: 'sin-senal', motivo: 'sin-respuesta' }; }
   const previo = detector;
@@ -167,6 +176,7 @@ async function vueltaUnica() {
     catch (e) { r = { ok: false, error: String(e && e.message || e) }; }
     detector = anotar(detector, accion, r);
     if (r.ok) { prueba.mensaje = accion === 'abrir' ? tr('opened', r.id) : tr('closed', r.id || detector.ultima); prueba.error = false; ultimoYokup = 0; }
+    else if (r.retenida) { prueba.mensaje = tr('held', detector.ultima); prueba.error = false; }
     else { prueba.mensaje = tr('yokupError', r.error); prueba.error = true; }
   }
   detector = { ...detector, accion: null };
@@ -219,6 +229,8 @@ async function arrancar() {
   $('inc-type').addEventListener('change', alCambiarPantalla);
   document.addEventListener('admira:lang', e => { const next = e.detail?.lang === 'es' ? 'es' : 'en'; if (next !== lang) { lang = next; traducir(); } });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) vuelta().catch(() => {}); });
+  // Al abrir el panel ▤ el detector arranca al momento (galaxy-shell mete la sección en un <details>).
+  document.addEventListener('toggle', e => { if (e.target && e.target.contains && e.target.contains(raiz) && e.target.open) vuelta().catch(() => {}); }, true);
   traducir();
   $('inc-status').textContent = tr('loading');
   try {

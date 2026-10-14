@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  CATALOGO, PANTALLAS_LAB, GRACIA_MS, REINTENTO_MS, pantallaLab, tipoIncidencia, orientacionEsperada, pantallasDelPlano, orden,
+  CATALOGO, PANTALLAS_LAB, GRACIA_MS, REINTENTO_MS, ESPERA_MAX_MS, pantallaLab, tipoIncidencia, orientacionEsperada, pantallasDelPlano, orden,
   pintadaPorGiro, lecturaSenal, evaluar, anotar, recurso, apertura, cierre, fichaYokup, incidenciaDe, pasos
 } from '../incidencias-core.mjs';
 import { mando, yokupPublico, yokupMcp, carril } from '../incidencias-adaptadores.mjs';
@@ -15,33 +15,40 @@ import { validate } from '../plano-core.mjs';
 const lab = JSON.parse(readFileSync(new URL('../data/xpacios/lab-gran-de-gracia-51.json', import.meta.url), 'utf8'));
 const starbucks = JSON.parse(readFileSync(new URL('../data/xpacios/alsea-sbux-021.json', import.meta.url), 'utf8'));
 const MBP16 = () => pantallasDelPlano(lab).find(p => p.itil === 'GDG51-PAN-07');
+// Carlos prueba con un player virtual: el mismo plano con el gemelo virtual-lab-bugito en GDG51-PAN-07.
+const LAB = 'virtual-lab-bugito';
+const labVirtual = structuredClone(lab);
+labVirtual.pantallas.find(p => p.itil === 'GDG51-PAN-07').playerVirtual = LAB;
+const BUGITO = () => pantallasDelPlano(labVirtual).find(p => p.itil === 'GDG51-PAN-07');
 const T0 = 1_791_970_000_000;
 const senal = (display, { lastSeen = T0, standby = false } = {}) => ({ ok: true, screen: 'macbookpro16', lastSeen, standby, device: { display } });
 const PANEL = { width: 3456, height: 2234 };
 
-test('el plano del laboratorio liga el CI del MBP16 a su player y sólo él es de laboratorio', () => {
+test('el plano liga el CI del MBP16 a su player, pero sin fallos hasta que tenga id dedicado', () => {
   const m = MBP16();
-  assert.deepEqual({ screen: m.screen, esperada: m.esperada, lab: m.lab, itil: m.itil }, { screen: 'macbookpro16', esperada: 'horizontal', lab: true, itil: 'GDG51-PAN-07' });
-  const otras = pantallasDelPlano(lab).filter(p => p.itil !== 'GDG51-PAN-07');
-  assert.ok(otras.length >= 6);
-  assert.ok(otras.every(p => !p.lab), 'las pantallas de los Mac Studio y Mac mini no son de laboratorio');
+  assert.deepEqual({ screen: m.screen, esperada: m.esperada, lab: m.lab, itil: m.itil }, { screen: 'macbookpro16', esperada: 'horizontal', lab: false, itil: 'GDG51-PAN-07' });
+  assert.ok(pantallasDelPlano(lab).every(p => !p.lab), 'en el plano publicado ninguna pantalla admite fallos');
   assert.equal(lab.yokup.project_id, 'gran-de-gracia');
   assert.deepEqual(validate(lab), [], 'el plano sigue siendo válido');
   assert.equal(pantallasDelPlano(starbucks).filter(p => p.lab).length, 0, 'ninguna pantalla de un cliente');
+  // Con un gemelo virtual de laboratorio, el Creador habla con él y no con la pantalla física.
+  const b = BUGITO();
+  assert.deepEqual({ screen: b.screen, lab: b.lab, esperada: b.esperada }, { screen: LAB, lab: true, esperada: 'horizontal' });
+  assert.equal(pantallasDelPlano(labVirtual).filter(p => p.lab).length, 1);
 });
 
-test('la salvaguarda: MBP16 y players virtuales; nada más', () => {
-  assert.deepEqual([...PANTALLAS_LAB], ['macbookpro16'], 'misma lista que omnipublicity-api src/fault-lab.js');
-  assert.equal(pantallaLab('virtual-lab-gdg51'), true);
-  for (const s of ['macmini-starbucks-horizontal', 'macstudio-starbucks-vertical', 'iphone17-mupi', 'virtual-x', '', null]) assert.equal(pantallaLab(s), false, String(s));
+test('la salvaguarda: sólo players virtual-lab-*; ni virtuales de clientes ni el hostname del MBP16', () => {
+  assert.deepEqual([...PANTALLAS_LAB], [], 'misma lista que omnipublicity-api src/fault-lab.js: ninguna física todavía');
+  for (const s of [LAB, 'virtual-lab-gdg51']) assert.equal(pantallaLab(s), true, s);
+  for (const s of ['virtual-alsea-macstudio', 'macbookpro16', 'lab-gdg51-mbp16', 'virtual-lab-', 'macmini-starbucks-horizontal', 'macstudio-starbucks-vertical', 'iphone17-mupi', 'virtual-x', '', null]) assert.equal(pantallaLab(s), false, String(s));
 });
 
 test('la orden que provoca y la que deshace, siempre dirigida a la propia pantalla', () => {
   assert.equal(CATALOGO[0].id, 'formato-girado');
-  assert.deepEqual(orden('formato-girado', 'macbookpro16'), { ok: true, body: { id: 'macbookpro16', screen: 'macbookpro16', cmd: 'fault-rotate' } });
-  assert.deepEqual(orden('formato-girado', 'macbookpro16', { vuelta: true }).body.cmd, 'fault-clear');
-  assert.deepEqual(orden('formato-girado', 'macmini-starbucks-horizontal'), { ok: false, error: 'pantalla_no_lab' });
-  assert.deepEqual(orden('pantalla-negra', 'macbookpro16'), { ok: false, error: 'tipo_desconocido' });
+  assert.deepEqual(orden('formato-girado', LAB), { ok: true, body: { id: LAB, screen: LAB, cmd: 'fault-rotate' } });
+  assert.deepEqual(orden('formato-girado', LAB, { vuelta: true }).body.cmd, 'fault-clear');
+  for (const s of ['macbookpro16', 'virtual-alsea-macstudio', 'macmini-starbucks-horizontal']) assert.deepEqual(orden('formato-girado', s), { ok: false, error: 'pantalla_no_lab' }, s);
+  assert.deepEqual(orden('pantalla-negra', LAB), { ok: false, error: 'tipo_desconocido' });
   assert.equal(tipoIncidencia('formato-girado').vuelta, 'fault-clear');
 });
 
@@ -97,32 +104,49 @@ test('el detector: una incidencia por fallo, con gracia al abrir y al cerrar', (
   assert.equal(evaluar(e, { esperada, pintada: 'horizontal' }, { ahora: T0 + 9 * g }).accion, null);
 });
 
-test('si Yokup falla, se reintenta una vez por minuto, al abrir y al cerrar', () => {
-  let e = { fase: 'sospecha', desde: T0, incidencia: null, intento: 0 };
-  e = evaluar(e, { esperada: 'horizontal', pintada: 'vertical' }, { ahora: T0 + GRACIA_MS });
-  e = anotar({ ...e, accion: null }, 'abrir', { ok: false, error: 'HTTP 503' });
-  assert.equal(e.error, 'HTTP 503');
-  assert.equal(evaluar(e, { esperada: 'horizontal', pintada: 'vertical' }, { ahora: T0 + GRACIA_MS + 1000 }).accion, null);
-  assert.equal(evaluar(e, { esperada: 'horizontal', pintada: 'vertical' }, { ahora: T0 + GRACIA_MS + REINTENTO_MS }).accion, 'abrir');
+test('si Yokup falla: espera creciente, 4xx permanente al tope y «lo lleva un técnico» es final', () => {
+  const v = (e, ahora) => evaluar(e, { esperada: 'horizontal', pintada: 'vertical' }, { ahora });
+  let e = v({ fase: 'sospecha', desde: T0, incidencia: null, intento: 0 }, T0 + GRACIA_MS);
+  assert.equal(e.accion, 'abrir');
+  e = anotar({ ...e, accion: null }, 'abrir', { ok: false, status: 503, error: 'HTTP 503' });
+  assert.equal(e.error, 'HTTP 503'); assert.equal(e.espera, REINTENTO_MS);
+  assert.equal(v(e, T0 + GRACIA_MS + 1000).accion, null);
+  e = v(e, T0 + GRACIA_MS + REINTENTO_MS);
+  assert.equal(e.accion, 'abrir', 'primer reintento al minuto');
+  e = anotar({ ...e, accion: null }, 'abrir', { ok: false, status: 503, error: 'HTTP 503' });
+  assert.equal(e.espera, 2 * REINTENTO_MS, 'luego el doble');
+  assert.equal(v(e, e.intento + REINTENTO_MS).accion, null);
+  assert.equal(v(e, e.intento + 2 * REINTENTO_MS).accion, 'abrir');
+  const permanente = anotar({ ...e, accion: null }, 'abrir', { ok: false, status: 400, permanente: true, error: 'invalid_project_id' });
+  assert.equal(permanente.espera, ESPERA_MAX_MS, 'un 4xx permanente no se martillea');
+  assert.equal(v(permanente, permanente.intento + ESPERA_MAX_MS - 1).accion, null);
+  for (let i = 0; i < 12; i++) e = anotar(e, 'abrir', { ok: false, status: 503 });
+  assert.equal(e.espera, ESPERA_MAX_MS, 'tope de 30 min');
+  const ok = anotar(e, 'abrir', { ok: true, id: 'INC-ABC12' });
+  assert.deepEqual([ok.fallos, ok.espera, ok.incidencia], [0, 0, 'INC-ABC12'], 'un éxito lo pone a cero');
+  // Cerrar: si la lleva un técnico del portal, el detector la suelta y no insiste.
   const cerrando = { fase: 'casa', desde: T0, incidencia: 'INC-ABC12', intento: T0 };
   assert.equal(evaluar(cerrando, { esperada: 'horizontal', pintada: 'horizontal' }, { ahora: T0 + REINTENTO_MS }).accion, 'resolver');
+  const retenida = anotar(cerrando, 'resolver', { ok: false, status: 409, retenida: true, permanente: true, error: 'La lleva un técnico' });
+  assert.deepEqual([retenida.incidencia, retenida.ultima, retenida.retenida], [null, 'INC-ABC12', true]);
+  for (let i = 1; i <= 5; i++) assert.equal(evaluar(retenida, { esperada: 'horizontal', pintada: 'horizontal' }, { ahora: T0 + i * ESPERA_MAX_MS }).accion, null);
 });
 
 test('la incidencia: recurso por Xpacio, CI y tipo; proyecto del plano; carril demo: sólo en laboratorio', () => {
-  const m = MBP16();
-  assert.equal(recurso(lab, m, 'formato-girado'), 'demo:lab-gran-de-gracia-51:GDG51-PAN-07:formato-girado');
-  assert.equal(recurso(lab, { ...m, lab: false }, 'formato-girado'), 'itil:lab-gran-de-gracia-51:GDG51-PAN-07:formato-girado');
+  const m = BUGITO();
+  assert.equal(recurso(labVirtual, m, 'formato-girado'), 'demo:lab-gran-de-gracia-51:GDG51-PAN-07:formato-girado');
+  assert.equal(recurso(lab, MBP16(), 'formato-girado'), 'itil:lab-gran-de-gracia-51:GDG51-PAN-07:formato-girado', 'una pantalla física iría por el carril real');
   const lectura = lecturaSenal(senal({ ...PANEL, painted: 'vertical', paintedRotation: 90 }), { ahora: T0 });
-  const body = apertura({ plan: lab, pantalla: m, tipo: 'formato-girado', lectura, esperada: 'horizontal', desde: T0 - 31000, ahora: T0, by: 'Agente detector · test' });
+  const body = apertura({ plan: labVirtual, pantalla: m, tipo: 'formato-girado', lectura, esperada: 'horizontal', desde: T0 - 31000, ahora: T0, by: 'Agente detector · test' });
   assert.equal(body.resource, 'demo:lab-gran-de-gracia-51:GDG51-PAN-07:formato-girado');
   assert.equal(body.kind, 'screen'); assert.equal(body.severity, 'alta'); assert.equal(body.project_id, 'gran-de-gracia'); assert.equal(body.loc, 'lab-gran-de-gracia-51');
   assert.ok(body.source.length <= 24);
   assert.match(body.subject, /^GDG51-PAN-07 · Formato girado: .* pinta en vertical y debe ir en horizontal$/);
   assert.ok(body.subject.length <= 200 && body.detail.length <= 2000);
-  assert.match(body.detail, /giro medido 90°/); assert.match(body.detail, /hace 31 s/); assert.match(body.detail, /player macbookpro16/);
-  const c = cierre({ plan: lab, pantalla: m, tipo: 'formato-girado', id: 'INC-ABC12', by: 'Agente detector · test' });
+  assert.match(body.detail, /giro medido 90°/); assert.match(body.detail, /hace 31 s/); assert.match(body.detail, /player virtual-lab-bugito/);
+  const c = cierre({ plan: labVirtual, pantalla: m, tipo: 'formato-girado', id: 'INC-ABC12', by: 'Agente detector · test' });
   assert.deepEqual(Object.keys(c).sort(), ['by', 'close', 'id', 'note', 'resource']);
-  assert.equal(cierre({ plan: lab, pantalla: m, tipo: 'formato-girado', id: 'no-es-un-id' }).id, undefined);
+  assert.equal(cierre({ plan: labVirtual, pantalla: m, tipo: 'formato-girado', id: 'no-es-un-id' }).id, undefined);
   assert.equal(fichaYokup('INC-ABC12'), 'https://www.yokup.com/ticket?id=INC-ABC12');
   assert.equal(fichaYokup('<script>'), 'https://www.yokup.com/incidencias');
 });
@@ -159,16 +183,16 @@ function red(rutas) {
 test('el mando: cola, 403 de la salvaguarda y acuse', async () => {
   const { fetcher, llamadas } = red([
     ['/locations/cmd/ack', () => [200, { ok: true, seen: true, ack: { status: 'executed', cmd: 'fault-rotate' } }]],
-    ['/locations/cmd', (u, i) => JSON.parse(i.body).screen === 'macbookpro16'
-      ? [200, { ok: true, id: 'macbookpro16', cid: 7, action: '11111111-1111-4111-8111-111111111111', cmd: 'fault-rotate' }]
+    ['/locations/cmd', (u, i) => JSON.parse(i.body).screen === LAB
+      ? [200, { ok: true, id: LAB, cid: 7, action: '11111111-1111-4111-8111-111111111111', cmd: 'fault-rotate' }]
       : [403, { error: 'fault_not_allowed', reason: 'screen_not_lab' }]]
   ]);
   const m = mando(fetcher);
-  const ok = await m.enviar(orden('formato-girado', 'macbookpro16').body);
+  const ok = await m.enviar(orden('formato-girado', LAB).body);
   assert.equal(ok.ok, true); assert.equal(ok.cid, 7);
-  const no = await m.enviar({ id: 'macmini-starbucks-horizontal', screen: 'macmini-starbucks-horizontal', cmd: 'fault-rotate' });
+  const no = await m.enviar({ id: 'virtual-alsea-macstudio', screen: 'virtual-alsea-macstudio', cmd: 'fault-rotate' });
   assert.deepEqual({ ok: no.ok, status: no.status, error: no.error }, { ok: false, status: 403, error: 'screen_not_lab' });
-  const a = await m.acuse('macbookpro16', ok.action);
+  const a = await m.acuse(LAB, ok.action);
   assert.equal(a.seen, true); assert.equal(a.ack.status, 'executed');
   assert.equal(llamadas[0].init.method, 'POST');
 });
@@ -179,7 +203,9 @@ test('Yokup público: sólo recursos demo:, idempotente y con el cierre de un re
     ['/incident/status', () => [200, { ok: true, incidents: [{ id: 'INC-ABC12', resource: 'demo:x', stage: 'abierta' }] }]],
     ['/incident', (u, i) => {
       const b = JSON.parse(i.body);
+      if (b.close && b.resource.endsWith(':tecnico')) return [409, { ok: false, portal_assigned: true, error: 'La lleva un técnico en el portal del comercio' }];
       if (b.close) return b.resource.endsWith(':nada') ? [404, { ok: false, error: 'incidencia demo no encontrada' }] : [200, { ok: true, id: 'INC-ABC12', status: 'resolved', stage: 'cerrada', applied: true }];
+      if (b.resource.endsWith(':malo')) return [400, { ok: false, error: 'project_id activo y exacto requerido' }];
       abiertas++; return [200, { ok: true, id: 'INC-ABC12' }];
     }]
   ]);
@@ -191,6 +217,10 @@ test('Yokup público: sólo recursos demo:, idempotente y con el cierre de un re
   assert.equal(abiertas, 1);
   assert.equal((await y.cerrar({ close: true, resource: 'demo:lab:GDG51-PAN-07:formato-girado' })).applied, true);
   assert.equal((await y.cerrar({ close: true, resource: 'demo:lab:nada' })).nada, true);
+  const t = await y.cerrar({ close: true, resource: 'demo:lab:tecnico' });
+  assert.deepEqual([t.ok, t.retenida, t.permanente], [false, true, true]);
+  const malo = await y.abrir({ resource: 'demo:lab:malo' });
+  assert.deepEqual([malo.ok, malo.status, malo.permanente], [false, 400, true]);
   const st = await y.estado('demo:lab:', ['INC-ABC12', 'malo']);
   assert.equal(st.incidents.length, 1);
   assert.match(llamadas.at(-1).url, /prefix=demo%3Alab%3A&ids=INC-ABC12$/);
@@ -230,7 +260,7 @@ test('el agente abre una sola incidencia por fallo y la cierra al volver a casar
     ['/incident', (u, i) => { const b = JSON.parse(i.body); posts.push(b); return [200, b.close ? { ok: true, id: 'INC-ABC12', applied: true, stage: 'cerrada' } : { ok: true, id: 'INC-ABC12' }]; }]
   ]);
   let estados = {};
-  const paso = async (seg, extra = {}) => { ahora += seg * 1000; const r = await pasada({ plan: lab, estados, fetcher, ahora, by: 'Agente detector · test', ...extra }); estados = r.estados; return r.hechos; };
+  const paso = async (seg, extra = {}) => { ahora += seg * 1000; const r = await pasada({ plan: labVirtual, estados, fetcher, ahora, by: 'Agente detector · test', ...extra }); estados = r.estados; return r.hechos; };
   await paso(0);
   assert.equal(posts.length, 0);
   pinta = 'vertical';                                   // fault-rotate llega al player
@@ -239,7 +269,7 @@ test('el agente abre una sola incidencia por fallo y la cierra al volver a casar
   await paso(10);
   assert.equal(posts.length, 1, 'abre al cumplir la gracia');
   assert.equal(posts[0].resource, 'demo:lab-gran-de-gracia-51:GDG51-PAN-07:formato-girado');
-  assert.equal(estados['macbookpro16:formato-girado'].incidencia, 'INC-ABC12');
+  assert.equal(estados['virtual-lab-bugito:formato-girado'].incidencia, 'INC-ABC12');
   for (let i = 0; i < 12; i++) await paso(10);
   assert.equal(posts.length, 1, 'una incidencia por fallo, no una por latido');
   pinta = 'horizontal';                                 // fault-clear
@@ -247,7 +277,7 @@ test('el agente abre una sola incidencia por fallo y la cierra al volver a casar
   assert.equal(posts.length, 1);
   await paso(10);
   assert.equal(posts.length, 2); assert.equal(posts[1].close, true); assert.equal(posts[1].id, 'INC-ABC12');
-  assert.equal(estados['macbookpro16:formato-girado'].incidencia, null);
+  assert.equal(estados['virtual-lab-bugito:formato-girado'].incidencia, null);
   for (let i = 0; i < 6; i++) await paso(10);
   assert.equal(posts.length, 2);
   // En seco no escribe nada aunque detecte.
@@ -258,15 +288,18 @@ test('el agente abre una sola incidencia por fallo y la cierra al volver a casar
   assert.ok(hechos.some(h => h.accion === 'abrir' && h.omitida === 'seco'));
 });
 
-test('el agente no vigila pantallas de clientes salvo que se le pida, y entonces sin credencial sólo observa', async () => {
-  const { fetcher, llamadas } = red([['/signage/now', () => [200, senal({ width: 2560, height: 1440, painted: 'vertical' })]]]);
+test('el agente no vigila pantallas de clientes salvo con --todas, y entonces en seco aunque haya credencial', async () => {
+  const { fetcher, llamadas } = red([['/signage/now', () => [200, senal({ width: 2560, height: 1440, painted: 'vertical' })]], ['yokup', () => [200, { ok: true, id: 'INC-NO' }]]]);
   await pasada({ plan: starbucks, fetcher, ahora: T0 });
   assert.equal(llamadas.length, 0);
-  let estados = {};
-  for (let i = 0; i <= 4; i++) estados = (await pasada({ plan: starbucks, estados, fetcher, ahora: T0 + i * GRACIA_MS, todas: true })).estados;
+  await pasada({ plan: lab, fetcher, ahora: T0 });
+  assert.equal(llamadas.length, 0, 'el MBP16 tampoco, mientras no tenga id dedicado');
+  const credencial = { token: 'ykm_secreto', scopes: ['incidents', 'incidents:write'] };
+  let estados = {}, hechos = [];
+  for (let i = 0; i <= 4; i++) { const r = await pasada({ plan: starbucks, estados, fetcher, ahora: T0 + i * GRACIA_MS, todas: true, credencial }); estados = r.estados; hechos.push(...r.hechos); }
   assert.ok(llamadas.length > 0);
-  assert.ok(llamadas.every(l => !l.url.includes('yokup')), 'sin credencial no se escribe en Yokup');
-  assert.ok(Object.values(estados).some(e => e.error === 'sin_carril'));
+  assert.ok(llamadas.every(l => !l.url.includes('yokup')), '--todas implica --seco: nada de incidencias reales');
+  assert.ok(hechos.some(h => h.accion === 'abrir' && h.omitida === 'seco'));
 });
 
 test('la página: sección en el ▤ Modo avanzado debajo de Creación de Xpacios, textos propios y publicada en admira.biz', () => {
@@ -281,5 +314,9 @@ test('la página: sección en el ▤ Modo avanzado debajo de Creación de Xpacio
   for (const k of [...seccion.matchAll(/data-inc="([a-zA-Z]+)"/g)].map(m => m[1])) assert.ok(new RegExp(`\\b${k}:`).test(ui), `falta el texto ${k}`);
   for (const f of ['plano-incidencias.mjs', 'plano-incidencias.css', 'incidencias-core.mjs', 'incidencias-adaptadores.mjs']) assert.ok(BIZ_ASSET_FILES.includes(f), f);
   assert.match(ui, /raiz\.addEventListener\('click', e => e\.stopPropagation\(\)\)/, 'pulsar dentro no cierra el panel');
+  // El detector de la pestaña sólo corre con la sección ▤ abierta y la pestaña visible.
+  assert.match(ui, /function activo\(\) \{\n\s*if \(document\.hidden\) return false;\n\s*const panel = raiz\.closest\('details'\);\n\s*return !panel \|\| panel\.open;/);
+  assert.match(ui, /async function vueltaUnica\(\) \{\n\s*const p = sel\(\); if \(!p \|\| !activo\(\)\) return;/);
+  assert.match(ui, /virtual-lab-\*/);
   assert.match(ui, /en: \{/);
 });

@@ -24,14 +24,20 @@ export const YOKUP_MCP = 'https://yokup.com/mcp';
 
 export const GRACIA_MS = 30000;      // N: segundos seguidos sin casar antes de abrir (y casando antes de cerrar)
 export const FRESCURA_MS = 330000;   // /signage/now caduca a los 300 s; más viejo que esto = sin señal
-export const REINTENTO_MS = 60000;   // si abrir o cerrar falla, se reintenta como mucho una vez por minuto
+export const REINTENTO_MS = 60000;   // si abrir o cerrar falla, primer reintento al minuto…
+export const ESPERA_MAX_MS = 30 * 60000;   // …y luego el doble cada vez hasta 30 min; un 4xx permanente, 30 min directos
 export const DEMO_PREFIX = 'demo:';  // carril público de Yokup (POST /incident): sólo recursos demo:
 export const ORIGEN = 'creador-incidencias';
 
 // Espejo de la lista del backend (omnipublicity-api src/fault-lab.js). MANDA EL BACKEND, que
 // devuelve 403 a cualquier otra pantalla: aquí sólo sirve para no ofrecer lo que se rechazaría.
-export const PANTALLAS_LAB = Object.freeze(['macbookpro16']);
-export const VIRTUAL_RE = /^virtual-[a-z0-9][a-z0-9-]{2,60}$/;
+//  · Players virtuales de laboratorio: sólo el prefijo `virtual-lab-` (el de pruebas es
+//    `virtual-lab-bugito`). No cualquier `virtual-*`: hay virtuales de clientes.
+//  · Pantallas físicas: lista explícita, hoy VACÍA. El MBP16 (GDG51-PAN-07) emite como
+//    `macbookpro16`, que sale del hostname (lo repetiría cualquier MacBook Pro 16): entra el día
+//    que tenga un id dedicado (`lab-gdg51-mbp16`), en los dos sitios a la vez.
+export const PANTALLAS_LAB = Object.freeze([]);
+export const VIRTUAL_LAB_RE = /^virtual-lab-[a-z0-9][a-z0-9-]{0,35}$/;
 const SCREEN_RE = /^[a-z0-9][a-z0-9_-]{1,59}$/;
 const ITIL_RE = /^[A-Z0-9]{2,12}(-[A-Z0-9]{2,12}){1,3}$/;
 const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,79}$/;
@@ -39,7 +45,7 @@ const ID_TICKET = /^[A-Z]{3}-[A-Z0-9]{4,10}$/;
 
 export function pantallaLab(screen) {
   const s = String(screen || '');
-  return PANTALLAS_LAB.includes(s) || VIRTUAL_RE.test(s);
+  return PANTALLAS_LAB.includes(s) || VIRTUAL_LAB_RE.test(s);
 }
 
 // ── Catálogo: se alimenta poco a poco. Cada tipo dice qué orden lo provoca, cuál lo deshace y
@@ -63,9 +69,11 @@ export function orientacionEsperada(p) {
   if (r && Number(r[0]) > 0 && Number(r[1]) > 0) return Number(r[0]) >= Number(r[1]) ? 'horizontal' : 'vertical';
   return null;
 }
+// La pantalla a la que se habla: si la del plano tiene un player de laboratorio (su gemelo
+// `playerVirtual: virtual-lab-…` o un id físico de la lista), ése; si no, la que emite.
 export function screenDe(p) {
-  const s = String((p && (p.screenId || p.playerVirtual)) || '');
-  return SCREEN_RE.test(s) ? s : '';
+  const candidatas = [p && p.screenId, p && p.playerVirtual].map(v => String(v || '')).filter(v => SCREEN_RE.test(v));
+  return candidatas.find(pantallaLab) || candidatas[0] || '';
 }
 export function pantallasDelPlano(plan) {
   const lista = plan && Array.isArray(plan.pantallas) ? plan.pantallas : [];
@@ -118,7 +126,8 @@ export function lecturaSenal(senal, { ahora = Date.now(), frescuraMs = FRESCURA_
 // ── El detector: una máquina de estados por pantalla y tipo ────────────────────────────────
 // casa → sospecha (no casa) → fallo (≥ gracia: ABRIR) → recuperando (casa) → casa (≥ gracia: RESOLVER).
 // Sin dato o sin señal NO se mueve: nunca abre ni cierra a ciegas. `incidencia` la rellena quien
-// ejecuta la acción; mientras falte en «fallo» (o sobre en «casa») se reintenta cada REINTENTO_MS.
+// ejecuta la acción; mientras falte en «fallo» (o sobre en «casa») se reintenta con la espera que
+// dejó anotar(): REINTENTO_MS, el doble a cada fallo y ESPERA_MAX_MS si el error es permanente.
 export function evaluar(prev, { esperada, pintada } = {}, { ahora = Date.now(), graciaMs = GRACIA_MS, reintentoMs = REINTENTO_MS } = {}) {
   const s = { fase: 'casa', desde: ahora, incidencia: null, intento: 0, ...(prev || {}) };
   if (!esperada || !pintada) return { ...s, sinDato: true, accion: null };
@@ -131,7 +140,7 @@ export function evaluar(prev, { esperada, pintada } = {}, { ahora = Date.now(), 
       return out;
     case 'fallo':
       if (casa) return { ...out, fase: 'recuperando', desde: ahora };
-      if (!s.incidencia && ahora - (s.intento || 0) >= reintentoMs) return { ...out, accion: 'abrir', intento: ahora };
+      if (!s.incidencia && ahora - (s.intento || 0) >= (s.espera || reintentoMs)) return { ...out, accion: 'abrir', intento: ahora };
       return out;
     case 'recuperando':
       if (!casa) return { ...out, fase: 'fallo', desde: ahora };
@@ -139,15 +148,27 @@ export function evaluar(prev, { esperada, pintada } = {}, { ahora = Date.now(), 
       return out;
     default:
       if (!casa) return { ...out, fase: 'sospecha', desde: ahora };
-      if (s.incidencia && ahora - (s.intento || 0) >= reintentoMs) return { ...out, fase: 'casa', accion: 'resolver', intento: ahora };
+      if (s.incidencia && ahora - (s.intento || 0) >= (s.espera || reintentoMs)) return { ...out, fase: 'casa', accion: 'resolver', intento: ahora };
       return { ...out, fase: 'casa' };
   }
 }
-// Tras ejecutar la acción: con éxito se apunta (o se olvida) la incidencia; si falla, se reintenta.
+// Tras ejecutar la acción: con éxito se apunta (o se olvida) la incidencia. Si falla:
+//  · al cerrar, «la lleva un técnico del portal» (409 portal_assigned) es FINAL: se cierra allí
+//    con evidencia, así que el detector la suelta y no insiste;
+//  · cualquier otro fallo se reintenta con espera creciente (1, 2, 4… min, tope 30) y un 4xx
+//    permanente (petición inválida, proyecto inexistente…) espera directamente el tope.
 export function anotar(estado, accion, resultado) {
-  if (!resultado || !resultado.ok) return { ...estado, error: (resultado && resultado.error) || 'error' };
-  if (accion === 'abrir') return { ...estado, incidencia: resultado.id || estado.incidencia || 'abierta', url: resultado.url || estado.url || '', error: '' };
-  if (accion === 'resolver') return { ...estado, incidencia: null, ultima: estado.incidencia, url: estado.url || '', error: '' };
+  if (!resultado || !resultado.ok) {
+    const error = (resultado && resultado.error) || 'error';
+    if (accion === 'resolver' && resultado && resultado.retenida)
+      return { ...estado, incidencia: null, ultima: estado.incidencia, retenida: true, error, fallos: 0, espera: 0 };
+    const fallos = (estado.fallos || 0) + 1;
+    const espera = resultado && resultado.permanente ? ESPERA_MAX_MS : Math.min(REINTENTO_MS * 2 ** (fallos - 1), ESPERA_MAX_MS);
+    return { ...estado, error, fallos, espera };
+  }
+  const limpio = { error: '', fallos: 0, espera: 0, retenida: false };
+  if (accion === 'abrir') return { ...estado, ...limpio, incidencia: resultado.id || estado.incidencia || 'abierta', url: resultado.url || estado.url || '' };
+  if (accion === 'resolver') return { ...estado, ...limpio, incidencia: null, ultima: estado.incidencia, url: estado.url || '' };
   return estado;
 }
 

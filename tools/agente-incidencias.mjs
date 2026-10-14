@@ -7,16 +7,21 @@
 // encendido. Una incidencia por fallo: Yokup admite una activa por recurso y el estado se guarda.
 //
 // Carriles de Yokup (incidencias-adaptadores.mjs):
-//   · pantallas de laboratorio (macbookpro16, virtual-*) → POST api.yokup.com/incident con recurso
-//     `demo:<xpacio>:<CI>:<tipo>` (público: abre, lee estado y cierra sin credenciales);
+//   · pantallas de laboratorio (players virtual-lab-*, p. ej. virtual-lab-bugito) → POST
+//     api.yokup.com/incident con recurso `demo:<xpacio>:<CI>:<tipo>` (público: abre, lee estado y
+//     cierra sin credenciales);
 //   · el resto (sólo con --todas) → MCP de flota yokup.com/mcp con una credencial que tenga
-//     `incidents:write` (--credencial <fichero>). Sin ella, sólo observa y lo dice.
+//     `incidents:write` (--credencial <fichero>).
 //
 // Uso:
 //   node tools/agente-incidencias.mjs                     → laboratorio de Gran de Gràcia 51, cada 10 s
 //   node tools/agente-incidencias.mjs --una --seco        → una pasada, sin escribir en Yokup
 //   node tools/agente-incidencias.mjs --plano data/xpacios/<id>.json [--gracia 30] [--intervalo 10]
 //        [--estado <fichero.json>] [--credencial <fichero de tools/mcp-credential.mjs>] [--todas] [--by "…"]
+//
+// --todas IMPLICA --seco: vigila también las pantallas que no son de laboratorio (CIs de clientes),
+// pero NO abre ni cierra incidencias reales `itil:` en Yokup; sólo dice lo que haría. Seguirá así
+// hasta validar el detector con hardware real.
 // Nunca imprime la credencial: sólo si el carril MCP está disponible o no.
 import fs from 'node:fs';
 import os from 'node:os';
@@ -31,6 +36,7 @@ const PLANO_POR_DEFECTO = path.join(RAIZ, 'data/xpacios/lab-gran-de-gracia-51.js
 // Una pasada por todas las pantallas vigiladas. Devuelve los estados nuevos y lo que ha hecho.
 export async function pasada({ plan, estados = {}, fetcher = fetch, ahora = Date.now(), graciaMs = GRACIA_MS, credencial = null,
   seco = false, todas = false, by = 'Agente detector', planoUrl = '' }) {
+  if (todas) seco = true;   // --todas implica --seco: nada de incidencias reales sobre CIs de clientes
   const red = mando(fetcher), publico = yokupPublico(fetcher), mcp = yokupMcp({ fetcher, credencial });
   const hechos = [], nuevos = { ...estados };
   for (const p of pantallasDelPlano(plan)) {
@@ -72,7 +78,7 @@ function args(argv) {
     else if (k === '--gracia') a.gracia = Math.max(5, Number(v()) || 30);
     else if (k === '--una') a.una = true;
     else if (k === '--seco') a.seco = true;
-    else if (k === '--todas') a.todas = true;
+    else if (k === '--todas') { a.todas = true; a.seco = true; }
     else if (k === '--credencial') a.credencial = v();
     else if (k === '--estado') a.estado = v();
     else if (k === '--by') a.by = v();
@@ -97,7 +103,7 @@ async function main() {
   const vigiladas = pantallasDelPlano(plan).filter(p => p.screen && p.esperada && (p.lab || a.todas));
   console.log(`▤ Creador de incidencias · agente detector · ${plan.nombre || plan.id}`);
   console.log(`  vigila: ${vigiladas.map(p => `${p.itil || p.id}=${p.screen} (${p.esperada}${p.lab ? ', laboratorio' : ''})`).join(' · ') || 'ninguna'}`);
-  console.log(`  gracia ${a.gracia} s · cada ${a.intervalo} s · Yokup: público demo: sí · MCP: ${mcp.disponible ? 'disponible' : 'no disponible (sin credencial con incidents:write)'}${a.seco ? ' · SECO: no escribe en Yokup' : ''}`);
+  console.log(`  gracia ${a.gracia} s · cada ${a.intervalo} s · Yokup: público demo: sí · MCP: ${mcp.disponible ? 'disponible' : 'no disponible (sin credencial con incidents:write)'}${a.seco ? ` · SECO: no escribe en Yokup${a.todas ? ' (--todas lo impone)' : ''}` : ''}`);
   const guardar = () => { try { fs.mkdirSync(path.dirname(ficheroEstado), { recursive: true }); fs.writeFileSync(ficheroEstado, JSON.stringify(estados, null, 1)); } catch (e) { console.error(`✖ no se pudo guardar el estado: ${e.message}`); } };
   let parar = false;
   process.on('SIGINT', () => { parar = true; guardar(); console.log('\n■ detenido'); process.exit(0); });

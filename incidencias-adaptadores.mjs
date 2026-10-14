@@ -4,6 +4,8 @@
 import { MANDO_CMD, MANDO_ACK, SIGNAGE_NOW, YOKUP_INCIDENT, YOKUP_STATUS, YOKUP_MCP, DEMO_PREFIX, fichaYokup } from './incidencias-core.mjs?v=20261014-incidencias-1';
 
 async function leerJson(r) { try { return await r.json(); } catch { return {}; } }
+// Un 4xx que repetir no arregla (petición inválida, recurso que no es suyo…). 408/425/429 sí se reintentan.
+export const permanente = status => status >= 400 && status < 500 && ![408, 425, 429].includes(status);
 
 // ── Mando a distancia ────────────────────────────────────────────────────────────────────────
 export function mando(fetcher = fetch) {
@@ -40,15 +42,16 @@ export function yokupPublico(fetcher = fetch) {
     async abrir(body) {
       if (!body || !String(body.resource || '').startsWith(DEMO_PREFIX)) return { ok: false, error: 'solo_demo' };
       const { r, d } = await post(body);
-      if (!r.ok || !d.ok || !d.id) return { ok: false, error: d.error || `HTTP ${r.status}` };
+      if (!r.ok || !d.ok || !d.id) return { ok: false, status: r.status, permanente: permanente(r.status), error: d.error || `HTTP ${r.status}` };
       return { ok: true, id: d.id, url: fichaYokup(d.id) };
     },
     async cerrar(body) {
       if (!body || !String(body.resource || '').startsWith(DEMO_PREFIX)) return { ok: false, error: 'solo_demo' };
       const { r, d } = await post(body);
       if (r.status === 404) return { ok: true, id: null, applied: false, nada: true };   // no había ninguna activa
-      if (r.status === 409 && d.portal_assigned) return { ok: false, retenida: true, error: d.error || 'la lleva un técnico del portal' };
-      if (!r.ok || !d.ok) return { ok: false, error: d.error || `HTTP ${r.status}` };
+      // Final: la lleva un técnico del portal del comercio y se cierra allí con evidencia.
+      if (r.status === 409 && d.portal_assigned) return { ok: false, status: 409, retenida: true, permanente: true, error: d.error || 'la lleva un técnico del portal' };
+      if (!r.ok || !d.ok) return { ok: false, status: r.status, permanente: permanente(r.status), error: d.error || `HTTP ${r.status}` };
       return { ok: true, id: d.id || null, applied: d.applied !== false, stage: d.stage || 'cerrada' };
     },
     async estado(prefijo, ids = []) {
@@ -81,7 +84,7 @@ export function yokupMcp({ fetcher = fetch, credencial = null } = {}) {
       body: JSON.stringify({ jsonrpc: '2.0', id: ++seq, method: 'tools/call', params: { name, arguments: args } })
     });
     const d = await leerJson(r);
-    if (!r.ok || d.error) return { ok: false, error: (d.error && (d.error.message || d.error)) || `HTTP ${r.status}` };
+    if (!r.ok || d.error) return { ok: false, status: r.status, permanente: permanente(r.status), error: (d.error && (d.error.message || d.error)) || `HTTP ${r.status}` };
     const res = d.result || {};
     if (res.isError) return { ok: false, error: (res.content && res.content[0] && res.content[0].text) || 'tool_error' };
     let out = res.structuredContent;
