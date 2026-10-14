@@ -379,4 +379,4 @@
   root.AdmiraExpert = Object.freeze({run, layout: () => normalizeLayout(state)});
 })(typeof window === 'undefined' ? globalThis : window);
 
-;(function(){if(typeof document!=='undefined'&&!document.querySelector('script[src*="/suite/experto.js"]')){var s=document.createElement("script");s.src="https://www.admiranext.com/suite/experto.js?v=20261014-personajes-2";document.head.appendChild(s);}})();
+;(function(){if(typeof document!=='undefined'&&!document.querySelector('script[src*="/suite/experto.js"]')){var s=document.createElement("script");s.src="https://www.admiranext.com/suite/experto.js?v=20261014-personajes-3";document.head.appendChild(s);}})();
