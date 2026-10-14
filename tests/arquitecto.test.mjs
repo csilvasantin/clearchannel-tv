@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import {
   ORDENES, ITIL_RE, parseOrden, parametros, tipoDe, paredDe, medidasDe, leerDescripcion, interpretarReforma, aplicarReforma, reformaDesdeEstimacion,
   planDesdeEstimacion, planDesdeDescripcion, prefijoDe, construirCis, revisarCis, ordenAlta, planConItil, inventarioTraspaso, codificarTraspaso,
-  urlPortal, caraUrl, baseLocal, ordenDeNube, MAX_TRASPASO_JSON, TRASPASO_SCHEMA, PORTAL_IMPORTAR, ESTIMAR_URL
+  urlPortal, caraUrl, baseLocal, ordenDeNube, MAX_TRASPASO_JSON, MAX_ORDENES, MAX_PANTALLAS_NUEVAS, TRASPASO_SCHEMA, PORTAL_IMPORTAR, ESTIMAR_URL
 } from '../arquitecto-core.mjs';
 import { svgPlanta, svgAlzado } from '../arquitecto-dibujo.mjs';
 import { generarXpacio } from '../plano-generador.mjs';
@@ -103,6 +103,20 @@ test('reformar: mover, girar, cambiar de tamaño y retirar por pared, número o 
   // Una orden sobre una pantalla que ya no está no rompe nada.
   r = aplicarReforma(plan, plan.pantallas, [{ op: 'retirar', ids: [plan.pantallas[0].id] }, { op: 'girar', ids: [plan.pantallas[0].id], orientacion: 'vertical' }]);
   assert.equal(r.hechos[1].motivo, 'no-esta');
+});
+
+test('topes: muchas órdenes o pantallas no cuelgan el navegador; lo que sobra se dice', () => {
+  const plan = generarXpacio({ tipo: 'supermercado', total: true, semilla: 3, id: 'super-topes' });
+  const largo = Array.from({ length: 40 }, (_, i) => `añade doce pantallas verticales de 85 pulgadas en la pared ${['del fondo', 'derecha', 'izquierda'][i % 3]}`).join(', ');
+  let t = Date.now();
+  const r = interpretarReforma(largo, plan.pantallas);
+  assert.equal(r.ops.length, MAX_ORDENES); assert.ok(r.demasiadas > 0, "las que sobran se cuentan");
+  const ap = aplicarReforma(plan, plan.pantallas, r.ops);
+  assert.equal(ap.propuesta.length - plan.pantallas.length, MAX_PANTALLAS_NUEVAS);
+  assert.ok(ap.hechos.some(h => h.motivo === 'demasiadas'));
+  const d = planDesdeDescripcion({ descripcion: 'supermercado de 30 por 40 m con ' + largo, id: 'desc-topes', semilla: 1 });
+  assert.ok(d.plan.pantallas.length <= MAX_PANTALLAS_NUEVAS);
+  assert.ok(Date.now() - t < 8000, 'en segundos, no en medio minuto: ' + (Date.now() - t) + ' ms');
 });
 
 test('reformar desde fotos: las pantallas estimadas sin pareja son altas en su sitio; nada se retira por no verse', () => {
@@ -246,8 +260,16 @@ test('la página: shell cuadrático, el Arquitecto a un lado y el plano al otro,
   assert.match(js, /registroSubida\(/, 'el mismo almacén de planos que plano.html');
   assert.doesNotMatch(js, /fetch\([^)]*yokup/i, 'el estudio no llama a la API de Yokup: traspasa al portal');
   const fotos = read('arquitecto-fotos.mjs');
-  assert.match(fotos, /from '\.\/plano-foto\.mjs\?v=20261014-foto-1'/, 'las reglas de fotos y vídeo de «Con foto o vídeo», no una copia');
+  assert.match(fotos, /from '\.\/plano-foto\.mjs\?v=20261014-foto-2'/, 'las reglas de fotos y vídeo de «Con foto o vídeo», no una copia');
   assert.match(js, /urlEstimador\(location\.search, location\.hostname\)/, 'en producción, siempre api.admira.store');
+  assert.match(js, /if \(!origenEstimador\(location\.origin\)\) return \{ ok: false, error: 'phOrigin' \};/, 'fuera de admira.biz/admira.store ni se intenta');
+  assert.match(js, /proponerReforma\(\{ conFotos: false \}\)/, 'por voz o por la nube, nunca al estimador');
+  assert.match(js, /inventariar\(\{ conFotos: false \}\)/);
+  assert.doesNotMatch(js, /traspasoBloqueado|w === null/, 'window.open con noopener siempre da null: no se dice que se bloqueó');
+  assert.match(html, /id="in-yokup-link"[^>]*rel="noopener"/, 'el enlace queda a mano');
+  assert.match(html, /<header class="arq-head" data-shell-keep>/);
+  assert.match(html, /href="plano\.css\?v=20261014-foto-2"/);
+  assert.match(read('arquitecto-core.mjs'), /from '\.\/plano-foto\.mjs\?v=20261014-foto-2'/);
   for (const f of ['arquitecto.html', 'arquitecto.mjs', 'arquitecto.css', 'arquitecto-core.mjs', 'arquitecto-dibujo.mjs', 'arquitecto-fotos.mjs']) assert.ok(BIZ_ASSET_FILES.includes(f), f);
   assert.equal(bizAssetPath(new URL('https://www.admira.biz/arquitecto')), '/__admira_biz/arquitecto');
   assert.equal(bizAssetPath(new URL('https://www.admira.biz/arquitecto-core.mjs?v=1')), '/__admira_biz/arquitecto-core.mjs');

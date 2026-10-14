@@ -13,12 +13,12 @@ import { exportOrder, workOrder, validate, round } from './plano-core.mjs?v=2026
 import { TIPOS, generarXpacio, medidasMedias, nuevaSemilla, resumenGenerado } from './plano-generador.mjs?v=20261014-foto-1';
 import { registroSubida, almacenPlanos, comprobarSala, conTiempo, ESPERA_IDB, ID_RE } from './plano-subida.mjs?v=20261014-subir-1';
 import {
-  ORDENES, CATEGORIAS, parseOrden, parametros, tipoDe, leerDescripcion, medidasDe, interpretarReforma, reformaDesdeEstimacion, aplicarReforma,
+  ORDENES, CATEGORIAS, MAX_ORDENES, parseOrden, parametros, tipoDe, leerDescripcion, medidasDe, interpretarReforma, reformaDesdeEstimacion, aplicarReforma,
   planDesdeEstimacion, planDesdeDescripcion, prefijoDe, construirCis, revisarCis, inventarioTraspaso, codificarTraspaso, urlPortal,
   caraUrl, baseLocal, ordenDeNube, CARA_ORIGEN, PREFIJO_RE, normalizarId
 } from './arquitecto-core.mjs?v=20261014-arquitecto-1';
 import { svgPlanta, svgAlzado } from './arquitecto-dibujo.mjs?v=20261014-arquitecto-1';
-import { prepararFotos, estimar, urlEstimador } from './arquitecto-fotos.mjs?v=20261014-arquitecto-1';
+import { prepararFotos, estimar, urlEstimador, origenEstimador } from './arquitecto-fotos.mjs?v=20261014-arquitecto-1';
 
 const $ = id => document.getElementById(id);
 const textos = {
@@ -62,7 +62,7 @@ const textos = {
       tamano: o => `Cambiar ${quien(o.ids)} a ${o.pulgadas}″`
     },
     enPared: p => ` en la pared ${pared(p)}`,
-    motivo: { 'no-cabe': 'no cabe sin solaparse ni tapar puertas', 'no-esta': 'esa pantalla ya no está', 'sin-cambio': 'ya estaba así', choca: 'choca con otra pantalla o un hueco' },
+    motivo: { demasiadas: 'demasiadas pantallas nuevas en una reforma (máx. 40)', 'no-cabe': 'no cabe sin solaparse ni tapar puertas', 'no-esta': 'esa pantalla ya no está', 'sin-cambio': 'ya estaba así', choca: 'choca con otra pantalla o un hueco' },
     otraPared: p => `no cabía donde dijiste: va en la pared ${pared(p)}`,
     duda: f => `No lo entiendo: «${f}»`, dudas: 'Prueba con «añade…», «quita…», «mueve … a la pared …», «gira…» o «cambia … a 55 pulgadas».',
     resumenObra: r => `<strong>Orden de obra</strong> · ${['alta', 'baja', 'modificacion', 'sustitucion', 'contenidos'].filter(k => r[k]).map(k => `${r[k]} ${{ alta: 'alta', baja: 'baja', modificacion: 'modificación', sustitucion: 'sustitución', contenidos: 'contenidos' }[k]}${r[k] > 1 && k !== 'contenidos' ? (k === 'modificacion' || k === 'sustitucion' ? 'es' : 's') : ''}`).join(' · ') || 'sin cambios'}`,
@@ -75,9 +75,9 @@ const textos = {
     th: ['Código ITIL', 'Nombre', 'Categoría', 'Depende de', ''], sinPadre: '—', quitar: 'Quitar',
     err: { formato: 'código con formato no válido (PREFIJO-PAN-01)', repetido: 'código repetido', vacio: 'falta el nombre', categoria: 'categoría no válida', padre: 'depende de un CI que no está en la lista', ciclo: 'depende de sí mismo', demasiados: 'demasiados CI (máx. 200)' },
     fila: i => `Fila ${i + 1}: `, cisN: n => `${n} CI`, prefijoMal: 'El prefijo ITIL son de 2 a 12 mayúsculas o cifras.',
-    traspasoOk: 'Abriendo el Portal del comercio de Yokup con el inventario: el titular elige el establecimiento y confirma el alta.',
+    traspasoOk: 'Abriendo el Portal del comercio de Yokup con el inventario: el titular elige el establecimiento y confirma el alta. Si no se abrió, usa el enlace.', abrirPortal: 'Abrir el Portal del comercio con el inventario ↗',
     traspasoGrande: 'El inventario es demasiado grande para la dirección: descárgalo y súbelo en el Portal del comercio («Importar inventario del Arquitecto»).',
-    traspasoBloqueado: url => `El navegador no dejó abrir la pestaña. Abre esto: ${url.slice(0, 80)}…`,
+    demasiadasOrdenes: n => `Como mucho ${n} órdenes por reforma: el resto, en otra.`,
     noCisValidos: 'Corrige los errores del inventario antes del alta.',
     vozCrear: 'Creo el Xpacio con lo que me has contado.', vozOrden: o => `Vamos con «${o}».`, pideFotos: 'Sube fotos o un vídeo del local, o cuéntame cómo es.', pideReforma: 'Cuéntame qué cambiamos o súbeme una foto de cómo debe quedar.',
     ayudaOrdenes: 'Arquitecto: /arquitecto crear [tipo] · /arquitecto reformar · /arquitecto inventariar', ordenDesconocida: x => `El Arquitecto no conoce «${x}». Prueba: crear, reformar o inventariar.`,
@@ -122,7 +122,7 @@ const textos = {
       girar: o => `Turn ${quien(o.ids)}${o.orientacion ? ' to ' + (o.orientacion === 'vertical' ? 'portrait' : 'landscape') : ''}`, tamano: o => `Change ${quien(o.ids)} to ${o.pulgadas}″`
     },
     enPared: p => ` on the ${pared(p)} wall`,
-    motivo: { 'no-cabe': 'does not fit without overlapping or covering doors', 'no-esta': 'that screen is gone', 'sin-cambio': 'already like that', choca: 'clashes with another screen or an opening' },
+    motivo: { demasiadas: 'too many new screens in one renovation (max. 40)', 'no-cabe': 'does not fit without overlapping or covering doors', 'no-esta': 'that screen is gone', 'sin-cambio': 'already like that', choca: 'clashes with another screen or an opening' },
     otraPared: p => `did not fit where you said: goes on the ${pared(p)} wall`,
     duda: f => `I don't understand: “${f}”`, dudas: 'Try “add…”, “remove…”, “move … to the … wall”, “turn…” or “change … to 55 inches”.',
     resumenObra: r => `<strong>Works order</strong> · ${Object.entries(r).map(([k, v]) => `${v} ${k}`).join(' · ') || 'no changes'}`,
@@ -135,9 +135,9 @@ const textos = {
     th: ['ITIL code', 'Name', 'Category', 'Depends on', ''], sinPadre: '—', quitar: 'Remove',
     err: { formato: 'invalid code format (PREFIX-PAN-01)', repetido: 'repeated code', vacio: 'name missing', categoria: 'invalid category', padre: 'depends on a CI not in the list', ciclo: 'depends on itself', demasiados: 'too many CIs (max. 200)' },
     fila: i => `Row ${i + 1}: `, cisN: n => `${n} CIs`, prefijoMal: 'The ITIL prefix is 2 to 12 capital letters or digits.',
-    traspasoOk: 'Opening Yokup\'s retailer portal with the inventory: the owner picks the establishment and confirms.',
+    traspasoOk: 'Opening Yokup\'s retailer portal with the inventory: the owner picks the establishment and confirms. If it did not open, use the link.', abrirPortal: 'Open the retailer portal with the inventory ↗',
     traspasoGrande: 'The inventory is too large for the address: download it and upload it in the retailer portal (“Import the Architect\'s inventory”).',
-    traspasoBloqueado: url => `The browser blocked the new tab. Open: ${url.slice(0, 80)}…`,
+    demasiadasOrdenes: n => `At most ${n} orders per renovation: the rest in another one.`,
     noCisValidos: 'Fix the inventory errors before registering.',
     vozCrear: 'Creating the Xpace from what you told me.', vozOrden: o => `Let's go with “${o}”.`, pideFotos: 'Upload photos or a video of the space, or tell me what it is like.', pideReforma: 'Tell me what to change or upload a photo of how it should look.',
     ayudaOrdenes: 'Architect: /arquitecto crear [type] · /arquitecto reformar · /arquitecto inventariar', ordenDesconocida: x => `The Architect does not know “${x}”. Try: crear, reformar or inventariar.`,
@@ -217,8 +217,9 @@ function deVoz({ orden, texto }) {
     : (() => { const d = leerDescripcion(resto); return !!(d.pantallas.length || d.ancho || d.m2 || d.camaras); })();
   const area = $(o === 'reformar' ? 'rf-texto' : 'in-texto');
   if (util) area.value = (area.value.trim() ? area.value.trim() + '. ' : '') + resto.trim();
-  if (o === 'reformar' && util) proponerReforma();
-  else if (o === 'inventariar' && util && !st.fotosIn.length) inventariar();
+  // Por voz o por la nube nunca se llama al estimador (cuesta y manda fotos fuera): sólo con el botón.
+  if (o === 'reformar' && util) proponerReforma({ conFotos: false });
+  else if (o === 'inventariar' && util && !st.fotosIn.length) inventariar({ conFotos: false });
   else nube(o === 'reformar' && !st.plan ? 'dudando' : 'escuchando', { texto: o === 'reformar' && !st.plan ? tr('sinBaseVoz') : tr(o === 'inventariar' ? 'pideFotos' : 'pideReforma') });
 }
 
@@ -356,13 +357,17 @@ for (const [input, n, key] of [['rf-fotos', 'rf-fotos-n', 'fotosRf'], ['in-fotos
 }
 // Las claves de error de «Con foto o vídeo» (claveError de plano-foto.mjs), en palabras.
 const ERR_ESTIMADOR = {
-  es: { phLimitIp: 'tope de estimaciones de hoy desde esta conexión', phLimitDay: 'tope diario de estimaciones', phTooBig: 'las fotos pesan demasiado', phOrigin: 'origen no permitido',
-    phTimeout: 'el modelo no respondió a tiempo', phInvalid: 'estimación no válida', phBusy: 'el modelo está saturado', phError: 'error del estimador', 'sin-fotos': 'ninguna foto utilizable', ilegible: 'fichero ilegible' },
-  en: { phLimitIp: 'today\'s estimate limit from this connection', phLimitDay: 'daily estimate limit', phTooBig: 'photos too large', phOrigin: 'origin not allowed',
-    phTimeout: 'the model did not answer in time', phInvalid: 'invalid estimate', phBusy: 'the model is busy', phError: 'estimator error', 'sin-fotos': 'no usable photo', ilegible: 'unreadable file' }
+  es: { phLimitIp: 'tope de estimaciones de hoy desde esta conexión', phLimitDay: 'tope diario de estimaciones', phTooBig: 'las fotos pesan demasiado', phOrigin: 'sólo funciona en www.admira.biz y www.admira.store',
+    phTimeout: 'el modelo no respondió a tiempo', phInvalid: 'estimación no válida', phBusy: 'el modelo está saturado', phError: 'error del estimador', phOff: 'la estimación con fotos está desactivada ahora mismo',
+    phQuotaDown: 'el control de cupo no responde; por seguridad no se estima', 'sin-fotos': 'ninguna foto utilizable', ilegible: 'fichero ilegible' },
+  en: { phLimitIp: 'today\'s estimate limit from this connection', phLimitDay: 'daily estimate limit', phTooBig: 'photos too large', phOrigin: 'it only works on www.admira.biz and www.admira.store',
+    phTimeout: 'the model did not answer in time', phInvalid: 'invalid estimate', phBusy: 'the model is busy', phError: 'estimator error', phOff: 'photo estimates are switched off right now',
+    phQuotaDown: 'the quota check is not answering; to be safe nothing is estimated', 'sin-fotos': 'no usable photo', ilegible: 'unreadable file' }
 };
 const errorEstimador = k => (ERR_ESTIMADOR[lang] || ERR_ESTIMADOR.es)[k] || k;
 async function fotosAEstimacion(files, tipo, notas) {
+  // El estimador sólo atiende a admira.biz y admira.store (y localhost): en otro dominio, ni se intenta.
+  if (!origenEstimador(location.origin)) return { ok: false, error: 'phOrigin' };
   status(tr('preparando'));
   const { fotos } = await prepararFotos(files);
   if (!fotos.length) return { ok: false, error: 'sin-fotos' };
@@ -375,22 +380,24 @@ function pintarBaseReforma() {
   $('rf-base').innerHTML = st.plan ? tr('base', st.plan, tr('origen')[st.origen] || st.origen) : esc(tr('sinBase'));
   $('rf-proponer').disabled = !st.plan;
 }
-async function proponerReforma() {
+async function proponerReforma({ conFotos = true } = {}) {
   if (!st.plan) { status(tr('sinBase'), { error: true }); nube('dudando', { texto: tr('sinBaseVoz') }); return; }
   const texto = $('rf-texto').value.trim();
-  if (!texto && !st.fotosRf.length) { status(tr('nadaQueProponer'), { error: true }); nube('dudando'); return; }
+  const fotos = conFotos ? st.fotosRf : [];
+  if (!texto && !fotos.length) { status(tr('nadaQueProponer'), { error: true }); nube('dudando'); return; }
   $('rf-proponer').disabled = true;
   status('');
   nube('midiendo', { orden: 'reformar' });
   const base = st.plan.pantallas;
   const deTexto = texto ? interpretarReforma(texto, base) : { ops: [], dudas: [] };
   let deFotos = { ops: [], dudas: [] };
-  if (st.fotosRf.length) {
-    const r = await fotosAEstimacion(st.fotosRf, st.plan.generador && st.plan.generador.tipo, texto);
+  if (fotos.length) {
+    const r = await fotosAEstimacion(fotos, st.plan.generador && st.plan.generador.tipo, texto);
     if (r.ok) deFotos = reformaDesdeEstimacion(st.plan, base, r.estimacion);
     else status(tr(deTexto.ops.length ? 'estimarFallo' : 'estimarFalloSolo', errorEstimador(r.error)), { error: true });
   }
-  st.ops = deTexto.ops.concat(deFotos.ops); st.activas = st.ops.map(() => true); st.dudas = deTexto.dudas;
+  st.ops = deTexto.ops.concat(deFotos.ops).slice(0, MAX_ORDENES); st.activas = st.ops.map(() => true); st.dudas = deTexto.dudas;
+  if (deTexto.demasiadas || deTexto.ops.length + deFotos.ops.length > MAX_ORDENES) status(tr('demasiadasOrdenes', MAX_ORDENES), { error: true });
   await pausa(500);
   aplicarActivas();
   $('rf-proponer').disabled = false;
@@ -462,11 +469,11 @@ function descargar(nombre, obj) {
 }
 
 // ── Inventariar ──────────────────────────────────────────────────────────────
-async function inventariar() {
+async function inventariar({ conFotos = true } = {}) {
   const texto = $('in-texto').value.trim(), tipo = st.tipo, nombre = $('in-nombre').value.trim();
-  const usarAbierto = $('in-abierto').checked && st.plan;
-  if (!st.fotosIn.length && !texto && !usarAbierto) { status(tr('noInventario'), { error: true }); nube('dudando'); return; }
-  $('in-inventariar').disabled = true;
+  const usarAbierto = $('in-abierto').checked && st.plan, fotosIn = conFotos ? st.fotosIn : [];
+  if (!fotosIn.length && !texto && !usarAbierto) { status(tr('noInventario'), { error: true }); nube('dudando'); return; }
+  $('in-inventariar').disabled = true; $('in-yokup-link').hidden = true;
   status('');
   nube('midiendo', { orden: 'inventariar' });
   const semilla = nuevaSemilla(), id = st.plan && usarAbierto ? st.plan.id : idNuevo(nombre, tipo, semilla);
@@ -474,8 +481,8 @@ async function inventariar() {
   let plan = null, aviso = '';
   try {
     if (usarAbierto) plan = JSON.parse(JSON.stringify(st.plan));
-    else if (st.fotosIn.length) {
-      const r = await fotosAEstimacion(st.fotosIn, tipo, texto);
+    else if (fotosIn.length) {
+      const r = await fotosAEstimacion(fotosIn, tipo, texto);
       if (r.ok) plan = planDesdeEstimacion({ respuesta: r, tipo, id, nombre: nombre || undefined, semilla });
       else if (texto) { aviso = tr('estimarFallo', errorEstimador(r.error)); }
       else { status(tr('estimarFalloSolo', errorEstimador(r.error)), { error: true }); nube('dudando'); return; }
@@ -561,8 +568,10 @@ $('in-yokup').addEventListener('click', async () => {
   const cod = await codificarTraspaso(inventarioActual());
   if (!cod.ok) { status(tr('traspasoGrande'), { error: true }); nube('dudando'); return; }
   const url = urlPortal(cod.fragmento);
-  const w = window.open(url, '_blank', 'noopener');
-  status(w === null && !document.hidden ? tr('traspasoBloqueado', url) : tr('traspasoOk'));
+  // Con 'noopener' window.open devuelve siempre null: no se sabe si se abrió, así que el enlace queda a mano.
+  window.open(url, '_blank', 'noopener');
+  status(tr('traspasoOk'));
+  const a = $('in-yokup-link'); a.href = url; a.hidden = false;
   nube('entregando', { orden: 'inventariar' });
 });
 

@@ -8,7 +8,7 @@
   <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
   <meta name="robots" content="noindex">
   <link rel="canonical" href="https://www.admira.biz/arquitecto.html">
-  <link rel="stylesheet" href="plano.css?v=20261014-crear-1">
+  <link rel="stylesheet" href="plano.css?v=20261014-foto-2">
   <link rel="stylesheet" href="brand.css">
   <script src="brand.js"></script>
   <!-- Estudio del Arquitecto (DCL-66d9ae0d5e756d0067127f24): su hoja va antes del shell, que gana los empates. -->
@@ -34,7 +34,7 @@
 
     <div class="arq-grid">
       <aside id="arq-panel" class="arq-panel card" aria-labelledby="arq-titulo">
-        <header class="arq-head">
+        <header class="arq-head" data-shell-keep>
           <h2 id="arq-titulo" data-t="arquitecto">El Arquitecto</h2>
           <span id="arq-estado" class="arq-chip arq-estado"></span>
           <button type="button" id="arq-toggle" class="arq-mini" data-t="hide">Ocultar al Arquitecto</button>
@@ -125,6 +125,7 @@
             <button type="button" id="in-yokup" class="arq-btn arq-btn-ok" data-t="altaYokup">Dar de alta en Yokup →</button>
             <button type="button" id="in-descargar" class="arq-btn" data-t="descargarInv">Descargar inventario (JSON)</button>
             <button type="button" id="in-usar" class="arq-btn" data-t="usar">Usar este plano</button>
+            <a id="in-yokup-link" class="arq-link" href="#" target="_blank" rel="noopener" data-t="abrirPortal" hidden>Abrir el Portal del comercio con el inventario ↗</a>
           </div>
           <p class="arq-note" data-t="yokupNote">El alta la confirma el titular en el Portal del comercio de Yokup (admira.app/retailer): allí elige el establecimiento y ve lo que se va a crear. El inventario viaja en la propia dirección (#), sin pasar por ningún servidor.</p>
         </div>

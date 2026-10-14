@@ -1,11 +1,11 @@
 // Estudio del Arquitecto (DCL-66d9ae0d5e756d0067127f24): fotos y vídeo → imágenes para POST /xpacio/estimar, con las
 // reglas de «Con foto o vídeo» de la Creación de Xpacios (plano-foto.mjs, DCL-ddf3203078fe9471f3796130): qué se admite
 // (clasificarFicheros), cuántos fotogramas y dónde (tiemposFotogramas), los escalones de tamaño y calidad hasta caber en
-// 1,5 MB (ESCALONES), la URL del estimador (urlEstimador: en producción siempre api.admira.store) y los errores
+// el tope del worker (ESCALONES, MAX_BYTES_FOTO), la URL del estimador (urlEstimador: en producción siempre api.admira.store) y los errores
 // (claveError). Aquí sólo el lienzo del navegador. Nada sale del navegador hasta pulsar el botón; el worker no guarda fotos.
-import { MAX_FOTOS, MAX_BYTES_FOTO, ESCALONES, ESPERA_ESTIMADOR, escalaFoto, tiemposFotogramas, bytesDataUrl, clasificarFicheros, claveError, urlEstimador } from './plano-foto.mjs?v=20261014-foto-1';
+import { MAX_FOTOS, MAX_BYTES_FOTO, ESCALONES, ESPERA_ESTIMADOR, escalaFoto, tiemposFotogramas, bytesDataUrl, clasificarFicheros, claveError, urlEstimador, origenEstimador } from './plano-foto.mjs?v=20261014-foto-2';
 
-export { MAX_FOTOS, urlEstimador };
+export { MAX_FOTOS, urlEstimador, origenEstimador };
 function aJpeg(fuente, w, h) {
   for (const { lado, calidad } of ESCALONES) {
     const t = escalaFoto(w, h, lado), c = document.createElement('canvas');

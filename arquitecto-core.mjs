@@ -21,7 +21,7 @@ import { TIPOS, generarXpacio } from './plano-generador.mjs?v=20261014-foto-1';
 import { ID_RE, normalizarId } from './plano-subida.mjs?v=20261014-subir-1';
 // «Con foto o vídeo» de la Creación de Xpacios (DCL-ddf3203078fe9471f3796130): la respuesta de /xpacio/estimar → plano,
 // con su procedencia (modelo, confianza) y las pantallas vistas desolapadas. El Arquitecto la reutiliza tal cual.
-import { planoDesdeEstimacion, ESTIMADOR } from './plano-foto.mjs?v=20261014-foto-1';
+import { planoDesdeEstimacion, ESTIMADOR } from './plano-foto.mjs?v=20261014-foto-2';
 
 export const ORDENES = Object.freeze(['crear', 'reformar', 'inventariar']);
 export const ESTUDIO_URL = 'https://www.admira.biz/arquitecto.html';
@@ -35,6 +35,10 @@ export const MAX_CIS = 200;
 export const MAX_TRASPASO_JSON = 256 * 1024;   // el plano compacto que Yokup admite (413 plan_too_large por encima)
 export const MAX_FRAGMENTO = 120000;          // caracteres del #fragmento; por encima, se descarga el JSON
 export const MAX_DESCRIPCION = 2000;
+// Topes de trabajo (colocar cada pantalla recorre las paredes validando el plano): con textos largos o muchas órdenes,
+// el navegador se quedaba ~30 s colgado. Lo que pase de aquí se dice («demasiadas») y no se hace.
+export const MAX_ORDENES = 12;
+export const MAX_PANTALLAS_NUEVAS = 40;
 const PAREDES = ['F', 'D', 'P', 'I'];
 const EPS = 1e-6;
 
@@ -248,7 +252,7 @@ export function interpretarReforma(texto, pantallas = []) {
     else if (verbo === 'girar') { const o = orientacionDe(f.replace(/^.*\b(en|a|to|into)\b/, '$1')) || ''; ops.push({ op: 'girar', ids, orientacion: o, texto: orig }); }
     else if (verbo === 'tamano') { const p = pulgadasDe(f); if (p) ops.push({ op: 'tamano', ids, pulgadas: p, texto: orig }); else dudas.push(orig); }
   }
-  return { ops, dudas };
+  return { ops: ops.slice(0, MAX_ORDENES), dudas: dudas.slice(0, MAX_ORDENES), demasiadas: Math.max(0, ops.length - MAX_ORDENES) };
 }
 
 // Reformar desde fotos o vídeo: lo que estima /xpacio/estimar (las pantallas que se ven) frente al plano.
@@ -272,15 +276,18 @@ export function reformaDesdeEstimacion(plan, pantallas, estimacion) {
 // propuesta y, por orden, qué se hizo: {op, texto, ok, ids, pared?, motivo?}.
 export function aplicarReforma(plan, propuesta, ops) {
   let lista = clone(propuesta);
-  const hechos = [];
-  for (const op of ops || []) {
+  const hechos = [], base = new Set(propuesta.map(s => s.id));
+  const nuevas = () => lista.filter(s => !base.has(s.id)).length;
+  for (const op of (ops || []).slice(0, MAX_ORDENES)) {
     if (op.op === 'anadir') {
       for (let k = 0; k < Math.max(1, Math.min(12, op.cantidad || 1)); k++) {
+        if (nuevas() >= MAX_PANTALLAS_NUEVAS) { hechos.push({ op: 'anadir', texto: op.texto, ok: false, ids: [], motivo: 'demasiadas' }); break; }
         let items;
         if (op.mosaico && op.mosaico.tipo === 'rejilla') items = rejilla(lista, op.mosaico.filas, op.mosaico.cols, op.pulgadas || 55);
         else if (op.mosaico) items = mosaicoHConPulgadas(lista, op.mosaico.tipo, op.pulgadas || 55);
         else items = [panel(op.orientacion || 'horizontal', op.pulgadas || 55, { id: newId(lista, 'arq'), nombre: op.nombre || `Pantalla ${op.orientacion || 'horizontal'} ${op.pulgadas || 55}″ (nueva)`, escaparate: !!op.escaparate || undefined })];
         if (!items[0].escaparate) items.forEach(s => { delete s.escaparate; });
+        if (nuevas() + items.length > MAX_PANTALLAS_NUEVAS) { hechos.push({ op: 'anadir', texto: op.texto, ok: false, ids: [], motivo: 'demasiadas' }); break; }
         // Con posición (de la foto): se prueba ahí; si choca, a la primera posición libre.
         if (op.posicion && items.length === 1) {
           const exacto = clampToWall(plan, { ...items[0], pared: op.pared, s: op.posicion.s, z: op.posicion.z });
@@ -351,13 +358,11 @@ export function planDesdeDescripcion({ descripcion, tipo, id, nombre, semilla } 
   if (!ancho && d.m2) { const r = (TIPOS[t].proporcion[0] + TIPOS[t].proporcion[1]) / 2; ancho = round(Math.sqrt(d.m2 / r), 1); largo = round(d.m2 / ancho, 1); }
   const plan = generarXpacio({ tipo: t, ancho, largo, alto, id, nombre, semilla, elementos: { pantallas: [] } });
   plan.fuente.pantallas = 'Pantallas descritas, sin código ITIL hasta darlas de alta en Yokup';
-  const lista = [], noCaben = [];
-  for (const p of d.pantallas) {
-    const op = { op: 'anadir', cantidad: p.cantidad, orientacion: p.orientacion, pulgadas: p.pulgadas || 55, pared: p.pared, mosaico: p.mosaico, escaparate: p.escaparate, texto: '' };
-    const r = aplicarReforma(plan, lista, [op]);
-    lista.splice(0, lista.length, ...r.propuesta);
-    r.hechos.filter(h => !h.ok).forEach(() => noCaben.push(p));
-  }
+  // Todas las pantallas descritas en una sola pasada: así cuenta el tope de pantallas nuevas de la reforma.
+  const descritas = d.pantallas.slice(0, MAX_ORDENES);
+  const r = aplicarReforma(plan, [], descritas.map((p, i) => ({ op: 'anadir', cantidad: p.cantidad, orientacion: p.orientacion, pulgadas: p.pulgadas || 55, pared: p.pared, mosaico: p.mosaico, escaparate: p.escaparate, texto: String(i) })));
+  const lista = r.propuesta, malas = new Set(r.hechos.filter(h => !h.ok).map(h => h.texto));
+  const noCaben = descritas.filter((_, i) => malas.has(String(i)));
   const cuenta = {};
   plan.pantallas = lista.map(s => {
     const pared = (plan.paredes.find(w => w.id === s.pared) || {}).nombre || s.pared, k = (cuenta[s.grupo || s.pared] = (cuenta[s.grupo || s.pared] || 0) + 1);
