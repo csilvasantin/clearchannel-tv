@@ -27,8 +27,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { CATALOGO, GRACIA_MS, pantallasDelPlano, lecturaSenal, evaluar, anotar, apertura, cierre, recurso } from '../incidencias-core.mjs?v=20261014-incidencias-1';
-import { mando, yokupPublico, yokupMcp, carril } from '../incidencias-adaptadores.mjs?v=20261014-incidencias-1';
+import { CATALOGO, GRACIA_MS, pantallasDelPlano, lecturaSenal, anotar, recurso, vueltaDetector } from '../incidencias-core.mjs?v=20261014-bugito-1';
+import { mando, yokupPublico, yokupMcp, carril } from '../incidencias-adaptadores.mjs?v=20261014-bugito-1';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PLANO_POR_DEFECTO = path.join(RAIZ, 'data/xpacios/lab-gran-de-gracia-51.json');
@@ -44,18 +44,21 @@ export async function pasada({ plan, estados = {}, fetcher = fetch, ahora = Date
     let senal = null;
     try { senal = await red.senal(p.screen); } catch { senal = null; }
     const lectura = lecturaSenal(senal, { ahora });
-    for (const t of CATALOGO.filter(c => c.detector === 'orientacion')) {
+    // Todos los tipos del catálogo: formato girado y, desde Bugito, cambio de resolución, popup y medio abrir.
+    for (const t of CATALOGO) {
       const clave = `${p.screen}:${t.id}`, previo = nuevos[clave];
-      let e = evaluar(previo, { esperada: p.esperada, pintada: lectura.estado === 'ok' ? lectura.pintada : null }, { ahora, graciaMs });
-      if (previo && previo.fase !== e.fase) hechos.push({ clave, fase: e.fase, de: previo.fase, esperada: p.esperada, pintada: lectura.pintada || null });
+      const v = vueltaDetector(previo, { plan, pantalla: p, tipo: t.id, senal, ahora, graciaMs, by, planoUrl });
+      let e = v.estado;
+      if (previo && previo.fase !== e.fase) hechos.push({ clave, fase: e.fase, de: previo.fase, esperada: v.observacion.esperada, pintada: v.observacion.pintada || null });
       if (e.accion) {
         const accion = e.accion, res = recurso(plan, p, t.id), via = carril(res, { publico, mcp });
-        const body = accion === 'abrir'
-          ? apertura({ plan, pantalla: p, tipo: t.id, lectura, esperada: p.esperada, desde: previo && previo.desde, ahora, by, planoUrl })
-          : cierre({ plan, pantalla: p, tipo: t.id, id: e.incidencia || '', by });
-        if (seco || !via || !body) {
-          e = { ...e, error: seco ? 'seco' : 'sin_carril' };
-          hechos.push({ clave, accion, recurso: res, omitida: seco ? 'seco' : 'sin_carril' });
+        const body = v.body;
+        // Una pantalla que no es de laboratorio (CI de cliente) va SIEMPRE en seco, sea cual sea el tipo y
+        // aunque haya credencial: ni formato girado ni popup ni medio abrir abren incidencias ITIL reales.
+        const enSeco = seco || !p.lab;
+        if (enSeco || !via || !body) {
+          e = { ...e, error: enSeco ? 'seco' : 'sin_carril' };
+          hechos.push({ clave, accion, recurso: res, omitida: enSeco ? 'seco' : 'sin_carril' });
         } else {
           let r;
           try { r = accion === 'abrir' ? await via.abrir(body) : await via.cerrar(body); } catch (err) { r = { ok: false, error: String(err && err.message || err) }; }

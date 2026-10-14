@@ -1,7 +1,7 @@
 // ▤ Creador de incidencias (DCL-34d5bbccb9cc227bb752a419): la red. Mando (cola /locations/cmd y su
 // acuse), señal del player (/signage/now) y Yokup. `fetcher` inyectable: lo usan el navegador, el
 // agente de consola y las pruebas. Ningún adaptador imprime ni devuelve credenciales.
-import { MANDO_CMD, MANDO_ACK, SIGNAGE_NOW, YOKUP_INCIDENT, YOKUP_STATUS, YOKUP_MCP, DEMO_PREFIX, fichaYokup } from './incidencias-core.mjs?v=20261014-incidencias-1';
+import { MANDO_CMD, MANDO_ACK, SIGNAGE_NOW, YOKUP_INCIDENT, YOKUP_STATUS, YOKUP_MCP, DEMO_PREFIX, fichaYokup } from './incidencias-core.mjs?v=20261014-bugito-1';
 
 async function leerJson(r) { try { return await r.json(); } catch { return {}; } }
 // Un 4xx que repetir no arregla (petición inválida, recurso que no es suyo…). 408/425/429 sí se reintentan.

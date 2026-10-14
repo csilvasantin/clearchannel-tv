@@ -18,3 +18,7 @@
 .inc-steps small{font-size:11px;color:var(--mut)}
 .inc-steps a{color:var(--brand)}
 #inc-live:empty{display:none}
+/* Bugito (DCL-5da4653d859552490fd5ae1d): «Probar con Bugito» abre el banco de pruebas. */
+#advanced-tools .incidencias .inc-bugito{display:flex;align-items:center;justify-content:center;gap:6px;min-height:38px;text-decoration:none;border-color:rgba(226,48,46,.6);color:#ffb4a8}
+#advanced-tools .incidencias .inc-bugito::before{content:"😈"}
+#advanced-tools .incidencias .inc-bugito:hover{background:#e2302e;color:#fff}

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Bugito · banco de pruebas de incidencias · Clear Channel</title>
+  <meta name="description" content="Banco de pruebas del Creador de incidencias: Bugito, el Admirito diablillo, rompe a propósito un player virtual de laboratorio y comprueba que el agente abre la incidencia en Yokup.">
+  <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://www.admira.biz/bugito.html">
+  <link rel="stylesheet" href="plano.css?v=20261014-crear-1">
+  <link rel="stylesheet" href="brand.css">
+  <script src="brand.js"></script>
+  <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
+  <script>
+  // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones manda; bugito.mjs escucha admira:lang.
+  window.ADMIRA_SHELL = { section: { es: '/ bugito · banco de pruebas', en: '/ bugito · test bench' }, setLang() {} };
+  </script>
+  <script defer src="/galaxy-shell.js?v=20261014-bugito-1"></script>
+  <!-- Bugito (DCL-5da4653d859552490fd5ae1d): banco de pruebas del ▤ Creador de incidencias. -->
+  <link rel="stylesheet" href="bugito.css?v=20261014-bugito-1">
+  <script type="module" src="bugito.mjs?v=20261014-bugito-1"></script>
+</head>
+<body>
+  <main class="bugito-banco">
+    <div class="intro">
+      <div>
+        <a class="back" href="plano.html?locationId=lab-gran-de-gracia-51" data-bb="back">← Creador de incidencias (▤ Modo avanzado del plano)</a>
+        <p class="eyebrow" data-bb="eyebrow">Creador de incidencias · banco de pruebas</p>
+        <h1 data-bb="title">Bugito rompe, el agente vigila</h1>
+        <p class="address" data-bb="intro">Bugito lanza un fallo en el player virtual de laboratorio; el detector lo mide en lo que el player declara y abre la incidencia en Yokup. Cuando vuelve a la normalidad, la cierra.</p>
+      </div>
+    </div>
+
+    <div class="bb-grid">
+      <section class="bb-player card" aria-labelledby="bb-player-title">
+        <header class="bb-head">
+          <h2 id="bb-player-title" data-bb="player">Player virtual de laboratorio</h2>
+          <code id="bb-screen" class="bb-chip">virtual-lab-bugito</code>
+          <span class="bb-chip" data-bb="landscape">horizontal · 16:9</span>
+        </header>
+        <div class="bb-tv"><iframe id="bb-player-frame" title="Player virtual de laboratorio" allow="autoplay; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <div id="bb-pausa" class="bb-pausa" hidden><p id="bb-pausa-texto"></p><button type="button" id="bb-reanudar" data-bb="resume">Reanudar</button></div></div>
+        <p id="bb-vivo" class="bb-vivo" aria-live="polite"></p>
+        <ul id="bb-detectores" class="bb-detectores" aria-label="Detectores"></ul>
+      </section>
+
+      <aside id="bb-bugito" class="bb-bugito card" aria-labelledby="bb-bugito-title">
+        <header class="bb-head">
+          <h2 id="bb-bugito-title" data-bb="bugito">Bugito</h2>
+          <span id="bb-bugito-estado" class="bb-chip bb-estado"></span>
+          <button type="button" id="bb-toggle" class="bb-mini" data-bb="hide">Ocultar a Bugito</button>
+        </header>
+        <div id="bb-cara" class="bb-cara"><iframe id="bb-cara-frame" title="Bugito, el Admirito diablillo" allow="autoplay"></iframe></div>
+        <div id="bb-menu" class="bb-menu" role="group" aria-labelledby="bb-menu-title">
+          <p id="bb-menu-title" class="bb-menu-title" data-bb="menu">¿Qué rompo?</p>
+        </div>
+        <button type="button" id="bb-normal" class="bb-normal" data-bb="normal">Volver a la normalidad</button>
+        <ol id="bb-pasos" class="inc-steps bb-pasos" aria-live="polite" hidden></ol>
+        <p id="bb-status" class="upload-status bb-status" role="status"></p>
+        <p class="bb-note" data-bb="note">Sólo players virtuales de laboratorio (virtual-lab-*): el mando rechaza cualquier otra pantalla. Cada fallo caduca solo a los 30 min.</p>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

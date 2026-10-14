@@ -58,6 +58,32 @@ export const CATALOGO = Object.freeze([
       es: 'El player gira la emisión 90°: una pantalla horizontal pinta en vertical (y al revés). Caduca sola a los 30 min.',
       en: 'The player turns its output 90°: a landscape screen paints portrait (and vice versa). Expires by itself after 30 min.'
     })
+  }),
+  // Bugito (DCL-5da4653d859552490fd5ae1d): tres fallos de superficie. El player (admira-tv canal.html)
+  // los pinta y declara lo que MIDE en /signage/now: display.canvas, display.overlay, display.visible.
+  Object.freeze({
+    id: 'cambio-resolucion', orden: 'fault-canvas', vuelta: 'fault-clear', detector: 'lienzo',
+    es: 'Cambio de resolución', en: 'Resolution change',
+    ayuda: Object.freeze({
+      es: 'El player emite en un lienzo de proporción contraria a la pantalla (horizontal ↔ vertical), con bandas. Caduca solo a los 30 min.',
+      en: 'The player paints on a canvas with the opposite proportion to the screen (landscape ↔ portrait), with bars. Expires by itself after 30 min.'
+    })
+  }),
+  Object.freeze({
+    id: 'popup-encima', orden: 'fault-popup', vuelta: 'fault-clear', detector: 'capa',
+    es: 'Popup encima del contenido', en: 'Popup over the content',
+    ayuda: Object.freeze({
+      es: 'Aparece una ventana de aviso del sistema encima de la emisión. Caduca sola a los 30 min.',
+      en: 'A system notice window pops up over the output. Expires by itself after 30 min.'
+    })
+  }),
+  Object.freeze({
+    id: 'medio-abrir', orden: 'fault-half', vuelta: 'fault-clear', detector: 'visible',
+    es: 'Pantalla a medio abrir', en: 'Half-open screen',
+    ayuda: Object.freeze({
+      es: 'El contenido sólo ocupa la mitad del lienzo y el resto se queda como una persiana bajada. Caduca solo a los 30 min.',
+      en: 'The content only fills half of the canvas; the rest looks like a half-closed shutter. Expires by itself after 30 min.'
+    })
   })
 ]);
 export const tipoIncidencia = id => CATALOGO.find(t => t.id === id) || null;
@@ -123,6 +149,58 @@ export function lecturaSenal(senal, { ahora = Date.now(), frescuraMs = FRESCURA_
   return { estado: 'sin-dato', motivo: 'no-declara-orientacion', visto };
 }
 
+// ── Bugito · lo que el player mide de su superficie (/signage/now · display) ─────────────────
+export const UMBRAL_TAPADO = 10;    // % de la emisión tapado por capas ajenas desde el que hay «popup encima»
+export const UMBRAL_VISIBLE = 90;   // % del lienzo con contenido por debajo del cual está «a medio abrir»
+const pct = v => (typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 100 ? Math.round(v) : null);
+export function lecturaSuperficie(senal) {
+  const d = (senal && senal.device && senal.device.display) || {};
+  const c = d.canvas && typeof d.canvas === 'object' ? d.canvas : null;
+  const w = c ? Number(c.w) : 0, h = c ? Number(c.h) : 0;
+  const canvas = w > 0 && h > 0 ? { w: Math.round(w), h: Math.round(h) } : null;
+  return {
+    canvas, lienzo: canvas ? (canvas.w >= canvas.h ? 'horizontal' : 'vertical') : null,
+    overlay: pct(d.overlay), visible: pct(d.visible),
+    fit: d.fit === 'editorial' || d.fit === 'fill' || d.fit === 'cover' ? d.fit : null
+  };
+}
+// Lo que espera el plano y lo que se observa, por tipo, en el vocabulario de `evaluar`
+// (casa ⇔ pintada === esperada). Sin señal fresca, o sin la medida de ese tipo, `pintada` es null:
+// el detector no se mueve. «Cambio de resolución» sólo se juzga con el lienzo a pantalla completa
+// (fit fill | cover): en editorial el marco sigue a cada pieza a propósito.
+export function observacion(tipo, senal, pantalla, { ahora = Date.now() } = {}) {
+  const t = tipoIncidencia(tipo), lectura = lecturaSenal(senal, { ahora });
+  const out = { tipo: t ? t.id : null, lectura, esperada: null, pintada: null, medida: null };
+  if (!t || lectura.estado === 'sin-senal') return out;
+  const sup = lecturaSuperficie(senal), esperada = (pantalla && pantalla.esperada) || null;
+  if (t.detector === 'orientacion') return { ...out, esperada, pintada: lectura.estado === 'ok' ? lectura.pintada : null, medida: lectura.giro ?? null };
+  if (t.detector === 'lienzo') return { ...out, esperada, pintada: sup.lienzo && (sup.fit === 'fill' || sup.fit === 'cover') ? sup.lienzo : null, medida: sup.canvas };
+  if (t.detector === 'capa') return { ...out, esperada: 'despejada', pintada: sup.overlay === null ? null : sup.overlay >= UMBRAL_TAPADO ? 'tapada' : 'despejada', medida: sup.overlay };
+  if (t.detector === 'visible') return { ...out, esperada: 'entera', pintada: sup.visible === null ? null : sup.visible < UMBRAL_VISIBLE ? 'a-medias' : 'entera', medida: sup.visible };
+  return out;
+}
+// Frase del fallo para el asunto y el detalle de la incidencia (castellano: Yokup es la ficha de flota).
+export function textoFallo(tipo, obs) {
+  const t = tipoIncidencia(tipo), m = obs && obs.medida;
+  if (!t || !obs) return '';
+  if (t.detector === 'lienzo') return `emite en un lienzo ${obs.pintada}${m ? ` de ${m.w}×${m.h} px` : ''} y la pantalla es ${obs.esperada}`;
+  if (t.detector === 'capa') return `una capa ajena tapa el ${m} % de la emisión`;
+  if (t.detector === 'visible') return `sólo el ${m} % del lienzo muestra contenido`;
+  return `pinta en ${obs.pintada} y debe ir en ${obs.esperada}`;
+}
+
+// La medida que ve el detector, en una línea para la UI (plano y banco de Bugito). '' si no hay dato.
+export function medidaTexto(tipo, obs, lang = 'es') {
+  const t = tipoIncidencia(tipo), en = lang === 'en', m = obs && obs.medida;
+  if (!t || !obs || obs.pintada == null) return '';
+  const or = v => (en ? ({ horizontal: 'landscape', vertical: 'portrait' }[v] || v) : v);
+  if (t.detector === 'lienzo') return en ? `Screen ${or(obs.esperada)} · canvas ${m.w}×${m.h} (${or(obs.pintada)})` : `Pantalla ${obs.esperada} · lienzo ${m.w}×${m.h} (${obs.pintada})`;
+  if (t.detector === 'capa') return en ? `${m} % of the output covered (popup from ${UMBRAL_TAPADO} %)` : `${m} % de la emisión tapado (popup desde el ${UMBRAL_TAPADO} %)`;
+  if (t.detector === 'visible') return en ? `${m} % of the canvas shows content (half open below ${UMBRAL_VISIBLE} %)` : `${m} % del lienzo con contenido (a medio abrir por debajo del ${UMBRAL_VISIBLE} %)`;
+  return en ? `Expects ${or(obs.esperada)} · paints ${or(obs.pintada)}${m != null ? ` (measured turn ${m}°)` : ''}`
+    : `Espera ${obs.esperada} · pinta ${obs.pintada}${m != null ? ` (giro medido ${m}°)` : ''}`;
+}
+
 // ── El detector: una máquina de estados por pantalla y tipo ────────────────────────────────
 // casa → sospecha (no casa) → fallo (≥ gracia: ABRIR) → recuperando (casa) → casa (≥ gracia: RESOLVER).
 // Sin dato o sin señal NO se mueve: nunca abre ni cierra a ciegas. `incidencia` la rellena quien
@@ -151,6 +229,17 @@ export function evaluar(prev, { esperada, pintada } = {}, { ahora = Date.now(), 
       if (s.incidencia && ahora - (s.intento || 0) >= (s.espera || reintentoMs)) return { ...out, fase: 'casa', accion: 'resolver', intento: ahora };
       return { ...out, fase: 'casa' };
   }
+}
+// Una vuelta del detector para una pantalla y un tipo (Bugito, DCL-5da4653d859552490fd5ae1d): observa
+// la señal, evalúa y, si toca abrir o resolver, prepara el cuerpo para Yokup. Quien llama ejecuta la
+// acción con su adaptador y la apunta con `anotar`. La usan el plano, el agente de consola y el banco.
+export function vueltaDetector(prev, { plan, pantalla, tipo, senal, ahora = Date.now(), graciaMs = GRACIA_MS, reintentoMs = REINTENTO_MS, by = 'Creador de incidencias', planoUrl = '' }) {
+  const obs = observacion(tipo, senal, pantalla, { ahora });
+  const estado = evaluar(prev, { esperada: obs.esperada, pintada: obs.pintada }, { ahora, graciaMs, reintentoMs });
+  let body = null;
+  if (estado.accion === 'abrir') body = apertura({ plan, pantalla, tipo, lectura: obs.lectura, esperada: obs.esperada, desde: prev && prev.desde, ahora, by, planoUrl, observado: obs });
+  else if (estado.accion === 'resolver') body = cierre({ plan, pantalla, tipo, id: estado.incidencia || '', by });
+  return { estado, observacion: obs, body };
 }
 // Tras ejecutar la acción: con éxito se apunta (o se olvida) la incidencia. Si falla:
 //  · al cerrar, «la lleva un técnico del portal» (409 portal_assigned) es FINAL: se cierra allí
@@ -190,9 +279,10 @@ export function proyecto(plan) {
   return SLUG_RE.test(p) ? p : '';
 }
 const recorta = (s, n) => String(s || '').replace(/[\u0000-\u0008\u000b-\u001f]/g, ' ').slice(0, n);
-export function apertura({ plan, pantalla, tipo, lectura, esperada, desde, ahora = Date.now(), by = 'Creador de incidencias', planoUrl = '' }) {
+export function apertura({ plan, pantalla, tipo, lectura, esperada, desde, ahora = Date.now(), by = 'Creador de incidencias', planoUrl = '', observado = null }) {
   const t = tipoIncidencia(tipo), res = recurso(plan, pantalla, tipo);
   if (!t || !res) return null;
+  if (t.detector !== 'orientacion') return aperturaSuperficie({ plan, pantalla, t, res, observado, desde, ahora, by, planoUrl });
   const pintada = (lectura && lectura.pintada) || '?';
   const giro = lectura && lectura.giro !== null && lectura.giro !== undefined ? ` (giro medido ${lectura.giro}°)` : '';
   const seg = desde ? Math.max(0, Math.round((ahora - desde) / 1000)) : 0;
@@ -210,11 +300,32 @@ export function apertura({ plan, pantalla, tipo, lectura, esperada, desde, ahora
   if (pid) body.project_id = pid;
   return body;
 }
+// Bugito: apertura de los tipos de superficie (cambio de resolución, popup encima, medio abrir).
+function aperturaSuperficie({ plan, pantalla, t, res, observado, desde, ahora, by, planoUrl }) {
+  const seg = desde ? Math.max(0, Math.round((ahora - desde) / 1000)) : 0;
+  const ci = pantalla.itil || pantalla.id, fallo = textoFallo(t.id, observado) || t.es.toLowerCase();
+  const body = {
+    subject: recorta(`${ci} · ${t.es}: ${pantalla.nombre} ${fallo}`, 200),
+    detail: recorta([
+      `Detectado por el agente del Creador de incidencias: la pantalla «${pantalla.nombre}» (CI ${ci}, player ${pantalla.screen}) ${fallo} según lo que declara en /signage/now${seg ? `, desde hace ${seg} s` : ''}.`,
+      `Xpacio: ${plan.nombre || plan.id}.${planoUrl ? ` Plano: ${planoUrl}` : ''}`,
+      pantalla.lab ? `Pantalla de laboratorio: el fallo puede ser una prueba inyectada (orden ${t.orden}, p. ej. desde el banco de pruebas Bugito); se cierra sola cuando vuelve a la normalidad.` : ''
+    ].filter(Boolean).join('\n'), 2000),
+    resource: res, kind: 'screen', severity: t.detector === 'capa' ? 'media' : 'alta', source: ORIGEN, by: recorta(by, 60), loc: plan.id
+  };
+  const pid = proyecto(plan);
+  if (pid) body.project_id = pid;
+  return body;
+}
 export function cierre({ plan, pantalla, tipo, id = '', by = 'Creador de incidencias', nota = '' }) {
   const res = recurso(plan, pantalla, tipo);
   if (!res) return null;
+  const t = tipoIncidencia(tipo);
+  const porDefecto = t && t.detector !== 'orientacion'
+    ? `Vuelve a la normalidad: el player ya no mide ${t.es.toLowerCase()}.`
+    : `Vuelve a casar: la pantalla pinta en la orientación que espera el plano (${pantalla.esperada}).`;
   const body = { close: true, resource: res, by: recorta(by, 60),
-    note: recorta(nota || `Vuelve a casar: la pantalla pinta en la orientación que espera el plano (${pantalla.esperada}).`, 500) };
+    note: recorta(nota || porDefecto, 500) };
   if (ID_TICKET.test(String(id || ''))) body.id = id;
   return body;
 }
