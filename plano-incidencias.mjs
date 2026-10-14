@@ -5,10 +5,10 @@
 // no data-copy: el traductor de plano.mjs reescribe todos los data-copy con SU diccionario.
 import { localeFor } from './walk-core.mjs?v=20261010-evidence-1';
 import {
-  CATALOGO, GRACIA_MS, DEMO_PREFIX, pantallasDelPlano, tipoIncidencia, orden, lecturaSenal, evaluar, anotar,
-  apertura, cierre, recurso, fichaYokup, incidenciaDe, pasos
-} from './incidencias-core.mjs?v=20261014-incidencias-1';
-import { mando, yokupPublico } from './incidencias-adaptadores.mjs?v=20261014-incidencias-1';
+  CATALOGO, GRACIA_MS, DEMO_PREFIX, pantallasDelPlano, tipoIncidencia, orden, anotar,
+  recurso, fichaYokup, incidenciaDe, pasos, vueltaDetector, medidaTexto
+} from './incidencias-core.mjs?v=20261014-bugito-1';
+import { mando, yokupPublico } from './incidencias-adaptadores.mjs?v=20261014-bugito-1';
 
 const $ = id => document.getElementById(id);
 const raiz = $('incidencias');
@@ -27,6 +27,8 @@ const textos = {
     clearSent: 'Vuelta a la normalidad', expects: (e, p, g) => `Espera ${e} · pinta ${p}${g !== null && g !== undefined ? ` (giro medido ${g}°)` : ''}`,
     noSignal: m => ({ 'sin-respuesta': 'sin respuesta de /signage/now', 'no-declara': 'el player no declara estado: arráncalo en el MBP16', 'latido-viejo': 'el último latido es de hace más de 5 min', standby: 'el player está en standby' }[m] || m),
     noData: 'el player no declara la orientación pintada (versión anterior del canal)',
+    noMeasure: 'el player no declara esta medida (versión anterior del canal o lienzo editorial)',
+    bugito: 'Probar con Bugito',
     suspect: s => `no casa · abre la incidencia en ${s} s`, failing: 'no casa', recovering: s => `vuelve a casar · se cierra en ${s} s`, matches: 'casa con el plano',
     opened: id => `Incidencia ${id} abierta en Yokup.`, closed: id => `Incidencia ${id || ''} cerrada: vuelve a casar.`, yokupError: e => `Yokup no responde: ${e}.`,
     held: id => `Vuelve a casar, pero la incidencia ${id || ''} la lleva un técnico del portal: se cierra allí con evidencia.`,
@@ -44,6 +46,8 @@ const textos = {
     clearSent: 'Back to normal', expects: (e, p, g) => `Expects ${e} · paints ${p}${g !== null && g !== undefined ? ` (measured turn ${g}°)` : ''}`,
     noSignal: m => ({ 'sin-respuesta': 'no answer from /signage/now', 'no-declara': 'the player reports no state: start it on the MBP16', 'latido-viejo': 'last heartbeat is older than 5 min', standby: 'the player is in standby' }[m] || m),
     noData: 'the player does not report its painted orientation (older channel release)',
+    noMeasure: 'the player does not report this measure (older channel release or editorial canvas)',
+    bugito: 'Try it with Bugito',
     suspect: s => `mismatch · opens the incident in ${s} s`, failing: 'mismatch', recovering: s => `matches again · closes in ${s} s`, matches: 'matches the plan',
     opened: id => `Incident ${id} opened in Yokup.`, closed: id => `Incident ${id || ''} closed: it matches again.`, yokupError: e => `Yokup is not answering: ${e}.`,
     held: id => `It matches again, but incident ${id || ''} is held by a portal technician: it is closed there with evidence.`,
@@ -65,6 +69,7 @@ const by = 'Creador de incidencias · admira.biz';
 let plan = null, lista = [];
 // Una prueba = lo que se pinta en los cinco pasos. Los pasos se quedan marcados (latch) hasta la siguiente.
 const prueba = { envio: null, acuse: null, vuelta: null, vueltaAcuse: null, marcas: new Set(), mensaje: '', error: false };
+let observado = null;
 let detector = null, lectura = null, incidencia = null, sondeo = 0, ultimoYokup = 0, ocupado = false;
 
 const sel = () => lista.find(p => p.screen === $('inc-screen').value) || null;
@@ -136,8 +141,11 @@ function detalle(paso) {
 function vivo(p) {
   if (!lectura) return '';
   if (lectura.estado === 'sin-senal') return tr('noSignal', lectura.motivo);
-  if (lectura.estado !== 'ok') return tr('noData');
-  const base = tr('expects', o(p.esperada), o(lectura.pintada), lectura.giro);
+  // Bugito: los tipos de superficie enseñan su medida (lienzo, % tapado, % visible).
+  const t = tipo(), superficie = t.detector !== 'orientacion';
+  if (superficie && (!observado || observado.pintada == null)) return tr('noMeasure');
+  if (!superficie && lectura.estado !== 'ok') return tr('noData');
+  const base = superficie ? medidaTexto(t.id, observado, lang) : tr('expects', o(p.esperada), o(lectura.pintada), lectura.giro);
   const ahora = Date.now(), quedan = d => Math.max(0, Math.ceil((GRACIA_MS - (ahora - d)) / 1000));
   if (!detector) return base;
   if (detector.fase === 'sospecha') return `${base} · ${tr('suspect', quedan(detector.desde))}`;
@@ -163,14 +171,12 @@ function activo() {
 async function vueltaUnica() {
   const p = sel(); if (!p || !activo()) return;
   const c = tipo(), ahora = Date.now();
-  try { lectura = lecturaSenal(await red.mando.senal(p.screen), { ahora }); } catch { lectura = { estado: 'sin-senal', motivo: 'sin-respuesta' }; }
-  const previo = detector;
-  detector = evaluar(detector, { esperada: p.esperada, pintada: lectura.estado === 'ok' ? lectura.pintada : null }, { ahora });
+  let senal = null;
+  try { senal = await red.mando.senal(p.screen); } catch { senal = null; }
+  const v = vueltaDetector(detector, { plan, pantalla: p, tipo: c.id, senal, ahora, by, planoUrl: location.href.split('#')[0] });
+  lectura = v.observacion.lectura; observado = v.observacion; detector = v.estado;
   if (detector.accion) {
-    const accion = detector.accion;
-    const body = accion === 'abrir'
-      ? apertura({ plan, pantalla: p, tipo: c.id, lectura, esperada: p.esperada, desde: previo && previo.desde, ahora, by, planoUrl: location.href.split('#')[0] })
-      : cierre({ plan, pantalla: p, tipo: c.id, id: detector.incidencia || '', by });
+    const accion = detector.accion, body = v.body;
     let r;
     try { r = body ? await (accion === 'abrir' ? red.yokup.abrir(body) : red.yokup.cerrar(body)) : { ok: false, error: 'sin_recurso' }; }
     catch (e) { r = { ok: false, error: String(e && e.message || e) }; }
@@ -217,7 +223,7 @@ async function enviar(vueltaANormalidad) {
   try { await vuelta(); } catch { /* sigue el sondeo */ }
 }
 
-function alCambiarPantalla() { detector = leerEstado(); lectura = null; incidencia = null; ultimoYokup = 0; pintarOpciones(); pintar(); vuelta().catch(() => {}); }
+function alCambiarPantalla() { detector = leerEstado(); lectura = null; observado = null; incidencia = null; ultimoYokup = 0; pintarOpciones(); pintar(); vuelta().catch(() => {}); }
 
 async function arrancar() {
   if (!raiz) return;

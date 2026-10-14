@@ -307,8 +307,8 @@ test('la página: sección en el ▤ Modo avanzado debajo de Creación de Xpacio
   const ui = readFileSync(new URL('../plano-incidencias.mjs', import.meta.url), 'utf8');
   assert.match(html, /<section id="incidencias"[^>]*data-shell-slot="advanced"/);
   assert.ok(html.indexOf('id="upload"') < html.indexOf('id="incidencias"') && html.indexOf('id="create"') < html.indexOf('id="incidencias"'));
-  assert.match(html, /plano-incidencias\.mjs\?v=20261014-incidencias-1/);
-  assert.match(html, /plano-incidencias\.css\?v=20261014-incidencias-1/);
+  assert.match(html, /plano-incidencias\.mjs\?v=20261014-bugito-1/);
+  assert.match(html, /plano-incidencias\.css\?v=20261014-bugito-1/);
   const seccion = html.slice(html.indexOf('<section id="incidencias"'), html.indexOf('</section>', html.indexOf('<section id="incidencias"')));
   assert.doesNotMatch(seccion, /data-copy/, 'plano.mjs reescribe los data-copy con su diccionario');
   for (const k of [...seccion.matchAll(/data-inc="([a-zA-Z]+)"/g)].map(m => m[1])) assert.ok(new RegExp(`\\b${k}:`).test(ui), `falta el texto ${k}`);

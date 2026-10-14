@@ -16,6 +16,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'plano-generador.mjs', 'plano-foto.mjs',
   // ▤ Creador de incidencias (DCL-34d5bbccb9cc227bb752a419): mando de fallos de laboratorio + agente detector.
   'plano-incidencias.mjs', 'plano-incidencias.css', 'incidencias-core.mjs', 'incidencias-adaptadores.mjs',
+  // Bugito (DCL-5da4653d859552490fd5ae1d): banco de pruebas del Creador de incidencias (admira.biz/bugito).
+  'bugito.html', 'bugito.mjs', 'bugito.css', 'bugito-core.mjs',
   // El laboratorio también como ficha del mapa (OMNIP_LOCATIONS_EXTRA): sin tocar el catálogo KV.
   'locations.js',
   'about.html', 'marketplace.html', 'players/index.html', 'page-language.css',
@@ -32,7 +34,7 @@ export function bizAssetPath(url, method = 'GET') {
       && !/(?:^|\.)clearchannel-tv\.pages\.dev$/i.test(url.hostname)) return '';
   let file = url.pathname === '/' ? 'index.html' : url.pathname.slice(1);
   if (/^(help|players|tutorial|demo)\/?$/.test(file)) file = file.replace(/\/$/, '') + '/index.html';
-  if (['walk', 'detail', 'about', 'marketplace', 'backoffice', 'plano'].includes(file)) file += '.html';
+  if (['walk', 'detail', 'about', 'marketplace', 'backoffice', 'plano', 'bugito'].includes(file)) file += '.html';
   if (!assets.has(file)) return '';
   // Pages' clean URLs serve HTML without exposing the internal namespace in a
   // redirect (a direct fetch of an .html asset may redirect to its clean URL).
