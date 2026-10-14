@@ -17,8 +17,11 @@
 //                  elige establecimiento y confirma. La cookie del portal es SameSite=Strict: desde admira.biz
 //                  no se puede llamar a su API, y así no hace falta.
 import { round, footprint, wallLength, validate, placeNew, moveGroup, reshape, clampToWall, newId, panelSize, groupOf, composition, template, hLayout } from './plano-core.mjs?v=20261014-plano-1';
-import { TIPOS, generarXpacio } from './plano-generador.mjs?v=20261014-crear-1';
+import { TIPOS, generarXpacio } from './plano-generador.mjs?v=20261014-foto-1';
 import { ID_RE, normalizarId } from './plano-subida.mjs?v=20261014-subir-1';
+// «Con foto o vídeo» de la Creación de Xpacios (DCL-ddf3203078fe9471f3796130): la respuesta de /xpacio/estimar → plano,
+// con su procedencia (modelo, confianza) y las pantallas vistas desolapadas. El Arquitecto la reutiliza tal cual.
+import { planoDesdeEstimacion, ESTIMADOR } from './plano-foto.mjs?v=20261014-foto-1';
 
 export const ORDENES = Object.freeze(['crear', 'reformar', 'inventariar']);
 export const ESTUDIO_URL = 'https://www.admira.biz/arquitecto.html';
@@ -325,12 +328,19 @@ export function aplicarReforma(plan, propuesta, ops) {
 }
 
 // ── Inventariar: plano estimado (fotos/vídeo o descripción) ───────────────────────────────────────────────
-// Desde la estimación de /xpacio/estimar: medidas y elementos situados → generarXpacio({elementos}).
-export function planDesdeEstimacion({ estimacion, tipo = 'cafeteria', id, nombre, semilla } = {}) {
-  if (!estimacion || ![estimacion.ancho, estimacion.largo, estimacion.alto].every(num)) throw new TypeError('estimacion-sin-medidas');
-  const e = estimacion;
-  return generarXpacio({ tipo: TIPOS[tipo] ? tipo : 'cafeteria', ancho: e.ancho, largo: e.largo, alto: e.alto, id, nombre, semilla,
-    elementos: { huecos: e.huecos || [], mobiliario: e.mobiliario || [], pantallas: e.pantallas || [] } });
+// Desde la respuesta de /xpacio/estimar: el plano de «Con foto o vídeo» (planoDesdeEstimacion de plano-foto.mjs, con su
+// procedencia y las pantallas desolapadas). Para un INVENTARIO, sólo las pantallas que se han visto: las típicas del tipo
+// que el generador añade cuando no se ve ninguna se quitan (serían CI inventados).
+export function planDesdeEstimacion({ respuesta, estimacion, tipo = 'cafeteria', id, nombre, semilla } = {}) {
+  const r = respuesta || { estimacion };
+  if (!r.estimacion || ![r.estimacion.ancho, r.estimacion.largo, r.estimacion.alto].every(num)) throw new TypeError('estimacion-sin-medidas');
+  const plan = planoDesdeEstimacion({ respuesta: r, tipo: TIPOS[tipo] ? tipo : 'cafeteria', id, nombre, semilla });
+  const vistas = plan.pantallas.filter(s => s.estado === 'estimada');
+  if (vistas.length !== plan.pantallas.length) {
+    plan.pantallas = vistas;
+    plan.fuente.pantallas = vistas.length ? `${vistas.length} ${vistas.length === 1 ? 'pantalla vista' : 'pantallas vistas'} en las fotos, sin código ITIL hasta darlas de alta en Yokup` : 'Ninguna pantalla vista en las fotos';
+  }
+  return plan;
 }
 // Desde la descripción: la sala del tipo (con las medidas dichas o la media del tipo), sin pantallas inventadas,
 // y las pantallas descritas colocadas en su pared con placeNew. Nada que no se haya dicho.
@@ -495,5 +505,5 @@ export function ordenDeNube(ev, { ventana, origen }) {
   if (ev.source !== ventana || ev.origin !== origen) return null;
   return { orden: ORDENES.includes(d.orden) ? d.orden : '', texto: limpio(d.texto, MAX_DESCRIPCION) };
 }
-export const ESTIMAR_URL = 'https://api.admira.store/xpacio/estimar';
+export const ESTIMAR_URL = ESTIMADOR;
 export { composition, footprint, wallLength, normalizarId };

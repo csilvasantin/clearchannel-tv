@@ -10,15 +10,15 @@
 // /arquitecto del ⌘ Experto llega aquí por window.AdmiraArquitecto.
 import { localeFor } from './walk-core.mjs?v=20261010-evidence-1';
 import { exportOrder, workOrder, validate, round } from './plano-core.mjs?v=20261014-plano-1';
-import { TIPOS, generarXpacio, medidasMedias, nuevaSemilla, resumenGenerado } from './plano-generador.mjs?v=20261014-crear-1';
+import { TIPOS, generarXpacio, medidasMedias, nuevaSemilla, resumenGenerado } from './plano-generador.mjs?v=20261014-foto-1';
 import { registroSubida, almacenPlanos, comprobarSala, conTiempo, ESPERA_IDB, ID_RE } from './plano-subida.mjs?v=20261014-subir-1';
 import {
   ORDENES, CATEGORIAS, parseOrden, parametros, tipoDe, leerDescripcion, medidasDe, interpretarReforma, reformaDesdeEstimacion, aplicarReforma,
   planDesdeEstimacion, planDesdeDescripcion, prefijoDe, construirCis, revisarCis, inventarioTraspaso, codificarTraspaso, urlPortal,
-  caraUrl, baseLocal, ordenDeNube, CARA_ORIGEN, ESTIMAR_URL, PREFIJO_RE, normalizarId
+  caraUrl, baseLocal, ordenDeNube, CARA_ORIGEN, PREFIJO_RE, normalizarId
 } from './arquitecto-core.mjs?v=20261014-arquitecto-1';
 import { svgPlanta, svgAlzado } from './arquitecto-dibujo.mjs?v=20261014-arquitecto-1';
-import { prepararFotos, estimar } from './arquitecto-fotos.mjs?v=20261014-arquitecto-1';
+import { prepararFotos, estimar, urlEstimador } from './arquitecto-fotos.mjs?v=20261014-arquitecto-1';
 
 const $ = id => document.getElementById(id);
 const textos = {
@@ -158,7 +158,8 @@ const P = parametros(location.search);
 const almacen = almacenPlanos();
 const caraBase = baseLocal(params.get('cara'), location.origin);
 const caraOrigen = caraBase ? new URL(caraBase).origin : CARA_ORIGEN;
-const estimarUrl = (baseLocal(params.get('estimar'), location.origin) || ESTIMAR_URL) + (params.get('simula') === '1' ? '?simula=1' : '');
+// La misma URL que «Con foto o vídeo»: en producción api.admira.store; en localhost, ?estimador= y ?simula=1.
+const estimarUrl = urlEstimador(location.search, location.hostname);
 
 const st = {
   orden: '', plan: null, origen: '', registro: null, creado: null, tipo: P.tipo || 'cafeteria',
@@ -353,6 +354,14 @@ dictado($('in-mic'), $('in-texto'));
 for (const [input, n, key] of [['rf-fotos', 'rf-fotos-n', 'fotosRf'], ['in-fotos', 'in-fotos-n', 'fotosIn']]) {
   $(input).addEventListener('change', e => { st[key] = Array.from(e.target.files || []); $(n).textContent = st[key].length ? tr('fotosN', st[key].length) : ''; });
 }
+// Las claves de error de «Con foto o vídeo» (claveError de plano-foto.mjs), en palabras.
+const ERR_ESTIMADOR = {
+  es: { phLimitIp: 'tope de estimaciones de hoy desde esta conexión', phLimitDay: 'tope diario de estimaciones', phTooBig: 'las fotos pesan demasiado', phOrigin: 'origen no permitido',
+    phTimeout: 'el modelo no respondió a tiempo', phInvalid: 'estimación no válida', phBusy: 'el modelo está saturado', phError: 'error del estimador', 'sin-fotos': 'ninguna foto utilizable', ilegible: 'fichero ilegible' },
+  en: { phLimitIp: 'today\'s estimate limit from this connection', phLimitDay: 'daily estimate limit', phTooBig: 'photos too large', phOrigin: 'origin not allowed',
+    phTimeout: 'the model did not answer in time', phInvalid: 'invalid estimate', phBusy: 'the model is busy', phError: 'estimator error', 'sin-fotos': 'no usable photo', ilegible: 'unreadable file' }
+};
+const errorEstimador = k => (ERR_ESTIMADOR[lang] || ERR_ESTIMADOR.es)[k] || k;
 async function fotosAEstimacion(files, tipo, notas) {
   status(tr('preparando'));
   const { fotos } = await prepararFotos(files);
@@ -379,7 +388,7 @@ async function proponerReforma() {
   if (st.fotosRf.length) {
     const r = await fotosAEstimacion(st.fotosRf, st.plan.generador && st.plan.generador.tipo, texto);
     if (r.ok) deFotos = reformaDesdeEstimacion(st.plan, base, r.estimacion);
-    else status(tr(deTexto.ops.length ? 'estimarFallo' : 'estimarFalloSolo', r.error), { error: true });
+    else status(tr(deTexto.ops.length ? 'estimarFallo' : 'estimarFalloSolo', errorEstimador(r.error)), { error: true });
   }
   st.ops = deTexto.ops.concat(deFotos.ops); st.activas = st.ops.map(() => true); st.dudas = deTexto.dudas;
   await pausa(500);
@@ -467,9 +476,9 @@ async function inventariar() {
     if (usarAbierto) plan = JSON.parse(JSON.stringify(st.plan));
     else if (st.fotosIn.length) {
       const r = await fotosAEstimacion(st.fotosIn, tipo, texto);
-      if (r.ok) plan = planDesdeEstimacion({ estimacion: r.estimacion, tipo, id, nombre: nombre || undefined, semilla });
-      else if (texto) { aviso = tr('estimarFallo', r.error); }
-      else { status(tr('estimarFalloSolo', r.error), { error: true }); nube('dudando'); return; }
+      if (r.ok) plan = planDesdeEstimacion({ respuesta: r, tipo, id, nombre: nombre || undefined, semilla });
+      else if (texto) { aviso = tr('estimarFallo', errorEstimador(r.error)); }
+      else { status(tr('estimarFalloSolo', errorEstimador(r.error)), { error: true }); nube('dudando'); return; }
     }
     if (!plan) { const r = planDesdeDescripcion({ descripcion: texto, tipo: d.tipo ? '' : tipo, id, nombre: nombre || undefined, semilla }); plan = r.plan; if (r.noCaben.length) aviso = [aviso, tr('noCaben', r.noCaben.length)].filter(Boolean).join(' '); }
   } catch { status(tr('medidasMal'), { error: true }); nube('dudando'); return; }

@@ -123,12 +123,19 @@ test('reformar desde fotos: las pantallas estimadas sin pareja son altas en su s
   assert.deepEqual(girada.ops.map(o => o.op), ['girar', 'tamano']);
 });
 
-test('inventariar desde fotos o vídeo: la estimación de /xpacio/estimar es un plano válido', () => {
-  const plan = planDesdeEstimacion({ estimacion: ESTIMACION, tipo: 'laboratorio', id: 'lab-inventario', nombre: 'Lab inventario', semilla: 9 });
+test('inventariar desde fotos o vídeo: el plano de «Con foto o vídeo» (plano-foto.mjs), sólo con lo que se ve', () => {
+  const respuesta = { ok: true, simulada: true, modelo: 'gemini-3.1-pro-preview', modeloNombre: 'Gemini 3.1 Pro', fotos: 3, estimacion: ESTIMACION };
+  const plan = planDesdeEstimacion({ respuesta, tipo: 'laboratorio', id: 'lab-inventario', nombre: 'Lab inventario', semilla: 9 });
   assert.equal(plan.schema, SCHEMA);
   assert.deepEqual(plan.planta, { ancho: 3.4, fondo: 3.6, alto: 3 });
   assert.equal(plan.pantallas.length, 3); assert.ok(plan.pantallas.every(s => s.estado === 'estimada' && s.itil === null));
+  assert.match(plan.fuente.titulo, /Plano estimado desde fotos · Gemini 3\.1 Pro · confianza 50 %/, 'con su procedencia');
+  assert.deepEqual(errores(plan), [], 'las pantallas vistas, desolapadas');
   assert.ok(leerPlanoJson(JSON.stringify(plan)).ok, 'Subir plano lo acepta');
+  // Sin pantallas vistas, el generador pondría las típicas: en un inventario serían CI inventados, se quitan.
+  const sinVer = planDesdeEstimacion({ respuesta: { ...respuesta, estimacion: { ...ESTIMACION, pantallas: [] } }, tipo: 'laboratorio', id: 'lab-sin', semilla: 9 });
+  assert.equal(sinVer.pantallas.length, 0); assert.equal(sinVer.fuente.pantallas, 'Ninguna pantalla vista en las fotos');
+  assert.equal(planDesdeEstimacion({ estimacion: ESTIMACION, tipo: 'laboratorio', id: 'lab-solo', semilla: 2 }).pantallas.length, 3, 'también con la estimación sola');
   assert.throws(() => planDesdeEstimacion({ estimacion: { pantallas: [] } }), /estimacion-sin-medidas/);
 });
 
@@ -206,7 +213,7 @@ test('la nube del Arquitecto: su URL, sus órdenes sólo desde su ventana y su o
   assert.equal(baseLocal('http://127.0.0.1:8871', 'http://127.0.0.1:8872'), 'http://127.0.0.1:8871');
   assert.equal(baseLocal('http://127.0.0.1:8871', 'https://www.admira.biz'), '', 'en producción, siempre la de verdad');
   assert.equal(baseLocal('https://evil.example', 'http://localhost:8080'), '');
-  assert.equal(ESTIMAR_URL, 'https://api.admira.store/xpacio/estimar');
+  assert.equal(ESTIMAR_URL, 'https://api.admira.store/xpacio/estimar', 'el ESTIMADOR de plano-foto.mjs');
 });
 
 test('planta y alzado en SVG: las clases de plano.css, nuevas en lima y los nombres escapados', () => {
@@ -238,6 +245,9 @@ test('la página: shell cuadrático, el Arquitecto a un lado y el plano al otro,
   assert.match(js, /'admira\.plano\.' \+ id/, 'la misma clave de propuesta que plano.html');
   assert.match(js, /registroSubida\(/, 'el mismo almacén de planos que plano.html');
   assert.doesNotMatch(js, /fetch\([^)]*yokup/i, 'el estudio no llama a la API de Yokup: traspasa al portal');
+  const fotos = read('arquitecto-fotos.mjs');
+  assert.match(fotos, /from '\.\/plano-foto\.mjs\?v=20261014-foto-1'/, 'las reglas de fotos y vídeo de «Con foto o vídeo», no una copia');
+  assert.match(js, /urlEstimador\(location\.search, location\.hostname\)/, 'en producción, siempre api.admira.store');
   for (const f of ['arquitecto.html', 'arquitecto.mjs', 'arquitecto.css', 'arquitecto-core.mjs', 'arquitecto-dibujo.mjs', 'arquitecto-fotos.mjs']) assert.ok(BIZ_ASSET_FILES.includes(f), f);
   assert.equal(bizAssetPath(new URL('https://www.admira.biz/arquitecto')), '/__admira_biz/arquitecto');
   assert.equal(bizAssetPath(new URL('https://www.admira.biz/arquitecto-core.mjs?v=1')), '/__admira_biz/arquitecto-core.mjs');
