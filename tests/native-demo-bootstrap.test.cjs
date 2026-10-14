@@ -25,7 +25,7 @@ test('native launch is scoped to matching exact App and Biz hosts', () => {
     for (const host of hosts) {
       const p = page(`https://${host}/?ax_demo=${demo}&marca=starbucks`); p.run();
       assert.equal(p.nodes.length, 1); const engine = p.nodes[0];
-      assert.equal(engine.src, base + '20261013-alsea-1');
+      assert.equal(engine.src, base + '20261014-personajes-2');
       assert.equal(engine.attrs['data-admira-demo-engine'], '');
       assert.equal(engine.attrs['data-pata'], 'admira.' + demo);
       assert.equal(engine.attrs['data-min'], 'hide'); assert.equal(engine.attrs['data-toggle'], '');
@@ -40,7 +40,7 @@ test('normal visits and unmatched launch requests retain the normal engine', () 
     'https://sub.admira.biz/?ax_demo=biz', 'https://admira.biz.evil.example/?ax_demo=biz',
     'https://localhost/?ax_demo=biz']) {
     const p = page(url); p.run();
-    assert.equal(p.nodes[0].src, base + '20261013-alsea-1', url);
+    assert.equal(p.nodes[0].src, base + '20261014-personajes-2', url);
     assert.equal(p.nodes[0].attrs['data-pata'], undefined);
     assert.equal(p.nodes[0].attrs['data-admira-demo-engine'], undefined);
   }
