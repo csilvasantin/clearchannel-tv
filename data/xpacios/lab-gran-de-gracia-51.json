@@ -1,14 +1,15 @@
 {
  "schema": "admira.xpacio-plano/1",
  "id": "lab-gran-de-gracia-51",
- "version": "2026-10-14-camara-2",
+ "version": "2026-10-14-camara-3",
  "nombre": "Laboratorio AdmiraNeXT · Gran de Gràcia 51",
  "direccion": "Carrer Gran de Gràcia 51, 1.ª planta · 08012 Barcelona",
  "fuente": {
   "titulo": "Levantamiento por cámara · medidas estimadas, por confirmar con metro",
   "medidas": "Sala de 3,45 × 3,50 m y 3,10 m de alto estimada desde la webcam PTZ de admira.live (Insta360 Link 2, encima de la pantalla H del puesto de Carlos): barrido de -120° a +120°, ángulos de la óptica (72° × 44°) y tamaños conocidos (pantallas de 27″, recreativa, silla, puerta doble, baldosa hidráulica de 20 cm). Margen ±15 cm en paredes y ±10 cm en pantallas",
   "pantallas": "Seis pantallas de la instalación starbucks-six de admira.studio (prueba de hardware r2 del 13-oct-2026, sitio «Gran de Gràcia 51»): V–H–V del Mac mini en el puesto de Carlos, junto a la ventana, y V–H–V del Mac Studio en la mesa larga de la pared de paneles 3D. Más la pantalla integrada del MacBook Pro 16 en esa mesa. Diagonal de 27″ deducida de la cámara y de los viewports 2560×1440 / 1440×2560; marca y modelo por leer en la etiqueta",
-  "itil": "Inventario ITIL dado de alta en Yokup (maestro) el 14-oct-2026: establecimiento «Laboratorio AdmiraNeXT · Gran de Gràcia 51» del Portal del comercio, 11 CI GDG51-… (7 pantallas, 3 players y la webcam) con sus dependencias"
+  "itil": "Inventario ITIL dado de alta en Yokup (maestro) el 14-oct-2026: establecimiento «Laboratorio AdmiraNeXT · Gran de Gràcia 51» del Portal del comercio, 11 CI GDG51-… (7 pantallas, 3 players y la webcam) con sus dependencias",
+  "correcciones": "Mesas en L en la esquina de las paredes I y F y nevera de espaldas a la pared I: corrección de Carlos con fotos del 14-oct (18:39)."
  },
  "planta": {
   "ancho": 3.45,
@@ -104,9 +105,9 @@
   {
    "id": "mesa-carlos",
    "nombre": "Mesa · puesto de Carlos",
-   "x": 0.9,
+   "x": 0.7,
    "y": 0,
-   "w": 1.75,
+   "w": 1.95,
    "d": 0.7,
    "alto": 0.75
   },
@@ -114,9 +115,9 @@
    "id": "mesa-larga",
    "nombre": "Mesa larga · Mac Studio",
    "x": 0,
-   "y": 0.75,
+   "y": 0,
    "w": 0.7,
-   "d": 2.2,
+   "d": 2.95,
    "alto": 0.75
   },
   {
@@ -126,7 +127,8 @@
    "y": 3.0,
    "w": 0.6,
    "d": 0.5,
-   "alto": 1.75
+   "alto": 1.75,
+   "pared": "I"
   },
   {
    "id": "recreativa",
