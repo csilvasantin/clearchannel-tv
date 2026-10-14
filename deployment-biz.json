@@ -21,9 +21,8 @@
     ]
   },
   "novedades": [
-    "El Arquitecto (admira.biz/arquitecto): Admirito con casco de obra crea, reforma o inventaría un Xpacio desde medidas, fotos, vídeo o lo que le cuentes.",
-    "Inventariar termina en Yokup: el Portal del comercio importa el plano y da de alta solo los CI nuevos, sin tocar los que ya existen.",
-    "/arquitecto crear|reformar|inventariar en el ⌘ Experto (suite personajes-3)."
+    "Bugito incorpora Quitar giro, Quitar resolución, Quitar popup y Quitar apertura parcial junto a cada fallo.",
+    "Cada botón recupera sólo su fallo; el vigilante cierra automáticamente su incidencia en Yokup y mantiene abiertas las restantes."
   ],
   "nativeClearChannel": {
     "enabled": true,

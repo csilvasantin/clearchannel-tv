@@ -6,7 +6,7 @@
 // Lógica PURA del banco (sin red ni DOM): la pantalla de laboratorio, las URL del player virtual y de la cara de
 // Bugito (la nube de Admirito con ?personaje=bugito), el alias de cada incidencia y en qué estado está Bugito.
 // La red es la del Creador de incidencias (incidencias-adaptadores.mjs) y el detector, el suyo (incidencias-core.mjs).
-import { CATALOGO, tipoIncidencia, pantallasDelPlano, pantallaLab, pasos, VIRTUAL_LAB_RE } from './incidencias-core.mjs?v=20261014-bugito-1';
+import { CATALOGO, tipoIncidencia, pantallasDelPlano, pantallaLab, pasos, VIRTUAL_LAB_RE } from './incidencias-core.mjs?v=20261014-bugito-3';
 
 // El player virtual de laboratorio del banco. La salvaguarda del backend (omnipublicity-api src/fault-lab.js)
 // sólo acepta órdenes fault-* para `virtual-lab-*`: nunca una pantalla de cliente.

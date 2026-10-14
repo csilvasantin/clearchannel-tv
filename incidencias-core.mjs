@@ -113,12 +113,12 @@ export function pantallasDelPlano(plan) {
 }
 
 // ── Mando: la orden que provoca un tipo y la que lo deshace ────────────────────────────────
-export function orden(tipo, screen, { vuelta = false } = {}) {
+export function orden(tipo, screen, { vuelta = false, individual = false } = {}) {
   const t = tipoIncidencia(tipo);
   if (!t) return { ok: false, error: 'tipo_desconocido' };
   if (!pantallaLab(screen)) return { ok: false, error: 'pantalla_no_lab' };
   // La cola es la de la PROPIA pantalla y la orden va dirigida: nunca un broadcast del circuito.
-  return { ok: true, body: { id: screen, screen, cmd: vuelta ? t.vuelta : t.orden } };
+  return { ok: true, body: { id: screen, screen, cmd: vuelta ? (individual ? `${t.orden} off` : t.vuelta) : t.orden } };
 }
 
 // ── Lo que el player declara que pinta (/signage/now) ───────────────────────────────────────
