@@ -35,6 +35,9 @@ Los mosaicos se mueven enteros salvo que se desmarque «Mover el mosaico entero�
   - `orientacion`, `pulgadas`, `resolucion`
   - `pared`, `s`: centro desde la izquierda, en metros
   - `z`: base sobre el suelo, en metros
+- **Dispositivos** (opcional): players, webcam y demás CI que no son pantallas, con `id`, `nombre`, `categoria` (`player` o `iot`), `rol`, `pared` e `itil`. Con `s` (y `z`) se sitúan en su pared; un player sin `s` se pinta al final de las pantallas que mueve (las de su mismo `player`). En planta salen como marcas pequeñas con su CI en el título, y en el inventario, en la tabla «Players y dispositivos · ITIL».
+- **Yokup** (opcional): `yokup.site_id`, `yokup.portal` y `yokup.cis`, el establecimiento y sus CI en el maestro del ITIL. Con `yokup.portal` (https y dominio de Yokup), el enlace de vuelta de la página es «← Ver en Yokup (ITIL)» en lugar de «← Volver a la ficha», porque ese Xpacio no está en el mapa comercial.
+- **Escala del dibujo:** los rótulos, los trazos finos y los márgenes se escalan con el tamaño del Xpacio (`--k`: 1 en un local de 14 m como Starbucks y proporcional en salas pequeñas), para que se lean igual en pantalla. Paredes, huecos, muebles y pantallas van siempre a su medida real.
 - **Registros de Xpacios con plano:**
   - `PLANOS` en `expert-commands.js`, más su copia en `xpace-shell.js` de admira-store.
   - `BIZ_ASSET_FILES` (`server/biz-assets.mjs`) sirve el plano en admira.biz.
@@ -61,6 +64,38 @@ Misión DCL-58288891486617b36ed8777d (Hoy #86), orden de Carlos del 14-oct-2026.
 - **Diagonal:** 55″ **supuesta**.
 - **Fuentes que no coinciden:** el gemelo de Matrix pinta seis verticales en grupos 3/1/2. Falta confirmar en visita técnica cuál es la distribución real y las medidas.
 - **ITIL:** los códigos de las pantallas están por cruzar con Yokup (maestro del ITIL). Fuera de las pruebas no hay códigos de pantalla en ningún repo.
+
+## Laboratorio AdmiraNeXT · Gran de Gràcia 51 (`lab-gran-de-gracia-51`)
+
+Misión DCL-6ae9d5b0e2d48ee2fd9c7b19 (Hoy #152). Es el laboratorio de Carlos, en la 1.ª planta de Carrer Gran de Gràcia 51 (Barcelona). Experto: `/plano lab` (también `laboratorio`, `gran de gracia 51` y `gdg51`).
+
+- **Levantamiento por cámara:** Neo lo levantó con la webcam PTZ de admira.live (Insta360 Link 2, encima de la pantalla H del puesto de Carlos). Hizo un barrido de -120° a +120° y midió con los ángulos de la óptica y con tamaños conocidos: pantallas de 27″, recreativa, silla, puerta doble y baldosa hidráulica de 20 cm.
+- **Medidas estimadas:** la sala es de 3,45 × 3,50 m y 3,10 m de alto, con un margen de **±15 cm** en paredes y de ±10 cm en las posiciones de las pantallas. Están por confirmar con metro. Las paredes son F (ventana y puesto de Carlos), D (puerta al pasillo), P (puerta doble de las pizarras) e I (paneles 3D y mesa larga).
+- **Pantallas:** dos V–H–V de 27″ de la instalación `starbucks-six` de admira.studio (prueba de hardware r2 del 13-oct-2026). Una es la del Mac mini, en el puesto de Carlos junto a la ventana; la otra es la del Mac Studio, en la mesa larga. Se añade la pantalla integrada del MacBook Pro 16.
+- **ITIL en Yokup:** el establecimiento «Laboratorio AdmiraNeXT · Gran de Gràcia 51» del Portal del comercio tiene 11 CI dados de alta el 14-oct-2026: 7 pantallas (`GDG51-PAN-01…07`), 3 players (`GDG51-PLY-01…03`) y la webcam (`GDG51-CAM-01`). Los códigos del JSON son los de Yokup y no se cambian aquí.
+
+## Plano compartido
+
+Los clientes globales comparten planos e inventario ITIL entre las cinco soluciones (orden de Carlos, 14-oct-2026):
+
+- admira.biz comercializa.
+- admira.app, que es Yokup, mantiene.
+- admira.studio adapta los contenidos.
+- admira.store lo demuestra con el gemelo.
+- Todo se lanza desde admira.tv.
+
+El primer paso es que el plano publicado en admira.biz se pueda leer desde las otras soluciones.
+
+- **URL canónica:** `https://www.admira.biz/data/xpacios/<id>.json`, por ejemplo `https://www.admira.biz/data/xpacios/lab-gran-de-gracia-51.json`.
+- **Cabeceras:** `Access-Control-Allow-Origin: *`, solo lectura (GET, HEAD y el preflight OPTIONS, sin credenciales ni cookies), `Cache-Control: public, max-age=300` y `Content-Type: application/json; charset=utf-8`. Un id sin plano responde `404` con `{"error":"sin-plano","id":…}`, en lugar de la portada que daría Pages.
+  - Las pone `_worker.js` y no `_headers`: la release de admira.biz conserva el `_headers` de la base (`scripts/build-biz-release.mjs`), mientras que el worker sí se copia de la raíz.
+  - Pruebas: `tests/biz-assets.test.mjs`, con el worker y con la release construida.
+- **Quién lo lee:**
+  - El gemelo 3D de admira.store / XpaceOS.
+  - Las adaptaciones de admira.studio, por el bloque `contenidos` y las pantallas con `screenId`.
+  - admira.tv, que lanza las soluciones.
+- **Maestro del ITIL:** Yokup. El establecimiento y sus CI van en el bloque `yokup` del JSON (`site_id`, `portal`, `cis`) y en el `itil` de cada pantalla y dispositivo. El plano de admira.biz es una vista: las altas y bajas de CI se hacen en Yokup.
+- **Siguiente paso propuesto:** que Yokup guarde también el plano junto al establecimiento y que admira.biz lo lea de allí, para que haya un solo plano.
 
 ## Siguientes pasos
 

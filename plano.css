@@ -76,42 +76,51 @@ td code{font-size:12px;color:var(--accent)}
 .actions .itil{color:var(--accent)}
 .actions .contenidos{color:var(--brand)}
 .empty{color:var(--mut);font-size:13px}
-/* SVG */
+/* SVG · 100 unidades por metro. Rótulos, trazos finos y márgenes se multiplican por --k (escala
+   del Xpacio: 1 en un local de 14 m como Starbucks, 0,25 en una sala de 3,5 m), así se leen igual
+   en pantalla sea cual sea el tamaño. Paredes, huecos y pantallas van a su medida real. */
 .floor{fill:var(--floor)}
 .wall{stroke:var(--wall);stroke-width:14;stroke-linecap:square;fill:none}
-.wall-hit{stroke:transparent;stroke-width:60;fill:none;cursor:pointer}
+.wall-hit{stroke:transparent;stroke-width:max(28px,calc(60px * var(--k,1)));fill:none;cursor:pointer}
 .wall-hit:hover+.wall-label,.wall-hit:focus+.wall-label{fill:var(--ink)}
 .wall.active{stroke:var(--accent)}
-.wall-label{fill:var(--mut);font-size:22px;font-weight:700;pointer-events:none}
+.wall-label{fill:var(--mut);font-size:calc(22px * var(--k,1));font-weight:700;pointer-events:none}
 .gap-door{stroke:var(--floor);stroke-width:18}
-.door-arc{fill:none;stroke:var(--door);stroke-width:3;stroke-dasharray:6 5}
+.door-arc{fill:none;stroke:var(--door);stroke-width:calc(3px * var(--k,1));stroke-dasharray:calc(6px * var(--k,1)) calc(5px * var(--k,1))}
 .gap-glass{stroke:var(--glass);stroke-width:8}
-.furniture{fill:var(--furn);stroke:#56696d;stroke-width:2}
-.furniture-label{fill:var(--ink);font-size:20px;pointer-events:none}
-.dim{fill:var(--mut);font-size:20px}
-.dim-line{stroke:var(--mut);stroke-width:1.5}
+.furniture{fill:var(--furn);stroke:#56696d;stroke-width:calc(2px * var(--k,1))}
+.furniture-label{fill:var(--ink);font-size:calc(20px * var(--k,1));pointer-events:none}
+.dim{fill:var(--mut);font-size:calc(20px * var(--k,1))}
+.dim-line{stroke:var(--mut);stroke-width:calc(1.5px * var(--k,1))}
 .scr{cursor:pointer}
-.scr-body{fill:var(--screen);stroke:#0b1b1f;stroke-width:2}
+.scr-body{fill:var(--screen);stroke:#0b1b1f;stroke-width:calc(2px * var(--k,1))}
 .scr.new .scr-body{fill:var(--screen-new)}
-.scr.selected .scr-body{stroke:#fff;stroke-width:5}
+.scr.selected .scr-body{stroke:#fff;stroke-width:calc(5px * var(--k,1))}
 .scr-cone{fill:var(--screen);opacity:.10;pointer-events:none}
 .scr.new .scr-cone{fill:var(--screen-new)}
-.scr-label{fill:var(--ink);font-size:20px;font-weight:700;pointer-events:none;paint-order:stroke;stroke:#0c181d;stroke-width:5px}
+.scr-label{fill:var(--ink);font-size:calc(20px * var(--k,1));font-weight:700;pointer-events:none;paint-order:stroke;stroke:#0c181d;stroke-width:calc(5px * var(--k,1))}
 .scr.has-error .scr-body{fill:var(--err)}
-.scr.moving .scr-body{stroke:#fff;stroke-width:3;stroke-dasharray:8 5}
-.scr-ghost{fill:none;stroke:var(--mut);stroke-width:2;stroke-dasharray:8 6;pointer-events:none}
-.elev-wall{fill:#1d3036;stroke:var(--wall);stroke-width:3}
-.elev-floor{stroke:var(--wall);stroke-width:4}
-.elev-door{fill:#2c2414;stroke:var(--door);stroke-width:2}
-.elev-glass{fill:rgba(95,183,232,.16);stroke:var(--glass);stroke-width:2}
-.elev-furn{fill:rgba(58,76,80,.8);stroke:#56696d;stroke-width:2}
-.guide{stroke:var(--warn);stroke-width:1.5;stroke-dasharray:6 6;opacity:.7}
-.guide-label{fill:var(--warn);font-size:16px;opacity:.85}
+.scr.moving .scr-body{stroke:#fff;stroke-width:calc(3px * var(--k,1));stroke-dasharray:calc(8px * var(--k,1)) calc(5px * var(--k,1))}
+.scr-ghost{fill:none;stroke:var(--mut);stroke-width:calc(2px * var(--k,1));stroke-dasharray:calc(8px * var(--k,1)) calc(6px * var(--k,1));pointer-events:none}
+.elev-wall{fill:#1d3036;stroke:var(--wall);stroke-width:calc(3px * var(--k,1))}
+.elev-floor{stroke:var(--wall);stroke-width:calc(4px * var(--k,1))}
+.elev-door{fill:#2c2414;stroke:var(--door);stroke-width:calc(2px * var(--k,1))}
+.elev-glass{fill:rgba(95,183,232,.16);stroke:var(--glass);stroke-width:calc(2px * var(--k,1))}
+.elev-furn{fill:rgba(58,76,80,.8);stroke:#56696d;stroke-width:calc(2px * var(--k,1))}
+.guide{stroke:var(--warn);stroke-width:calc(1.5px * var(--k,1));stroke-dasharray:calc(6px * var(--k,1)) calc(6px * var(--k,1));opacity:.7}
+.guide-label{fill:var(--warn);font-size:calc(16px * var(--k,1));opacity:.85}
 .scr:focus{outline:none}
-.scr:focus-visible .scr-body{stroke:#fff;stroke-width:5}
-#planta .wall-label{font-size:30px}#planta .furniture-label{font-size:26px}#planta .scr-label{font-size:28px}
-#alzado .scr-label{font-size:26px}#alzado .dim{font-size:24px}#alzado .furniture-label{font-size:24px}#alzado .guide-label{font-size:20px}
+.scr:focus-visible .scr-body{stroke:#fff;stroke-width:calc(5px * var(--k,1))}
+#planta .wall-label{font-size:calc(30px * var(--k,1))}#planta .furniture-label{font-size:calc(26px * var(--k,1))}#planta .scr-label{font-size:calc(28px * var(--k,1))}
+#alzado .scr-label{font-size:calc(26px * var(--k,1))}#alzado .dim{font-size:calc(24px * var(--k,1))}#alzado .furniture-label{font-size:calc(24px * var(--k,1))}#alzado .guide-label{font-size:calc(20px * var(--k,1))}
 .scr-label.group{fill:var(--accent)}
+/* Dispositivos del inventario (players, webcam): marcas pequeñas, con su CI ITIL en el título. */
+.device-mark{fill:#0c181d;stroke:var(--brand);stroke-width:calc(3px * var(--k,1))}
+.device.iot .device-mark{stroke:var(--warn)}
+.device-label{fill:var(--brand);font-size:calc(24px * var(--k,1));font-weight:700;paint-order:stroke;stroke:#0c181d;stroke-width:calc(4px * var(--k,1))}
+.device.iot .device-label{fill:var(--warn)}
+.devices{margin-top:14px}
+.devices h3{margin:0 0 6px;font-size:13px;color:var(--mut);font-weight:600;letter-spacing:.02em}
 /* Calco subido: sobre el suelo, debajo de lo demás, sin capturar el puntero */
 .calco-img{pointer-events:none}
 .source button,.no-plan button{margin-left:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:7px;padding:4px 10px;font-size:12px;font-weight:600}

@@ -7,8 +7,10 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'galaxy-shell.js', 'expert-panel.js', 'responsive-shell.js',
   'index.html', 'app.js', 'planner-core.js', 'inventory-evidence.js', 'expert-commands.js', 'intro.js', 'detail.html',
   'walk.html', 'walk.mjs', 'walk-launch.mjs', 'walk-core.mjs', 'walk.css', 'help/index.html',
-  // /redistribucion (FLT-102063): plano y obras del Xpacio; ▤ Subir plano (DCL-58288891486617b36ed8777d).
+  // /redistribucion (FLT-102063): plano y obras del Xpacio; ▤ Subir plano (DCL-58288891486617b36ed8777d);
+  // laboratorio de Gran de Gràcia 51 (DCL-6ae9d5b0e2d48ee2fd9c7b19).
   'plano.html', 'plano.mjs', 'plano-core.mjs', 'plano-subida.mjs', 'plano.css', 'data/xpacios/alsea-sbux-021.json',
+  'data/xpacios/lab-gran-de-gracia-51.json',
   'about.html', 'marketplace.html', 'players/index.html', 'page-language.css',
   'backoffice.html', 'central-project-backoffice.mjs', 'tutorial/index.html',
   'demo/index.html', 'demo/demo.mjs', 'version.json',

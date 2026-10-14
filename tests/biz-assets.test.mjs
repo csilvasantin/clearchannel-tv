@@ -53,6 +53,39 @@ test('the worker serves JS/version by host and denies direct internal paths', as
     for(const suffix of ['','/','/index.html']) assert.equal((await worker.fetch(new Request('https://www.clearchannel.tv/'+prefix+suffix),env)).status,404);
   }
 });
+test('published floor plans are shared read-only with any origin; an id without a plan is a JSON 404', async () => {
+  const calls = [];
+  const env = {ASSETS:{fetch(request) {
+    const path = new URL(request.url).pathname;
+    calls.push(path);
+    if (path === '/__admira_biz/data/xpacios/lab-gran-de-gracia-51.json') return new Response('{"schema":"admira.xpacio-plano/1"}', {headers:{'content-type':'application/json','set-cookie':'x=1'}});
+    // Pages responde a lo que no existe con la portada (200, HTML).
+    if (path.startsWith('/data/xpacios/')) return new Response('<!doctype html><title>Portada</title>', {headers:{'content-type':'text/html; charset=utf-8'}});
+    return new Response('{}', {headers:{'content-type':'application/javascript'}});
+  }}};
+  const plan = await worker.fetch(new Request('https://www.admira.biz/data/xpacios/lab-gran-de-gracia-51.json', {headers:{Origin:'https://www.admira.store'}}), env);
+  assert.equal(plan.status, 200);
+  assert.equal(plan.headers.get('access-control-allow-origin'), '*');
+  assert.equal(plan.headers.get('access-control-allow-credentials'), null);
+  assert.equal(plan.headers.get('set-cookie'), null);
+  assert.equal(plan.headers.get('cache-control'), 'public, max-age=300');
+  assert.equal(plan.headers.get('content-type'), 'application/json; charset=utf-8');
+  assert.equal(JSON.parse(await plan.text()).schema, 'admira.xpacio-plano/1');
+  assert.equal(calls.pop(), '/__admira_biz/data/xpacios/lab-gran-de-gracia-51.json');
+  const missing = await worker.fetch(new Request('https://www.admira.biz/data/xpacios/mi-tienda.json'), env);
+  assert.equal(missing.status, 404);
+  assert.equal(missing.headers.get('access-control-allow-origin'), '*');
+  assert.deepEqual(await missing.json(), {error:'sin-plano', id:'mi-tienda'});
+  const preflight = await worker.fetch(new Request('https://www.admira.biz/data/xpacios/alsea-sbux-021.json', {method:'OPTIONS'}), env);
+  assert.equal(preflight.status, 204);
+  assert.match(preflight.headers.get('access-control-allow-methods'), /^GET, HEAD, OPTIONS$/);
+  // Fuera de /data/xpacios/<id>.json no cambia nada.
+  for (const path of ['/data/xpacios/../app.json', '/data/otro.json', '/app.js']) {
+    const other = await worker.fetch(new Request('https://www.admira.biz' + path), env);
+    assert.equal(other.headers.get('access-control-allow-origin'), null, path);
+  }
+});
+
 test('the built release serves corrected biz assets while preserving the other domains', async () => {
   const root = dirname(dirname(fileURLToPath(import.meta.url)));
   const output = mkdtempSync(join(tmpdir(), 'admira-biz-release-test-'));
@@ -98,6 +131,12 @@ test('the built release serves corrected biz assets while preserving the other d
         assert.equal(await response.text(), readFileSync(join(output, scoped ? '__admira_biz' : host==='www.clearchannel.tv' && CC_NATIVE_FILES.includes(file) ? '__admira_cc_native' : '', file), 'utf8'), host + route);
       }
     }
+    // Plano compartido: el del laboratorio sale de la release de admira.biz con CORS de lectura.
+    const shared = await worker.fetch(new Request('https://www.admira.biz/data/xpacios/lab-gran-de-gracia-51.json'), env);
+    assert.equal(shared.status, 200);
+    assert.equal(shared.headers.get('access-control-allow-origin'), '*');
+    assert.equal(shared.headers.get('cache-control'), 'public, max-age=300');
+    assert.equal(await shared.text(), readFileSync(join(root, 'data/xpacios/lab-gran-de-gracia-51.json'), 'utf8'));
   } finally { rmSync(output, {recursive:true, force:true}); }
 });
 

@@ -252,12 +252,38 @@ test('an IndexedDB open that never answers times out instead of blocking the pag
   assert.equal(await conTiempo('ya', 10), 'ya');
 });
 
+test('every published floor plan reads as a valid plan with no plano-core errors and ships on admira.biz', () => {
+  const C = createRequire(import.meta.url)('../expert-commands.js');
+  assert.ok(C.PLANOS.some(p => p.id === 'lab-gran-de-gracia-51'));
+  for (const p of C.PLANOS) {
+    const file = `data/xpacios/${p.id}.json`;
+    const r = leerPlanoJson(readFileSync(new URL('../' + file, import.meta.url), 'utf8'), p.id);
+    assert.equal(r.ok, true, `${p.id}: ${JSON.stringify(r.errores)}`);
+    assert.equal(r.id, p.id);
+    assert.equal(r.plan.schema, SCHEMA);
+    assert.deepEqual(validate(r.plan).filter(i => i.nivel === 'error'), [], p.id);
+    assert.ok(BIZ_ASSET_FILES.includes(file), file);
+  }
+});
+
+test('the Gran de Gràcia 51 lab keeps its camera survey sizes and its ITIL codes from Yokup', () => {
+  const lab = JSON.parse(readFileSync(new URL('../data/xpacios/lab-gran-de-gracia-51.json', import.meta.url), 'utf8'));
+  assert.deepEqual(lab.planta, { ancho: 3.45, fondo: 3.5, alto: 3.1 });
+  assert.deepEqual(lab.pantallas.map(s => s.itil).sort(), ['GDG51-PAN-01', 'GDG51-PAN-02', 'GDG51-PAN-03', 'GDG51-PAN-04', 'GDG51-PAN-05', 'GDG51-PAN-06', 'GDG51-PAN-07']);
+  assert.deepEqual(lab.dispositivos.map(d => d.itil), ['GDG51-PLY-01', 'GDG51-PLY-02', 'GDG51-PLY-03', 'GDG51-CAM-01']);
+  for (const d of lab.dispositivos) assert.ok(lab.paredes.some(w => w.id === d.pared), d.id);
+  assert.equal(lab.yokup.cis, lab.pantallas.length + lab.dispositivos.length);
+  assert.match(lab.yokup.portal, /^https:\/\/admira\.app\//);
+  assert.deepEqual(validate(lab), [], 'no warnings either');
+});
+
 test('the upload module ships with the floor plan page on admira.biz', () => {
   assert.ok(BIZ_ASSET_FILES.includes('plano-subida.mjs'));
   const html = readFileSync(new URL('../plano.html', import.meta.url), 'utf8');
   const page = readFileSync(new URL('../plano.mjs', import.meta.url), 'utf8');
-  assert.match(html, /plano\.mjs\?v=20261014-subir-1/);
-  assert.match(html, /plano\.css\?v=20261014-subir-1/);
+  // plano.mjs y plano.css salen con el mismo sello; el módulo de subida, con el suyo.
+  const stamp = html.match(/plano\.mjs\?v=(\d{8}-[a-z0-9-]+)"/)[1];
+  assert.ok(html.includes(`plano.css?v=${stamp}"`), stamp);
   assert.match(page, /plano-subida\.mjs\?v=20261014-subir-1/);
   assert.match(html, /id="upload"[^>]*data-shell-slot="advanced"/);
   // pdf.js solo bajo demanda, con versión exacta y su worker de la misma versión.

@@ -7,7 +7,7 @@
   <meta name="description" content="Plano en planta y en alzado de un Xpacio con su inventario ITIL de pantallas, y propuestas de obra para cambiar su distribución.">
   <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
   <link rel="canonical" href="https://www.clearchannel.tv/plano.html">
-  <link rel="stylesheet" href="plano.css?v=20261014-subir-1">
+  <link rel="stylesheet" href="plano.css?v=20261014-lab-1">
   <link rel="stylesheet" href="brand.css">
   <script src="brand.js"></script>
   <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
@@ -15,8 +15,8 @@
   // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones manda; plano.mjs escucha admira:lang.
   window.ADMIRA_SHELL = { section: { es: '/ plano y obras', en: '/ floor plan and works' }, setLang() {} };
   </script>
-  <script defer src="/galaxy-shell.js?v=20261014-subir-1"></script>
-  <script type="module" src="plano.mjs?v=20261014-subir-1"></script>
+  <script defer src="/galaxy-shell.js?v=20261014-lab-1"></script>
+  <script type="module" src="plano.mjs?v=20261014-lab-1"></script>
 </head>
 <body>
   <main>
@@ -65,6 +65,7 @@
         <section class="card inventory" aria-labelledby="inv-title">
           <div class="card-head"><h2 id="inv-title" data-copy="inventory">Inventario ITIL · pantallas</h2><span id="inv-count" class="hint"></span></div>
           <div class="table-wrap"><table id="inventory"></table></div>
+          <div id="devices" class="devices table-wrap" hidden></div>
         </section>
         <aside class="card inspector" id="inspector" aria-labelledby="insp-title" hidden>
           <div class="card-head"><h2 id="insp-title" data-copy="selected">Pantalla seleccionada</h2></div>
