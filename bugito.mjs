@@ -34,6 +34,7 @@ const textos = {
     noMeasure: 'sin medida (el canal aún no declara esta medida)', waiting: 'esperando al player…',
     fases: { casa: 'en orden', sospecha: s => `no casa · abre en ${s} s`, fallo: 'incidencia', recuperando: s => `vuelve a casar · cierra en ${s} s` },
     opened: id => `Incidencia ${id} abierta en Yokup.`, closed: id => `Incidencia ${id || ''} cerrada: vuelve a la normalidad.`, yokupError: e => `Yokup no responde: ${e}.`,
+    held: id => `La incidencia ${id || ''} la lleva un técnico del portal: se cierra allí.`,
     stage: { abierta: 'abierta', en_curso: 'en curso', recuperada: 'recuperada', cerrada: 'cerrada' },
     unknown: x => `Bugito no conoce «${x}». Prueba: girar, resolucion, popup, medias o normal.`,
     launched: (n) => `Bugito lanza «${n}» en el player virtual.`, shown: 'Bugito a la vista.', hidden: 'Bugito escondido (vuelve con /bugito).',
@@ -53,6 +54,7 @@ const textos = {
     noMeasure: 'no measure (the channel does not report it yet)', waiting: 'waiting for the player…',
     fases: { casa: 'all good', sospecha: s => `mismatch · opens in ${s} s`, fallo: 'incident', recuperando: s => `matches again · closes in ${s} s` },
     opened: id => `Incident ${id} opened in Yokup.`, closed: id => `Incident ${id || ''} closed: back to normal.`, yokupError: e => `Yokup is not answering: ${e}.`,
+    held: id => `Incident ${id || ''} is handled by a portal technician: it is closed there.`,
     stage: { abierta: 'open', en_curso: 'in progress', recuperada: 'recovered', cerrada: 'closed' },
     unknown: x => `Bugito does not know “${x}”. Try: rotate, resolution, popup, half or normal.`,
     launched: (n) => `Bugito launches “${n}” on the virtual player.`, shown: 'Bugito in sight.', hidden: 'Bugito hidden (/bugito brings him back).',
@@ -234,6 +236,7 @@ async function vueltaUnica() {
       catch (err) { r = { ok: false, error: String(err && err.message || err) }; }
       e = anotar(e, accion, r);
       if (r.ok) { prueba.mensaje = accion === 'abrir' ? tr('opened', r.id) : tr('closed', r.id || e.ultima); prueba.error = false; ultimoYokup = 0; }
+      else if (r.retenida) { prueba.mensaje = tr('held', e.ultima); prueba.error = false; }
       else { prueba.mensaje = tr('yokupError', r.error); prueba.error = true; }
     }
     detectores[c.id] = { ...e, accion: null };
