@@ -30,8 +30,8 @@ const textos = {
     sending: 'Bugito manda la orden…', sent: c => `Orden «${c}» en la cola del player virtual.`, rejected: r => `El mando la rechaza: ${r}.`, netError: 'Sin conexión con el mando.',
     waitAck: 'esperando al player…', noAck: 'sin acuse: ¿está el player virtual abierto?', ackOk: 'ejecutada', ackFail: 'el player no la pudo ejecutar',
     clearSent: 'Vuelta a la normalidad',
-    noSignal: m => ({ 'sin-respuesta': 'sin respuesta de /signage/now', 'no-declara': 'el player virtual aún no ha declarado su estado', 'latido-viejo': 'el último latido es de hace más de 5 min', standby: 'el player está en standby' }[m] || m),
-    noMeasure: 'sin medida (el canal aún no declara esta medida)',
+    noSignal: m => ({ 'sin-respuesta': 'esperando el primer latido del player virtual (/signage/now)…', 'no-declara': 'el player virtual aún no ha declarado su estado', 'latido-viejo': 'el último latido es de hace más de 5 min', standby: 'el player está en standby' }[m] || m),
+    noMeasure: 'sin medida (el canal aún no declara esta medida)', waiting: 'esperando al player…',
     fases: { casa: 'en orden', sospecha: s => `no casa · abre en ${s} s`, fallo: 'incidencia', recuperando: s => `vuelve a casar · cierra en ${s} s` },
     opened: id => `Incidencia ${id} abierta en Yokup.`, closed: id => `Incidencia ${id || ''} cerrada: vuelve a la normalidad.`, yokupError: e => `Yokup no responde: ${e}.`,
     stage: { abierta: 'abierta', en_curso: 'en curso', recuperada: 'recuperada', cerrada: 'cerrada' },
@@ -49,8 +49,8 @@ const textos = {
     sending: 'Bugito sends the order…', sent: c => `Order “${c}” queued for the virtual player.`, rejected: r => `The remote rejects it: ${r}.`, netError: 'No connection to the remote.',
     waitAck: 'waiting for the player…', noAck: 'no receipt: is the virtual player open?', ackOk: 'executed', ackFail: 'the player could not run it',
     clearSent: 'Back to normal',
-    noSignal: m => ({ 'sin-respuesta': 'no answer from /signage/now', 'no-declara': 'the virtual player has not reported its state yet', 'latido-viejo': 'last heartbeat is older than 5 min', standby: 'the player is in standby' }[m] || m),
-    noMeasure: 'no measure (the channel does not report it yet)',
+    noSignal: m => ({ 'sin-respuesta': 'waiting for the virtual player\'s first heartbeat (/signage/now)…', 'no-declara': 'the virtual player has not reported its state yet', 'latido-viejo': 'last heartbeat is older than 5 min', standby: 'the player is in standby' }[m] || m),
+    noMeasure: 'no measure (the channel does not report it yet)', waiting: 'waiting for the player…',
     fases: { casa: 'all good', sospecha: s => `mismatch · opens in ${s} s`, fallo: 'incident', recuperando: s => `matches again · closes in ${s} s` },
     opened: id => `Incident ${id} opened in Yokup.`, closed: id => `Incident ${id || ''} closed: back to normal.`, yokupError: e => `Yokup is not answering: ${e}.`,
     stage: { abierta: 'open', en_curso: 'in progress', recuperada: 'recovered', cerrada: 'closed' },
@@ -200,7 +200,8 @@ function pintar() {
     const fase = d && !d.sinDato ? d.fase : '';
     if (fase === 'fallo' || fase === 'sospecha' || fase === 'recuperando') li.className = 'fallo'; else if (fase === 'casa') li.className = 'casa';
     const f = tr('fases'), texto = !fase ? '' : typeof f[fase] === 'function' ? f[fase](quedan(d.desde)) : f[fase];
-    const medida = o && o.pintada != null ? medidaTexto(c.id, o, lang) : tr('noMeasure');
+    const sinSenal = !o || !o.lectura || o.lectura.estado === 'sin-senal';
+    const medida = o && o.pintada != null ? medidaTexto(c.id, o, lang) : sinSenal ? tr('waiting') : tr('noMeasure');
     li.append(document.createTextNode(medida + (texto ? ` · ${texto}` : '')));
     const id = (incidencias[c.id] && incidencias[c.id].id) || (d && d.incidencia);
     if (id) { li.append(' · '); li.append(enlace(id, incidencias[c.id] && incidencias[c.id].stage)); }
