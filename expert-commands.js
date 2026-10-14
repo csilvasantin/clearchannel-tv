@@ -120,9 +120,13 @@
     return origin ? String(origin).replace(/\/+$/, '') + path : path;
   }
   // ▤ Subir plano (DCL-58288891486617b36ed8777d): un Xpacio sin plano registrado lo sube en plano.html.
-  const PLANO_ID = /^[a-z0-9][a-z0-9-]{0,79}$/;
-  function subirPlanoUrl(id, origin) {
-    const path = '/plano.html?locationId=' + encodeURIComponent(id) + '&subir=1';
+  // planoId normaliza como normalizarId de plano-subida.mjs: «Café Gràcia» → «cafe-gracia».
+  function planoId(value) {
+    return String(value == null ? '' : value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+/, '').slice(0, 80).replace(/-+$/, '');
+  }
+  function subirPlanoUrl(id, lang, origin) {
+    const path = '/plano.html?locationId=' + encodeURIComponent(id) + '&subir=1&lang=' + (lang === 'en' ? 'en' : 'es');
     return origin ? String(origin).replace(/\/+$/, '') + path : path;
   }
   function attributeFor(verb, name) {
@@ -281,8 +285,8 @@
         const plano = resolvePlano(args.xpacio || (open && open.id) || (PLANOS.length === 1 ? PLANOS[0].id : ''));
         if (!plano) {
           // Con un id válido (el escrito o el de la ficha abierta), el enlace para subirlo desde ▤ Modo avanzado.
-          const slug = [args.xpacio ? String(args.xpacio).trim().toLowerCase() : '', !args.xpacio && open ? String(open.id || '') : ''].find(v => PLANO_ID.test(v));
-          const upload = slug ? subirPlanoUrl(slug, ctx && ctx.planoOrigin) : '';
+          const slug = planoId(args.xpacio || (open && open.id));
+          const upload = slug ? subirPlanoUrl(slug, lang, ctx && ctx.planoOrigin) : '';
           if (args.xpacio || open) return fail(L(lang, `${args.xpacio ? `«${args.xpacio}»` : (open.name || open.id)} aún no tiene plano. Con plano: ${list}.${upload ? ` Súbelo desde ▤ Modo avanzado: ${upload}` : ''}`, `${args.xpacio ? `“${args.xpacio}”` : (open.name || open.id)} has no floor plan yet. With a plan: ${list}.${upload ? ` Upload it from ▤ Advanced mode: ${upload}` : ''}`));
           return fail(L(lang, `Indica el Xpacio: /redistribucion <xpacio>. Con plano: ${list}.`, `Name the Xpace: /redistribucion <xpace>. With a plan: ${list}.`));
         }
@@ -582,7 +586,7 @@
   }
 
   const api = Object.freeze({
-    CLIENTS, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, parse, execute, isAvatarCommand, errorLines, usage,
+    CLIENTS, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, planoId, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, parse, execute, isAvatarCommand, errorLines, usage,
     complete, defaultRoutines, sanitizeRoutines, loadRoutines, saveRoutines, addRoutine, removeRoutine, helpLines,
     pickDemoXpacio, demoScreens, registeredSurfaces, liveSurfaces, demoSurfaces,
   });

@@ -10,7 +10,7 @@ import {
 // ▤ Subir plano (DCL-58288891486617b36ed8777d): JSON del plano o calco (imagen o PDF), guardado en este navegador.
 import {
   ACEPTA, MAX_LADO, comprobarFichero, leerPlanoJson, resumenPlano, salaRectangular, comprobarSala, escalaCalco, escalaPdf,
-  anchoSala, nuevoCalco, geometriaCalco, registroSubida, almacenPlanos, nombreDeFichero
+  anchoSala, nuevoCalco, calcoValido, geometriaCalco, registroSubida, almacenPlanos, nombreDeFichero, conTiempo, ESPERA_IDB
 } from './plano-subida.mjs?v=20261014-subir-1';
 
 const copy = {
@@ -136,6 +136,7 @@ let saveTimer = 0;
 function persist() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
+    if (!plan || !state.proposal) return;
     let ok = true;
     try { localStorage.setItem(STORE_KEY, JSON.stringify(exportOrder(plan, state.proposal.propuesta, { titulo: state.proposal.titulo }))); } catch { ok = false; }
     $('saved').textContent = tr(ok ? 'saved' : 'notSaved');
@@ -561,6 +562,7 @@ function when(iso) {
 
 // ── Mostrar un plano o la invitación a subirlo ───────────────────────────────
 function showPlan(next, mode = 'actual') {
+  clearTimeout(saveTimer);
   plan = next;
   Object.assign(state, { mode: 'actual', wallId: null, selectedId: null, proposal: null });
   drag = null;
@@ -578,6 +580,7 @@ function showPlan(next, mode = 'actual') {
   renderTrace(); paintUpload();
 }
 function showNoPlan() {
+  clearTimeout(saveTimer);
   plan = null;
   Object.assign(state, { mode: 'actual', wallId: null, selectedId: null, proposal: null });
   setStatus('');
@@ -656,6 +659,7 @@ async function chooseFile(file) {
     if (check.tipo === 'json') leido = leerPlanoJson(await file.text(), xpacioId);
     else calco = check.tipo === 'pdf' ? await traceFromPdf(file) : await traceFromImage(file);
     if (seq !== uploadSeq) return; // llegó otro fichero mientras tanto
+    if (calco && !calcoValido(nuevoCalco({ ...calco, ancho: 1 }))) throw new Error('calco no válido');
     Object.assign(upload, { leido, calco });
     uploadStatus('');
     if (calco && !plan) {
@@ -682,6 +686,7 @@ function confirmDiscardDraft(id = xpacioId) {
   try { has = !!localStorage.getItem(key); } catch {}
   if (!has) return true;
   if (!window.confirm(tr('upConfirmDraft'))) return false;
+  if (id === xpacioId) clearTimeout(saveTimer); // que un guardado pendiente no lo vuelva a escribir
   try { localStorage.removeItem(key); } catch {}
   return true;
 }
@@ -775,18 +780,22 @@ function canvasDataUrl(canvas) {
 }
 async function traceFromImage(file) {
   const svg = /\.svg$/i.test(file.name || '') || file.type === 'image/svg+xml';
-  const url = URL.createObjectURL(file);
+  // Un .svg sin tipo (application/octet-stream) no se decodifica como imagen: se le pone el suyo.
+  const source = svg ? new Blob([file], { type: 'image/svg+xml' }) : file;
+  const url = URL.createObjectURL(source);
   try {
     const img = await loadImage(url);
     let w = img.naturalWidth, h = img.naturalHeight;
     if (!(w > 0 && h > 0)) { if (!svg) throw new Error('imagen sin tamaño'); w = 1600; h = 1200; }
-    const size = escalaCalco(w, h, MAX_LADO);
-    const { canvas, ctx } = whiteCanvas(size.w, size.h);
-    ctx.drawImage(img, 0, 0, size.w, size.h);
-    try { return { dataUrl: canvasDataUrl(canvas), pxAncho: size.w, pxAlto: size.h, fichero: file.name }; }
-    catch (error) {
-      // Algún navegador marca el lienzo como contaminado con SVG: entonces va el SVG tal cual (es vectorial).
-      if (svg) return { dataUrl: await readDataUrl(file), pxAncho: w, pxAlto: h, fichero: file.name };
+    // El SVG es vectorial: se rasteriza a MAX_LADO aunque su tamaño propio sea menor.
+    const size = svg ? escalaCalco(w * escalaPdf(w, h, MAX_LADO), h * escalaPdf(w, h, MAX_LADO), MAX_LADO) : escalaCalco(w, h, MAX_LADO);
+    try {
+      const { canvas, ctx } = whiteCanvas(size.w, size.h);
+      ctx.drawImage(img, 0, 0, size.w, size.h);
+      return { dataUrl: canvasDataUrl(canvas), pxAncho: size.w, pxAlto: size.h, fichero: file.name };
+    } catch (error) {
+      // SVG sin width/height (Firefox no lo dibuja) o lienzo contaminado: va el SVG tal cual (es vectorial).
+      if (svg) return { dataUrl: await readDataUrl(source), pxAncho: w, pxAlto: h, fichero: file.name };
       throw error;
     }
   } finally { URL.revokeObjectURL(url); }
@@ -794,21 +803,24 @@ async function traceFromImage(file) {
 // pdf.js solo se carga al subir un PDF, con versión fijada y su worker de la misma versión.
 const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
 const PDFJS_SRI = 'sha512-q+4liFwdPC/bNdhUpZx6aXDx/h77yEQtn4I1slHydcbZK34nLaR3cAeYSJshoxIOq3mjEf7xJE8YWIUHMn+oCQ==';
+const PDFJS_WORKER_SRI = 'sha512-BbrZ76UNZq5BhH7LL7pn9A4TKQpQeNCHOo65/akfelcIBbcVvYWOFQKPXIrykE3qZxYjmDX573oa4Ywsc7rpTw==';
 let pdfjsReady = null;
 function loadPdfJs() {
-  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
-  return pdfjsReady || (pdfjsReady = new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = PDFJS + 'pdf.min.js'; s.integrity = PDFJS_SRI; s.crossOrigin = 'anonymous'; s.referrerPolicy = 'no-referrer';
-    s.onload = () => {
-      const lib = window.pdfjsLib;
-      if (!lib) { pdfjsReady = null; reject(new Error('pdf.js')); return; }
-      lib.GlobalWorkerOptions.workerSrc = PDFJS + 'pdf.worker.min.js';
-      resolve(lib);
-    };
-    s.onerror = () => { pdfjsReady = null; s.remove(); reject(new Error('pdf.js')); };
-    document.head.append(s);
-  }));
+  return pdfjsReady || (pdfjsReady = (async () => {
+    const lib = window.pdfjsLib || await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = PDFJS + 'pdf.min.js'; s.integrity = PDFJS_SRI; s.crossOrigin = 'anonymous'; s.referrerPolicy = 'no-referrer';
+      s.onload = () => (window.pdfjsLib ? resolve(window.pdfjsLib) : reject(new Error('pdf.js')));
+      s.onerror = () => { s.remove(); reject(new Error('pdf.js')); };
+      document.head.append(s);
+    });
+    // El worker también con integridad: se descarga con SRI y se sirve desde un blob de este
+    // origen, así pdf.js no hace importScripts ni <script> de una URL sin comprobar.
+    const res = await fetch(PDFJS + 'pdf.worker.min.js', { integrity: PDFJS_WORKER_SRI, mode: 'cors', credentials: 'omit', referrerPolicy: 'no-referrer' });
+    if (!res.ok) throw new Error('pdf.worker ' + res.status);
+    lib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([await res.blob()], { type: 'text/javascript' }));
+    return lib;
+  })().catch(error => { pdfjsReady = null; throw error; }));
 }
 async function traceFromPdf(file) {
   const lib = await loadPdfJs();
@@ -884,9 +896,20 @@ const drop = $('upload-drop');
 for (const type of ['dragenter', 'dragover']) drop.addEventListener(type, e => { e.preventDefault(); drop.classList.add('over'); });
 for (const type of ['dragleave', 'dragend']) drop.addEventListener(type, () => drop.classList.remove('over'));
 drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); chooseFile(e.dataTransfer && e.dataTransfer.files[0]); });
+// Un fichero soltado fuera de la zona no debe abrirse en la pestaña (y perder la página).
+const dragsFiles = e => !!(e.dataTransfer && [...(e.dataTransfer.types || [])].includes('Files'));
+for (const type of ['dragover', 'drop']) addEventListener(type, e => { if (dragsFiles(e)) e.preventDefault(); });
 $('upload-apply').addEventListener('click', applyUpload);
 $('upload-cancel').addEventListener('click', () => { uploadSeq++; resetUpload(); uploadStatus(''); paintUpload(); });
 $('open-upload').addEventListener('click', () => openUpload());
+
+// ?subir=1 ya abrió el panel: fuera de la URL, para que recargar no lo vuelva a abrir.
+function dropUploadParam() {
+  const url = new URL(location.href);
+  if (!url.searchParams.has('subir')) return;
+  url.searchParams.delete('subir');
+  try { history.replaceState(history.state, '', url.pathname + url.search + url.hash); } catch {}
+}
 
 // ── Arranque: primero lo subido en este navegador; si no, el plano publicado ─
 async function loadPublished() {
@@ -905,14 +928,15 @@ async function init() {
   $('upload-file').accept = ACEPTA;
   $('back').href = `/?locationId=${encodeURIComponent(xpacioId)}&lang=${lang}`;
   paintUpload();
-  const [stored] = await Promise.all([almacen.leer(xpacioId), loadPublished()]);
+  // Lo subido manda, pero IndexedDB no puede dejar la página en «Cargando…»: tope de 1,5 s.
+  const [stored] = await Promise.all([conTiempo(almacen.leer(xpacioId), ESPERA_IDB, null), loadPublished()]);
   registro = stored;
   const mode = params.get('modo') === 'obra' ? 'obra' : 'actual';
   if (registro && registro.plan) showPlan(registro.plan, mode);
   else if (publicado) showPlan(publicado, mode);
   else if (publicadoEstado === 'error') setStatus('loadError');
   else showNoPlan();
-  if (params.get('subir') === '1' || (!plan && publicadoEstado === 'none')) whenShellReady(() => openUpload());
+  if (params.get('subir') === '1' || (!plan && publicadoEstado === 'none')) whenShellReady(() => { openUpload(); dropUploadParam(); });
   $('upload-nostore').hidden = await almacen.disponible();
 }
 init();

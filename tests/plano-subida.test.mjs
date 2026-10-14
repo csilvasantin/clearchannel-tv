@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import {
   ID_RE, MAX_JSON, MAX_CALCO, MAX_LADO, ACEPTA, normalizarId, idDeFichero, nombreDeFichero, tipoFichero, comprobarFichero,
   leerPlanoJson, resumenPlano, comprobarSala, salaRectangular, escalaCalco, escalaPdf, anchoSala, nuevoCalco, calcoValido,
-  geometriaCalco, registroSubida, registroValido, almacenPlanos
+  geometriaCalco, registroSubida, registroValido, almacenPlanos, conTiempo, ESPERA_IDB
 } from '../plano-subida.mjs';
 import { SCHEMA, ORDER_SCHEMA, validate, inwardNormal, wallLength, placeNew, template } from '../plano-core.mjs';
 import { BIZ_ASSET_FILES } from '../server/biz-assets.mjs';
@@ -22,6 +23,13 @@ test('ids and names come from any text or file name', () => {
   assert.equal(idDeFichero('/Users/c/Planos/Tienda Valencia_v2.PDF'), 'tienda-valencia-v2');
   assert.equal(nombreDeFichero('planta-tienda_valencia.pdf'), 'planta tienda valencia');
   assert.equal(nombreDeFichero('C:\\planos\\Local 7.json'), 'Local 7');
+});
+
+test('the expert verb builds the upload link with the same id normalisation', () => {
+  const C = createRequire(import.meta.url)('../expert-commands.js');
+  for (const text of ['Café Gràcia', '  Starbucks Paseo de Gracia 103 ', 'Mañana · Óptica--Ñ', 'MI-TIENDA', '¿?', 'a'.repeat(100)]) {
+    assert.equal(C.planoId(text), normalizarId(text), text);
+  }
 });
 
 test('file type by extension or MIME, with size limits', () => {
@@ -214,6 +222,34 @@ test('without IndexedDB the store degrades cleanly', async () => {
   assert.equal(await store.borrar('x'), false);
   const throwing = almacenPlanos({ open() { throw new Error('SecurityError'); } });
   assert.equal(await throwing.leer('x'), null);
+});
+
+test('reading window.indexedDB may throw: the module and the store survive', async () => {
+  const before = Object.getOwnPropertyDescriptor(globalThis, 'indexedDB');
+  Object.defineProperty(globalThis, 'indexedDB', { configurable: true, get() { throw new Error('SecurityError: storage blocked'); } });
+  try {
+    const store = almacenPlanos();
+    assert.equal(await store.leer('alsea-sbux-021'), null);
+    assert.equal(await store.disponible(), false);
+    assert.equal(await store.guardar({ id: 'x' }), false);
+  } finally {
+    if (before) Object.defineProperty(globalThis, 'indexedDB', before); else delete globalThis.indexedDB;
+  }
+});
+
+test('an IndexedDB open that never answers times out instead of blocking the page', async () => {
+  assert.equal(ESPERA_IDB, 1500);
+  const hanging = { open() { return {}; } }; // la petición no dispara nunca onsuccess ni onerror
+  const store = almacenPlanos(hanging, { espera: 40 });
+  const t0 = Date.now();
+  assert.equal(await store.leer('alsea-sbux-021'), null);
+  assert.equal(await store.guardar({ id: 'x' }), false);
+  assert.equal(await store.disponible(), false);
+  assert.ok(Date.now() - t0 < 1000, 'each call gives up after its wait');
+  // El tope de init: el plano publicado no espera a IndexedDB.
+  assert.equal(await conTiempo(new Promise(() => {}), 20, null), null);
+  assert.equal(await conTiempo(Promise.resolve('subido'), 1000, null), 'subido');
+  assert.equal(await conTiempo('ya', 10), 'ya');
 });
 
 test('the upload module ships with the floor plan page on admira.biz', () => {

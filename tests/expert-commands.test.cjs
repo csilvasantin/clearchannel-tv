@@ -213,17 +213,21 @@ test('/redistribucion opens the floor plan in works mode for the named or open X
   assert.equal(noPlan.ok, false);
   assert.match(noPlan.lines[0], /Xtanco Valencia aún no tiene plano/);
   assert.equal(C.execute('/plano mercadona', fakeCtx({open: () => assert.fail('must not open')}), 'es').ok, false);
-  // Sin plano registrado y con un id válido: enlace para subirlo desde ▤ Modo avanzado (DCL-58288891486617b36ed8777d).
-  assert.match(noPlan.lines[0], /Súbelo desde ▤ Modo avanzado: \/plano\.html\?locationId=xtanco-valencia&subir=1$/);
+  // Sin plano registrado: enlace para subirlo desde ▤ Modo avanzado con el id normalizado (DCL-58288891486617b36ed8777d).
+  assert.match(noPlan.lines[0], /Súbelo desde ▤ Modo avanzado: \/plano\.html\?locationId=xtanco-valencia&subir=1&lang=es$/);
   const upload = C.execute('/redistribucion mi-tienda', fakeCtx({open: () => assert.fail('must not open')}), 'en');
   assert.equal(upload.ok, false);
-  assert.match(upload.lines[0], /“mi-tienda” has no floor plan yet\..*Upload it from ▤ Advanced mode: \/plano\.html\?locationId=mi-tienda&subir=1$/);
+  assert.match(upload.lines[0], /“mi-tienda” has no floor plan yet\..*Upload it from ▤ Advanced mode: \/plano\.html\?locationId=mi-tienda&subir=1&lang=en$/);
   const away = C.execute('/plano Mi-Tienda', fakeCtx({planoOrigin: 'https://www.admira.biz/', open: () => assert.fail('must not open')}), 'es');
-  assert.match(away.lines[0], /https:\/\/www\.admira\.biz\/plano\.html\?locationId=mi-tienda&subir=1$/);
-  const notSlug = C.execute('/plano mi tienda nueva', fakeCtx({open: () => assert.fail('must not open')}), 'es');
-  assert.equal(notSlug.ok, false);
-  assert.doesNotMatch(notSlug.lines[0], /subir=1/);
-  assert.equal(C.subirPlanoUrl('mi tienda', ''), '/plano.html?locationId=mi%20tienda&subir=1');
+  assert.match(away.lines[0], /https:\/\/www\.admira\.biz\/plano\.html\?locationId=mi-tienda&subir=1&lang=es$/);
+  const accents = C.execute('/plano Café Gràcia', fakeCtx({open: () => assert.fail('must not open')}), 'es');
+  assert.equal(accents.ok, false);
+  assert.match(accents.lines[0], /«Café Gràcia» aún no tiene plano.*locationId=cafe-gracia&subir=1&lang=es$/);
+  const nothing = C.execute('/plano ¿?', fakeCtx({open: () => assert.fail('must not open')}), 'es');
+  assert.equal(nothing.ok, false);
+  assert.doesNotMatch(nothing.lines[0], /subir=1/);
+  assert.equal(C.planoId('  Starbucks Paseo de Gracia 103 '), 'starbucks-paseo-de-gracia-103');
+  assert.equal(C.subirPlanoUrl('mi tienda', 'en', ''), '/plano.html?locationId=mi%20tienda&subir=1&lang=en');
   // El motor común de la suite no quita tildes: la forma acentuada va como alias literal.
   assert.ok(C.VERBS.find(v => v.id === 'redistribucion').aliases.includes('redistribución'));
   assert.equal(C.planoUrl('alsea-sbux-021', 'es', 'https://www.admira.biz/'), 'https://www.admira.biz/plano.html?locationId=alsea-sbux-021&modo=obra&lang=es');

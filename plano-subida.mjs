@@ -262,29 +262,51 @@ export function registroValido(r, id) {
     (r.calco === null || calcoValido(r.calco)) && !!(r.plan || r.calco);
 }
 
+// Promesa con tope: si `promesa` no responde en `ms`, se resuelve con `valor`. Para que
+// nada de IndexedDB (Safari a veces deja `open` sin responder) bloquee pintar el plano.
+export function conTiempo(promesa, ms, valor = null) {
+  let timer;
+  const tope = new Promise(resolve => { timer = setTimeout(() => resolve(valor), ms); });
+  return Promise.race([Promise.resolve(promesa), tope]).finally(() => clearTimeout(timer));
+}
+const SIN_RESPUESTA = Symbol('sin respuesta');
+
 // IndexedDB `admira-planos` → store `planos`, clave = id del Xpacio. Sin IndexedDB (modo
-// privado, almacenamiento bloqueado) cada operación devuelve null/false y la página sigue.
-export const DB_NAME = 'admira-planos', DB_STORE = 'planos';
-export function almacenPlanos(idb = globalThis.indexedDB) {
-  let db = null;
-  const abrir = () => db || (db = new Promise((resolve, reject) => {
-    if (!idb || typeof idb.open !== 'function') { reject(new Error('IndexedDB no disponible')); return; }
-    const req = idb.open(DB_NAME, 1);
-    req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains(DB_STORE)) req.result.createObjectStore(DB_STORE, { keyPath: 'id' }); };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error || new Error('IndexedDB'));
-    req.onblocked = () => reject(new Error('IndexedDB bloqueada'));
-  }));
+// privado, almacenamiento bloqueado, `indexedDB` que lanza al leerlo u `open` que no
+// responde en `espera` ms) cada operación devuelve null/false y la página sigue.
+export const DB_NAME = 'admira-planos', DB_STORE = 'planos', ESPERA_IDB = 1500;
+function indexedDBGlobal() { try { return globalThis.indexedDB; } catch { return null; } }
+export function almacenPlanos(...args) {
+  // Sin argumento, el del navegador (leerlo puede lanzar); con argumento, el que se pase (tests).
+  const idb = args.length ? args[0] : indexedDBGlobal();
+  const espera = (args[1] && args[1].espera) || ESPERA_IDB;
+  let conn = null, pending = null;
+  const abrir = async () => {
+    if (conn) return conn;
+    if (!pending) pending = new Promise((resolve, reject) => {
+      if (!idb || typeof idb.open !== 'function') throw new Error('IndexedDB no disponible');
+      const req = idb.open(DB_NAME, 1);
+      req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains(DB_STORE)) req.result.createObjectStore(DB_STORE, { keyPath: 'id' }); };
+      req.onsuccess = () => { conn = req.result; resolve(conn); };
+      req.onerror = () => reject(req.error || new Error('IndexedDB'));
+      req.onblocked = () => reject(new Error('IndexedDB bloqueada'));
+    }).catch(error => { pending = null; throw error; });
+    // Si `open` responde tarde, la conexión queda guardada para la operación siguiente.
+    const result = await conTiempo(pending, espera, SIN_RESPUESTA);
+    if (result === SIN_RESPUESTA) throw new Error('IndexedDB no responde');
+    return result;
+  };
+  // Escribir un calco de varios MB tarda más que abrir: la transacción tiene más margen.
   const run = async (mode, fn) => {
-    const conn = await abrir();
-    return new Promise((resolve, reject) => {
-      const tx = conn.transaction(DB_STORE, mode), req = fn(tx.objectStore(DB_STORE));
+    const db = await abrir();
+    return conTiempo(new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_STORE, mode), req = fn(tx.objectStore(DB_STORE));
       tx.oncomplete = () => resolve(req.result);
       tx.onerror = tx.onabort = () => reject(tx.error || new Error('IndexedDB'));
-    });
+    }), espera * 4, SIN_RESPUESTA).then(r => { if (r === SIN_RESPUESTA) throw new Error('IndexedDB no responde'); return r; });
   };
   return {
-    async disponible() { try { await abrir(); return true; } catch { db = null; return false; } },
+    async disponible() { try { await abrir(); return true; } catch { return false; } },
     async leer(id) { try { const r = await run('readonly', s => s.get(id)); return registroValido(r, id) ? r : null; } catch { return null; } },
     async guardar(registro) { try { await run('readwrite', s => s.put(registro)); return true; } catch { return false; } },
     async borrar(id) { try { await run('readwrite', s => s.delete(id)); return true; } catch { return false; } }
