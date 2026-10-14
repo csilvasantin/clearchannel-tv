@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Bugito (admira.biz/bugito): el Admirito demonio rompe a propósito un player virtual de laboratorio y el agente abre y cierra la incidencia en Yokup.",
-    "Cuatro incidencias de prueba: formato girado, cambio de resolución, popup encima del contenido y pantalla a medio abrir; solo en players virtual-lab-*.",
-    "/bugito en el ⌘ Experto de las cinco patas y «😈 Probar con Bugito» en el ▤ Creador de incidencias del plano."
+    "El Arquitecto (admira.biz/arquitecto): Admirito con casco de obra crea, reforma o inventaría un Xpacio desde medidas, fotos, vídeo o lo que le cuentes.",
+    "Inventariar termina en Yokup: el Portal del comercio importa el plano y da de alta solo los CI nuevos, sin tocar los que ya existen.",
+    "/arquitecto crear|reformar|inventariar en el ⌘ Experto (suite personajes-3)."
   ],
   "nativeClearChannel": {
     "enabled": true,
