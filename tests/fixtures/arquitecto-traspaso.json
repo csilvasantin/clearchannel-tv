@@ -1,5 +1,5 @@
 {
-  "nota": "Contrato del traspaso Arquitecto → Portal del comercio de Yokup (DCL-66d9ae0d5e756d0067127f24). El mismo fichero vive en clearchannel-tv/tests/fixtures y en yokup-tool/yokup-site/fixtures: si cambia uno, cambian los dos.",
+  "nota": "Contrato del traspaso Arquitecto → Portal del comercio de Yokup (DCL-66d9ae0d5e756d0067127f24). El mismo fichero vive en clearchannel-tv/tests/fixtures/arquitecto-traspaso.json y en yokup-tool/docs/arquitecto-traspaso.json: si cambia uno, cambian los dos.",
   "inventario": {
     "schema": "admira.arquitecto-inventario/1",
     "creado": "2026-10-14T11:00:00.000Z",
