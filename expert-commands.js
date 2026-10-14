@@ -97,7 +97,28 @@
     cliente: {id: 'cliente', aliases: ['client', 'customer', 'circuito', 'circuit'], es: 'cliente', en: 'client', values: CLIENTS},
     texto: {id: 'texto', aliases: ['text', 'q', 'query', 'lugar', 'place'], es: 'texto', en: 'text', free: true},
     marca: {id: 'marca', aliases: ['brand', 'id', 'web', 'url'], es: 'marca', en: 'brand', brands: true},
+    xpacio: {id: 'xpacio', aliases: ['xpace', 'local', 'tienda', 'store', 'punto', 'location'], es: 'xpacio', en: 'xpace', free: true},
   };
+
+  // Xpacios con plano en planta y alzado (FLT-102063): plano.html · data/xpacios/<id>.json.
+  // /redistribucion abre su plano en modo obras para cambiar la distribución de pantallas.
+  const PLANOS = [
+    {id: 'alsea-sbux-021', nombre: 'Starbucks Paseo de Gracia 103', aliases: ['starbucks', 'starbucks 103', 'starbucks paseo de gracia', 'paseo de gracia', 'paseo de gracia 103', 'pg103', 'sbux 021']},
+  ];
+  const PLANO_KEYS = new Map();
+  for (const p of PLANOS) for (const alias of [p.id, p.nombre, ...p.aliases]) if (!PLANO_KEYS.has(key(alias))) PLANO_KEYS.set(key(alias), p);
+  function resolvePlano(value) {
+    const k = key(value);
+    if (!k) return null;
+    if (PLANO_KEYS.has(k)) return PLANO_KEYS.get(k);
+    const found = k.length >= 3 ? new Set([...PLANO_KEYS].filter(([alias]) => alias.startsWith(k)).map(([, p]) => p)) : new Set();
+    return found.size === 1 ? [...found][0] : null;
+  }
+  // Misma web si ya estamos en admira.app/admira.biz; desde fuera, admira.app.
+  function planoUrl(id, lang, origin) {
+    const path = '/plano.html?locationId=' + encodeURIComponent(id) + '&modo=obra&lang=' + (lang === 'en' ? 'en' : 'es');
+    return origin ? String(origin).replace(/\/+$/, '') + path : path;
+  }
   function attributeFor(verb, name) {
     const k = key(name);
     return verb.attributes.find(id => id === k || ATTRIBUTES[id].aliases.some(a => key(a) === k)) || null;
@@ -242,6 +263,24 @@
         } catch (_) { document.documentElement.lang = next; }
         try { document.dispatchEvent(new CustomEvent('admiranext:lang', {detail: {lang: next}})); } catch (_) {}
         return done(next === 'en' ? 'Language: English' : 'Idioma: español');
+      },
+    },
+    {
+      id: 'redistribucion', command: '/redistribucion', aliases: ['redistribución', 'redistribuir', 'plano', 'obras', 'floorplan'], attributes: ['xpacio'], requires: [],
+      es: 'Plano en planta y alzado de un Xpacio con su inventario ITIL de pantallas, en modo obras: mover, girar, añadir o retirar pantallas y mosaicos, y sacar la orden de obra. Sin xpacio: el de la ficha abierta.',
+      en: 'Floor plan and elevation of an Xpace with its ITIL screen inventory, in works mode: move, rotate, add or remove screens and mosaics, and get the work order. No xpace: the open profile.',
+      run(args, ctx, lang) {
+        const list = PLANOS.map(p => p.nombre).join(', ');
+        const open = ctx && typeof ctx.location === 'function' ? ctx.location() : null;
+        const plano = resolvePlano(args.xpacio || (open && open.id) || (PLANOS.length === 1 ? PLANOS[0].id : ''));
+        if (!plano) {
+          if (args.xpacio || open) return fail(L(lang, `${args.xpacio ? `«${args.xpacio}»` : (open.name || open.id)} aún no tiene plano. Con plano: ${list}.`, `${args.xpacio ? `“${args.xpacio}”` : (open.name || open.id)} has no floor plan yet. With a plan: ${list}.`));
+          return fail(L(lang, `Indica el Xpacio: /redistribucion <xpacio>. Con plano: ${list}.`, `Name the Xpace: /redistribucion <xpace>. With a plan: ${list}.`));
+        }
+        const url = planoUrl(plano.id, lang, ctx && ctx.planoOrigin);
+        const r = ctx && typeof ctx.open === 'function' ? (ctx.open(url) || {}) : {ok: false};
+        if (r.ok === false) return fail(L(lang, `Abre ${url} para redistribuir ${plano.nombre}.`, `Open ${url} to redistribute ${plano.nombre}.`));
+        return done(L(lang, `Abriendo el plano de ${plano.nombre} en modo obras…`, `Opening the ${plano.nombre} floor plan in works mode…`));
       },
     },
     {
@@ -534,7 +573,7 @@
   }
 
   const api = Object.freeze({
-    CLIENTS, ATTRIBUTES, VERBS, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, parse, execute, isAvatarCommand, errorLines, usage,
+    CLIENTS, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, parse, execute, isAvatarCommand, errorLines, usage,
     complete, defaultRoutines, sanitizeRoutines, loadRoutines, saveRoutines, addRoutine, removeRoutine, helpLines,
     pickDemoXpacio, demoScreens, registeredSurfaces, liveSurfaces, demoSurfaces,
   });

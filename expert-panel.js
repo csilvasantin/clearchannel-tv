@@ -203,6 +203,11 @@
     },
     clear() { log.replaceChildren(); },
     routines: () => allRoutines(),
+    // /redistribucion (FLT-102063): el Xpacio de la ficha abierta en la portada y la navegación al plano.
+    location() {
+      try { return typeof activeLocation !== 'undefined' && activeLocation ? {id: activeLocation.id, name: activeLocation.name} : null; } catch (_) { return null; }
+    },
+    open(url) { try { root.location.assign(url); return {ok: true}; } catch (_) { return {ok: false}; } },
     // Marca blanca (marca-blanca.js): se lee al ejecutar porque puede cargar después que este panel.
     get marca() { return root.AdmiraMarca || null; },
   };

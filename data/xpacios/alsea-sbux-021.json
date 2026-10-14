@@ -1,0 +1,290 @@
+{
+  "schema": "admira.xpacio-plano/1",
+  "id": "alsea-sbux-021",
+  "version": "2026-10-14-esquematico-1",
+  "nombre": "Starbucks Paseo de Gracia 103",
+  "direccion": "Paseo de Gracia 103 · 08008 Barcelona",
+  "fuente": {
+    "titulo": "Plano esquemático · por confirmar en visita técnica",
+    "medidas": "Sala de 14 × 8 m y 3,30 m de alto tomada de la rejilla del gemelo de XpaceOS (Matrix), que no es un levantamiento medido",
+    "pantallas": "Mural doble H V–H–V–V–H–V de la instalación starbucks-six de admira.studio (lienzo 8160×1920, players Mac Studio y Mac mini) con diagonal de 55″ supuesta; el gemelo de Matrix pinta seis verticales en grupos 3/1/2 y falta confirmar cuál es la distribución real",
+    "itil": "Códigos ITIL de las pantallas por cruzar con Yokup, el maestro del ITIL"
+  },
+  "planta": {
+    "ancho": 14,
+    "fondo": 8,
+    "alto": 3.3
+  },
+  "paredes": [
+    {
+      "id": "F",
+      "nombre": "Fondo · barra",
+      "a": [
+        0,
+        0
+      ],
+      "b": [
+        14,
+        0
+      ]
+    },
+    {
+      "id": "D",
+      "nombre": "Lateral derecho",
+      "a": [
+        14,
+        0
+      ],
+      "b": [
+        14,
+        8
+      ]
+    },
+    {
+      "id": "P",
+      "nombre": "Frente",
+      "a": [
+        14,
+        8
+      ],
+      "b": [
+        0,
+        8
+      ]
+    },
+    {
+      "id": "C",
+      "nombre": "Lateral · acceso",
+      "a": [
+        0,
+        8
+      ],
+      "b": [
+        0,
+        0
+      ]
+    }
+  ],
+  "huecos": [
+    {
+      "id": "acceso",
+      "tipo": "puerta",
+      "nombre": "Acceso desde la calle",
+      "pared": "C",
+      "desde": 0.25,
+      "ancho": 1.65,
+      "base": 0,
+      "alto": 2.4
+    }
+  ],
+  "mobiliario": [
+    {
+      "id": "barra",
+      "nombre": "Barra · espresso",
+      "x": 3,
+      "y": 0,
+      "w": 10,
+      "d": 1,
+      "alto": 0.96
+    },
+    {
+      "id": "caja",
+      "nombre": "Caja · TPV",
+      "x": 3,
+      "y": 3,
+      "w": 4,
+      "d": 1,
+      "alto": 1.05
+    },
+    {
+      "id": "vitrina",
+      "nombre": "Vitrina",
+      "x": 7,
+      "y": 3,
+      "w": 6,
+      "d": 1,
+      "alto": 1.35
+    },
+    {
+      "id": "tazas",
+      "nombre": "Tazas",
+      "x": 0,
+      "y": 3,
+      "w": 1,
+      "d": 3,
+      "alto": 2.1
+    },
+    {
+      "id": "pilar",
+      "nombre": "Pilar",
+      "x": 2,
+      "y": 3,
+      "w": 1,
+      "d": 1,
+      "alto": 3.3
+    },
+    {
+      "id": "mesa-a",
+      "nombre": "Mesa",
+      "x": 3,
+      "y": 6,
+      "w": 2,
+      "d": 2,
+      "alto": 0.75
+    },
+    {
+      "id": "mesa-b",
+      "nombre": "Mesa",
+      "x": 6,
+      "y": 6,
+      "w": 2,
+      "d": 2,
+      "alto": 0.75
+    }
+  ],
+  "contenidos": {
+    "instalacion": "starbucks-six",
+    "grupo": "mural-doble-h",
+    "url": "https://www.admira.studio/adaptaciones/campanas/starbucks-six.json"
+  },
+  "pantallas": [
+    {
+      "id": "macstudio-starbucks-vertical",
+      "itil": null,
+      "screenId": "macstudio-starbucks-vertical",
+      "nombre": "Mural doble H · V1 · izquierda",
+      "corto": "V1",
+      "tipo": "pantalla",
+      "grupo": "mural-doble-h",
+      "grupoNombre": "mural doble H",
+      "subgrupo": "H1",
+      "player": "Mac Studio",
+      "orientacion": "vertical",
+      "pulgadas": 55,
+      "resolucion": [
+        1920,
+        1080
+      ],
+      "estado": "en servicio",
+      "pared": "F",
+      "s": 5.755,
+      "z": 1.75,
+      "fuente": "admira.studio · instalación starbucks-six (posición nominal)"
+    },
+    {
+      "id": "macstudio-starbucks-horizontal",
+      "itil": null,
+      "screenId": "macstudio-starbucks-horizontal",
+      "nombre": "Mural doble H · H1 · centro",
+      "corto": "H1",
+      "tipo": "pantalla",
+      "grupo": "mural-doble-h",
+      "grupoNombre": "mural doble H",
+      "subgrupo": "H1",
+      "player": "Mac Studio",
+      "orientacion": "horizontal",
+      "pulgadas": 55,
+      "resolucion": [
+        1920,
+        1080
+      ],
+      "estado": "en servicio",
+      "pared": "F",
+      "s": 6.706,
+      "z": 2.016,
+      "fuente": "admira.studio · instalación starbucks-six (posición nominal)"
+    },
+    {
+      "id": "macstudio-starbucks-vertical-right",
+      "itil": null,
+      "screenId": "macstudio-starbucks-vertical-right",
+      "nombre": "Mural doble H · V2 · derecha",
+      "corto": "V2",
+      "tipo": "pantalla",
+      "grupo": "mural-doble-h",
+      "grupoNombre": "mural doble H",
+      "subgrupo": "H1",
+      "player": "Mac Studio",
+      "orientacion": "vertical",
+      "pulgadas": 55,
+      "resolucion": [
+        1920,
+        1080
+      ],
+      "estado": "en servicio",
+      "pared": "F",
+      "s": 7.658,
+      "z": 1.75,
+      "fuente": "admira.studio · instalación starbucks-six (posición nominal)"
+    },
+    {
+      "id": "macmini-starbucks-vertical",
+      "itil": null,
+      "screenId": "macmini-starbucks-vertical",
+      "nombre": "Mural doble H · V3 · izquierda",
+      "corto": "V3",
+      "tipo": "pantalla",
+      "grupo": "mural-doble-h",
+      "grupoNombre": "mural doble H",
+      "subgrupo": "H2",
+      "player": "Mac mini",
+      "orientacion": "vertical",
+      "pulgadas": 55,
+      "resolucion": [
+        1920,
+        1080
+      ],
+      "estado": "en servicio",
+      "pared": "F",
+      "s": 8.342,
+      "z": 1.75,
+      "fuente": "admira.studio · instalación starbucks-six (posición nominal)"
+    },
+    {
+      "id": "macmini-starbucks-horizontal",
+      "itil": null,
+      "screenId": "macmini-starbucks-horizontal",
+      "nombre": "Mural doble H · H2 · centro",
+      "corto": "H2",
+      "tipo": "pantalla",
+      "grupo": "mural-doble-h",
+      "grupoNombre": "mural doble H",
+      "subgrupo": "H2",
+      "player": "Mac mini",
+      "orientacion": "horizontal",
+      "pulgadas": 55,
+      "resolucion": [
+        1920,
+        1080
+      ],
+      "estado": "en servicio",
+      "pared": "F",
+      "s": 9.294,
+      "z": 2.016,
+      "fuente": "admira.studio · instalación starbucks-six (posición nominal)"
+    },
+    {
+      "id": "macmini-starbucks-vertical-right",
+      "itil": null,
+      "screenId": "macmini-starbucks-vertical-right",
+      "nombre": "Mural doble H · V4 · derecha",
+      "corto": "V4",
+      "tipo": "pantalla",
+      "grupo": "mural-doble-h",
+      "grupoNombre": "mural doble H",
+      "subgrupo": "H2",
+      "player": "Mac mini",
+      "orientacion": "vertical",
+      "pulgadas": 55,
+      "resolucion": [
+        1920,
+        1080
+      ],
+      "estado": "en servicio",
+      "pared": "F",
+      "s": 10.245,
+      "z": 1.75,
+      "fuente": "admira.studio · instalación starbucks-six (posición nominal)"
+    }
+  ]
+}
