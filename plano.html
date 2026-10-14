@@ -7,7 +7,7 @@
   <meta name="description" content="Plano en planta y en alzado de un Xpacio con su inventario ITIL de pantallas, y propuestas de obra para cambiar su distribución.">
   <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
   <link rel="canonical" href="https://www.clearchannel.tv/plano.html">
-  <link rel="stylesheet" href="plano.css?v=20261014-lab-1">
+  <link rel="stylesheet" href="plano.css?v=20261014-crear-1">
   <link rel="stylesheet" href="brand.css">
   <script src="brand.js"></script>
   <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
@@ -16,7 +16,7 @@
   window.ADMIRA_SHELL = { section: { es: '/ plano y obras', en: '/ floor plan and works' }, setLang() {} };
   </script>
   <script defer src="/galaxy-shell.js?v=20261014-lab-1"></script>
-  <script type="module" src="plano.mjs?v=20261014-lab-1"></script>
+  <script type="module" src="plano.mjs?v=20261014-crear-1"></script>
 </head>
 <body>
   <main>
@@ -33,7 +33,7 @@
       </div>
     </div>
     <p id="page-status" role="status" class="page-status" data-copy="loading">Cargando el plano…</p>
-    <p id="no-plan" class="no-plan" hidden><span data-copy="noPlanUpload">Este Xpacio aún no tiene plano: súbelo desde ▤ Modo avanzado.</span> <button type="button" id="open-upload" data-copy="openUpload">▤ Subir plano</button></p>
+    <p id="no-plan" class="no-plan" hidden><span data-copy="noPlanUpload">Este Xpacio aún no tiene plano: súbelo o créalo desde ▤ Modo avanzado.</span> <span class="no-plan-actions"><button type="button" id="open-upload" data-copy="openUpload">▤ Subir plano</button> <button type="button" id="open-create" data-copy="openCreate">▤ Crear Xpacio</button></span></p>
     <p id="source" class="source" hidden></p>
 
     <div id="workspace" hidden>
@@ -120,6 +120,42 @@
     </div>
     <p id="upload-nostore" class="upload-status err" data-copy="noStore" hidden>Este navegador no deja guardar planos: lo que subas dura hasta recargar.</p>
     <p class="upload-note" data-copy="upNote">Plano subido en este navegador; el maestro del ITIL es Yokup.</p>
+  </section>
+
+  <!-- ▤ Modo avanzado · Creación de Xpacios (DCL-35708977d7b8520386dad95f): si no hay plano, nos lo inventamos. -->
+  <section id="create" class="upload create" data-shell-slot="advanced" aria-labelledby="create-title" tabindex="-1">
+    <h3 id="create-title" class="upload-title" data-copy="crTitle">Creación de Xpacios</h3>
+    <p class="upload-hint" data-copy="crHint">Para dar de alta Xpacios que no podremos visitar: al azar según el tipo, con su plano o, próximamente, con fotos o vídeo.</p>
+    <div class="create-tabs" role="tablist" data-copy-aria="crTabs" aria-label="Cómo crear el Xpacio">
+      <button type="button" role="tab" id="create-tab-random" aria-selected="true" aria-controls="create-random" data-pane="create-random" data-copy="crTabRandom">Aleatorio</button>
+      <button type="button" role="tab" id="create-tab-plan" aria-selected="false" aria-controls="create-plan" data-pane="create-plan" tabindex="-1" data-copy="crTabPlan">Con plano</button>
+      <button type="button" role="tab" id="create-tab-photo" aria-selected="false" aria-controls="create-photo" data-pane="create-photo" tabindex="-1" data-copy="crTabPhoto">Con foto o vídeo</button>
+    </div>
+    <div id="create-random" class="create-pane" role="tabpanel" aria-labelledby="create-tab-random">
+    <p class="upload-hint" data-copy="crRandomHint">Elige el tipo y las medidas, o «Creación total» para sortearlas según la media del tipo.</p>
+    <label class="create-field"><span data-copy="crType">Tipo de Xpacio</span><select id="create-type"></select></label>
+    <div class="upload-dims">
+      <label><span data-copy="crWidth">Ancho</span><input id="create-ancho" type="number" inputmode="decimal" min="1" max="500" step="0.05"></label>
+      <label><span data-copy="crLength">Largo</span><input id="create-largo" type="number" inputmode="decimal" min="1" max="500" step="0.05"></label>
+      <label><span data-copy="upHeight">Alto</span><input id="create-alto" type="number" inputmode="decimal" min="2" max="30" step="0.05"></label>
+    </div>
+    <p id="create-area" class="upload-unit" aria-live="polite"></p>
+    <button type="button" id="create-manual" class="header-circuit-btn create-btn" data-copy="crManual">Crear con estas medidas</button>
+    <button type="button" id="create-total" class="header-circuit-btn create-btn create-total" data-copy="crTotal">Creación total</button>
+    <div id="create-preview" class="upload-preview" hidden></div>
+    <ul id="create-issues" class="upload-issues" hidden></ul>
+    <button type="button" id="create-apply" class="header-circuit-btn upload-apply" hidden data-copy="crApply">Usar este plano</button>
+    <p id="create-status" class="upload-status" role="status"></p>
+    </div>
+    <div id="create-plan" class="create-pane" role="tabpanel" aria-labelledby="create-tab-plan" hidden>
+      <p class="upload-hint" data-copy="crPlanText">Si tienes el plano del Xpacio (JSON, imagen o PDF), súbelo con «Subir plano», aquí arriba: una imagen o un PDF sirven de calco para una sala nueva.</p>
+      <button type="button" id="create-go-upload" class="header-circuit-btn create-btn" data-copy="crGoUpload">Ir a Subir plano</button>
+    </div>
+    <div id="create-photo" class="create-pane" role="tabpanel" aria-labelledby="create-tab-photo" hidden>
+      <p class="create-soon" data-copy="crSoon">Próximamente · todavía no funciona</p>
+      <p class="upload-hint" data-copy="crPhotoText">Estimará el Xpacio a partir de fotos o de un vídeo del local, como el levantamiento del laboratorio con la webcam: tamaños conocidos (pantallas de 27″ o 55″, puertas de unos 2,1 m, baldosa de 20 cm) y los ángulos de la óptica. Saldrán las medidas y las pantallas, puertas y muebles situados, y el generador completará el plano.</p>
+    </div>
+    <p class="upload-note" data-copy="crNote">Plano generado en este navegador · inventado, no es un levantamiento.</p>
   </section>
 </body>
 </html>

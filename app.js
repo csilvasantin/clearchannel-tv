@@ -265,6 +265,7 @@ const I18N = {
     advanced_mode:'Modo avanzado',
     emission_room:'Sala de emisión',
     upload_plan:'Subir plano',
+    create_xpacio:'Creación de Xpacios',
     ed_type_video:'Vídeo', ed_type_animation:'Animación', ed_type_image:'Imagen', ed_type_twin:'Gemelo', ed_type_npc:'NPC', ed_type_audio:'Audio', ed_type_music:'Música', ed_type_voice:'Locución', ed_others:'Otros',
     ed_linking:'◍ ENLAZANDO RED…', ed_on_air:'● EN ANTENA', ed_close_esc:'Cerrar (Esc)',
     ed_kpi_plays:'PASES HOY', ed_kpi_screens:'PANTALLAS EN ANTENA', ed_kpi_pieces:'PIEZAS EMITIDAS', ed_kpi_rate:'PASES / MIN',
@@ -400,6 +401,7 @@ const I18N = {
     advanced_mode:'Advanced mode',
     emission_room:'Broadcast room',
     upload_plan:'Upload floor plan',
+    create_xpacio:'Xpace creation',
     ed_type_video:'Video', ed_type_animation:'Animation', ed_type_image:'Image', ed_type_twin:'Twin', ed_type_npc:'NPC', ed_type_audio:'Audio', ed_type_music:'Music', ed_type_voice:'Voice-over', ed_others:'Others',
     ed_linking:'◍ LINKING NETWORK…', ed_on_air:'● ON AIR', ed_close_esc:'Close (Esc)',
     ed_kpi_plays:'PLAYS TODAY', ed_kpi_screens:'SCREENS ON AIR', ed_kpi_pieces:'PIECES AIRED', ed_kpi_rate:'PLAYS / MIN',
@@ -3580,10 +3582,13 @@ window.getWalkPlacement = function(index) {
   return { location: activeLocation, surface: activeLocation.surfaces[index], index, draft: pendingPixeriaDraft };
 };
 // ▤ Subir plano (DCL-58288891486617b36ed8777d): abre el plano de la ficha abierta (si la hay) con el panel de subida.
-document.getElementById('header-upload-plan-btn')?.addEventListener('click', () => {
-  const id = activeLocation && /^[a-z0-9][a-z0-9-]{0,79}$/.test(String(activeLocation.id || '')) ? activeLocation.id : '';
-  location.assign('/plano.html?' + (id ? 'locationId=' + encodeURIComponent(id) + '&' : '') + 'subir=1&lang=' + LANG);
-});
+// ▤ Creación de Xpacios (DCL-35708977d7b8520386dad95f): el mismo plano, con el panel en la sección de creación.
+for (const [button, param] of [['header-upload-plan-btn', 'subir'], ['header-create-xpacio-btn', 'crear']]) {
+  document.getElementById(button)?.addEventListener('click', () => {
+    const id = activeLocation && /^[a-z0-9][a-z0-9-]{0,79}$/.test(String(activeLocation.id || '')) ? activeLocation.id : '';
+    location.assign('/plano.html?' + (id ? 'locationId=' + encodeURIComponent(id) + '&' : '') + param + '=1&lang=' + LANG);
+  });
+}
 function renderPanel(loc) {
   activeLocation = loc;
   document.getElementById('p-name').textContent = loc.name;

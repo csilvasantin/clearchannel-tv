@@ -21,6 +21,7 @@ Los mosaicos se mueven enteros salvo que se desmarque «Mover el mosaico entero�
 - **⌘ Modo experto · admira.biz** (este proyecto; desde el intercambio de dominios de octubre, www.admira.app es Yokup): `/redistribucion [xpacio]`. Alias: `/redistribución`, `/redistribuir`, `/plano` y `/obras`. Sin xpacio, usa el de la ficha abierta en la portada. Abre `/plano.html?locationId=<id>&modo=obra`. Si el Xpacio no tiene plano registrado, la respuesta da el enlace para subirlo, con el id normalizado como en `plano-subida.mjs` («Café Gràcia» → `cafe-gracia`): `/plano.html?locationId=<id>&subir=1&lang=<es|en>`.
 - **⌘ Modo experto · admira.store / xpaceos.com:** el mismo verbo en `assets/xpace-shell.js` (repo admira-store). Abre el plano en `https://www.admira.biz`. Sin argumento, toma el `?loc=` del gemelo.
 - **▤ Modo avanzado de la portada:** «Subir plano» abre `/plano.html?locationId=<ficha abierta>&subir=1` (sin ficha abierta, el plano por defecto).
+- **▤ Modo avanzado de la portada · «Creación de Xpacios»:** abre `/plano.html?locationId=<ficha abierta>&crear=1`. `?crear=1` abre el panel en la sección de creación y también se quita de la URL.
 - **`?subir=1`** abre el panel ▤ de `plano.html` al cargar, enfoca «Subir plano» y se quita de la URL (`history.replaceState`), para que recargar no lo vuelva a abrir. Un Xpacio sin plano también abre el panel solo.
 
 ## Datos
@@ -64,6 +65,66 @@ Misión DCL-58288891486617b36ed8777d (Hoy #86), orden de Carlos del 14-oct-2026.
 - **Diagonal:** 55″ **supuesta**.
 - **Fuentes que no coinciden:** el gemelo de Matrix pinta seis verticales en grupos 3/1/2. Falta confirmar en visita técnica cuál es la distribución real y las medidas.
 - **ITIL:** los códigos de las pantallas están por cruzar con Yokup (maestro del ITIL). Fuera de las pruebas no hay códigos de pantalla en ningún repo.
+
+## Creación de Xpacios (▤ Modo avanzado)
+
+Misión DCL-35708977d7b8520386dad95f (Hoy #225), orden de Carlos del 14-oct-2026: «si no tenemos los planos de un Xpacio, nos lo inventamos». La idea es dar de alta Xpacios que no podremos visitar. En `plano.html`, debajo de «Subir plano», la sección «Creación de Xpacios» tiene tres vías en pestañas:
+
+1. **Aleatorio:** el generador, que se describe abajo.
+2. **Con plano:** es «Subir plano». La pestaña lo explica y lleva a esa sección; no lo duplica.
+3. **Con foto o vídeo:** **próximamente, todavía no funciona**. La pestaña lo dice y explica lo que hará: estimar el Xpacio a partir de fotos o de un vídeo del local, como el levantamiento del laboratorio con la webcam. Usará tamaños conocidos (pantallas de 27″ o 55″, puertas de unos 2,1 m, baldosa de 20 cm) y los ángulos de la óptica. Su punto de entrada ya está en el generador: `generarXpacio({ tipo, ancho, largo, alto, elementos })`, donde `elementos = { huecos?, mobiliario?, pantallas? }` son los elementos ya situados con el convenio de la sala.
+   - Los elementos se respetan tal cual y no se inventan los de una categoría que ya venga dada. Si no hay puerta, se pone una.
+   - Las pantallas dadas quedan en `estado: "estimada"`.
+   - Los muebles inventados no pueden quedar delante de ellas.
+   - La fuente dice «Plano estimado · medidas y elementos aproximados, no es un levantamiento».
+
+La pestaña «Aleatorio» funciona así:
+
+- **Formulario:** tipo de Xpacio y ancho (fachada), largo (fondo) y alto en metros, precargados con la media del tipo. Los m² se calculan al vuelo.
+- **Crear con estas medidas** usa las medidas del formulario.
+- **Creación total** sortea las medidas según la media del tipo. Cada clic hace otro sorteo y escribe las medidas sorteadas en el formulario.
+- **Vista previa:** m², puertas y escaparate, muebles, pantallas y semilla.
+- **Usar este plano** lo guarda como plano subido: mismo IndexedDB y misma confirmación del borrador de propuesta. La línea de fuente dice «Plano generado en este navegador · inventado». Si el Xpacio ya tiene un plano real, el generado conserva su nombre y su dirección.
+- **Xpacio sin plano:** la invitación ofrece las dos vías, subir o crear.
+
+**Generador:** `plano-generador.mjs`, lógica pura con pruebas en `tests/plano-generador.test.mjs`. `generarXpacio({tipo, ancho?, largo?, alto?, semilla?, total?, id?, nombre?, direccion?})` devuelve un `admira.xpacio-plano/1`. Parte de `salaRectangular`; `validate()` no da errores ni avisos.
+
+- **Medidas:** las dadas a mano se respetan y las que faltan salen de la media. Con `total`, se sortean así:
+  - la superficie, con una distribución triangular entre el mínimo y el máximo y la moda en la media;
+  - la proporción largo/ancho, uniforme dentro del rango del tipo;
+  - el alto, triangular.
+- **Semilla:** el azar es mulberry32 con una semilla de 32 bits. La semilla queda en `generador` con el tipo y las medidas, y con ella se regenera el mismo plano.
+- **Huecos:** la puerta va en la fachada (pared P), a un lado sorteado. Los tipos de calle llevan escaparate en el resto de la fachada. En el kiosco es una ventanilla, que va al lateral si la fachada no da.
+- **Mobiliario típico:**
+  - Cafetería, restaurante y panadería: contrabarra, barra y mesas.
+  - Estanco: expositor, mostrador y lineal.
+  - Farmacia: cajonera, mostrador, lineales murales y góndola.
+  - Moda: murales, probadores, caja y burros.
+  - Supermercado: murales, góndolas y cajas.
+  - Banco: puestos de atención, sillas de espera y cajero.
+  - Oficina: ventana, mesa de reunión y puestos.
+  - Laboratorio: mesas de trabajo.
+  - En todos, nada delante de la puerta ni en la franja de entrada.
+- **Pantallas típicas:** menu boards sobre la contrabarra, una vertical junto a la caja, la de escaparate (que mira a la calle), las de sección del supermercado, el V–H–V del laboratorio… Todas van con `estado: "propuesta"` e `itil: null`. Cada una se coloca deslizándola por su pared hasta que `validate()` no se queja (sin solapes, sin tapar huecos, sin muebles delante, bajo el techo); si no cabe, no se pone.
+- **`fuente.titulo`:** «Plano generado · inventado, no es un levantamiento · <tipo> · <m²> m² · semilla <n>».
+
+**Tipos y medias.** Son una estimación de la casa, no una estadística oficial: superficie de sala de venta de locales de calle en ciudad.
+
+| Tipo | m² media (rango) | Alto (m) | Largo/ancho |
+|---|---|---|---|
+| Cafetería | 100 (70–140) | 2,8–3,4 | 1,2–2,0 |
+| Estanco | 45 (25–70) | 2,7–3,2 | 1,2–2,2 |
+| Kiosco | 8 (4–12) | 2,4–2,8 | 0,7–1,3 |
+| Farmacia | 120 (80–180) | 2,8–3,4 | 1,0–1,8 |
+| Tienda de moda | 150 (80–250) | 3,0–3,5 | 1,4–2,6 |
+| Restaurante | 160 (100–250) | 2,8–3,5 | 1,2–2,2 |
+| Supermercado de proximidad | 400 (250–600) | 3,0–3,5 | 1,0–2,0 |
+| Panadería | 60 (35–90) | 2,7–3,2 | 1,0–2,0 |
+| Oficina bancaria | 150 (90–250) | 2,7–3,3 | 1,0–2,0 |
+| Oficina | 90 (40–200) | 2,6–3,0 | 1,0–1,8 |
+| Laboratorio / showroom | 40 (15–80) | 2,7–3,3 | 0,8–1,6 |
+
+Un plano generado es una hipótesis para enseñar y comercializar el Xpacio; no es un levantamiento. Lo que se instale de verdad se da de alta en Yokup, el maestro del ITIL.
 
 ## Laboratorio AdmiraNeXT · Gran de Gràcia 51 (`lab-gran-de-gracia-51`)
 

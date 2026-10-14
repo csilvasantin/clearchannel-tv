@@ -12,6 +12,8 @@ import {
   ACEPTA, MAX_LADO, comprobarFichero, leerPlanoJson, resumenPlano, salaRectangular, comprobarSala, escalaCalco, escalaPdf,
   anchoSala, nuevoCalco, calcoValido, geometriaCalco, registroSubida, almacenPlanos, nombreDeFichero, conTiempo, ESPERA_IDB
 } from './plano-subida.mjs?v=20261014-subir-1';
+// ▤ Creación de Xpacios (DCL-35708977d7b8520386dad95f): plano inventado según el tipo de Xpacio.
+import { TIPOS, generarXpacio, medidasMedias, nuevaSemilla, resumenGenerado } from './plano-generador.mjs?v=20261014-crear-1';
 
 const copy = {
   es: {
@@ -36,7 +38,19 @@ const copy = {
     source: 'Fuente', model: 'Modelo', state: 'Estado', size: 'Tamaño', player: 'Player', screenId: 'Pantalla en admira.studio', group: 'Mosaico',
     devices: 'Players y dispositivos · ITIL', thDevice: 'Dispositivo', thKind: 'Tipo', thRole: 'Función',
     // ▤ Subir plano
-    noPlanUpload: 'Este Xpacio aún no tiene plano: súbelo desde ▤ Modo avanzado.', openUpload: '▤ Subir plano',
+    noPlanUpload: 'Este Xpacio aún no tiene plano: súbelo o créalo desde ▤ Modo avanzado.', openUpload: '▤ Subir plano', openCreate: '▤ Crear Xpacio',
+    crTitle: 'Creación de Xpacios', crHint: 'Para dar de alta Xpacios que no podremos visitar: al azar según el tipo, con su plano o, próximamente, con fotos o vídeo.',
+    crTabs: 'Cómo crear el Xpacio', crTabRandom: 'Aleatorio', crTabPlan: 'Con plano', crTabPhoto: 'Con foto o vídeo',
+    crRandomHint: 'Elige el tipo y las medidas, o «Creación total» para sortearlas según la media del tipo.',
+    crPlanText: 'Si tienes el plano del Xpacio (JSON, imagen o PDF), súbelo con «Subir plano», aquí arriba: una imagen o un PDF sirven de calco para una sala nueva.', crGoUpload: 'Ir a Subir plano',
+    crSoon: 'Próximamente · todavía no funciona',
+    crPhotoText: 'Estimará el Xpacio a partir de fotos o de un vídeo del local, como el levantamiento del laboratorio con la webcam: tamaños conocidos (pantallas de 27″ o 55″, puertas de unos 2,1 m, baldosa de 20 cm) y los ángulos de la óptica. Saldrán las medidas y las pantallas, puertas y muebles situados, y el generador completará el plano.',
+    crType: 'Tipo de Xpacio', crWidth: 'Ancho', crLength: 'Largo', crManual: 'Crear con estas medidas', crTotal: 'Creación total', crApply: 'Usar este plano',
+    crNote: 'Plano generado en este navegador · inventado, no es un levantamiento.',
+    crArea: (m2, t) => `≈ ${m2} m² · ancho = fachada, largo = fondo · media del tipo: ${t.m2[1]} m² (${t.m2[0]}–${t.m2[2]})`,
+    crPreview: r => `${fmt(r.ancho)} × ${fmt(r.largo)} m y ${fmt(r.alto)} m de alto · ${r.puertas} ${r.puertas === 1 ? 'puerta' : 'puertas'}${r.escaparates ? ' y escaparate' : ''} · ${r.muebles} ${r.muebles === 1 ? 'mueble' : 'muebles'} · ${r.pantallas} ${r.pantallas === 1 ? 'pantalla' : 'pantallas'} en propuesta`,
+    crSeed: n => `semilla ${n}`, crTotalNote: 'medidas sorteadas', crManualNote: 'medidas indicadas',
+    crDone: 'Plano generado y guardado en este navegador.', generatedLine: 'Plano generado en este navegador · inventado',
     upTitle: 'Subir plano', upHint: 'El plano en JSON (admira.xpacio-plano/1), o una imagen o un PDF como calco bajo la planta.',
     upDrop: 'Suelta aquí el fichero o pulsa para elegirlo', upRoom: 'Sala del Xpacio nuevo', upName: 'Nombre', upWidth: 'Ancho', upDepth: 'Fondo', upHeight: 'Alto',
     upMetres: 'Medidas en metros. Cuatro paredes; las pantallas se añaden en Propuesta de obra.', upCancel: 'Descartar',
@@ -72,7 +86,19 @@ const copy = {
     source: 'Source', model: 'Model', state: 'Status', size: 'Size', player: 'Player', screenId: 'Screen in admira.studio', group: 'Mosaic',
     devices: 'Players and devices · ITIL', thDevice: 'Device', thKind: 'Type', thRole: 'Role',
     // ▤ Upload floor plan
-    noPlanUpload: 'This Xpace has no floor plan yet: upload it from ▤ Advanced mode.', openUpload: '▤ Upload floor plan',
+    noPlanUpload: 'This Xpace has no floor plan yet: upload or create it from ▤ Advanced mode.', openUpload: '▤ Upload floor plan', openCreate: '▤ Create Xpace',
+    crTitle: 'Xpace creation', crHint: 'To register Xpaces we will not be able to visit: at random by type, with their floor plan or, soon, with photos or video.',
+    crTabs: 'How to create the Xpace', crTabRandom: 'Random', crTabPlan: 'With a floor plan', crTabPhoto: 'With photo or video',
+    crRandomHint: 'Choose the type and the sizes, or “Full creation” to draw them from the type average.',
+    crPlanText: 'If you have the Xpace floor plan (JSON, image or PDF), upload it with “Upload floor plan”, just above: an image or a PDF works as a trace for a new room.', crGoUpload: 'Go to Upload floor plan',
+    crSoon: 'Coming soon · not working yet',
+    crPhotoText: 'It will estimate the Xpace from photos or a video of the premises, like the lab survey with the webcam: known sizes (27″ or 55″ screens, doors of about 2.1 m, 20 cm floor tiles) and the lens angles. It will give the sizes and the placed screens, doors and furniture, and the generator will complete the plan.',
+    crType: 'Xpace type', crWidth: 'Width', crLength: 'Length', crManual: 'Create with these sizes', crTotal: 'Full creation', crApply: 'Use this floor plan',
+    crNote: 'Floor plan generated in this browser · made up, not a survey.',
+    crArea: (m2, t) => `≈ ${m2} m² · width = frontage, length = depth · type average: ${t.m2[1]} m² (${t.m2[0]}–${t.m2[2]})`,
+    crPreview: r => `${fmt(r.ancho)} × ${fmt(r.largo)} m, ${fmt(r.alto)} m high · ${r.puertas} ${r.puertas === 1 ? 'door' : 'doors'}${r.escaparates ? ' and shop window' : ''} · ${r.muebles} furniture ${r.muebles === 1 ? 'item' : 'items'} · ${r.pantallas} proposed ${r.pantallas === 1 ? 'screen' : 'screens'}`,
+    crSeed: n => `seed ${n}`, crTotalNote: 'random sizes', crManualNote: 'given sizes',
+    crDone: 'Floor plan generated and saved in this browser.', generatedLine: 'Floor plan generated in this browser · made up',
     upTitle: 'Upload floor plan', upHint: 'The floor plan as JSON (admira.xpacio-plano/1), or an image or a PDF as a trace under the plan.',
     upDrop: 'Drop the file here or click to choose it', upRoom: 'Room of the new Xpace', upName: 'Name', upWidth: 'Width', upDepth: 'Depth', upHeight: 'Height',
     upMetres: 'Sizes in metres. Four walls; add the screens in Works proposal.', upCancel: 'Discard',
@@ -615,7 +641,7 @@ document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click',
 document.addEventListener('admira:lang', e => {
   const next = e.detail?.lang === 'es' ? 'es' : 'en'; if (next === lang) return;
   lang = next; translate(); setBackLink(); if (plan) { renderSource(); renderAll(); }
-  renderTrace(); paintUpload(); paintUploadStatus();
+  renderTrace(); paintUpload(); paintUploadStatus(); paintCreate();
 });
 
 function renderSource() {
@@ -624,7 +650,9 @@ function renderSource() {
   const parts = [];
   // Lo subido en este navegador va delante, con su vuelta atrás.
   if (registro && registro.plan) {
-    parts.push(`<span class="source-upload"><strong>${tr('uploadedLine')}</strong> · ${esc(registro.fichero || '—')} · ${esc(when(registro.subidoEn))} <button type="button" id="source-revert">${tr(publicadoEstado === 'none' ? 'deleteUploaded' : 'backPublished')}</button></span>`);
+    const gen = registro.plan.generador, tipo = gen && TIPOS[gen.tipo];
+    const what = gen ? `<strong>${tr('generatedLine')}</strong> · ${esc(tipo ? tipo[lang] : gen.tipo || '')} · ${esc(tr('crSeed', gen.semilla))}` : `<strong>${tr('uploadedLine')}</strong> · ${esc(registro.fichero || '—')}`;
+    parts.push(`<span class="source-upload">${what} · ${esc(when(registro.subidoEn))} <button type="button" id="source-revert">${tr(publicadoEstado === 'none' ? 'deleteUploaded' : 'backPublished')}</button></span>`);
   } else if (calcoActual()) {
     const c = calcoActual();
     parts.push(`<span class="source-upload"><strong>${tr('traceLine')}</strong> · ${esc(c.fichero || '—')} · ${esc(when(c.subidoEn || registro.subidoEn))}</span>`);
@@ -676,7 +704,7 @@ function showPlan(next, mode = 'actual') {
   $('workspace').hidden = false;
   $('mode-actual').parentElement.hidden = false;
   setMode(mode);
-  renderTrace(); paintUpload();
+  renderTrace(); paintUpload(); paintCreate();
 }
 function showNoPlan() {
   clearTimeout(saveTimer);
@@ -690,7 +718,7 @@ function showNoPlan() {
   $('source').hidden = true;
   $('no-plan').hidden = false;
   $('mode-actual').parentElement.hidden = true; // sin plano no hay distribución que ver
-  renderTrace(); paintUpload();
+  renderTrace(); paintUpload(); paintCreate();
 }
 
 // ── ▤ Subir plano ────────────────────────────────────────────────────────────
@@ -976,10 +1004,10 @@ $('trace-remove').addEventListener('click', async () => {
 });
 
 // ── Panel ▤: el mismo botón de la barra, sin estado propio ───────────────────
-function openUpload({ focus = true } = {}) {
+function openUpload({ focus = true, section = 'upload' } = {}) {
   const panel = $('advanced-tools'), toggle = $('header-advanced-toggle');
   if (panel && toggle && !panel.open) toggle.click();
-  if (focus) { $('upload').focus({ preventScroll: true }); $('upload').scrollIntoView({ block: 'nearest' }); }
+  if (focus) { $(section).focus({ preventScroll: true }); $(section).scrollIntoView({ block: 'nearest' }); }
 }
 // responsive-shell.js atiende el botón ▤; galaxy-shell avisa con admira:shell-ready (o ya lo hizo).
 function whenShellReady(fn) {
@@ -1002,12 +1030,85 @@ for (const type of ['dragover', 'drop']) addEventListener(type, e => { if (drags
 $('upload-apply').addEventListener('click', applyUpload);
 $('upload-cancel').addEventListener('click', () => { uploadSeq++; resetUpload(); uploadStatus(''); paintUpload(); });
 $('open-upload').addEventListener('click', () => openUpload());
+$('open-create').addEventListener('click', () => openUpload({ section: 'create' }));
 
-// ?subir=1 ya abrió el panel: fuera de la URL, para que recargar no lo vuelva a abrir.
+// ── ▤ Creación de Xpacios ────────────────────────────────────────────────────
+// Un plano inventado (plano-generador.mjs) se guarda como un plano subido: mismo IndexedDB,
+// misma confirmación del borrador y su línea de fuente «Plano generado en este navegador».
+const creation = { tipo: 'cafeteria', plan: null, issues: [], statusKey: '', statusError: false };
+const createField = id => parseFloat(String($(id).value).replace(',', '.'));
+function createDims() { return { ancho: createField('create-ancho'), largo: createField('create-largo'), alto: createField('create-alto') }; }
+function fillCreateDims({ ancho, largo, alto }) { $('create-ancho').value = ancho; $('create-largo').value = largo; $('create-alto').value = alto; paintCreateArea(); }
+function paintCreateArea() {
+  const { ancho, largo } = createDims(), m2 = ancho > 0 && largo > 0 ? round(ancho * largo, 1).toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB') : '—';
+  $('create-area').textContent = tr('crArea', m2, TIPOS[creation.tipo]);
+}
+function paintCreate() {
+  const select = $('create-type');
+  select.replaceChildren(...Object.entries(TIPOS).map(([id, t]) => Object.assign(document.createElement('option'), { value: id, textContent: t[lang], selected: id === creation.tipo })));
+  paintCreateArea();
+  const preview = $('create-preview'), r = creation.plan && resumenGenerado(creation.plan);
+  if (r) {
+    const gen = creation.plan.generador;
+    preview.innerHTML = `<strong>${esc(TIPOS[r.tipo][lang])} · ${esc(r.m2.toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB'))} m²</strong><span class="upload-meta">${esc(tr('crPreview', r))} · ${esc(tr(gen.total ? 'crTotalNote' : 'crManualNote'))} · ${esc(tr('crSeed', r.semilla))}</span>`;
+  } else preview.replaceChildren();
+  preview.hidden = !r;
+  $('create-issues').replaceChildren(...creation.issues.map(m => Object.assign(document.createElement('li'), { className: 'error', textContent: message(m) })));
+  $('create-issues').hidden = !creation.issues.length;
+  $('create-apply').hidden = !r;
+  const st = $('create-status');
+  st.textContent = creation.statusKey ? tr(creation.statusKey) : '';
+  st.classList.toggle('err', creation.statusError);
+}
+// El nombre y la dirección del Xpacio real (publicado o subido) se conservan; si no hay, «Tipo · id».
+function createBase() { return (registro && registro.plan && !registro.plan.generador) ? registro.plan : publicado; }
+function createPlan(total) {
+  const base = createBase(), dims = createDims();
+  creation.statusKey = ''; creation.statusError = false;
+  creation.issues = total ? [] : comprobarSala({ ancho: dims.ancho, fondo: dims.largo, alto: dims.alto });
+  if (creation.issues.length) { creation.plan = null; paintCreate(); return; }
+  creation.plan = generarXpacio({ tipo: creation.tipo, total, semilla: nuevaSemilla(), id: xpacioId, nombre: base && base.nombre, direccion: base && base.direccion, ...(total ? {} : dims) });
+  if (total) fillCreateDims({ ancho: creation.plan.planta.ancho, largo: creation.plan.planta.fondo, alto: creation.plan.planta.alto });
+  paintCreate();
+}
+async function applyCreate() {
+  if (!creation.plan || !confirmDiscardDraft()) return;
+  const next = registroSubida({ id: xpacioId, plan: creation.plan, calco: registro && registro.calco, fichero: '' });
+  const stored = await almacen.guardar(next);
+  registro = next; creation.plan = null;
+  creation.statusKey = stored ? 'crDone' : 'upNotStored'; creation.statusError = !stored;
+  showPlan(next.plan);
+}
+$('create').addEventListener('click', e => e.stopPropagation());
+// Tres vías: aleatorio (aquí), con plano («Subir plano», arriba) y con foto o vídeo (próximamente).
+const createTabs = [...document.querySelectorAll('#create [role="tab"]')];
+function selectCreateTab(tab, { focus = false } = {}) {
+  for (const t of createTabs) {
+    const on = t === tab;
+    t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
+    $(t.dataset.pane).hidden = !on;
+  }
+  if (focus) tab.focus();
+}
+createTabs.forEach((tab, i) => {
+  tab.addEventListener('click', () => selectCreateTab(tab));
+  tab.addEventListener('keydown', e => {
+    const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!d) return;
+    e.preventDefault(); selectCreateTab(createTabs[(i + d + createTabs.length) % createTabs.length], { focus: true });
+  });
+});
+$('create-go-upload').addEventListener('click', () => openUpload({ section: 'upload' }));
+$('create-type').addEventListener('change', e => { creation.tipo = TIPOS[e.target.value] ? e.target.value : 'cafeteria'; creation.plan = null; creation.issues = []; fillCreateDims(medidasMedias(creation.tipo)); paintCreate(); });
+for (const id of ['create-ancho', 'create-largo', 'create-alto']) $(id).addEventListener('input', paintCreateArea);
+$('create-manual').addEventListener('click', () => createPlan(false));
+$('create-total').addEventListener('click', () => createPlan(true));
+$('create-apply').addEventListener('click', applyCreate);
+
+// ?subir=1 o ?crear=1 ya abrieron el panel: fuera de la URL, para que recargar no lo vuelva a abrir.
 function dropUploadParam() {
   const url = new URL(location.href);
-  if (!url.searchParams.has('subir')) return;
-  url.searchParams.delete('subir');
+  if (!url.searchParams.has('subir') && !url.searchParams.has('crear')) return;
+  url.searchParams.delete('subir'); url.searchParams.delete('crear');
   try { history.replaceState(history.state, '', url.pathname + url.search + url.hash); } catch {}
 }
 
@@ -1028,6 +1129,8 @@ async function init() {
   $('upload-file').accept = ACEPTA;
   setBackLink();
   paintUpload();
+  fillCreateDims(medidasMedias(creation.tipo));
+  paintCreate();
   // Lo subido manda, pero IndexedDB no puede dejar la página en «Cargando…»: tope de 1,5 s.
   const [stored] = await Promise.all([conTiempo(almacen.leer(xpacioId), ESPERA_IDB, null), loadPublished()]);
   registro = stored;
@@ -1036,7 +1139,8 @@ async function init() {
   else if (publicado) showPlan(publicado, mode);
   else if (publicadoEstado === 'error') setStatus('loadError');
   else showNoPlan();
-  if (params.get('subir') === '1' || (!plan && publicadoEstado === 'none')) whenShellReady(() => { openUpload(); dropUploadParam(); });
+  const crear = params.get('crear') === '1';
+  if (crear || params.get('subir') === '1' || (!plan && publicadoEstado === 'none')) whenShellReady(() => { openUpload({ section: crear ? 'create' : 'upload' }); dropUploadParam(); });
   $('upload-nostore').hidden = await almacen.disponible();
 }
 init();
