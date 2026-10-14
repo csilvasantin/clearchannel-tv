@@ -1178,7 +1178,7 @@
   // Avatar conversacional. Un solo cargador (admiranext.com/assets/avatar.js): good = Admirito (nube animada),
   // better = chica Ready Player Me, best = Neo. En modo piel el CLI de la pata ya lo tiene;
   // aquí entra el modo propio (data-mount), que es el dock de las patas sin consola.
-  var AVATAR_SRC = 'https://www.admiranext.com/assets/avatar.js?v=20261014-personajes-2';
+  var AVATAR_SRC = 'https://www.admiranext.com/assets/avatar.js?v=20261014-personajes-3';
   function avatarApi() {
     if (root.AdmiraAvatar && root.AdmiraAvatar.handle) return Promise.resolve(root.AdmiraAvatar);
     var tag = document.querySelector('script[data-admira-avatar]');
@@ -1223,7 +1223,13 @@
     {name: 'bugito', gancho: 'AdmiraBugito', pagina: 'https://www.admira.biz/bugito.html', param: 'incidencia', args: '[girar|resolucion|popup|medias|normal]',
       desc: ['sin nada, abre el banco de pruebas de Bugito en admira.biz (si ya estás en él, lo muestra u oculta); con una incidencia, la lanza en el player virtual de laboratorio',
         'alone, opens Bugito\'s test bench on admira.biz (if you are already there, shows or hides him); with an incident, launches it on the lab virtual player'],
-      abriendo: ['Bugito: abriendo su banco de pruebas en admira.biz…', 'Bugito: opening his test bench on admira.biz…']}
+      abriendo: ['Bugito: abriendo su banco de pruebas en admira.biz…', 'Bugito: opening his test bench on admira.biz…']},
+    // El Arquitecto (Carlos, 14-oct-2026, DCL-66d9ae0d5e756d0067127f24): Admirito con casco de obra. Crear (un Xpacio
+    // inventado), reformar (desde foto, vídeo o lo que se cuente) o inventariar (y dar de alta el ITIL en Yokup).
+    {name: 'arquitecto', gancho: 'AdmiraArquitecto', pagina: 'https://www.admira.biz/arquitecto.html', param: 'arg', args: '[crear [tipo]|reformar|inventariar]',
+      desc: ['sin nada, saca al Arquitecto (Admirito con casco de obra) en su estudio de admira.biz y explica las tres órdenes; crear [tipo] inventa un Xpacio, reformar propone la obra desde una foto, un vídeo o lo que le cuentes e inventariar hace el plano y el inventario ITIL para darlo de alta en Yokup',
+        'alone, brings out the Architect (Admirito in a hard hat) in his admira.biz studio and explains the three commands; crear [type] invents a Xpace, reformar proposes the works from a photo, a video or what you tell him, and inventariar builds the floor plan and ITIL inventory to register it in Yokup'],
+      abriendo: ['El Arquitecto: abriendo su estudio en admira.biz (crear · reformar · inventariar)…', 'The Architect: opening his studio on admira.biz (create · renovate · survey)…']}
   ];
   // Mismo troceado que avatar.js (personajeArg): minúsculas, sin acentos, guiones; 40 caracteres.
   function personajeSlug(t) {
