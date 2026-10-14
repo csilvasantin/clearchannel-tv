@@ -21,8 +21,8 @@
     ]
   },
   "novedades": [
-    "Bugito incorpora Quitar giro, Quitar resolución, Quitar popup y Quitar apertura parcial junto a cada fallo.",
-    "Cada botón recupera sólo su fallo; el vigilante cierra automáticamente su incidencia en Yokup y mantiene abiertas las restantes."
+    "Bugito incorpora /bugito apagar MBP16 y /bugito encender MBP16 para controlar la pantalla física sin dormir el ordenador.",
+    "Acceso de owner, destino MBP16 verificado y confirmación de un solo uso. La orden en cola se distingue de la detección física del Supervisor."
   ],
   "nativeClearChannel": {
     "enabled": true,
