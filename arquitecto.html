@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Arquitecto · crear, reformar e inventariar Xpacios · Clear Channel</title>
+  <meta name="description" content="Estudio del Arquitecto: Admirito con casco de obra crea Xpacios nuevos, reforma los que hay desde una foto, un vídeo o lo que le cuentes, y hace su inventario ITIL para darlo de alta en Yokup.">
+  <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://www.admira.biz/arquitecto.html">
+  <link rel="stylesheet" href="plano.css?v=20261014-crear-1">
+  <link rel="stylesheet" href="brand.css">
+  <script src="brand.js"></script>
+  <!-- Estudio del Arquitecto (DCL-66d9ae0d5e756d0067127f24): su hoja va antes del shell, que gana los empates. -->
+  <link rel="stylesheet" href="arquitecto.css?v=20261014-arquitecto-1">
+  <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
+  <script>
+  // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones manda; arquitecto.mjs escucha admira:lang.
+  window.ADMIRA_SHELL = { section: { es: '/ arquitecto · estudio', en: '/ architect · studio' }, setLang() {} };
+  </script>
+  <script defer src="/galaxy-shell.js?v=20261014-lab-1"></script>
+  <script type="module" src="arquitecto.mjs?v=20261014-arquitecto-1"></script>
+</head>
+<body>
+  <main class="arq-estudio">
+    <div class="intro">
+      <div>
+        <a id="arq-back" class="back" href="plano.html" data-t="back">← Plano y obras</a>
+        <p class="eyebrow" data-t="eyebrow">Estudio del Arquitecto · Xpacios</p>
+        <h1 data-t="title">Crear, reformar o inventariar</h1>
+        <p class="address" data-t="intro">El Arquitecto es Admirito con casco de obra: inventa Xpacios nuevos, reforma los que hay desde una foto, un vídeo o lo que le cuentes, y hace su inventario ITIL para darlo de alta en Yokup.</p>
+      </div>
+    </div>
+
+    <div class="arq-grid">
+      <aside id="arq-panel" class="arq-panel card" aria-labelledby="arq-titulo">
+        <header class="arq-head">
+          <h2 id="arq-titulo" data-t="arquitecto">El Arquitecto</h2>
+          <span id="arq-estado" class="arq-chip arq-estado"></span>
+          <button type="button" id="arq-toggle" class="arq-mini" data-t="hide">Ocultar al Arquitecto</button>
+        </header>
+        <div id="arq-cara" class="arq-cara"><iframe id="arq-cara-frame" data-t-title="caraTitle" title="El Arquitecto, Admirito con casco de obra" allow="autoplay; microphone"></iframe></div>
+
+        <div class="arq-tabs" role="tablist" data-t-aria="tabs" aria-label="Órdenes del Arquitecto">
+          <button type="button" role="tab" id="tab-crear" aria-controls="arq-crear" aria-selected="false" data-orden="crear"><span class="ico" aria-hidden="true">✚</span><span data-t="crear">Crear</span></button>
+          <button type="button" role="tab" id="tab-reformar" aria-controls="arq-reformar" aria-selected="false" tabindex="-1" data-orden="reformar"><span class="ico" aria-hidden="true">⚒</span><span data-t="reformar">Reformar</span></button>
+          <button type="button" role="tab" id="tab-inventariar" aria-controls="arq-inventariar" aria-selected="false" tabindex="-1" data-orden="inventariar"><span class="ico" aria-hidden="true">▤</span><span data-t="inventariar">Inventariar</span></button>
+        </div>
+
+        <section id="arq-ayuda" class="arq-pane" aria-live="polite">
+          <p class="arq-lead" data-t="ayudaLead">¿Qué hacemos? Pídemelo aquí, con el micro de la nube o en ⌘ Experto:</p>
+          <ul class="arq-ordenes">
+            <li><code>/arquitecto crear [tipo]</code> <span data-t="ayudaCrear">un Xpacio nuevo, inventado según el tipo (o con tus medidas)</span></li>
+            <li><code>/arquitecto reformar</code> <span data-t="ayudaReformar">una reforma del plano abierto desde una foto, un vídeo o lo que me cuentes, como propuesta de obra</span></li>
+            <li><code>/arquitecto inventariar</code> <span data-t="ayudaInventariar">el plano y el inventario ITIL desde una foto, un vídeo o una descripción; al final, alta en Yokup</span></li>
+          </ul>
+        </section>
+
+        <section id="arq-crear" class="arq-pane" role="tabpanel" aria-labelledby="tab-crear" hidden>
+          <label class="arq-field"><span data-t="tipo">Tipo de Xpacio</span><select id="cr-tipo"></select></label>
+          <div class="arq-dims">
+            <label><span data-t="ancho">Ancho</span><input id="cr-ancho" type="number" inputmode="decimal" min="1" max="500" step="0.05"></label>
+            <label><span data-t="largo">Largo</span><input id="cr-largo" type="number" inputmode="decimal" min="1" max="500" step="0.05"></label>
+            <label><span data-t="alto">Alto</span><input id="cr-alto" type="number" inputmode="decimal" min="2" max="30" step="0.05"></label>
+          </div>
+          <label class="arq-field"><span data-t="nombre">Nombre del Xpacio</span><input id="cr-nombre" maxlength="120" autocomplete="off"></label>
+          <div class="arq-actions">
+            <button type="button" id="cr-manual" class="arq-btn" data-t="crManual">Crear con estas medidas</button>
+            <button type="button" id="cr-total" class="arq-btn arq-btn-alt" data-t="crTotal">Creación total</button>
+          </div>
+          <p id="cr-preview" class="arq-preview" hidden></p>
+          <div class="arq-actions">
+            <button type="button" id="cr-usar" class="arq-btn arq-btn-ok" data-t="usar" hidden>Usar este plano</button>
+          </div>
+        </section>
+
+        <section id="arq-reformar" class="arq-pane" role="tabpanel" aria-labelledby="tab-reformar" hidden>
+          <p id="rf-base" class="arq-base"></p>
+          <label class="arq-drop"><input id="rf-fotos" type="file" accept="image/*,video/*" multiple><span data-t="fotos">Fotos o vídeo (opcional): cómo debe quedar o lo que falta en el plano</span><span id="rf-fotos-n" class="arq-drop-n"></span></label>
+          <label class="arq-field"><span data-t="describe">Cuéntame la reforma</span>
+            <span class="arq-dictado"><textarea id="rf-texto" rows="3" maxlength="2000" data-t-ph="rfPh" placeholder="Añade un videowall 2x2 en la pared derecha, quita la pantalla 3 y gira las del fondo a vertical"></textarea><button type="button" id="rf-mic" class="arq-mic" data-t-aria="dictar" aria-label="Dictar">🎙️</button></span></label>
+          <div class="arq-actions"><button type="button" id="rf-proponer" class="arq-btn" data-t="proponer">Proponer reforma</button></div>
+          <ol id="rf-ops" class="arq-ops" hidden></ol>
+          <ul id="rf-dudas" class="arq-dudas" hidden></ul>
+          <div id="rf-orden" class="arq-orden" hidden></div>
+          <div class="arq-actions" id="rf-acciones" hidden>
+            <button type="button" id="rf-guardar" class="arq-btn arq-btn-ok" data-t="guardarObra">Guardar como propuesta de obra</button>
+            <button type="button" id="rf-descargar" class="arq-btn" data-t="descargarObra">Descargar orden de obra (JSON)</button>
+            <a id="rf-abrir" class="arq-link" href="plano.html" data-t="abrirObra">Abrir en el plano (modo obra) →</a>
+          </div>
+        </section>
+
+        <section id="arq-inventariar" class="arq-pane" role="tabpanel" aria-labelledby="tab-inventariar" hidden>
+          <label class="arq-field"><span data-t="tipo">Tipo de Xpacio</span><select id="in-tipo"></select></label>
+          <label class="arq-drop"><input id="in-fotos" type="file" accept="image/*,video/*" multiple><span data-t="fotosInv">Fotos o vídeo del local (hasta 8 fotos; de un vídeo saco fotogramas)</span><span id="in-fotos-n" class="arq-drop-n"></span></label>
+          <label class="arq-field"><span data-t="describeInv">O descríbelo</span>
+            <span class="arq-dictado"><textarea id="in-texto" rows="3" maxlength="2000" data-t-ph="inPh" placeholder="Cafetería de 8 por 12 m con tres pantallas verticales de 43″ en la pared del fondo, un videowall 2x2 a la derecha y dos cámaras"></textarea><button type="button" id="in-mic" class="arq-mic" data-t-aria="dictar" aria-label="Dictar">🎙️</button></span></label>
+          <div class="arq-dims arq-dims-2">
+            <label><span data-t="nombre">Nombre del Xpacio</span><input id="in-nombre" maxlength="120" autocomplete="off"></label>
+            <label><span data-t="prefijo">Prefijo ITIL</span><input id="in-prefijo" maxlength="12" autocomplete="off" spellcheck="false" pattern="[A-Z0-9]{2,12}"></label>
+          </div>
+          <label class="arq-check" id="in-abierto-l" hidden><input type="checkbox" id="in-abierto"><span data-t="usarAbierto">Inventariar el plano abierto</span></label>
+          <div class="arq-actions"><button type="button" id="in-inventariar" class="arq-btn" data-t="inventariarBtn">Inventariar</button></div>
+        </section>
+        <p id="arq-status" class="upload-status arq-status" role="status"></p>
+      </aside>
+
+      <section class="arq-plano card" aria-labelledby="arq-plano-titulo">
+        <div class="card-head">
+          <h2 id="arq-plano-titulo" data-t="plano">Plano</h2>
+          <span id="arq-plano-meta" class="hint"></span>
+        </div>
+        <div id="arq-sin-plano" class="no-plan"><span data-t="sinPlano">Todavía no hay plano: créalo o inventaríalo con el Arquitecto.</span></div>
+        <div id="arq-vistas" hidden>
+          <div class="svg-wrap"><svg id="arq-planta" role="img" data-t-aria="plantaAria" aria-label="Plano en planta"></svg></div>
+          <div class="card-head arq-alzado-head"><h3 data-t="alzado">Alzado</h3><div id="arq-paredes" class="wall-tabs" role="tablist"></div></div>
+          <div class="svg-wrap"><svg id="arq-alzado" role="img" data-t-aria="alzadoAria" aria-label="Alzado de la pared"></svg></div>
+          <p class="hint arq-leyenda"><span class="arq-sw"></span><span data-t="leyActual">actual</span> <span class="arq-sw new"></span><span data-t="leyNueva">nueva o propuesta</span> <span class="arq-sw ghost"></span><span data-t="leyRetirada">retirada</span></p>
+        </div>
+        <div id="in-cis" class="arq-cis" hidden>
+          <div class="arq-cis-head"><strong data-t="cis">Inventario ITIL propuesto</strong><span id="in-cis-n" class="hint"></span><button type="button" id="in-add" class="arq-mini" data-t="addCi">+ CI</button></div>
+          <div class="table-wrap"><table id="in-tabla"></table></div>
+          <ul id="in-errores" class="arq-dudas" hidden></ul>
+          <div class="arq-actions">
+            <button type="button" id="in-yokup" class="arq-btn arq-btn-ok" data-t="altaYokup">Dar de alta en Yokup →</button>
+            <button type="button" id="in-descargar" class="arq-btn" data-t="descargarInv">Descargar inventario (JSON)</button>
+            <button type="button" id="in-usar" class="arq-btn" data-t="usar">Usar este plano</button>
+          </div>
+          <p class="arq-note" data-t="yokupNote">El alta la confirma el titular en el Portal del comercio de Yokup (admira.app/retailer): allí elige el establecimiento y ve lo que se va a crear. El inventario viaja en la propia dirección (#), sin pasar por ningún servidor.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
