@@ -18,8 +18,11 @@
   </script>
   <script defer src="/galaxy-shell.js?v=20261014-bugito-1"></script>
   <!-- Bugito (DCL-5da4653d859552490fd5ae1d): banco de pruebas del ▤ Creador de incidencias. -->
-  <link rel="stylesheet" href="bugito.css?v=20261014-bugito-2">
-  <script type="module" src="bugito.mjs?v=20261014-bugito-2"></script>
+  <link rel="stylesheet" href="bugito.css?v=20261014-bugito-3">
+  <!-- Opción B · login de owner para el dispositivo real (la cuenta propia por Google, no un token maestro). -->
+  <script src="https://accounts.google.com/gsi/client" async></script>
+  <script defer src="bugito-super.js?v=20261014-bugito-3"></script>
+  <script type="module" src="bugito.mjs?v=20261014-bugito-3"></script>
 </head>
 <body>
   <main class="bugito-banco">
@@ -48,7 +51,20 @@
           <span id="bb-objetivo-breadcrumb" class="bb-objetivo-bc" data-bb="objBancoBc">Banco de pruebas</span>
           <p class="bb-objetivo-nota" data-bb="objNota">Bugito actúa sobre un player virtual de laboratorio de ese circuito; no toca el dispositivo real del cliente.</p>
         </div>
+        <details id="bb-super" class="bb-super" aria-label="Dispositivo real (superusuario)">
+          <summary data-bb="superTitulo">Dispositivo real (superusuario)</summary>
+          <p class="bb-super-intro" data-bb="superIntro">Para forzar un fallo en un dispositivo FÍSICO en producción, entra con tu cuenta de owner.</p>
+          <div class="bb-super-fila">
+            <div id="bb-super-signin" class="bb-super-signin"></div>
+            <span id="bb-super-quien" class="bb-super-quien"></span>
+            <button type="button" id="bb-super-salir" class="bb-mini" data-bb="superSalir" hidden>Salir</button>
+          </div>
+          <label class="bb-objetivo-campo bb-super-sel"><span data-bb="superDispositivo">Dispositivo real</span>
+            <select id="bb-super-real"></select></label>
+          <p id="bb-super-banner" class="bb-super-banner" hidden></p>
+        </details>
         <div class="bb-tv"><iframe id="bb-player-frame" title="Player virtual de laboratorio" allow="autoplay; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <div id="bb-real-overlay" class="bb-real-overlay" data-bb="superOverlay" hidden>Dispositivo real: el fallo se envía al equipo físico. Aquí no se incrusta su pantalla.</div>
           <div id="bb-pausa" class="bb-pausa" hidden><p id="bb-pausa-texto"></p><button type="button" id="bb-reanudar" data-bb="resume">Reanudar</button></div></div>
         <p id="bb-vivo" class="bb-vivo" aria-live="polite"></p>
         <ul id="bb-detectores" class="bb-detectores" aria-label="Detectores"></ul>
