@@ -10,10 +10,10 @@
     "deployedAt": "2026-10-09T00:09:34+0200",
     "dirty": false,
     "novedades": [
-    "Plano del laboratorio AdmiraNeXT de Gran de Gràcia 51 (/plano lab): levantado con la webcam PTZ de admira.live, medidas estimadas ±15 cm.",
-    "Inventario ITIL de Yokup en el plano: 7 pantallas, 3 players y la webcam con sus códigos GDG51-…, y enlace «Ver en Yokup (ITIL)».",
-    "Plano compartido: /data/xpacios/<id>.json se puede leer desde admira.store, admira.studio y admira.tv (CORS de solo lectura); rótulos legibles en salas pequeñas."
-  ],
+      "Plano del laboratorio AdmiraNeXT de Gran de Gràcia 51 (/plano lab): levantado con la webcam PTZ de admira.live, medidas estimadas ±15 cm.",
+      "Inventario ITIL de Yokup en el plano: 7 pantallas, 3 players y la webcam con sus códigos GDG51-…, y enlace «Ver en Yokup (ITIL)».",
+      "Plano compartido: /data/xpacios/<id>.json se puede leer desde admira.store, admira.studio y admira.tv (CORS de solo lectura); rótulos legibles en salas pequeñas."
+    ],
     "domains": [
       "www.clearchannel.tv",
       "www.admira.app",
@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Plano del Xpacio: «Subir plano» en ▤ Modo avanzado acepta el plano en JSON o una imagen o un PDF como calco bajo la planta, con ancho real y opacidad.",
-    "Xpacio sin plano: invita a subirlo y, con una imagen o un PDF, crea una sala rectangular de las medidas indicadas; se guarda solo en este navegador.",
-    "Portada: «Subir plano» en ▤ Modo avanzado abre el plano de la ficha abierta; /redistribucion enlaza la subida si el Xpacio aún no tiene plano."
+    "Laboratorio AdmiraNeXT · Gran de Gràcia 51 en el mapa y con plano: planta y alzado levantados con la webcam de admira.live, 7 pantallas y sus players.",
+    "Inventario ITIL del laboratorio en Yokup (11 CI GDG51-…): el plano enlaza «Ver en Yokup (ITIL)» y lista players y dispositivos.",
+    "Plano compartido: www.admira.biz/data/xpacios/<id>.json se puede leer desde admira.store, admira.studio y admira.tv."
   ],
   "nativeClearChannel": {
     "enabled": true,
