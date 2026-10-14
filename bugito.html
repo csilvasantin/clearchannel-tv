@@ -18,8 +18,8 @@
   </script>
   <script defer src="/galaxy-shell.js?v=20261014-bugito-1"></script>
   <!-- Bugito (DCL-5da4653d859552490fd5ae1d): banco de pruebas del ▤ Creador de incidencias. -->
-  <link rel="stylesheet" href="bugito.css?v=20261014-bugito-1">
-  <script type="module" src="bugito.mjs?v=20261014-bugito-1"></script>
+  <link rel="stylesheet" href="bugito.css?v=20261014-bugito-2">
+  <script type="module" src="bugito.mjs?v=20261014-bugito-2"></script>
 </head>
 <body>
   <main class="bugito-banco">
@@ -39,6 +39,15 @@
           <code id="bb-screen" class="bb-chip">virtual-lab-bugito</code>
           <span class="bb-chip" data-bb="landscape">horizontal · 16:9</span>
         </header>
+        <div id="bb-objetivo" class="bb-objetivo" aria-label="Objetivo de Bugito">
+          <span class="bb-objetivo-etq" data-bb="objTitulo">Objetivo</span>
+          <label class="bb-objetivo-campo"><span data-bb="objProyecto">Proyecto</span>
+            <select id="bb-sel-proyecto"></select></label>
+          <label class="bb-objetivo-campo"><span data-bb="objDispositivo">Dispositivo</span>
+            <select id="bb-sel-dispositivo" disabled></select></label>
+          <span id="bb-objetivo-breadcrumb" class="bb-objetivo-bc" data-bb="objBancoBc">Banco de pruebas</span>
+          <p class="bb-objetivo-nota" data-bb="objNota">Bugito actúa sobre un player virtual de laboratorio de ese circuito; no toca el dispositivo real del cliente.</p>
+        </div>
         <div class="bb-tv"><iframe id="bb-player-frame" title="Player virtual de laboratorio" allow="autoplay; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>
           <div id="bb-pausa" class="bb-pausa" hidden><p id="bb-pausa-texto"></p><button type="button" id="bb-reanudar" data-bb="resume">Reanudar</button></div></div>
         <p id="bb-vivo" class="bb-vivo" aria-live="polite"></p>

@@ -11,9 +11,10 @@ import {
 } from './incidencias-core.mjs?v=20261014-bugito-1';
 import { mando, yokupPublico } from './incidencias-adaptadores.mjs?v=20261014-bugito-1';
 import {
-  BANCO, BUGITO_SCREEN, BUGITO_ORIGIN, GRACIA_BANCO_MS, pantallaBanco, resolverIncidencia, playerUrl, caraUrl, baseLocal,
-  estadoBugito, mensajeBugito, esDeBugito, debePausar
-} from './bugito-core.mjs?v=20261014-bugito-1';
+  BANCO, BUGITO_ORIGIN, GRACIA_BANCO_MS, resolverIncidencia, playerUrl, caraUrl, baseLocal,
+  estadoBugito, mensajeBugito, esDeBugito, debePausar,
+  OBJETIVO_BANCO, labScreenPara, bancoPara, pantallaDe
+} from './bugito-core.mjs?v=20261014-bugito-2';
 
 const $ = id => document.getElementById(id);
 const SONDEO_MS = 3000, ACUSE_MAX_MS = 90000, ESTADO_YOKUP_MS = 12000;
@@ -40,7 +41,10 @@ const textos = {
     launched: (n) => `Bugito lanza «${n}» en el player virtual.`, shown: 'Bugito a la vista.', hidden: 'Bugito escondido (vuelve con /bugito).',
     presel: n => `Preseleccionada: ${n}. Pulsa el botón para lanzarla.`,
     resume: 'Reanudar', pausaOculta: 'Player en pausa mientras la pestaña está oculta.',
-    pausaInactivo: 'Player en pausa tras 5 min sin actividad: es un player de verdad y así no escribe en /signage/now para nada.'
+    pausaInactivo: 'Player en pausa tras 5 min sin actividad: es un player de verdad y así no escribe en /signage/now para nada.',
+    objTitulo: 'Objetivo', objProyecto: 'Proyecto', objDispositivo: 'Dispositivo',
+    objBanco: 'Banco de pruebas (sin circuito)', objBancoBc: 'Banco de pruebas',
+    objNota: 'Bugito actúa sobre un player virtual de laboratorio de ese circuito; no toca el dispositivo real del cliente.'
   },
   en: {
     back: '← Incident creator (▤ floor plan advanced mode)', eyebrow: 'Incident creator · test bench', title: 'Bugito breaks, the agent watches',
@@ -62,7 +66,10 @@ const textos = {
     launched: (n) => `Bugito launches “${n}” on the virtual player.`, shown: 'Bugito in sight.', hidden: 'Bugito hidden (/bugito brings him back).',
     presel: n => `Preselected: ${n}. Press the button to launch it.`,
     resume: 'Resume', pausaOculta: 'Player paused while the tab is hidden.',
-    pausaInactivo: 'Player paused after 5 min without activity: it is a real player, so it stops writing to /signage/now.'
+    pausaInactivo: 'Player paused after 5 min without activity: it is a real player, so it stops writing to /signage/now.',
+    objTitulo: 'Target', objProyecto: 'Project', objDispositivo: 'Device',
+    objBanco: 'Test bench (no circuit)', objBancoBc: 'Test bench',
+    objNota: 'Bugito acts on a lab virtual player for that circuit; it never touches the real client device.'
   }
 };
 const LANGUAGE_KEY = (window.ADMIRA_SITE_BRAND?.id || 'clearchannel') + '-lang';
@@ -74,7 +81,13 @@ const nombre = id => { const t = tipoIncidencia(id); return t ? (t[lang] || t.es
 const params = new URLSearchParams(location.search);
 const red = { mando: mando((...a) => fetch(...a)), yokup: yokupPublico((...a) => fetch(...a)) };
 const by = 'Bugito · banco de pruebas · admira.biz';
-const P = pantallaBanco();
+// Objetivo acotado (proyecto · circuito · dispositivo). Bugito actúa sobre el player virtual de
+// laboratorio derivado del objetivo; sin objetivo, el banco (virtual-lab-bugito). Mutable: el
+// selector lo cambia, recarga el player y reinicia la prueba. `banco` y `P` se recalculan con él.
+let objetivo = { ...OBJETIVO_BANCO };
+let banco = bancoPara(objetivo);
+let P = pantallaDe(objetivo);
+let catalogoObjetivos = null;
 // En producción, siempre los de verdad; en localhost se pueden apuntar a copias locales (?player=, ?cara=).
 const playerBase = baseLocal(params.get('player'), location.origin) || undefined;
 const caraBase = baseLocal(params.get('cara'), location.origin);
@@ -144,6 +157,10 @@ window.addEventListener('message', ev => {
 function traducir() {
   document.querySelectorAll('[data-bb]').forEach(n => { const v = textos[lang][n.dataset.bb]; if (typeof v === 'string') n.textContent = v; });
   $('bb-toggle').textContent = document.querySelector('.bugito-banco').classList.contains('sin-bugito') ? tr('show') : tr('hide');
+  // El selector: la opción «banco» y el rótulo del objetivo activo se retraducen (son dinámicos).
+  const selP = $('bb-sel-proyecto'); if (selP && selP.options[0]) selP.options[0].textContent = tr('objBanco');
+  const bc = $('bb-objetivo-breadcrumb');
+  if (bc) bc.textContent = objetivo.dispositivo ? `${objetivo.proyectoLabel} · ${objetivo.circuito} · ${objetivo.dispositivo}` : tr('objBancoBc');
   pintarMenu(); pintar(); pintarPausa();
 }
 function pintarMenu() {
@@ -230,9 +247,9 @@ async function vueltaUnica() {
   if (!P || document.hidden || pausado) return;
   const ahora = Date.now();
   let senal = null;
-  try { senal = await red.mando.senal(BUGITO_SCREEN); } catch { senal = null; }
+  try { senal = await red.mando.senal(objetivo.screen); } catch { senal = null; }
   for (const c of CATALOGO) {
-    const v = vueltaDetector(detectores[c.id], { plan: BANCO, pantalla: P, tipo: c.id, senal, ahora, graciaMs: GRACIA_BANCO_MS, by, planoUrl: location.href.split('#')[0] });
+    const v = vueltaDetector(detectores[c.id], { plan: banco, pantalla: P, tipo: c.id, senal, ahora, graciaMs: GRACIA_BANCO_MS, by, planoUrl: location.href.split('#')[0] });
     lectura = v.observacion.lectura; observaciones[c.id] = v.observacion;
     let e = v.estado;
     if (e.accion) {
@@ -258,7 +275,7 @@ async function vueltaUnica() {
     ultimoYokup = ahora;
     const ids = CATALOGO.flatMap(c => [detectores[c.id] && detectores[c.id].incidencia, detectores[c.id] && detectores[c.id].ultima]).filter(Boolean);
     const e = await red.yokup.estado(`${DEMO_PREFIX}${BANCO.id}:`, ids).catch(() => null);
-    if (e && e.ok) for (const c of CATALOGO) incidencias[c.id] = incidenciaDe(e.incidents, recurso(BANCO, P, c.id)) || incidencias[c.id] || null;
+    if (e && e.ok) for (const c of CATALOGO) incidencias[c.id] = incidenciaDe(e.incidents, recurso(banco, P, c.id)) || incidencias[c.id] || null;
   }
   pintar();
 }
@@ -272,7 +289,7 @@ async function lanzar(texto) {
   if (!P || ocupado) return '';
   const normal = id === 'normal';
   // La orden la construye el Creador de incidencias: dirigida a la cola de la propia pantalla de laboratorio.
-  const o = orden(normal ? CATALOGO[0].id : id, BUGITO_SCREEN, { vuelta: normal });
+  const o = orden(normal ? CATALOGO[0].id : id, objetivo.screen, { vuelta: normal });
   if (!o.ok) { prueba.mensaje = tr('rejected', o.error); prueba.error = true; pintar(); return prueba.mensaje; }
   ocupado = true; prueba.mensaje = tr('sending'); prueba.error = false;
   if (!normal) Object.assign(prueba, { tipo: id, envio: { ok: true, en: Date.now(), cmd: o.body.cmd, pendiente: true }, acuse: null, vuelta: null, vueltaAcuse: null, marcas: new Set() });
@@ -303,7 +320,7 @@ function pausarPlayer(motivo) {
 function reanudarPlayer() {
   if (!pausado) return;
   pausado = ''; gesto();
-  $('bb-player-frame').src = playerUrl({ base: playerBase, lang });
+  $('bb-player-frame').src = playerUrl({ base: playerBase, lang, screen: objetivo.screen });
   pintarPausa(); vuelta().catch(() => {});
 }
 function pintarPausa() {
@@ -325,7 +342,7 @@ function alternarBugito(mostrar) {
 window.AdmiraBugito = {
   toggle: () => alternarBugito(),
   lanzar: arg => lanzar(arg),
-  estado: () => ({ ...estadoActual(), screen: BUGITO_SCREEN, detectores: JSON.parse(JSON.stringify(detectores)) })
+  estado: () => ({ ...estadoActual(), screen: objetivo.screen, objetivo: { ...objetivo }, detectores: JSON.parse(JSON.stringify(detectores)) })
 };
 
 function arrancar() {
@@ -344,12 +361,67 @@ function arrancar() {
   for (const ev of ['pointerdown', 'keydown', 'wheel', 'touchstart']) document.addEventListener(ev, gesto, { passive: true, capture: true });
   $('bb-reanudar').addEventListener('click', reanudarPlayer);
   setInterval(vigilarPausa, 15000);
-  $('bb-screen').textContent = BUGITO_SCREEN;
-  $('bb-player-frame').src = playerUrl({ base: playerBase, lang });
+  $('bb-screen').textContent = objetivo.screen;
+  $('bb-player-frame').src = playerUrl({ base: playerBase, lang, screen: objetivo.screen });
   montarCara();
   traducir();
+  montarObjetivo();
   const pre = resolverIncidencia(params.get('incidencia'));
   if (pre && pre !== 'normal') { prueba.mensaje = tr('presel', nombre(pre)); pintar(); }
   programar(); vuelta().catch(() => {});
+}
+
+// ── Selector de objetivo: proyecto · circuito · dispositivo (Opción A: laboratorio) ──────────
+async function cargarCatalogoObjetivos() {
+  if (catalogoObjetivos) return catalogoObjetivos;
+  try {
+    const r = await fetch('./bugito-objetivos.json?v=20261014-bugito-2', { cache: 'no-store' });
+    const d = r.ok ? await r.json() : null;
+    catalogoObjetivos = d && Array.isArray(d.proyectos) ? d.proyectos : [];
+  } catch { catalogoObjetivos = []; }
+  return catalogoObjetivos;
+}
+async function montarObjetivo() {
+  const proyectos = await cargarCatalogoObjetivos();
+  const selP = $('bb-sel-proyecto'), selD = $('bb-sel-dispositivo');
+  if (!selP || !selD) return;
+  if (!proyectos.length) { $('bb-objetivo')?.setAttribute('hidden', ''); return; }
+  const opt = (v, txt) => { const o = document.createElement('option'); o.value = v; o.textContent = txt; return o; };
+  selP.innerHTML = ''; selP.append(opt('', tr('objBanco')));
+  for (const p of proyectos) selP.append(opt(p.id, `${p.label} · ${p.circuit}`));
+  function poblarDispositivos() {
+    const p = proyectos.find(x => x.id === selP.value);
+    selD.innerHTML = '';
+    const ds = (p && p.dispositivos) || [];
+    selD.disabled = !ds.length;
+    for (const d of ds) selD.append(opt(d, d));
+    if (ds.length) selD.value = ds[0];
+  }
+  selP.addEventListener('change', () => { poblarDispositivos(); aplicarSeleccion(); });
+  selD.addEventListener('change', aplicarSeleccion);
+  poblarDispositivos();
+}
+function aplicarSeleccion() {
+  const selP = $('bb-sel-proyecto'), selD = $('bb-sel-dispositivo');
+  const p = (catalogoObjetivos || []).find(x => x.id === selP.value);
+  if (!p) return aplicarObjetivo({ ...OBJETIVO_BANCO });
+  const dispositivo = selD.value || '';
+  aplicarObjetivo({
+    proyecto: p.id, proyectoLabel: p.label, circuito: p.circuit, dispositivo,
+    screen: labScreenPara({ circuito: p.circuit, dispositivo }),
+  });
+}
+// Cambiar de objetivo: nueva pantalla de laboratorio, player recargado y prueba reiniciada.
+function aplicarObjetivo(nuevo) {
+  objetivo = { ...OBJETIVO_BANCO, ...nuevo };
+  banco = bancoPara(objetivo); P = pantallaDe(objetivo);
+  Object.assign(prueba, { tipo: '', envio: null, acuse: null, vuelta: null, vueltaAcuse: null, marcas: new Set(), mensaje: '', error: false });
+  for (const t of CATALOGO) { incidencias[t.id] = null; if (detectores[t.id]) detectores[t.id] = { ...detectores[t.id], ultima: null }; }
+  $('bb-screen').textContent = objetivo.screen;
+  const b = $('bb-objetivo-breadcrumb');
+  if (b) b.textContent = objetivo.dispositivo ? `${objetivo.proyectoLabel} · ${objetivo.circuito} · ${objetivo.dispositivo}` : tr('objBancoBc');
+  pausado = ''; $('bb-pausa').hidden = true; gesto();
+  $('bb-player-frame').src = playerUrl({ base: playerBase, lang, screen: objetivo.screen });
+  pintar(); vuelta().catch(() => {});
 }
 arrancar();

@@ -1,0 +1,239 @@
+{
+ "_como": "Objetivos de Bugito: proyecto→circuito→dispositivo (tipo de superficie). Generado con node tools/sync-bugito-objetivos.mjs. Bugito actúa sobre un player virtual de laboratorio de ese circuito; no toca dispositivos de cliente.",
+ "proyectos": [
+  {
+   "id": "cafebreria",
+   "label": "Cafebrería",
+   "circuit": "cafebreria",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "starbucks",
+   "label": "Starbucks",
+   "circuit": "alsea_starbucks",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla recogida",
+    "Escaparate"
+   ]
+  },
+  {
+   "id": "starbucks-mexico",
+   "label": "Starbucks México",
+   "circuit": "alsea_mexico",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla recogida",
+    "Escaparate"
+   ]
+  },
+  {
+   "id": "alcampo",
+   "label": "Alcampo",
+   "circuit": "alcampo",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "canalkiosk",
+   "label": "CanalKiosk",
+   "circuit": "kioskos",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "jti",
+   "label": "JTI Xtanco",
+   "circuit": "jti_xtanco",
+   "dispositivos": [
+    "LED Frontal",
+    "Escaparate exterior",
+    "Mostrador panel"
+   ]
+  },
+  {
+   "id": "estancos",
+   "label": "Estancos",
+   "circuit": "estancos",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "decathlon",
+   "label": "Decathlon",
+   "circuit": "decathlon",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "mango",
+   "label": "Mango",
+   "circuit": "mango",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "desigual",
+   "label": "Desigual",
+   "circuit": "desigual",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "elcorteingles",
+   "label": "El Corte Inglés",
+   "circuit": "elcorteingles",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "caixabank",
+   "label": "CaixaBank",
+   "circuit": "caixabank",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "bbva",
+   "label": "BBVA",
+   "circuit": "bbva",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "correos",
+   "label": "Correos",
+   "circuit": "correos",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "multiopticas",
+   "label": "Multiópticas",
+   "circuit": "multiopticas",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "palacio",
+   "label": "Palacio de Hierro",
+   "circuit": "palacio",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "liverpool",
+   "label": "Liverpool",
+   "circuit": "liverpool_mx",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "banorte",
+   "label": "Banorte",
+   "circuit": "banorte_mx",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "metro",
+   "label": "Metro BCN",
+   "circuit": "metro_bcn",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  },
+  {
+   "id": "admiraxperience",
+   "label": "Admira Xperience",
+   "circuit": "admiraxperience",
+   "dispositivos": [
+    "Menu board digital",
+    "Pantalla de caja",
+    "Pantalla de recogida",
+    "Escaparate",
+    "Tótem"
+   ]
+  }
+ ]
+}
