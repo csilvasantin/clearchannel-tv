@@ -68,11 +68,13 @@ export function parseOrden(entrada) {
   const texto = resto.join(' ').slice(0, MAX_DESCRIPCION);
   return { orden, tipo: orden === 'crear' || orden === 'inventariar' ? tipoDe(texto) : '', resto: texto };
 }
-// Parámetros de la página: ?orden=crear&tipo=cafeteria&locationId=…&lang=es (todo validado).
+// Parámetros de la página: ?orden=crear&tipo=cafeteria&locationId=…&lang=es (todo validado). El cargador común
+// (admiranext.com/assets/avatar.js, tabla PERSONAJES) manda /arquitecto crear cafetería como ?arg=crear-cafeteria.
 export function parametros(search = '') {
   const q = new URLSearchParams(search);
-  const orden = ORDENES.includes(q.get('orden')) ? q.get('orden') : '';
-  const tipo = Object.hasOwn(TIPOS, q.get('tipo') || '') ? q.get('tipo') : '';
+  const arg = /^[a-z0-9-]{1,40}$/.test(q.get('arg') || '') ? parseOrden(q.get('arg').replace(/-/g, ' ')) : null;
+  const orden = ORDENES.includes(q.get('orden')) ? q.get('orden') : (arg && arg.orden) || '';
+  const tipo = Object.hasOwn(TIPOS, q.get('tipo') || '') ? q.get('tipo') : (arg && arg.tipo) || '';
   const locationId = ID_RE.test(q.get('locationId') || '') ? q.get('locationId') : '';
   return { orden, tipo, locationId };
 }

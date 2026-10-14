@@ -589,7 +589,10 @@ window.AdmiraArquitecto = {
     return tr('abierta', tr(p.orden));
   },
   ayuda() { abrirAyuda(); return tr('ayudaOrdenes'); },
-  toggle() { return mostrarArquitecto(document.querySelector('.arq-estudio').classList.contains('sin-arquitecto')); },
+  // El contrato de los personajes del cargador común: sin argumento toggle(), con argumento lanzar(arg).
+  // /arquitecto sin nada saca al Arquitecto y explica las tres órdenes (no lo esconde: para eso, su botón).
+  toggle() { mostrarArquitecto(true); abrirAyuda(); nube('reposo'); return tr('ayudaOrdenes'); },
+  lanzar(arg) { return window.AdmiraArquitecto.orden(String(arg || '').replace(/-/g, ' ')); },
   estado() { return { orden: st.orden, estado: st.estado, plan: st.plan && st.plan.id, inventario: st.inv && st.inv.id, cis: st.cis.length, ops: st.ops.length }; }
 };
 function abrirAyuda() { $('arq-ayuda').hidden = false; $('in-cis').hidden = true; for (const t of tabs) { t.setAttribute('aria-selected', 'false'); $(t.getAttribute('aria-controls')).hidden = true; } st.orden = ''; pintarPlano(); }

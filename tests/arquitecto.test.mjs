@@ -41,6 +41,10 @@ test('/arquitecto: tres órdenes (y sus alias en inglés), el tipo al crear y na
   assert.equal(parseOrden('/arquitectura'), null, '/arquitectura es el organigrama, no el Arquitecto');
   assert.deepEqual(parametros('?orden=crear&tipo=kiosco&locationId=lab-1'), { orden: 'crear', tipo: 'kiosco', locationId: 'lab-1' });
   assert.deepEqual(parametros('?orden=borrar&tipo=castillo&locationId=../x'), { orden: '', tipo: '', locationId: '' });
+  // El cargador común (avatar.js, PERSONAJES) manda la orden en ?arg=: /arquitecto crear cafetería → crear-cafeteria.
+  assert.deepEqual(parametros('?lang=es&arg=crear-cafeteria'), { orden: 'crear', tipo: 'cafeteria', locationId: '' });
+  assert.deepEqual(parametros('?arg=inventariar'), { orden: 'inventariar', tipo: '', locationId: '' });
+  assert.deepEqual(parametros('?arg=<script>'), { orden: '', tipo: '', locationId: '' });
   assert.equal(tipoDe('una farmacia de barrio'), 'farmacia');
   assert.equal(tipoDe('algo raro'), '');
 });
@@ -229,6 +233,8 @@ test('la página: shell cuadrático, el Arquitecto a un lado y el plano al otro,
     assert.match(html, new RegExp(`id="${id}"`), id);
   assert.match(html, /allow="autoplay; microphone"/, 'el micro de la nube también vale');
   assert.match(js, /window\.AdmiraArquitecto = \{/);
+  assert.match(js, /toggle\(\) \{ mostrarArquitecto\(true\); abrirAyuda\(\);/, '/arquitecto sin nada: lo saca y explica');
+  assert.match(js, /lanzar\(arg\) \{/, 'el contrato de personajes del cargador (toggle/lanzar)');
   assert.match(js, /'admira\.plano\.' \+ id/, 'la misma clave de propuesta que plano.html');
   assert.match(js, /registroSubida\(/, 'el mismo almacén de planos que plano.html');
   assert.doesNotMatch(js, /fetch\([^)]*yokup/i, 'el estudio no llama a la API de Yokup: traspasa al portal');
