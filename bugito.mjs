@@ -13,7 +13,8 @@ import { mando, yokupPublico } from './incidencias-adaptadores.mjs?v=20261014-bu
 import {
   BANCO, BUGITO_ORIGIN, GRACIA_BANCO_MS, resolverIncidencia, playerUrl, caraUrl, baseLocal,
   estadoBugito, mensajeBugito, esDeBugito, debePausar,
-  OBJETIVO_BANCO, labScreenPara, bancoPara, pantallaDe
+  OBJETIVO_BANCO, labScreenPara, bancoPara, pantallaDe,
+  MANDO_ARM, MANDO_CMD_REAL, SIGNAGE_SCREENS, esPantallaReal, objetivoReal
 } from './bugito-core.mjs?v=20261014-bugito-3';
 
 const $ = id => document.getElementById(id);
@@ -47,7 +48,16 @@ const textos = {
     pausaInactivo: 'Player en pausa tras 5 min sin actividad: es un player de verdad y así no escribe en /signage/now para nada.',
     objTitulo: 'Objetivo', objProyecto: 'Proyecto', objDispositivo: 'Dispositivo',
     objBanco: 'Banco de pruebas (sin circuito)', objBancoBc: 'Banco de pruebas',
-    objNota: 'Bugito actúa sobre un player virtual de laboratorio de ese circuito; no toca el dispositivo real del cliente.'
+    objNota: 'Bugito actúa sobre un player virtual de laboratorio de ese circuito; no toca el dispositivo real del cliente.',
+    superTitulo: 'Dispositivo real (superusuario)', superIntro: 'Para forzar un fallo en un dispositivo FÍSICO en producción, entra con tu cuenta de owner.',
+    superComo: e => `Conectado como ${e}`, superSalir: 'Salir', superDispositivo: 'Dispositivo real',
+    superCargando: 'Cargando dispositivos registrados…', superElige: 'Elige un dispositivo real…', superVacio: 'No hay dispositivos reales registrados ahora',
+    superBanner: (d, s) => `⚠ DISPOSITIVO REAL · ${d} · ${s} — el fallo se envía al equipo físico`,
+    superConfirma: (inc, d, s) => `Vas a FORZAR «${inc}» en el dispositivo REAL «${d}» (${s}) en PRODUCCIÓN. ¿Seguro?`,
+    superCancelado: 'Cancelado.', superArmando: 'Confirmando y enviando al dispositivo real…',
+    superEnviado: (c, d) => `Orden «${c}» enviada al dispositivo real ${d}.`, superRechazo: r => `El servidor la rechaza: ${r}.`,
+    superEntra: 'Entra con tu cuenta de owner para actuar sobre un dispositivo real.',
+    superOverlay: 'Dispositivo real: el fallo se envía al equipo físico. Aquí no se incrusta su pantalla.'
   },
   en: {
     back: '← Incident creator (▤ floor plan advanced mode)', eyebrow: 'Incident creator · test bench', title: 'Bugito breaks, the agent watches',
@@ -75,7 +85,16 @@ const textos = {
     pausaInactivo: 'Player paused after 5 min without activity: it is a real player, so it stops writing to /signage/now.',
     objTitulo: 'Target', objProyecto: 'Project', objDispositivo: 'Device',
     objBanco: 'Test bench (no circuit)', objBancoBc: 'Test bench',
-    objNota: 'Bugito acts on a lab virtual player for that circuit; it never touches the real client device.'
+    objNota: 'Bugito acts on a lab virtual player for that circuit; it never touches the real client device.',
+    superTitulo: 'Real device (superuser)', superIntro: 'To force a fault on a PHYSICAL device in production, sign in with your owner account.',
+    superComo: e => `Signed in as ${e}`, superSalir: 'Sign out', superDispositivo: 'Real device',
+    superCargando: 'Loading registered devices…', superElige: 'Pick a real device…', superVacio: 'No real devices registered right now',
+    superBanner: (d, s) => `⚠ REAL DEVICE · ${d} · ${s} — the fault is sent to the physical unit`,
+    superConfirma: (inc, d, s) => `You are about to FORCE “${inc}” on the REAL device “${d}” (${s}) in PRODUCTION. Are you sure?`,
+    superCancelado: 'Cancelled.', superArmando: 'Confirming and sending to the real device…',
+    superEnviado: (c, d) => `Order “${c}” sent to real device ${d}.`, superRechazo: r => `The server rejects it: ${r}.`,
+    superEntra: 'Sign in with your owner account to act on a real device.',
+    superOverlay: 'Real device: the fault is sent to the physical unit. Its screen is not embedded here.'
   }
 };
 const LANGUAGE_KEY = (window.ADMIRA_SITE_BRAND?.id || 'clearchannel') + '-lang';
@@ -94,6 +113,13 @@ let objetivo = { ...OBJETIVO_BANCO };
 let banco = bancoPara(objetivo);
 let P = pantallaDe(objetivo);
 let catalogoObjetivos = null;
+// Opción B · modo superusuario (dispositivo real). La identidad es el LOGIN DE OWNER por Google
+// (window.BugitoSuper, bugito-super.js): su ID token verificado en el servidor; no hay token
+// maestro en la página. objetivoRealActivo manda sobre el banco de laboratorio cuando está puesto;
+// el fallo va al dispositivo FÍSICO con doble confirmación y un nonce de un solo uso del servidor.
+let objetivoRealActivo = null;
+let pantallasReales = null;
+const superApi = () => (typeof window !== 'undefined' && window.BugitoSuper) || null;
 // En producción, siempre los de verdad; en localhost se pueden apuntar a copias locales (?player=, ?cara=).
 const playerBase = baseLocal(params.get('player'), location.origin) || undefined;
 const caraBase = baseLocal(params.get('cara'), location.origin);
@@ -297,6 +323,7 @@ async function lanzar(texto, { retirar = false } = {}) {
   gesto(); if (pausado) reanudarPlayer();
   const id = resolverIncidencia(texto);
   if (!id) { prueba.mensaje = tr('unknown', String(texto || '').slice(0, 40)); prueba.error = true; pintar(); return prueba.mensaje; }
+  if (objetivoRealActivo) return lanzarReal(id);
   if (!P || ocupado) return '';
   const normal = id === 'normal';
   retirar = retirar && !normal;
@@ -383,6 +410,7 @@ function arrancar() {
   montarCara();
   traducir();
   montarObjetivo();
+  montarSuper();
   const pre = resolverIncidencia(params.get('incidencia'));
   if (pre && pre !== 'normal') { prueba.mensaje = tr('presel', nombre(pre)); pintar(); }
   programar(); vuelta().catch(() => {});
@@ -392,7 +420,7 @@ function arrancar() {
 async function cargarCatalogoObjetivos() {
   if (catalogoObjetivos) return catalogoObjetivos;
   try {
-    const r = await fetch('./bugito-objetivos.json?v=20261014-bugito-2', { cache: 'no-store' });
+    const r = await fetch('./bugito-objetivos.json?v=20261014-bugito-3', { cache: 'no-store' });
     const d = r.ok ? await r.json() : null;
     catalogoObjetivos = d && Array.isArray(d.proyectos) ? d.proyectos : [];
   } catch { catalogoObjetivos = []; }
@@ -440,5 +468,81 @@ function aplicarObjetivo(nuevo) {
   pausado = ''; $('bb-pausa').hidden = true; gesto();
   $('bb-player-frame').src = playerUrl({ base: playerBase, lang, screen: objetivo.screen });
   pintar(); vuelta().catch(() => {});
+}
+// ── Opción B · modo superusuario: dispositivo real (login de owner por Google, doble confirmación, nonce) ──
+function montarSuper() {
+  const caja = $('bb-super'); if (!caja) return;
+  const api = superApi();
+  const host = $('bb-super-signin');
+  if (api && host) { api.init(host, lang); api.onChange(onSuperCambio); }
+  $('bb-super-salir')?.addEventListener('click', () => { api && api.signOut(); });
+  $('bb-super-real')?.addEventListener('change', e => {
+    const screen = e.target.value;
+    if (!screen) { objetivoRealActivo = null; aplicarObjetivo({ ...OBJETIVO_BANCO }); pintarSuper(); return; }
+    const p = (pantallasReales || []).find(x => x.screen === screen);
+    objetivoRealActivo = objetivoReal(screen, p ? p.nombre : screen, p ? p.circuito : '');
+    pintarSuper();
+  });
+  onSuperCambio(api && api.signedIn() ? api.email() : '');
+}
+function onSuperCambio(email) {
+  const dentro = !!email, caja = $('bb-super');
+  if (caja) caja.dataset.on = dentro ? '1' : '';
+  const quien = $('bb-super-quien'); if (quien) quien.textContent = dentro ? tr('superComo', email) : '';
+  const salir = $('bb-super-salir'); if (salir) salir.hidden = !dentro;
+  const host = $('bb-super-signin'); if (host) host.hidden = dentro;
+  if (!dentro) { objetivoRealActivo = null; pantallasReales = null; const sel = $('bb-super-real'); if (sel) sel.innerHTML = ''; if (!objetivo.real) { /* nada */ } else aplicarObjetivo({ ...OBJETIVO_BANCO }); }
+  else poblarReales();
+  pintarSuper();
+}
+async function poblarReales() {
+  const sel = $('bb-super-real'); if (!sel) return;
+  const opt = (v, t) => { const o = document.createElement('option'); o.value = v; o.textContent = t; return o; };
+  sel.innerHTML = ''; sel.append(opt('', tr('superCargando')));
+  try {
+    const r = await fetch(`${SIGNAGE_SCREENS}?t=${Date.now()}`, { cache: 'no-store' });
+    const d = r.ok ? await r.json() : null;
+    pantallasReales = (d && Array.isArray(d.screens) ? d.screens : [])
+      .filter(s => esPantallaReal(s && s.screen))
+      .map(s => ({ screen: String(s.screen), nombre: String(s.locName || s.loc || s.screen), circuito: String(s.circuit || s.loc || '') }));
+  } catch { pantallasReales = []; }
+  sel.innerHTML = '';
+  sel.append(opt('', pantallasReales.length ? tr('superElige') : tr('superVacio')));
+  for (const p of pantallasReales) sel.append(opt(p.screen, `${p.nombre} · ${p.screen}`));
+}
+function pintarSuper() {
+  const banner = $('bb-super-banner');
+  if (banner) { banner.hidden = !objetivoRealActivo; if (objetivoRealActivo) banner.textContent = tr('superBanner', objetivoRealActivo.dispositivo, objetivoRealActivo.screen); }
+  const ov = $('bb-real-overlay'); if (ov) ov.hidden = !objetivoRealActivo;
+}
+// Lanzar un fallo en el dispositivo REAL: doble confirmación, armado (nonce) y envío con el ID token de Google.
+async function lanzarReal(id) {
+  if (ocupado) return '';
+  const api = superApi(), t = objetivoRealActivo;
+  if (!t) return '';
+  const token = api && api.token();
+  if (!token) { prueba.mensaje = tr('superEntra'); prueba.error = true; pintar(); return prueba.mensaje; }
+  const normal = id === 'normal';
+  const tipo = normal ? CATALOGO[0] : CATALOGO.find(c => c.id === id);
+  const cmd = normal ? tipo.vuelta : tipo.orden;
+  if (!normal && !confirm(tr('superConfirma', nombre(id), t.dispositivo, t.screen))) { prueba.mensaje = tr('superCancelado'); prueba.error = false; pintar(); return prueba.mensaje; }
+  ocupado = true; prueba.mensaje = tr('superArmando'); prueba.error = false; pintar();
+  const bearer = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
+  let nonce = '';
+  try {
+    const r = await fetch(MANDO_ARM, { method: 'POST', headers: bearer, body: JSON.stringify({ screen: t.screen }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.nonce) { ocupado = false; prueba.mensaje = tr('superRechazo', (d && d.reason) || r.status); prueba.error = true; pintar(); return prueba.mensaje; }
+    nonce = d.nonce;
+  } catch { ocupado = false; prueba.mensaje = tr('netError'); prueba.error = true; pintar(); return prueba.mensaje; }
+  let r2;
+  try {
+    const resp = await fetch(MANDO_CMD_REAL, { method: 'POST', headers: bearer, body: JSON.stringify({ id: t.screen, screen: t.screen, cmd, confirm: nonce }) });
+    const d = await resp.json().catch(() => ({})); r2 = { ok: resp.ok, reason: d.reason, error: d.error, status: resp.status };
+  } catch { r2 = { ok: false, error: tr('netError') }; }
+  ocupado = false;
+  prueba.mensaje = r2.ok ? tr('superEnviado', cmd, t.dispositivo) : tr('superRechazo', r2.reason || r2.error || r2.status);
+  prueba.error = !r2.ok; pintar();
+  return prueba.mensaje;
 }
 arrancar();

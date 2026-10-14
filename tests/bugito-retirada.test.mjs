@@ -38,6 +38,8 @@ function banco() {
   const context = vm.createContext({
     CATALOGO, tipoIncidencia, orden, resolverIncidencia, prueba, incidencias, detectores,
     objetivo: { screen }, P: { screen, lab: true }, ocupado: false, pausado: '',
+    // Opción B (dispositivo real): en el banco de laboratorio no hay objetivo real; lanzar() sigue por el camino de siempre.
+    objetivoRealActivo: null, lanzarReal: async () => '',
     ICONO: {}, params: new URLSearchParams(),
     $: id => id === 'bb-menu' ? menu : titulo,
     document: { createElement: tag => new Elemento(tag) },

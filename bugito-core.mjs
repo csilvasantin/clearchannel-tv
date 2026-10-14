@@ -12,6 +12,16 @@ import { CATALOGO, tipoIncidencia, pantallasDelPlano, pantallaLab, pasos, VIRTUA
 // sólo acepta órdenes fault-* para `virtual-lab-*`: nunca una pantalla de cliente.
 export const BUGITO_SCREEN = 'virtual-lab-bugito';
 export const PLAYER_BASE = 'https://admira.tv/canal.html';
+// Opción B (dispositivo real, sólo superusuario con login de owner): armar la confirmación de un
+// solo uso y el registro de pantallas reales. El backend exige flag + owner + pantalla registrada + nonce.
+export const MANDO_ARM = 'https://api.admira.store/locations/cmd/fault-arm';
+export const MANDO_CMD_REAL = 'https://api.admira.store/locations/cmd';
+export const SIGNAGE_SCREENS = 'https://api.admira.store/signage/screens';
+// Una pantalla es «real» (de cliente) si NO es un player virtual de laboratorio.
+export const esPantallaReal = screen => { const s = String(screen || ''); return !!s && !/^virtual-lab-/.test(s); };
+export function objetivoReal(screen, nombre = '', circuito = '') {
+  return { proyecto: '', proyectoLabel: '', circuito, dispositivo: nombre || screen, screen: String(screen || ''), real: true };
+}
 // La cara: la nube de Admirito con la piel de Bugito (mismo cargador: admiranext.com/assets/avatar.js).
 export const BUGITO_CARA = 'https://digitalavatar.ai/nube.html?dock=1&personaje=bugito';
 export const BUGITO_ORIGIN = 'https://digitalavatar.ai';

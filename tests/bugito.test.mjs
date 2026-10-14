@@ -210,7 +210,7 @@ test('la página del banco y el botón «Probar con Bugito» del ▤ Creador de 
   assert.match(ui, /esDeBugito\(ev, \$\('bb-cara-frame'\)\.contentWindow, caraOrigen\)/, 'sólo la cara que incrusta la página puede pedir fallos');
   assert.match(plano, /<a id="inc-bugito" class="header-circuit-btn inc-bugito" href="bugito\.html" data-inc="bugito">Probar con Bugito<\/a>/);
   assert.match(inc, /bugito: 'Probar con Bugito'/); assert.match(inc, /bugito: 'Try it with Bugito'/);
-  for (const f of ['bugito.html', 'bugito.mjs', 'bugito.css', 'bugito-core.mjs', 'bugito-objetivos.json']) assert.ok(BIZ_ASSET_FILES.includes(f), f);
+  for (const f of ['bugito.html', 'bugito.mjs', 'bugito.css', 'bugito-core.mjs', 'bugito-objetivos.json', 'bugito-super.js']) assert.ok(BIZ_ASSET_FILES.includes(f), f);
   assert.equal(bizAssetPath(new URL('https://www.admira.biz/bugito')), '/__admira_biz/bugito');
   assert.equal(bizAssetPath(new URL('https://www.admira.biz/bugito.html')), '/__admira_biz/bugito');
 });
@@ -306,4 +306,41 @@ test('la página trae el selector de objetivo y la UI lo cablea sin tocar la sal
   // El mando sigue construyendo la orden contra objetivo.screen (lab), no una pantalla de cliente.
   assert.match(ui, /orden\(normal \? CATALOGO\[0\]\.id : id, objetivo\.screen/);
   assert.doesNotMatch(ui, /orden\([^)]*(sel-dispositivo|real)/i);
+});
+
+// ── Opción B · modo superusuario (dispositivo real, login de owner) ──────────────────────────
+import { MANDO_ARM, MANDO_CMD_REAL, SIGNAGE_SCREENS, esPantallaReal, objetivoReal } from '../bugito-core.mjs';
+
+test('core B: endpoints, pantalla real vs laboratorio y objetivoReal', () => {
+  assert.equal(MANDO_ARM, 'https://api.admira.store/locations/cmd/fault-arm');
+  assert.equal(MANDO_CMD_REAL, 'https://api.admira.store/locations/cmd');
+  assert.equal(SIGNAGE_SCREENS, 'https://api.admira.store/signage/screens');
+  assert.equal(esPantallaReal('alsea-sbux-001-menu'), true);
+  assert.equal(esPantallaReal('virtual-lab-bugito'), false, 'un player de laboratorio no es «real»');
+  assert.equal(esPantallaReal(''), false);
+  const o = objetivoReal('alsea-sbux-001-menu', 'Starbucks A Coruña', 'alsea_starbucks');
+  assert.deepEqual(o, { proyecto: '', proyectoLabel: '', circuito: 'alsea_starbucks', dispositivo: 'Starbucks A Coruña', screen: 'alsea-sbux-001-menu', real: true });
+});
+
+test('la UI del dispositivo real usa LOGIN DE OWNER (Google), nunca un token pegado', () => {
+  const html = readFileSync(new URL('../bugito.html', import.meta.url), 'utf8');
+  const ui = readFileSync(new URL('../bugito.mjs', import.meta.url), 'utf8');
+  const sup = readFileSync(new URL('../bugito-super.js', import.meta.url), 'utf8');
+  // La página carga Google Identity Services y el módulo de login; y tiene la sección de superusuario.
+  assert.match(html, /accounts\.google\.com\/gsi\/client/);
+  assert.match(html, /bugito-super\.js\?v=/);
+  for (const id of ['bb-super', 'bb-super-signin', 'bb-super-real', 'bb-super-banner', 'bb-real-overlay']) assert.ok(html.includes(`id="${id}"`), id);
+  // El token sale del login de Google (window.BugitoSuper), no de un campo de texto pegado.
+  assert.match(ui, /superApi\(\)/);
+  assert.match(ui, /Authorization: `Bearer \$\{token\}`/);
+  assert.doesNotMatch(ui, /superToken/, 'no hay token maestro pegado en memoria');
+  assert.doesNotMatch(html, /type="password"/, 'no se pide pegar ningún token');
+  // El módulo de login usa el ID token de Google del propio usuario, en sessionStorage.
+  assert.match(sup, /google\.accounts\.id\.initialize/);
+  assert.match(sup, /sessionStorage/);
+  assert.doesNotMatch(sup, /localStorage/, 'el token de sesión no se persiste en localStorage');
+  assert.ok(BIZ_ASSET_FILES.includes('bugito-super.js'), 'el login se publica en admira.biz');
+  // El lanzamiento real arma el nonce y envía con confirm; el laboratorio sigue sin pedir nada.
+  assert.match(ui, /MANDO_ARM/); assert.match(ui, /confirm: nonce/);
+  assert.match(ui, /if \(objetivoRealActivo\) return lanzarReal\(id\)/);
 });
