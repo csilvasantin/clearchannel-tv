@@ -202,7 +202,7 @@ test('la página del banco y el botón «Probar con Bugito» del ▤ Creador de 
   const plano = readFileSync(new URL('../plano.html', import.meta.url), 'utf8');
   const inc = readFileSync(new URL('../plano-incidencias.mjs', import.meta.url), 'utf8');
   assert.match(html, /<script defer src="\/galaxy-shell\.js/, 'el shell cuadrático como el plano');
-  assert.match(html, /<script type="module" src="bugito\.mjs\?v=20261014-bugito-1"><\/script>/);
+  assert.match(html, /<script type="module" src="bugito\.mjs\?v=20261014-bugito-2"><\/script>/);
   assert.ok(html.indexOf('id="bb-player-frame"') < html.indexOf('id="bb-cara-frame"'), 'player a la izquierda, Bugito a la derecha');
   for (const k of [...html.matchAll(/data-bb="([a-zA-Z]+)"/g)].map((m) => m[1])) assert.ok(new RegExp(`\\b${k}:`).test(ui), `falta el texto ${k}`);
   assert.match(ui, /en: \{/);
@@ -210,7 +210,7 @@ test('la página del banco y el botón «Probar con Bugito» del ▤ Creador de 
   assert.match(ui, /esDeBugito\(ev, \$\('bb-cara-frame'\)\.contentWindow, caraOrigen\)/, 'sólo la cara que incrusta la página puede pedir fallos');
   assert.match(plano, /<a id="inc-bugito" class="header-circuit-btn inc-bugito" href="bugito\.html" data-inc="bugito">Probar con Bugito<\/a>/);
   assert.match(inc, /bugito: 'Probar con Bugito'/); assert.match(inc, /bugito: 'Try it with Bugito'/);
-  for (const f of ['bugito.html', 'bugito.mjs', 'bugito.css', 'bugito-core.mjs']) assert.ok(BIZ_ASSET_FILES.includes(f), f);
+  for (const f of ['bugito.html', 'bugito.mjs', 'bugito.css', 'bugito-core.mjs', 'bugito-objetivos.json']) assert.ok(BIZ_ASSET_FILES.includes(f), f);
   assert.equal(bizAssetPath(new URL('https://www.admira.biz/bugito')), '/__admira_biz/bugito');
   assert.equal(bizAssetPath(new URL('https://www.admira.biz/bugito.html')), '/__admira_biz/bugito');
 });
@@ -247,4 +247,63 @@ test('revisión: el player del banco es real; se pausa con la pestaña oculta y 
   assert.match(ui, /if \(!P \|\| document\.hidden \|\| pausado\) return;/, 'pausado, el detector no sondea');
   assert.match(ui, /gesto\(\); if \(pausado\) reanudarPlayer\(\);/, 'lanzar una incidencia lo reanuda');
   assert.match(html, /<button type="button" id="bb-reanudar" data-bb="resume">Reanudar<\/button>/);
+});
+
+// ── Objetivo acotado: proyecto · circuito · dispositivo (Carlos 14-oct-2026, Opción A) ───────
+import { OBJETIVO_BANCO, labScreenPara, bancoPara, pantallaDe } from '../bugito-core.mjs';
+import { VIRTUAL_LAB_RE } from '../incidencias-core.mjs';
+
+test('el objetivo deriva SIEMPRE un player de laboratorio válido (virtual-lab-*), nunca uno de cliente', () => {
+  const casos = [
+    { circuito: 'alsea_starbucks', dispositivo: 'Menu board digital' },
+    { circuito: 'alsea_mexico', dispositivo: 'Pantalla recogida' },
+    { circuito: 'un-circuito-con-un-nombre-larguisimo-de-verdad-y-mas', dispositivo: 'y-un-dispositivo-aun-mas-largo-todavia-xxxx' },
+    { circuito: '', dispositivo: '' },
+  ];
+  for (const c of casos) {
+    const s = labScreenPara(c);
+    assert.match(s, VIRTUAL_LAB_RE, `${s} debe ser virtual-lab-*`);
+    assert.ok(s.length <= 48, `${s} cabe en 48`);
+  }
+  assert.equal(labScreenPara({}), 'virtual-lab-bugito', 'sin objetivo → el banco');
+  assert.equal(labScreenPara({ circuito: 'alsea_starbucks', dispositivo: 'Escaparate' }), 'virtual-lab-alsea-starbucks-escaparate');
+});
+
+test('bancoPara/pantallaDe: el plano del objetivo usa la pantalla de laboratorio derivada y el proyecto elegido', () => {
+  const obj = { proyecto: 'starbucks', proyectoLabel: 'Starbucks', circuito: 'alsea_starbucks', dispositivo: 'Escaparate',
+    screen: labScreenPara({ circuito: 'alsea_starbucks', dispositivo: 'Escaparate' }) };
+  const plan = bancoPara(obj);
+  assert.equal(plan.id, BANCO.id, 'el id del banco no cambia (claves estables)');
+  assert.equal(plan.yokup.project_id, 'starbucks');
+  assert.equal(plan.pantallas[0].screenId, 'virtual-lab-alsea-starbucks-escaparate');
+  const p = pantallaDe(obj);
+  assert.ok(p && p.lab, 'la pantalla del objetivo sigue siendo de laboratorio');
+  assert.equal(p.screen, 'virtual-lab-alsea-starbucks-escaparate');
+  // El banco por defecto no cambia de comportamiento.
+  assert.equal(pantallaDe(OBJETIVO_BANCO).screen, BUGITO_SCREEN);
+});
+
+test('catálogo de objetivos: proyectos con circuito y dispositivos, servido en admira.biz', () => {
+  const cat = JSON.parse(readFileSync(new URL('../bugito-objetivos.json', import.meta.url), 'utf8'));
+  assert.ok(Array.isArray(cat.proyectos) && cat.proyectos.length >= 10, 'hay proyectos');
+  for (const p of cat.proyectos) {
+    assert.ok(p.id && p.label && p.circuit, `proyecto completo: ${JSON.stringify(p)}`);
+    assert.ok(Array.isArray(p.dispositivos) && p.dispositivos.length, `${p.id} tiene dispositivos`);
+    // Cada dispositivo deriva un player de laboratorio válido.
+    for (const d of p.dispositivos) assert.match(labScreenPara({ circuito: p.circuit, dispositivo: d }), VIRTUAL_LAB_RE);
+  }
+  const sbux = cat.proyectos.find((p) => p.id === 'starbucks');
+  assert.equal(sbux.circuit, 'alsea_starbucks');
+  assert.ok(BIZ_ASSET_FILES.includes('bugito-objetivos.json'), 'el catálogo se publica');
+});
+
+test('la página trae el selector de objetivo y la UI lo cablea sin tocar la salvaguarda', () => {
+  const html = readFileSync(new URL('../bugito.html', import.meta.url), 'utf8');
+  const ui = readFileSync(new URL('../bugito.mjs', import.meta.url), 'utf8');
+  for (const id of ['bb-sel-proyecto', 'bb-sel-dispositivo', 'bb-objetivo-breadcrumb']) assert.ok(html.includes(`id="${id}"`), id);
+  assert.match(ui, /labScreenPara\(/, 'la UI deriva el player de laboratorio del objetivo');
+  assert.match(ui, /bugito-objetivos\.json/, 'la UI lee el catálogo');
+  // El mando sigue construyendo la orden contra objetivo.screen (lab), no una pantalla de cliente.
+  assert.match(ui, /orden\(normal \? CATALOGO\[0\]\.id : id, objetivo\.screen/);
+  assert.doesNotMatch(ui, /orden\([^)]*(sel-dispositivo|real)/i);
 });

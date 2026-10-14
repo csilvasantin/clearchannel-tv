@@ -17,7 +17,7 @@ export const BIZ_ASSET_FILES = Object.freeze([
   // ▤ Creador de incidencias (DCL-34d5bbccb9cc227bb752a419): mando de fallos de laboratorio + agente detector.
   'plano-incidencias.mjs', 'plano-incidencias.css', 'incidencias-core.mjs', 'incidencias-adaptadores.mjs',
   // Bugito (DCL-5da4653d859552490fd5ae1d): banco de pruebas del Creador de incidencias (admira.biz/bugito).
-  'bugito.html', 'bugito.mjs', 'bugito.css', 'bugito-core.mjs',
+  'bugito.html', 'bugito.mjs', 'bugito.css', 'bugito-core.mjs', 'bugito-objetivos.json',
   // Estudio del Arquitecto (DCL-66d9ae0d5e756d0067127f24): /arquitecto crear · reformar · inventariar (admira.biz/arquitecto).
   'arquitecto.html', 'arquitecto.mjs', 'arquitecto.css', 'arquitecto-core.mjs', 'arquitecto-dibujo.mjs', 'arquitecto-fotos.mjs',
   // El laboratorio también como ficha del mapa (OMNIP_LOCATIONS_EXTRA): sin tocar el catálogo KV.

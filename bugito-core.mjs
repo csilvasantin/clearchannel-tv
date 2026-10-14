@@ -6,7 +6,7 @@
 // Lógica PURA del banco (sin red ni DOM): la pantalla de laboratorio, las URL del player virtual y de la cara de
 // Bugito (la nube de Admirito con ?personaje=bugito), el alias de cada incidencia y en qué estado está Bugito.
 // La red es la del Creador de incidencias (incidencias-adaptadores.mjs) y el detector, el suyo (incidencias-core.mjs).
-import { CATALOGO, tipoIncidencia, pantallasDelPlano, pantallaLab, pasos } from './incidencias-core.mjs?v=20261014-bugito-1';
+import { CATALOGO, tipoIncidencia, pantallasDelPlano, pantallaLab, pasos, VIRTUAL_LAB_RE } from './incidencias-core.mjs?v=20261014-bugito-1';
 
 // El player virtual de laboratorio del banco. La salvaguarda del backend (omnipublicity-api src/fault-lab.js)
 // sólo acepta órdenes fault-* para `virtual-lab-*`: nunca una pantalla de cliente.
@@ -32,6 +32,39 @@ export function pantallaBanco() {
   return p && p.lab ? p : null;
 }
 
+// ── Objetivo acotado: proyecto · circuito · dispositivo (Carlos 14-oct-2026) ───────────────
+// El superusuario escoge sobre qué quiere ver actuar a Bugito. En la Opción A, Bugito NO toca
+// un dispositivo de cliente: actúa sobre un player virtual de LABORATORIO nombrado por ese
+// circuito y dispositivo (`virtual-lab-<circuito>-<dispositivo>`), así el impacto se ve acotado
+// y la salvaguarda del backend (sólo `virtual-lab-*`) sigue intacta. Sin objetivo → el banco.
+const slug = s => String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+  .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+export function labScreenPara({ circuito = '', dispositivo = '' } = {}) {
+  const cuerpo = [slug(circuito), slug(dispositivo)].filter(Boolean).join('-').slice(0, 36).replace(/-+$/,'');
+  const id = `virtual-lab-${cuerpo || 'bugito'}`;
+  return VIRTUAL_LAB_RE.test(id) ? id : BUGITO_SCREEN;
+}
+export const OBJETIVO_BANCO = Object.freeze({ proyecto: '', proyectoLabel: '', circuito: '', dispositivo: '', screen: BUGITO_SCREEN });
+// El plano del banco para un objetivo: misma forma que BANCO pero con la pantalla de laboratorio
+// derivada. El id del banco no cambia (claves de almacenamiento estables); sí el screenId destino.
+export function bancoPara(objetivo = OBJETIVO_BANCO) {
+  const screen = objetivo && objetivo.screen && VIRTUAL_LAB_RE.test(objetivo.screen) ? objetivo.screen : BUGITO_SCREEN;
+  const nombre = objetivo && objetivo.dispositivo
+    ? `${objetivo.proyectoLabel || objetivo.proyecto} · ${objetivo.circuito} · ${objetivo.dispositivo}` : BANCO.nombre;
+  return Object.freeze({
+    id: BANCO.id, nombre: BANCO.nombre,
+    yokup: Object.freeze({ project_id: objetivo && objetivo.proyecto ? objetivo.proyecto : BANCO.yokup.project_id }),
+    pantallas: Object.freeze([Object.freeze({
+      id: 'player-virtual-bugito', nombre, corto: 'Bugito',
+      screenId: screen, orientacion: 'horizontal', resolucion: Object.freeze([1920, 1080])
+    })])
+  });
+}
+export function pantallaDe(objetivo = OBJETIVO_BANCO) {
+  const p = pantallasDelPlano(bancoPara(objetivo))[0];
+  return p && p.lab ? p : null;
+}
+
 // Alias de las órdenes (verbo /bugito <x>, chips de Bugito, ?incidencia=) → id del catálogo o «normal».
 const ALIAS = [
   ['normal', /^(normal|normalidad|clear|fault-clear|limpiar|limpia|arregla|arreglar|fix|restaurar|back|vuelve)\b|normalidad/],
@@ -52,9 +85,9 @@ export const INCIDENCIAS = Object.freeze(CATALOGO.map(t => t.id));
 
 // URL del player virtual (iframe a la izquierda): limpio, sin sonido y a pantalla completa (fit=screen), que es
 // como emite un player físico; así el lienzo es la ventana y los detectores de superficie tienen sentido.
-export function playerUrl({ base = PLAYER_BASE, lang = 'es' } = {}) {
+export function playerUrl({ base = PLAYER_BASE, lang = 'es', screen = BUGITO_SCREEN } = {}) {
   const u = new URL(base);
-  u.searchParams.set('screen', BUGITO_SCREEN);
+  u.searchParams.set('screen', VIRTUAL_LAB_RE.test(screen) ? screen : BUGITO_SCREEN);
   u.searchParams.set('playerType', 'virtual');
   u.searchParams.set('clean', '1');
   u.searchParams.set('muted', '1');
