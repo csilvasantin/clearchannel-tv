@@ -228,6 +228,17 @@ test('/redistribucion opens the floor plan in works mode for the named or open X
   assert.doesNotMatch(nothing.lines[0], /subir=1/);
   assert.equal(C.planoId('  Starbucks Paseo de Gracia 103 '), 'starbucks-paseo-de-gracia-103');
   assert.equal(C.subirPlanoUrl('mi tienda', 'en', ''), '/plano.html?locationId=mi%20tienda&subir=1&lang=en');
+  // Laboratorio de Gran de Gràcia 51 (DCL-6ae9d5b0e2d48ee2fd9c7b19).
+  for (const input of ['/plano laboratorio', '/redistribucion lab', '/obras gran de gracia 51', '/plano Gran de Gràcia 51', '/plano gdg51', '/plano lab-gran-de-gracia-51']) {
+    const opened = [];
+    const r = C.execute(input, fakeCtx({open: url => { opened.push(url); return {ok: true}; }}), 'es');
+    assert.equal(r.ok, true, input);
+    assert.deepEqual(opened, ['/plano.html?locationId=lab-gran-de-gracia-51&modo=obra&lang=es'], input);
+  }
+  // Con dos planos, sin xpacio ni ficha abierta hay que decir cuál.
+  const which = C.execute('/redistribucion', fakeCtx({open: () => assert.fail('must not open')}), 'es');
+  assert.equal(which.ok, false);
+  assert.match(which.lines[0], /Indica el Xpacio.*Starbucks Paseo de Gracia 103, Laboratorio AdmiraNeXT · Gran de Gràcia 51/);
   // El motor común de la suite no quita tildes: la forma acentuada va como alias literal.
   assert.ok(C.VERBS.find(v => v.id === 'redistribucion').aliases.includes('redistribución'));
   assert.equal(C.planoUrl('alsea-sbux-021', 'es', 'https://www.admira.biz/'), 'https://www.admira.biz/plano.html?locationId=alsea-sbux-021&modo=obra&lang=es');

@@ -104,6 +104,8 @@
   // /redistribucion abre su plano en modo obras para cambiar la distribución de pantallas.
   const PLANOS = [
     {id: 'alsea-sbux-021', nombre: 'Starbucks Paseo de Gracia 103', aliases: ['starbucks', 'starbucks 103', 'starbucks paseo de gracia', 'paseo de gracia', 'paseo de gracia 103', 'pg103', 'sbux 021']},
+    // Laboratorio de Carlos (DCL-6ae9d5b0e2d48ee2fd9c7b19): levantado con la webcam PTZ de admira.live; ITIL en Yokup.
+    {id: 'lab-gran-de-gracia-51', nombre: 'Laboratorio AdmiraNeXT · Gran de Gràcia 51', aliases: ['laboratorio', 'lab', 'gran de gracia 51', 'gdg51']},
   ];
   const PLANO_KEYS = new Map();
   for (const p of PLANOS) for (const alias of [p.id, p.nombre, ...p.aliases]) if (!PLANO_KEYS.has(key(alias))) PLANO_KEYS.set(key(alias), p);

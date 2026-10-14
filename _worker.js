@@ -192,6 +192,33 @@ async function agentLogin(request, url) {
   return new Response(response.body, { status: response.status, headers: out });
 }
 
+// Plano compartido (DCL-6ae9d5b0e2d48ee2fd9c7b19): los clientes globales comparten planos e
+// inventario ITIL entre las cinco soluciones, y /data/xpacios/<id>.json se lee desde fuera
+// (gemelo de admira.store, adaptaciones de admira.studio, admira.tv). Son planos ya públicos:
+// CORS abierto solo para leer (GET/HEAD, sin credenciales) y 5 min de caché. Las cabeceras van
+// aquí y no en _headers porque la release de admira.biz conserva el _headers de la base y este
+// worker sí se copia de la raíz (scripts/build-biz-release.mjs). Un id sin plano da 404 en JSON
+// (Pages respondería con la portada, 200 HTML).
+const PLANO_JSON = /^\/data\/xpacios\/[a-z0-9][a-z0-9-]{0,79}\.json$/;
+const PLANO_CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS', 'X-Content-Type-Options': 'nosniff' };
+function sharedPlanPreflight() {
+  return new Response(null, { status: 204, headers: Object.assign({ 'Access-Control-Max-Age': '86400', 'Cache-Control': 'public, max-age=86400' }, PLANO_CORS) });
+}
+function sharedPlan(response, pathname) {
+  var type = response.headers.get('content-type') || '';
+  if (!response.ok || type.includes('text/html')) {
+    var id = pathname.split('/').pop().replace(/\.json$/, '');
+    return new Response(JSON.stringify({ error: 'sin-plano', id: id }), { status: 404, headers: Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=60' }, PLANO_CORS) });
+  }
+  var headers = new Headers(response.headers);
+  for (var name in PLANO_CORS) headers.set(name, PLANO_CORS[name]);
+  headers.set('Content-Type', 'application/json; charset=utf-8');
+  headers.set('Cache-Control', 'public, max-age=300');
+  headers.delete('Access-Control-Allow-Credentials');
+  headers.delete('Set-Cookie');
+  return new Response(response.body, { status: response.status, headers: headers });
+}
+
 export default {
   async fetch(request, env) {
     if (new URL(request.url).pathname === '/avatar-ask') return avatarAsk({request});
@@ -213,6 +240,8 @@ export default {
     let publicPath=url.pathname;
     try {publicPath=decodeURIComponent(publicPath);} catch (_) {}
     if ([BIZ_ASSET_PREFIX,CC_NATIVE_PREFIX].some(prefix=>publicPath===prefix||publicPath.startsWith(prefix+'/'))) return new Response('Not found', {status:404});
+    var plano = PLANO_JSON.test(url.pathname);
+    if (plano && request.method === 'OPTIONS') return sharedPlanPreflight();
     var assetPath = bizAssetPath(url, request.method) || clearChannelNativePath(url, request.method);
     var assetRequest = request;
     if (assetPath) {
@@ -221,6 +250,7 @@ export default {
       assetRequest = new Request(assetUrl, request);
     }
     var response = await env.ASSETS.fetch(assetRequest);
+    if (plano && (request.method === 'GET' || request.method === 'HEAD')) return sharedPlan(response, url.pathname);
     var contentType = response.headers.get('content-type') || '';
     if (!contentType.includes('text/html')) return response;
     var avatar = wantsAvatar(url, response);
@@ -229,4 +259,4 @@ export default {
   }
 };
 
-export { AVATAR_TAG, SELLO_TAG, ADMIRA_HOST, AGENT_LOGIN_HOST, agentLogin, agentUpstream, ADMIRA_MCP_FILES, YOKUP_MOVED_HOST, admiraApex, isYokupPath, replaceBrand, yokupMoved };
+export { PLANO_JSON, AVATAR_TAG, SELLO_TAG, ADMIRA_HOST, AGENT_LOGIN_HOST, agentLogin, agentUpstream, ADMIRA_MCP_FILES, YOKUP_MOVED_HOST, admiraApex, isYokupPath, replaceBrand, yokupMoved };

@@ -15,7 +15,7 @@ import {
 
 const copy = {
   es: {
-    back: '← Volver a la ficha', eyebrow: 'Plano del Xpacio · inventario ITIL', current: 'Distribución actual', works: 'Propuesta de obra',
+    back: '← Volver a la ficha', backYokup: '← Ver en Yokup (ITIL)', eyebrow: 'Plano del Xpacio · inventario ITIL', current: 'Distribución actual', works: 'Propuesta de obra',
     modes: 'Qué distribución ver', loading: 'Cargando el plano…', noPlan: 'Este Xpacio aún no tiene plano.', loadError: 'No se pudo cargar el plano.',
     plan: 'Planta', planHint: 'Pulsa una pared para ver su alzado', elevation: 'Alzado', planAria: 'Plano en planta', elevationAria: 'Alzado de la pared',
     dragHint: 'Arrastra una pantalla en el alzado o muévela con las flechas (Mayús: 10 cm). Los mosaicos se mueven enteros salvo que lo desactives.',
@@ -34,6 +34,7 @@ const copy = {
     types: { alta: 'Alta', baja: 'Baja', modificacion: 'Modificación', sustitucion: 'Sustitución', contenidos: 'Contenidos' }, inventoryLine: 'Inventario', contentLine: 'Contenidos',
     removed: 'retirada', unchanged: 'sin cambios', criterion: m => `criterio: base a ${m} m`, wallOf: (w, l, h) => `${w} · ${l} m de largo · ${h} m de alto`,
     source: 'Fuente', model: 'Modelo', state: 'Estado', size: 'Tamaño', player: 'Player', screenId: 'Pantalla en admira.studio', group: 'Mosaico',
+    devices: 'Players y dispositivos · ITIL', thDevice: 'Dispositivo', thKind: 'Tipo', thRole: 'Función',
     // ▤ Subir plano
     noPlanUpload: 'Este Xpacio aún no tiene plano: súbelo desde ▤ Modo avanzado.', openUpload: '▤ Subir plano',
     upTitle: 'Subir plano', upHint: 'El plano en JSON (admira.xpacio-plano/1), o una imagen o un PDF como calco bajo la planta.',
@@ -50,7 +51,7 @@ const copy = {
     traceTitle: 'Calco', traceWidth: 'Ancho real (m)', traceOpacity: 'Opacidad', traceRemove: 'Quitar calco', noStore: 'Este navegador no deja guardar planos: lo que subas dura hasta recargar.'
   },
   en: {
-    back: '← Back to the profile', eyebrow: 'Xpace floor plan · ITIL inventory', current: 'Current layout', works: 'Works proposal',
+    back: '← Back to the profile', backYokup: '← View in Yokup (ITIL)', eyebrow: 'Xpace floor plan · ITIL inventory', current: 'Current layout', works: 'Works proposal',
     modes: 'Which layout to show', loading: 'Loading the floor plan…', noPlan: 'This Xpace has no floor plan yet.', loadError: 'The floor plan could not be loaded.',
     plan: 'Floor plan', planHint: 'Click a wall to see its elevation', elevation: 'Elevation', planAria: 'Floor plan', elevationAria: 'Wall elevation',
     dragHint: 'Drag a screen in the elevation or move it with the arrow keys (Shift: 10 cm). Mosaics move as a whole unless you turn it off.',
@@ -69,6 +70,7 @@ const copy = {
     types: { alta: 'New', baja: 'Removal', modificacion: 'Change', sustitucion: 'Replacement', contenidos: 'Content' }, inventoryLine: 'Inventory', contentLine: 'Content',
     removed: 'removed', unchanged: 'unchanged', criterion: m => `criterion: bottom at ${m} m`, wallOf: (w, l, h) => `${w} · ${l} m long · ${h} m high`,
     source: 'Source', model: 'Model', state: 'Status', size: 'Size', player: 'Player', screenId: 'Screen in admira.studio', group: 'Mosaic',
+    devices: 'Players and devices · ITIL', thDevice: 'Device', thKind: 'Type', thRole: 'Role',
     // ▤ Upload floor plan
     noPlanUpload: 'This Xpace has no floor plan yet: upload it from ▤ Advanced mode.', openUpload: '▤ Upload floor plan',
     upTitle: 'Upload floor plan', upHint: 'The floor plan as JSON (admira.xpacio-plano/1), or an image or a PDF as a trace under the plan.',
@@ -107,6 +109,16 @@ const almacen = almacenPlanos();
 let publicado = null, publicadoEstado = 'none', registro = null;
 const calcoActual = () => (plan && registro && registro.calco) || null;
 let calcoNode = { src: '', node: null };
+// Escala de rótulos, trazos finos y márgenes (--k en plano.css): 1 en un local de 14 m como
+// Starbucks; en una sala pequeña, proporcional, para que se lean igual en pantalla.
+let K = 1;
+const scaleOf = p => {
+  const xs = p.paredes.flatMap(w => [w.a[0], w.b[0]]), ys = p.paredes.flatMap(w => [w.a[1], w.b[1]]);
+  const span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
+  return Math.min(1, Math.max(0.2, round(span / 14, 3)));
+};
+// Conos de visión y rótulos de mosaico: más cortos en salas pequeñas, sin bajar de un tercio.
+const coneScale = () => Math.max(K, 0.35);
 
 function el(tag, attrs = {}, parent) {
   const node = document.createElementNS(NS, tag);
@@ -173,7 +185,7 @@ function renderPlanta() {
   const svg = $('planta');
   svg.replaceChildren();
   const xs = plan.paredes.flatMap(w => [w.a[0], w.b[0]]), ys = plan.paredes.flatMap(w => [w.a[1], w.b[1]]);
-  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys), m = 90;
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys), m = 90 * K;
   svg.setAttribute('viewBox', `${minX * U - m} ${minY * U - m} ${(maxX - minX) * U + 2 * m} ${(maxY - minY) * U + 2 * m}`);
   el('polygon', { class: 'floor', points: plan.paredes.map(w => `${w.a[0] * U},${w.a[1] * U}`).join(' ') }, svg);
   // Calco subido: sobre el suelo y debajo de paredes, muebles y pantallas; no recibe el puntero.
@@ -188,7 +200,7 @@ function renderPlanta() {
 
   for (const f of plan.mobiliario || []) {
     el('rect', { class: 'furniture', x: f.x * U, y: f.y * U, width: f.w * U, height: f.d * U, rx: 6 }, svg);
-    text(svg, (f.x + f.w / 2) * U, (f.y + f.d / 2) * U + 7, f.nombre || f.id, 'furniture-label', { 'text-anchor': 'middle' });
+    furnitureLabel(svg, f);
   }
   for (const w of plan.paredes) {
     el('line', { class: 'wall' + (w.id === state.wallId ? ' active' : ''), x1: w.a[0] * U, y1: w.a[1] * U, x2: w.b[0] * U, y2: w.b[1] * U }, svg);
@@ -212,7 +224,7 @@ function renderPlanta() {
     hit.addEventListener('click', () => selectWall(w.id));
     hit.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectWall(w.id); } });
     const mid = pointOnWall(w, wallLength(w) / 2), [nx, ny] = inwardNormal(w);
-    const lx = mid[0] * U - nx * 45, ly = mid[1] * U - ny * 45 + 7;
+    const lx = mid[0] * U - nx * 45 * K, ly = mid[1] * U - ny * 45 * K + 7 * K;
     const vertical = Math.abs(nx) > Math.abs(ny);
     text(svg, lx, ly, `${w.nombre || w.id} · ${fmt(wallLength(w))} m`, 'wall-label', { 'text-anchor': 'middle', transform: vertical ? `rotate(-90 ${lx} ${ly})` : null });
   }
@@ -234,9 +246,55 @@ function renderPlanta() {
   for (const { wall, name, group, fs } of labels.values()) {
     const w = wallById(wall); if (!w) continue;
     const mid = (Math.min(...fs.map(f => f.x0)) + Math.max(...fs.map(f => f.x1))) / 2;
-    const c = pointOnWall(w, mid), [nx, ny] = inwardNormal(w), d = 1.65 * U;
-    text(svg, c[0] * U + nx * d, c[1] * U + ny * d + 9, name, 'scr-label' + (group ? ' group' : ''), { 'text-anchor': 'middle' });
+    const c = pointOnWall(w, mid), [nx, ny] = inwardNormal(w), d = 1.65 * U * coneScale();
+    const x = c[0] * U + nx * d, y = c[1] * U + ny * d;
+    // En una pared vertical de la planta el rótulo va girado, como el de la pared: no invade la sala.
+    if (Math.abs(nx) > Math.abs(ny)) text(svg, x + 9 * K, y, name, 'scr-label' + (group ? ' group' : ''), { 'text-anchor': 'middle', transform: `rotate(-90 ${x + 9 * K} ${y})` });
+    else text(svg, x, y + 9 * K, name, 'scr-label' + (group ? ' group' : ''), { 'text-anchor': 'middle' });
   }
+  drawDevices(svg);
+}
+
+// Dispositivos del inventario (players, webcam…): una marca pequeña con su nombre y, en el
+// título, su CI ITIL y su rol. Con `s` se sitúa en su pared; un player sin `s`, a la altura de
+// las pantallas que mueve (mismo `player`), sobre la mesa; si no, en el centro de su pared.
+function devicePlace(d) {
+  const w = wallById(d.pared); if (!w) return null;
+  let s = Number.isFinite(d.s) ? d.s : null, inward = 0.18;
+  if (s === null) {
+    // Junto al final de sus pantallas (no encima del rótulo del mosaico) y a 30 cm de la pared.
+    const driven = plan.pantallas.filter(x => x.pared === w.id && x.player && x.player === d.nombre);
+    s = driven.length ? Math.max(...driven.map(x => footprint(x).x1)) + 0.15 : wallLength(w) / 2;
+    inward = 0.3;
+  }
+  const c = pointOnWall(w, Math.min(Math.max(s, 0), wallLength(w))), [nx, ny] = inwardNormal(w);
+  return [c[0] * U + nx * inward * U, c[1] * U + ny * inward * U];
+}
+function drawDevices(svg) {
+  const size = Math.max(10, 40 * K);
+  for (const d of plan.dispositivos || []) {
+    const p = devicePlace(d); if (!p) continue;
+    const iot = d.categoria !== 'player';
+    const g = el('g', { class: 'device ' + (iot ? 'iot' : 'player'), 'data-device': d.id }, svg);
+    const title = document.createElementNS(NS, 'title');
+    title.textContent = [d.nombre, d.itil, d.rol].filter(Boolean).join(' · ');
+    g.append(title);
+    if (iot) el('circle', { class: 'device-mark', cx: p[0], cy: p[1], r: size / 2 }, g);
+    else el('rect', { class: 'device-mark', x: p[0] - size / 2, y: p[1] - size / 2, width: size, height: size, rx: size / 5 }, g);
+    text(g, p[0] + size / 2 + 6 * K, p[1] + 8 * K, d.fleet || (iot ? 'Webcam' : d.nombre || d.id), 'device-label');
+  }
+}
+
+// Rótulo de un mueble en planta. Si no cabe a lo ancho (texto estimado a 0,55 em por carácter):
+// en vertical si el mueble es más largo que ancho; si no, con letra más pequeña (hasta el 60 %).
+// En los muebles de Starbucks cabe siempre: se pinta como antes.
+function furnitureLabel(svg, f) {
+  const name = f.nombre || f.id, size = 26 * K, cx = (f.x + f.w / 2) * U, cy = (f.y + f.d / 2) * U;
+  const width = n => String(name).length * 0.55 * n;
+  if (width(size) <= f.w * U) return text(svg, cx, cy + 7 * K, name, 'furniture-label', { 'text-anchor': 'middle' });
+  if (f.d > f.w && width(size) <= f.d * U) return text(svg, cx + 7 * K, cy, name, 'furniture-label', { 'text-anchor': 'middle', transform: `rotate(-90 ${cx + 7 * K} ${cy})` });
+  const fit = Math.max(size * 0.6, f.w * U / (String(name).length * 0.55));
+  return text(svg, cx, cy + fit / 4, name, 'furniture-label', { 'text-anchor': 'middle', style: `font-size:${round(fit, 2)}px` });
 }
 
 function drawPlanScreen(svg, s, { ghost = false, error = false } = {}) {
@@ -247,7 +305,7 @@ function drawPlanScreen(svg, s, { ghost = false, error = false } = {}) {
   const body = `${q(p0, off)} ${q(p1, off)} ${q(p1, off + depth)} ${q(p0, off + depth)}`;
   if (ghost) { el('polygon', { class: 'scr-ghost', points: body }, svg); return; }
   const g = el('g', { class: groupClass(s, error), 'data-id': s.id }, svg);
-  const c = pointOnWall(w, s.s), reach = 1.4 * U;
+  const c = pointOnWall(w, s.s), reach = 1.4 * U * coneScale();
   const cx = c[0] * U + nx * (off + depth), cy = c[1] * U + ny * (off + depth);
   const len = wallLength(w), ux = (w.b[0] - w.a[0]) / len, uy = (w.b[1] - w.a[1]) / len, spread = reach * 0.6;
   el('polygon', { class: 'scr-cone', points: `${q(p0, off + depth)} ${q(p1, off + depth)} ${cx + nx * reach + ux * spread},${cy + ny * reach + uy * spread} ${cx + nx * reach - ux * spread},${cy + ny * reach - uy * spread}` }, g);
@@ -260,18 +318,20 @@ function renderAlzado() {
   const svg = $('alzado');
   svg.replaceChildren();
   const w = wallById(state.wallId); if (!w) return;
-  const len = wallLength(w), alto = w.alto || plan.planta.alto, mL = 70, mT = 50, mB = 80;
+  const len = wallLength(w), alto = w.alto || plan.planta.alto, mL = 70 * K, mT = 50 * K, mB = 80 * K;
   svg.setAttribute('viewBox', `${-mL} ${-mT} ${len * U + mL * 2} ${alto * U + mT + mB}`);
   svg.setAttribute('aria-label', tr('wallOf', w.nombre || w.id, fmt(len), fmt(alto)));
   const Y = z => (alto - z) * U;
   el('rect', { class: 'elev-wall', x: 0, y: 0, width: len * U, height: alto * U }, svg);
   for (const h of (plan.huecos || []).filter(h => h.pared === w.id)) {
     el('rect', { class: h.tipo === 'puerta' ? 'elev-door' : 'elev-glass', x: h.desde * U, y: Y((h.base || 0) + h.alto), width: h.ancho * U, height: h.alto * U }, svg);
-    text(svg, (h.desde + h.ancho / 2) * U, Y((h.base || 0) + h.alto) - 10, h.nombre || h.tipo, 'dim', { 'text-anchor': 'middle' });
+    text(svg, (h.desde + h.ancho / 2) * U, Y((h.base || 0) + h.alto) - 10 * K, h.nombre || h.tipo, 'dim', { 'text-anchor': 'middle' });
   }
   const crit = criteria(plan);
   el('line', { class: 'guide', x1: 0, y1: Y(crit.alturaMinima), x2: len * U, y2: Y(crit.alturaMinima) }, svg);
-  text(svg, 8, Y(crit.alturaMinima) - 8, tr('criterion', fmt(crit.alturaMinima)), 'guide-label');
+  // Si un mueble más alto que el criterio tapa el arranque de la pared, el rótulo va al otro extremo.
+  const startBlocked = (plan.mobiliario || []).some(m => { const p = furnitureAgainstWall(m, w); return p.dist <= crit.profundidadMueble && p.dist >= -0.05 && p.s0 < 1.6 && p.s1 > 0 && m.alto > crit.alturaMinima; });
+  text(svg, startBlocked ? len * U - 8 * K : 8 * K, Y(crit.alturaMinima) - 8 * K, tr('criterion', fmt(crit.alturaMinima)), 'guide-label', startBlocked ? { 'text-anchor': 'end' } : {});
 
   const errors = errorIds();
   if (state.mode === 'obra') {
@@ -288,7 +348,7 @@ function renderAlzado() {
     const f = footprint(s);
     const g = el('g', { class: groupClass(s, errors.has(s.id)) + (moving.has(s.id) && s.id !== state.selectedId ? ' moving' : ''), 'data-id': s.id, tabindex: 0, role: 'button', 'aria-label': `${s.nombre || s.id} · ${fmt(f.w)}×${fmt(f.h)} m` }, svg);
     el('rect', { class: 'scr-body', x: f.x0 * U, y: Y(f.z1), width: f.w * U, height: f.h * U, rx: 2 }, g);
-    text(g, s.s * U, Y(f.z0 + f.h / 2) + 7, shortName(s), 'scr-label', { 'text-anchor': 'middle' });
+    text(g, s.s * U, Y(f.z0 + f.h / 2) + 7 * K, shortName(s), 'scr-label', { 'text-anchor': 'middle' });
     g.addEventListener('pointerdown', e => startDrag(e, s.id));
     g.addEventListener('keydown', e => nudge(e, s.id));
     g.addEventListener('focus', () => { if (state.selectedId !== s.id) select(s.id, { keepFocus: true }); });
@@ -298,7 +358,7 @@ function renderAlzado() {
     const members = groupOf(screens(), gId).filter(s => s.pared === w.id), fs = members.map(footprint);
     const x0 = Math.min(...fs.map(f => f.x0)), x1 = Math.max(...fs.map(f => f.x1)), top = Math.max(...fs.map(f => f.z1));
     const name = (members.find(s => s.grupoNombre) || {}).grupoNombre || gId;
-    text(svg, (x0 + x1) / 2 * U, Y(top) - 14, `${name} · ${composition(screens(), gId)} · ${groupCanvas(screens(), gId).join('×')} px · ${fmt(x1 - x0)} m`, 'scr-label', { 'text-anchor': 'middle' });
+    text(svg, (x0 + x1) / 2 * U, Y(top) - 14 * K, `${name} · ${composition(screens(), gId)} · ${groupCanvas(screens(), gId).join('×')} px · ${fmt(x1 - x0)} m`, 'scr-label', { 'text-anchor': 'middle' });
   }
   // Muebles delante de la pared: tapan lo que quede por debajo de su altura.
   for (const m of plan.mobiliario || []) {
@@ -306,15 +366,23 @@ function renderAlzado() {
     if (p.dist > crit.profundidadMueble || p.dist < -0.05) continue;
     const s0 = Math.max(0, p.s0), s1 = Math.min(len, p.s1); if (s1 <= s0) continue;
     el('rect', { class: 'elev-furn', x: s0 * U, y: Y(m.alto), width: (s1 - s0) * U, height: m.alto * U }, svg);
-    text(svg, (s0 + s1) / 2 * U, Y(m.alto / 2) + 7, m.nombre || m.id, 'furniture-label', { 'text-anchor': 'middle' });
+    text(svg, (s0 + s1) / 2 * U, Y(m.alto / 2) + 7 * K, m.nombre || m.id, 'furniture-label', { 'text-anchor': 'middle' });
   }
-  el('line', { class: 'elev-floor', x1: -30, y1: Y(0), x2: len * U + 30, y2: Y(0) }, svg);
-  el('line', { class: 'dim-line', x1: 0, y1: Y(0) + 34, x2: len * U, y2: Y(0) + 34 }, svg);
-  text(svg, len * U / 2, Y(0) + 62, `${fmt(len)} m`, 'dim', { 'text-anchor': 'middle' });
-  text(svg, -16, Y(alto / 2), `${fmt(alto)} m`, 'dim', { 'text-anchor': 'middle', transform: `rotate(-90 -16 ${Y(alto / 2)})` });
+  // Dispositivos con posición en esta pared (la webcam): marca pequeña con su CI en el título.
+  for (const d of (plan.dispositivos || []).filter(d => d.pared === w.id && Number.isFinite(d.s) && Number.isFinite(d.z))) {
+    const g = el('g', { class: 'device ' + (d.categoria === 'player' ? 'player' : 'iot'), 'data-device': d.id }, svg);
+    const title = document.createElementNS(NS, 'title');
+    title.textContent = [d.nombre, d.itil, d.rol].filter(Boolean).join(' · ');
+    g.append(title);
+    el('circle', { class: 'device-mark', cx: d.s * U, cy: Y(d.z), r: Math.max(6, 20 * K) }, g);
+  }
+  el('line', { class: 'elev-floor', x1: -30 * K, y1: Y(0), x2: len * U + 30 * K, y2: Y(0) }, svg);
+  el('line', { class: 'dim-line', x1: 0, y1: Y(0) + 34 * K, x2: len * U, y2: Y(0) + 34 * K }, svg);
+  text(svg, len * U / 2, Y(0) + 62 * K, `${fmt(len)} m`, 'dim', { 'text-anchor': 'middle' });
+  text(svg, -16 * K, Y(alto / 2), `${fmt(alto)} m`, 'dim', { 'text-anchor': 'middle', transform: `rotate(-90 ${-16 * K} ${Y(alto / 2)})` });
   if (sel && sel.pared === w.id) {
     const f = footprint(sel);
-    text(svg, sel.s * U, Y(0) + 26, `↔ ${fmt(sel.s)} m · ↕ ${fmt(sel.z)} m`, 'dim', { 'text-anchor': 'middle' });
+    text(svg, sel.s * U, Y(0) + 26 * K, `↔ ${fmt(sel.s)} m · ↕ ${fmt(sel.z)} m`, 'dim', { 'text-anchor': 'middle' });
     el('line', { class: 'dim-line', x1: sel.s * U, y1: Y(0), x2: sel.s * U, y2: Y(f.z0) }, svg);
   }
 }
@@ -372,7 +440,18 @@ function renderInventory() {
   }).join('');
   $('inventory').innerHTML = head + `<tbody>${body}</tbody>`;
   $('inv-count').textContent = tr('screens', screens().length);
+  renderDevices();
   $('inventory').querySelectorAll('tbody tr').forEach(row => row.addEventListener('click', () => select(row.dataset.id, { wall: true })));
+}
+
+// Players, webcam y demás CI del Xpacio que no son pantallas (bloque `dispositivos`).
+function renderDevices() {
+  const list = Array.isArray(plan.dispositivos) ? plan.dispositivos : [];
+  $('devices').hidden = !list.length;
+  if (!list.length) { $('devices').replaceChildren(); return; }
+  const rows = list.map(d => `<tr><td>${d.itil ? `<code>${esc(d.itil)}</code>` : `<span class="tag">${tr('pending')}</span>`}</td><td>${esc(d.nombre || d.id)}</td>
+    <td>${esc(d.categoria === 'player' ? tr('player') : d.categoria === 'iot' ? 'IoT' : d.categoria || '—')}</td><td>${esc(d.pared ? wallName(d.pared) : '—')}</td><td>${esc(d.rol || '')}</td></tr>`).join('');
+  $('devices').innerHTML = `<h3>${esc(tr('devices'))}</h3><table><thead><tr><th>${tr('thItil')}</th><th>${tr('thDevice')}</th><th>${tr('thKind')}</th><th>${tr('thWall')}</th><th>${tr('thRole')}</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function facts(s) {
@@ -535,7 +614,7 @@ document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click',
 }));
 document.addEventListener('admira:lang', e => {
   const next = e.detail?.lang === 'es' ? 'es' : 'en'; if (next === lang) return;
-  lang = next; translate(); if (plan) { renderSource(); renderAll(); }
+  lang = next; translate(); setBackLink(); if (plan) { renderSource(); renderAll(); }
   renderTrace(); paintUpload(); paintUploadStatus();
 });
 
@@ -560,10 +639,30 @@ function when(iso) {
   return Number.isNaN(d.getTime()) ? '' : d.toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' });
 }
 
+// «← Volver a la ficha» lleva al mapa comercial. Un Xpacio que no está en ese catálogo y lleva
+// `yokup.portal` (el laboratorio de Gran de Gràcia 51) enlaza su establecimiento en Yokup, el
+// maestro del ITIL. Solo https y dominios de Yokup: el JSON puede venir subido.
+const YOKUP_HOST = /^(?:www\.)?(?:admira\.app|yokup\.com)$/i;
+function yokupPortal(p) {
+  try {
+    const url = new URL(p && p.yokup && p.yokup.portal);
+    return url.protocol === 'https:' && YOKUP_HOST.test(url.hostname) ? url.href : '';
+  } catch { return ''; }
+}
+function setBackLink() {
+  const back = $('back'), portal = yokupPortal(plan);
+  back.dataset.copy = portal ? 'backYokup' : 'back';
+  back.textContent = tr(back.dataset.copy);
+  back.href = portal || `/?locationId=${encodeURIComponent(xpacioId)}&lang=${lang}`;
+}
+
 // ── Mostrar un plano o la invitación a subirlo ───────────────────────────────
 function showPlan(next, mode = 'actual') {
   clearTimeout(saveTimer);
   plan = next;
+  K = scaleOf(plan);
+  for (const id of ['planta', 'alzado']) $(id).style.setProperty('--k', K);
+  setBackLink();
   Object.assign(state, { mode: 'actual', wallId: null, selectedId: null, proposal: null });
   drag = null;
   $('saved').textContent = '';
@@ -582,6 +681,7 @@ function showPlan(next, mode = 'actual') {
 function showNoPlan() {
   clearTimeout(saveTimer);
   plan = null;
+  setBackLink();
   Object.assign(state, { mode: 'actual', wallId: null, selectedId: null, proposal: null });
   setStatus('');
   $('title').textContent = xpacioId;
@@ -926,7 +1026,7 @@ async function loadPublished() {
 async function init() {
   translate();
   $('upload-file').accept = ACEPTA;
-  $('back').href = `/?locationId=${encodeURIComponent(xpacioId)}&lang=${lang}`;
+  setBackLink();
   paintUpload();
   // Lo subido manda, pero IndexedDB no puede dejar la página en «Cargando…»: tope de 1,5 s.
   const [stored] = await Promise.all([conTiempo(almacen.leer(xpacioId), ESPERA_IDB, null), loadPublished()]);
