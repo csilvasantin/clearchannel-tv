@@ -50,7 +50,12 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$CLOUDFLARE_API_TOKEN" || { echo "✗ falta el secreto CLOUDFLARE_API_TOKEN en el repo"; exit 1; }
-          ./deploy-biz.sh
+          # Un token mal pegado (espacios, salto de línea o la línea de al lado) rompe la cabecera Authorization
+          # de wrangler. Nos quedamos solo con lo que tiene forma de token de Cloudflare (14-oct-2026).
+          token="$(printf '%s' "$CLOUDFLARE_API_TOKEN" | grep -oE '[A-Za-z0-9_-]{40,}' | head -1 || true)"
+          test -n "$token" || { echo "✗ CLOUDFLARE_API_TOKEN no tiene forma de token de Cloudflare: vuelve a guardarlo"; exit 1; }
+          echo "::add-mask::$token"
+          CLOUDFLARE_API_TOKEN="$token" ./deploy-biz.sh
 
       - name: Comprobar producción
         run: |

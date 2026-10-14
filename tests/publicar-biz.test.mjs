@@ -23,6 +23,8 @@ test('el flujo usa los secretos de Cloudflare y firma con el agente del cambio �
   assert.match(flujo, /ADMIRA_RELEASE_MACHINE=GitHubActions/);
   assert.match(flujo, /\.\/deploy-biz\.sh/);
   assert.match(flujo, /gitShort/, 'comprueba que producción sirve el commit publicado');
+  assert.match(flujo, /grep -oE '\[A-Za-z0-9_-\]\{40,\}'/, 'limpia un token mal pegado');
+  assert.match(flujo, /::add-mask::\$token/, 'el token limpio también se enmascara en los logs');
 });
 
 test('deploy-biz.sh en CI no empuja ni usa el vault, se adelanta si main ya va por delante y respeta 4 por hora', () => {
