@@ -1,0 +1,28 @@
+const {chromium}=require(process.env.BIZ_PLAYWRIGHT_MODULE || 'playwright');
+const fs=require('fs');const assert=require('node:assert/strict');const {join}=require('node:path');const evidence=process.env.BIZ_PREVIEW_EVIDENCE_DIR || fs.mkdtempSync(join(require('node:os').tmpdir(),'biz-context-browser-'));
+(async()=>{
+ const browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1440,height:1000}});
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/*',async route=>{if(route.request().method()!=='GET'&&!route.request().url().startsWith('http://127.0.0.1:5977/'))return route.abort();return route.continue();});
+ await page.goto('http://127.0.0.1:5977/preview/');await page.waitForFunction(()=>window.AdmiraContexto?.actual().synced);
+ await page.click('#superuser');await page.waitForFunction(()=>window.AdmiraContexto?.actual().superusuario);
+ const command=async line=>{await page.fill('#command',line);await page.locator('#review-command button').click();await page.waitForFunction(()=>!document.getElementById('command-result').textContent.includes('Comprobando contexto'));await page.waitForTimeout(300);};
+ await command('/proyecto starbucks');await page.waitForFunction(()=>window.AdmiraContexto.actual().proyecto==='starbucks');
+ await command('/marca lumbre');await page.waitForFunction(()=>window.AdmiraMarca?.actual()?.id==='lumbre',{},{timeout:20000});
+ const state=await page.evaluate(()=>({context:AdmiraContexto.actual(),brand:AdmiraMarca.actual(),screens:document.getElementById('screens').textContent,links:[...document.querySelectorAll('a')].map(a=>a.href),logo:document.getElementById('mb-bar-logo')?.innerHTML,platform:document.documentElement.dataset.mbPlataforma}));
+ assert.equal(state.context.proyecto,'starbucks');assert.equal(state.context.marca,'lumbre');assert.equal(JSON.parse(state.screens.slice(state.screens.indexOf('\n')+1)).screens.length,2);assert.ok(state.logo.includes('Lumbre'));
+ await page.screenshot({path:join(evidence,'superuser.png'),fullPage:true});console.log(JSON.stringify({step:'authorized',state,errors}));
+ await command('/proyecto off');await page.waitForFunction(()=>AdmiraContexto.actual().proyecto===null);console.log(JSON.stringify({step:'reset',state:await page.evaluate(()=>AdmiraContexto.actual())}));
+ await page.click('#reader');await page.waitForFunction(()=>window.AdmiraContexto?.actual().synced&&!AdmiraContexto.actual().superusuario);
+ await command('/proyecto starbucks');console.log(JSON.stringify({step:'denied-selection',output:await page.locator('#command-result').innerText(),context:await page.evaluate(()=>AdmiraContexto.actual())}));
+ await command('/proyecto off');console.log(JSON.stringify({step:'denied-clear',output:await page.locator('#command-result').innerText()}));
+ await page.screenshot({path:join(evidence,'reader.png'),fullPage:true});
+ await page.click('#superuser');await page.waitForFunction(()=>window.AdmiraContexto?.actual().superusuario);await command('/proyecto starbucks');
+ await page.goto('http://127.0.0.1:5977/?brand=admira&lang=en&proyecto=starbucks');await page.waitForFunction(()=>window.AdmiraContexto?.actual().proyecto==='starbucks');await page.waitForFunction(()=>window.AdmiraGlobo);await page.waitForTimeout(2000);
+ console.log(JSON.stringify({step:'homepage',state:await page.evaluate(()=>({context:AdmiraContexto.actual(),map:AdmiraGlobo.segmento(),ids:AdmiraGlobo.ids(),live:LIVE_SCREENS,brand:AdmiraMarca.actual()})),errors}));
+ assert.ok(await page.evaluate(()=>AdmiraGlobo.ids().every(id=>id.startsWith('alsea-sbux-'))));
+ await page.click('#header-expert-toggle');await page.waitForFunction(()=>AdmiraExperto.isOpen());await page.fill('#expert-command','/brand brumelle');await page.locator('#expert-command').press('Enter');await page.waitForFunction(()=>AdmiraContexto.actual().marca==='brumelle');await page.fill('#expert-command','/project off');await page.locator('#expert-command').press('Enter');await page.waitForFunction(()=>AdmiraContexto.actual().proyecto===null);assert.equal(await page.evaluate(()=>AdmiraContexto.actual().marca),'brumelle');
+ await page.screenshot({path:join(evidence,'homepage.png'),fullPage:true});
+ assert.equal(errors.length,0);console.log('Browser verified; evidence: '+evidence);
+ fs.writeFileSync(join(evidence,'errors.json'),JSON.stringify(errors));await browser.close();
+})().catch(e=>{console.error(e);process.exit(1);});

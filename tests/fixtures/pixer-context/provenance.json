@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/csilvasantin/pixer-worker",
+  "pullRequest": "https://github.com/csilvasantin/pixer-worker/pull/22",
+  "commit": "be5a51e7a438f1ebc99d85bdd8c0aa5e45c262b1",
+  "usage": "test and loopback preview only",
+  "sha256": {
+    "contexto.mjs": "221576ea27d6c42d25b5d98f9e1722e65d4de6c7204b417daba8d76de40cd6df",
+    "paid-auth.mjs": "fe2aa4f1321daf0c8944c19184c3d53d47d1d9472567671df95ceb8dad5dcd21"
+  }
+}

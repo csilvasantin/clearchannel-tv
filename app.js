@@ -719,11 +719,13 @@ const RTB_DEMO_CIRCUIT = 'sim-gracia';
 // surface de su Xpacio → cualquier gemelo encendido pasa a ser VENDIBLE/targetable,
 // sin tener que hardcodear su screenId en locations.js (campo pixerScreens).
 window.LIVE_SCREENS = { byLoc: Object.create(null), byScreen: Object.create(null), online: 0, fetchedAt: 0, error: 'unavailable' };
+let liveScreensGeneration = 0;
 async function loadLiveScreens() {
+  const generation = ++liveScreensGeneration;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 6000);
   try {
-    const r = await fetch(PIXER + '/signage/screens', { cache: 'no-store', signal: controller.signal });
+    const r = await (window.AdmiraBizContext ? window.AdmiraBizContext.request('/signage/screens', {signal:controller.signal}) : fetch(PIXER + '/signage/screens', {cache:'no-store',signal:controller.signal}));
     if (!r.ok) throw new Error('http ' + r.status);
     const d = await r.json();
     if (!d || d.ok === false || !Array.isArray(d.screens)) throw new Error('invalid schema');
@@ -734,12 +736,13 @@ async function loadLiveScreens() {
       byScreen[s.screen] = { online: s.online };
       if (!s.online) return;
       online++;
-      if (typeof s.loc === 'string' && s.loc) (byLoc[s.loc] = byLoc[s.loc] || []).push(s.screen);
+      const locationId = s.locationId || s.loc;
+      if (typeof locationId === 'string' && locationId) (byLoc[locationId] = byLoc[locationId] || []).push(s.screen);
     });
-    window.LIVE_SCREENS = { byLoc, byScreen, online, fetchedAt: Date.now(), error: '' };
+    if (generation === liveScreensGeneration) window.LIVE_SCREENS = { byLoc, byScreen, online, fetchedAt: Date.now(), error: '' };
   } catch (e) {
     // A failed request invalidates the previous signal instead of retaining a connected label.
-    window.LIVE_SCREENS = { byLoc: Object.create(null), byScreen: Object.create(null), online: 0, fetchedAt: 0, error: 'unavailable' };
+    if (generation === liveScreensGeneration) window.LIVE_SCREENS = { byLoc: Object.create(null), byScreen: Object.create(null), online: 0, fetchedAt: 0, error: 'unavailable' };
   } finally { clearTimeout(timeout); }
 }
 function liveScreensForLoc(locId) {
@@ -4563,9 +4566,8 @@ async function mergeSelfRegDevices(){
 mergeSelfRegDevices();
 setInterval(mergeSelfRegDevices, 60000);
 
-// Cliente activo (cliente-segmento.js): ?marca, ?cliente, la marca de la pestaña, /marca en el
-// Experto o el evento admira:marca. Re-segmenta globo, clusters, contadores, circuitos y buscador
-// sin recargar, y encuadra los puntos del cliente (Admira = todos, sin mover la cámara).
+// Biz resegmenta el catálogo público sólo desde el contexto confirmado por la API.
+// Marca y proyecto son independientes; el adaptador legado conserva su contrato.
 function brandSegmentCount() { return { cliente: (window.AdmiraSegmento && window.AdmiraSegmento.actual()) || 'admira', puntos: LOCATIONS.length, total: LOCATIONS_ALL.length }; }
 window.AdmiraGlobo = Object.freeze({ segmento: brandSegmentCount, ids: () => LOCATIONS.map(l => l.id) });
 function fitBrandSegment() {
@@ -4587,6 +4589,10 @@ function applyBrandSegment(fit) {
   try { applyCircuitDeepLink(); } catch (_) {}
 }
 document.addEventListener('admira:segmento', () => applyBrandSegment(true));
+document.addEventListener('admira:contexto', () => {
+  window.LIVE_SCREENS = {byLoc:Object.create(null),byScreen:Object.create(null),online:0,fetchedAt:0,error:'unavailable'};
+  loadLiveScreens().then(() => { try { updateLocationsSource(); updateBiddingLiveCounters(); } catch (_) {} });
+});
 document.documentElement.dataset.segmentoPuntos = String(LOCATIONS.length);
 if (window.AdmiraSegmento && window.AdmiraSegmento.actual()) { if (map.loaded()) fitBrandSegment(); else map.once('load', fitBrandSegment); }
 

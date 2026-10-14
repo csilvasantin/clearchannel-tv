@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/csilvasantin/admira-design",
+  "pullRequest": "https://github.com/csilvasantin/admira-design/pull/1",
+  "commit": "d5f619b4178199d041644292cdc89f28fafec1a2",
+  "sha256": {
+    "contexto.js": "9237a815ff3edd4803d4cfa66da0917ce5d37e5f6edab63789105b28818f0311",
+    "marca-blanca.js": "c29940ea196b2a435e591c8d03a773b0d139e821d0a4fe50f02d6b96f14af27b",
+    "marca-blanca.css": "e56536fb2c1632d39a98956707210e896305e159737e2bd9b315e2b0ffdc406b"
+  }
+}
