@@ -7,7 +7,7 @@
   <meta name="description" content="Plano en planta y en alzado de un Xpacio con su inventario ITIL de pantallas, y propuestas de obra para cambiar su distribución.">
   <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
   <link rel="canonical" href="https://www.clearchannel.tv/plano.html">
-  <link rel="stylesheet" href="plano.css?v=20261014-plano-1">
+  <link rel="stylesheet" href="plano.css?v=20261014-subir-1">
   <link rel="stylesheet" href="brand.css">
   <script src="brand.js"></script>
   <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
@@ -15,8 +15,8 @@
   // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones manda; plano.mjs escucha admira:lang.
   window.ADMIRA_SHELL = { section: { es: '/ plano y obras', en: '/ floor plan and works' }, setLang() {} };
   </script>
-  <script defer src="/galaxy-shell.js?v=20261014-redistribucion-1"></script>
-  <script type="module" src="plano.mjs?v=20261014-plano-1"></script>
+  <script defer src="/galaxy-shell.js?v=20261014-subir-1"></script>
+  <script type="module" src="plano.mjs?v=20261014-subir-1"></script>
 </head>
 <body>
   <main>
@@ -27,12 +27,13 @@
         <h1 id="title">Plano y obras</h1>
         <p id="address" class="address"></p>
       </div>
-      <div class="modes" role="group" data-copy-aria="modes" aria-label="Qué distribución ver">
+      <div class="modes" role="group" data-copy-aria="modes" aria-label="Qué distribución ver" hidden>
         <button type="button" id="mode-actual" aria-pressed="true" data-copy="current">Distribución actual</button>
         <button type="button" id="mode-obra" aria-pressed="false" data-copy="works">Propuesta de obra</button>
       </div>
     </div>
     <p id="page-status" role="status" class="page-status" data-copy="loading">Cargando el plano…</p>
+    <p id="no-plan" class="no-plan" hidden><span data-copy="noPlanUpload">Este Xpacio aún no tiene plano: súbelo desde ▤ Modo avanzado.</span> <button type="button" id="open-upload" data-copy="openUpload">▤ Subir plano</button></p>
     <p id="source" class="source" hidden></p>
 
     <div id="workspace" hidden>
@@ -84,5 +85,40 @@
       </section>
     </div>
   </main>
+
+  <!-- ▤ Modo avanzado · Subir plano (DCL-58288891486617b36ed8777d): galaxy-shell lo pasa al panel derecho. -->
+  <section id="upload" class="upload" data-shell-slot="advanced" aria-labelledby="upload-title" tabindex="-1">
+    <h3 id="upload-title" class="upload-title" data-copy="upTitle">Subir plano</h3>
+    <p class="upload-hint" data-copy="upHint">El plano en JSON (admira.xpacio-plano/1), o una imagen o un PDF como calco bajo la planta.</p>
+    <label id="upload-drop" class="upload-drop">
+      <input id="upload-file" type="file">
+      <span class="upload-drop-main" data-copy="upDrop">Suelta aquí el fichero o pulsa para elegirlo</span>
+      <span class="upload-drop-types">JSON · PNG · JPG · WebP · SVG · PDF</span>
+    </label>
+    <div id="upload-preview" class="upload-preview" hidden></div>
+    <ul id="upload-issues" class="upload-issues" hidden></ul>
+    <fieldset id="upload-room" class="upload-room" hidden>
+      <legend data-copy="upRoom">Sala del Xpacio nuevo</legend>
+      <label><span data-copy="upName">Nombre</span><input id="upload-name" maxlength="120" autocomplete="off"></label>
+      <div class="upload-dims">
+        <label><span data-copy="upWidth">Ancho</span><input id="upload-ancho" type="number" inputmode="decimal" min="1" max="500" step="0.1"></label>
+        <label><span data-copy="upDepth">Fondo</span><input id="upload-fondo" type="number" inputmode="decimal" min="1" max="500" step="0.1"></label>
+        <label><span data-copy="upHeight">Alto</span><input id="upload-alto" type="number" inputmode="decimal" min="2" max="30" step="0.1"></label>
+      </div>
+      <p class="upload-unit" data-copy="upMetres">Medidas en metros. Cuatro paredes; las pantallas se añaden en Propuesta de obra.</p>
+    </fieldset>
+    <button type="button" id="upload-apply" class="header-circuit-btn upload-apply" hidden></button>
+    <button type="button" id="upload-cancel" class="upload-link" hidden data-copy="upCancel">Descartar</button>
+    <p id="upload-status" class="upload-status" role="status"></p>
+    <div id="trace" class="trace" hidden>
+      <h4 class="upload-title" data-copy="traceTitle">Calco</h4>
+      <p id="trace-file" class="upload-hint"></p>
+      <label><span data-copy="traceWidth">Ancho real (m)</span><input id="trace-width" type="number" inputmode="decimal" min="0.5" max="2000" step="0.1"></label>
+      <label><span><span data-copy="traceOpacity">Opacidad</span> · <output id="trace-opacity-out" for="trace-opacity"></output></span><input id="trace-opacity" type="range" min="0.1" max="1" step="0.05"></label>
+      <button type="button" id="trace-remove" class="upload-link" data-copy="traceRemove">Quitar calco</button>
+    </div>
+    <p id="upload-nostore" class="upload-status err" data-copy="noStore" hidden>Este navegador no deja guardar planos: lo que subas dura hasta recargar.</p>
+    <p class="upload-note" data-copy="upNote">Plano subido en este navegador; el maestro del ITIL es Yokup.</p>
+  </section>
 </body>
 </html>

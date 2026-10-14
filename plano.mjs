@@ -7,6 +7,11 @@ import {
   SCHEMA, round, wallLength, pointOnWall, inwardNormal, screenGeometry, footprint, furnitureAgainstWall, criteria,
   validate, workOrder, exportOrder, restoreProposal, template, placeNew, clampToWall, moveGroup, groupOf, composition, groupCanvas, reshape
 } from './plano-core.mjs?v=20261014-plano-1';
+// ▤ Subir plano (DCL-58288891486617b36ed8777d): JSON del plano o calco (imagen o PDF), guardado en este navegador.
+import {
+  ACEPTA, MAX_LADO, comprobarFichero, leerPlanoJson, resumenPlano, salaRectangular, comprobarSala, escalaCalco, escalaPdf,
+  anchoSala, nuevoCalco, geometriaCalco, registroSubida, almacenPlanos, nombreDeFichero
+} from './plano-subida.mjs?v=20261014-subir-1';
 
 const copy = {
   es: {
@@ -28,7 +33,21 @@ const copy = {
     summary: r => ['alta', 'baja', 'modificacion', 'sustitucion', 'contenidos'].filter(k => r[k]).map(k => `${r[k]} ${({ alta: ['alta', 'altas'], baja: ['baja', 'bajas'], modificacion: ['modificación', 'modificaciones'], sustitucion: ['sustitución', 'sustituciones'], contenidos: ['de contenidos', 'de contenidos'] })[k][r[k] > 1 ? 1 : 0]}`).join(' · '),
     types: { alta: 'Alta', baja: 'Baja', modificacion: 'Modificación', sustitucion: 'Sustitución', contenidos: 'Contenidos' }, inventoryLine: 'Inventario', contentLine: 'Contenidos',
     removed: 'retirada', unchanged: 'sin cambios', criterion: m => `criterio: base a ${m} m`, wallOf: (w, l, h) => `${w} · ${l} m de largo · ${h} m de alto`,
-    source: 'Fuente', model: 'Modelo', state: 'Estado', size: 'Tamaño', player: 'Player', screenId: 'Pantalla en admira.studio', group: 'Mosaico'
+    source: 'Fuente', model: 'Modelo', state: 'Estado', size: 'Tamaño', player: 'Player', screenId: 'Pantalla en admira.studio', group: 'Mosaico',
+    // ▤ Subir plano
+    noPlanUpload: 'Este Xpacio aún no tiene plano: súbelo desde ▤ Modo avanzado.', openUpload: '▤ Subir plano',
+    upTitle: 'Subir plano', upHint: 'El plano en JSON (admira.xpacio-plano/1), o una imagen o un PDF como calco bajo la planta.',
+    upDrop: 'Suelta aquí el fichero o pulsa para elegirlo', upRoom: 'Sala del Xpacio nuevo', upName: 'Nombre', upWidth: 'Ancho', upDepth: 'Fondo', upHeight: 'Alto',
+    upMetres: 'Medidas en metros. Cuatro paredes; las pantallas se añaden en Propuesta de obra.', upCancel: 'Descartar',
+    upNote: 'Plano subido en este navegador; el maestro del ITIL es Yokup.', upReading: 'Leyendo el fichero…', upPdf: 'Abriendo el PDF (página 1)…',
+    upPdfError: 'No se pudo leer el PDF.', upImageError: 'No se pudo leer la imagen.', upJsonError: 'No se pudo leer el fichero.',
+    upApplyPlan: 'Aplicar plano', upApplyTrace: 'Poner como calco', upApplyRoom: 'Crear sala y poner calco',
+    upSummary: r => `${r.paredes} paredes · ${r.pantallas} ${r.pantallas === 1 ? 'pantalla' : 'pantallas'} · sala de ${fmt(r.ancho)} × ${fmt(r.fondo)} m y ${fmt(r.alto)} m de alto`,
+    upMore: n => `… y ${n} ${n === 1 ? 'aviso más' : 'avisos más'}`, upPlanWarnings: 'Avisos del plano (no impiden aplicarlo):',
+    upDone: 'Plano aplicado y guardado en este navegador.', upTraceDone: 'Calco puesto bajo la planta.', upNotStored: 'No se pudo guardar en este navegador: se perderá al recargar.',
+    upConfirmDraft: 'Hay una propuesta de obra en borrador para este Xpacio. Al cambiar de plano se descarta. ¿Seguir?', upOpening: id => `Abriendo el plano de «${id}»…`,
+    uploadedLine: 'Plano subido en este navegador', traceLine: 'Calco en este navegador', backPublished: 'Volver al plano publicado', deleteUploaded: 'Borrar plano subido',
+    traceTitle: 'Calco', traceWidth: 'Ancho real (m)', traceOpacity: 'Opacidad', traceRemove: 'Quitar calco', noStore: 'Este navegador no deja guardar planos: lo que subas dura hasta recargar.'
   },
   en: {
     back: '← Back to the profile', eyebrow: 'Xpace floor plan · ITIL inventory', current: 'Current layout', works: 'Works proposal',
@@ -49,7 +68,21 @@ const copy = {
     summary: r => ['alta', 'baja', 'modificacion', 'sustitucion', 'contenidos'].filter(k => r[k]).map(k => `${r[k]} ${({ alta: ['addition', 'additions'], baja: ['removal', 'removals'], modificacion: ['change', 'changes'], sustitucion: ['replacement', 'replacements'], contenidos: ['content update', 'content updates'] })[k][r[k] > 1 ? 1 : 0]}`).join(' · '),
     types: { alta: 'New', baja: 'Removal', modificacion: 'Change', sustitucion: 'Replacement', contenidos: 'Content' }, inventoryLine: 'Inventory', contentLine: 'Content',
     removed: 'removed', unchanged: 'unchanged', criterion: m => `criterion: bottom at ${m} m`, wallOf: (w, l, h) => `${w} · ${l} m long · ${h} m high`,
-    source: 'Source', model: 'Model', state: 'Status', size: 'Size', player: 'Player', screenId: 'Screen in admira.studio', group: 'Mosaic'
+    source: 'Source', model: 'Model', state: 'Status', size: 'Size', player: 'Player', screenId: 'Screen in admira.studio', group: 'Mosaic',
+    // ▤ Upload floor plan
+    noPlanUpload: 'This Xpace has no floor plan yet: upload it from ▤ Advanced mode.', openUpload: '▤ Upload floor plan',
+    upTitle: 'Upload floor plan', upHint: 'The floor plan as JSON (admira.xpacio-plano/1), or an image or a PDF as a trace under the plan.',
+    upDrop: 'Drop the file here or click to choose it', upRoom: 'Room of the new Xpace', upName: 'Name', upWidth: 'Width', upDepth: 'Depth', upHeight: 'Height',
+    upMetres: 'Sizes in metres. Four walls; add the screens in Works proposal.', upCancel: 'Discard',
+    upNote: 'Floor plan uploaded to this browser; Yokup is the ITIL master.', upReading: 'Reading the file…', upPdf: 'Opening the PDF (page 1)…',
+    upPdfError: 'The PDF could not be read.', upImageError: 'The image could not be read.', upJsonError: 'The file could not be read.',
+    upApplyPlan: 'Apply floor plan', upApplyTrace: 'Use as trace', upApplyRoom: 'Create room and add trace',
+    upSummary: r => `${r.paredes} walls · ${r.pantallas} ${r.pantallas === 1 ? 'screen' : 'screens'} · room of ${fmt(r.ancho)} × ${fmt(r.fondo)} m, ${fmt(r.alto)} m high`,
+    upMore: n => `… and ${n} more ${n === 1 ? 'warning' : 'warnings'}`, upPlanWarnings: 'Floor plan warnings (they do not block it):',
+    upDone: 'Floor plan applied and saved in this browser.', upTraceDone: 'Trace placed under the plan.', upNotStored: 'It could not be saved in this browser: it will be lost on reload.',
+    upConfirmDraft: 'There is a draft works proposal for this Xpace. Changing the floor plan discards it. Continue?', upOpening: id => `Opening the floor plan of “${id}”…`,
+    uploadedLine: 'Floor plan uploaded to this browser', traceLine: 'Trace in this browser', backPublished: 'Back to the published plan', deleteUploaded: 'Delete uploaded plan',
+    traceTitle: 'Trace', traceWidth: 'Real width (m)', traceOpacity: 'Opacity', traceRemove: 'Remove trace', noStore: 'This browser does not allow saving floor plans: uploads last until you reload.'
   }
 };
 
@@ -69,6 +102,11 @@ const xpacioId = /^[a-z0-9][a-z0-9-]{0,79}$/.test(params.get('locationId') || ''
 const STORE_KEY = 'admira.plano.' + xpacioId;
 let plan = null;
 const state = { mode: 'actual', wallId: null, selectedId: null, proposal: null, statusKey: 'loading', groupLock: true };
+// Plano publicado (data/xpacios/<id>.json: 'ok' | 'none' | 'error') y lo subido en este navegador (IndexedDB).
+const almacen = almacenPlanos();
+let publicado = null, publicadoEstado = 'none', registro = null;
+const calcoActual = () => (plan && registro && registro.calco) || null;
+let calcoNode = { src: '', node: null };
 
 function el(tag, attrs = {}, parent) {
   const node = document.createElementNS(NS, tag);
@@ -137,6 +175,15 @@ function renderPlanta() {
   const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys), m = 90;
   svg.setAttribute('viewBox', `${minX * U - m} ${minY * U - m} ${(maxX - minX) * U + 2 * m} ${(maxY - minY) * U + 2 * m}`);
   el('polygon', { class: 'floor', points: plan.paredes.map(w => `${w.a[0] * U},${w.a[1] * U}`).join(' ') }, svg);
+  // Calco subido: sobre el suelo y debajo de paredes, muebles y pantallas; no recibe el puntero.
+  // El nodo se reutiliza entre renders (arrastrar repinta la planta): la imagen no se vuelve a decodificar.
+  const calco = calcoActual();
+  if (calco) {
+    if (calcoNode.src !== calco.dataUrl) calcoNode = { src: calco.dataUrl, node: el('image', { class: 'calco-img', href: calco.dataUrl, preserveAspectRatio: 'none', 'pointer-events': 'none', 'aria-hidden': 'true' }) };
+    const g = geometriaCalco(calco, plan);
+    for (const [k, v] of Object.entries({ x: g.x * U, y: g.y * U, width: g.width * U, height: g.height * U, opacity: calco.opacidad })) calcoNode.node.setAttribute(k, v);
+    svg.append(calcoNode.node);
+  }
 
   for (const f of plan.mobiliario || []) {
     el('rect', { class: 'furniture', x: f.x * U, y: f.y * U, width: f.w * U, height: f.d * U, rx: 6 }, svg);
@@ -488,30 +535,384 @@ document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click',
 document.addEventListener('admira:lang', e => {
   const next = e.detail?.lang === 'es' ? 'es' : 'en'; if (next === lang) return;
   lang = next; translate(); if (plan) { renderSource(); renderAll(); }
+  renderTrace(); paintUpload(); paintUploadStatus();
 });
 
 function renderSource() {
   const src = plan.fuente || {};
   const lines = [src.medidas, src.pantallas, src.itil].filter(Boolean).map(esc);
-  $('source').hidden = !lines.length;
-  $('source').innerHTML = `<strong>${esc(src.titulo || tr('source'))}</strong> · ${lines.join(' · ')}`;
+  const parts = [];
+  // Lo subido en este navegador va delante, con su vuelta atrás.
+  if (registro && registro.plan) {
+    parts.push(`<span class="source-upload"><strong>${tr('uploadedLine')}</strong> · ${esc(registro.fichero || '—')} · ${esc(when(registro.subidoEn))} <button type="button" id="source-revert">${tr(publicadoEstado === 'none' ? 'deleteUploaded' : 'backPublished')}</button></span>`);
+  } else if (calcoActual()) {
+    const c = calcoActual();
+    parts.push(`<span class="source-upload"><strong>${tr('traceLine')}</strong> · ${esc(c.fichero || '—')} · ${esc(when(c.subidoEn || registro.subidoEn))}</span>`);
+  }
+  if (lines.length) parts.push(`<strong>${esc(src.titulo || tr('source'))}</strong> · ${lines.join(' · ')}`);
+  $('source').hidden = !parts.length;
+  $('source').innerHTML = parts.join('<br>');
+  $('source-revert')?.addEventListener('click', revertUpload);
+}
+function when(iso) {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? '' : d.toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' });
 }
 
-async function init() {
-  translate();
-  $('back').href = `/?locationId=${encodeURIComponent(xpacioId)}&lang=${lang}`;
-  let res;
-  try { res = await fetch(`data/xpacios/${xpacioId}.json`, { cache: 'no-store' }); } catch { setStatus('loadError'); return; }
-  if (res.status === 404) { setStatus('noPlan'); return; }
-  try { plan = await res.json(); } catch { plan = null; }
-  if (!res.ok || !plan || plan.schema !== SCHEMA || !Array.isArray(plan.paredes) || !Array.isArray(plan.pantallas)) { plan = null; setStatus('loadError'); return; }
+// ── Mostrar un plano o la invitación a subirlo ───────────────────────────────
+function showPlan(next, mode = 'actual') {
+  plan = next;
+  Object.assign(state, { mode: 'actual', wallId: null, selectedId: null, proposal: null });
+  drag = null;
+  $('saved').textContent = '';
   document.title = `${plan.nombre} · ${tr('plan')} · ${window.ADMIRA_SITE_BRAND?.name || 'Clear Channel'}`;
   $('title').textContent = plan.nombre;
   $('address').textContent = plan.direccion || '';
   renderSource();
   state.wallId = (plan.pantallas[0] && plan.pantallas[0].pared) || plan.paredes[0].id;
   setStatus('');
+  $('no-plan').hidden = true;
   $('workspace').hidden = false;
-  setMode(params.get('modo') === 'obra' ? 'obra' : 'actual');
+  $('mode-actual').parentElement.hidden = false;
+  setMode(mode);
+  renderTrace(); paintUpload();
+}
+function showNoPlan() {
+  plan = null;
+  Object.assign(state, { mode: 'actual', wallId: null, selectedId: null, proposal: null });
+  setStatus('');
+  $('title').textContent = xpacioId;
+  $('address').textContent = '';
+  $('workspace').hidden = true;
+  $('source').hidden = true;
+  $('no-plan').hidden = false;
+  $('mode-actual').parentElement.hidden = true; // sin plano no hay distribución que ver
+  renderTrace(); paintUpload();
+}
+
+// ── ▤ Subir plano ────────────────────────────────────────────────────────────
+// Lo elegido y aún sin aplicar: un plano JSON ya leído (`leido`) o un calco preparado (`calco`).
+const upload = { fichero: '', leido: null, calco: null, issues: [], busy: false, statusKey: '', statusArgs: [], statusError: false };
+let uploadSeq = 0;
+function resetUpload() { Object.assign(upload, { fichero: '', leido: null, calco: null, issues: [], busy: false }); }
+function uploadStatus(key, { error = false, args = [] } = {}) {
+  Object.assign(upload, { statusKey: key, statusArgs: args, statusError: error });
+  paintUploadStatus();
+}
+function paintUploadStatus() {
+  const n = $('upload-status');
+  n.textContent = upload.statusKey ? tr(upload.statusKey, ...upload.statusArgs) : '';
+  n.classList.toggle('err', upload.statusError);
+}
+const message = m => (lang === 'en' && m.en ? m.en : m.texto);
+
+function paintUpload() {
+  const { leido, calco } = upload;
+  const preview = $('upload-preview');
+  if (leido && leido.ok) {
+    preview.innerHTML = `<strong>${esc(leido.plan.nombre)}</strong><span class="upload-meta"><code>${esc(leido.id)}</code> · ${esc(tr('upSummary', resumenPlano(leido.plan)))}</span>`;
+  } else if (calco) {
+    const img = new Image();
+    img.alt = ''; img.src = calco.dataUrl;
+    const meta = document.createElement('span');
+    meta.className = 'upload-meta'; meta.textContent = `${calco.fichero} · ${calco.pxAncho}×${calco.pxAlto} px`;
+    preview.replaceChildren(img, meta);
+  } else preview.replaceChildren();
+  preview.hidden = !preview.childElementCount;
+  // Errores (bloquean) y avisos del plano (no bloquean; los seis primeros).
+  const list = [];
+  if (leido) {
+    for (const m of leido.errores) list.push(['error', message(m)]);
+    if (leido.ok && leido.avisos.length) {
+      list.push(['head', tr('upPlanWarnings')]);
+      for (const m of leido.avisos.slice(0, 6)) list.push([m.nivel === 'error' ? 'error' : 'aviso', message(m)]);
+      if (leido.avisos.length > 6) list.push(['more', tr('upMore', leido.avisos.length - 6)]);
+    }
+  }
+  for (const m of upload.issues) list.push(['error', message(m)]);
+  $('upload-issues').replaceChildren(...list.map(([cls, txt]) => Object.assign(document.createElement('li'), { className: cls, textContent: txt })));
+  $('upload-issues').hidden = !list.length;
+  // Sin plano, un calco pide las medidas de la sala nueva.
+  $('upload-room').hidden = !(calco && !plan);
+  const key = leido && leido.ok ? 'upApplyPlan' : calco ? (plan ? 'upApplyTrace' : 'upApplyRoom') : '';
+  $('upload-apply').hidden = !key;
+  $('upload-apply').textContent = key ? tr(key) : '';
+  $('upload-apply').disabled = upload.busy;
+  $('upload-cancel').hidden = !(leido || calco || upload.issues.length);
+}
+
+async function chooseFile(file) {
+  if (!file) return;
+  const seq = ++uploadSeq;
+  resetUpload();
+  upload.fichero = file.name || '';
+  const check = comprobarFichero(file);
+  if (!check.ok) { upload.issues = [check.error]; uploadStatus(''); paintUpload(); return; }
+  upload.busy = true;
+  uploadStatus(check.tipo === 'pdf' ? 'upPdf' : 'upReading');
+  paintUpload();
+  try {
+    let leido = null, calco = null;
+    if (check.tipo === 'json') leido = leerPlanoJson(await file.text(), xpacioId);
+    else calco = check.tipo === 'pdf' ? await traceFromPdf(file) : await traceFromImage(file);
+    if (seq !== uploadSeq) return; // llegó otro fichero mientras tanto
+    Object.assign(upload, { leido, calco });
+    uploadStatus('');
+    if (calco && !plan) {
+      // Medidas por defecto: 10 m de ancho y el fondo en la proporción del calco.
+      $('upload-name').value = nombreDeFichero(file.name) || xpacioId;
+      $('upload-ancho').value = 10;
+      $('upload-fondo').value = round(Math.min(500, Math.max(1, 10 * calco.pxAlto / calco.pxAncho)), 1);
+      $('upload-alto').value = 3;
+    }
+  } catch (error) {
+    if (seq !== uploadSeq) return;
+    console.warn('Subir plano:', error);
+    resetUpload();
+    uploadStatus(check.tipo === 'pdf' ? 'upPdfError' : check.tipo === 'imagen' ? 'upImageError' : 'upJsonError', { error: true });
+  } finally {
+    if (seq === uploadSeq) { upload.busy = false; paintUpload(); }
+  }
+}
+
+// Borrador de propuesta de ese Xpacio: al cambiar de plano no se mezcla con el nuevo.
+function confirmDiscardDraft(id = xpacioId) {
+  const key = 'admira.plano.' + id;
+  let has = false;
+  try { has = !!localStorage.getItem(key); } catch {}
+  if (!has) return true;
+  if (!window.confirm(tr('upConfirmDraft'))) return false;
+  try { localStorage.removeItem(key); } catch {}
+  return true;
+}
+const fieldNumber = id => parseFloat(String($(id).value).replace(',', '.'));
+const stamped = calco => ({ ...calco, subidoEn: new Date().toISOString() });
+
+async function applyUpload() {
+  const { leido, calco } = upload;
+  if (upload.busy || (!(leido && leido.ok) && !calco)) return;
+  if (leido && leido.ok) {
+    const id = leido.id;
+    if (!confirmDiscardDraft(id)) return;
+    const before = id === xpacioId ? registro : await almacen.leer(id);
+    const next = registroSubida({ id, plan: leido.plan, calco: before && before.calco, fichero: upload.fichero });
+    const stored = await almacen.guardar(next);
+    if (id !== xpacioId) {
+      // Es el plano de otro Xpacio: se abre su página, que lo lee de este navegador.
+      if (!stored) { uploadStatus('noStore', { error: true }); return; }
+      uploadStatus('upOpening', { args: [id] });
+      const url = new URL(location.href);
+      url.searchParams.set('locationId', id); url.searchParams.delete('subir'); url.searchParams.delete('modo');
+      location.assign(url.href);
+      return;
+    }
+    registro = next; resetUpload(); showPlan(next.plan);
+    uploadStatus(stored ? 'upDone' : 'upNotStored', { error: !stored });
+    return;
+  }
+  if (plan) {
+    // Calco bajo el plano que se ve (publicado o subido), del ancho de la sala.
+    const next = registroSubida({ id: xpacioId, plan: registro && registro.plan, calco: stamped(nuevoCalco({ ...calco, ancho: anchoSala(plan) })), fichero: registro ? registro.fichero : '', subidoEn: registro && registro.plan ? registro.subidoEn : undefined });
+    const stored = await almacen.guardar(next);
+    registro = next; resetUpload();
+    renderPlanta(); renderSource(); renderTrace(); paintUpload();
+    uploadStatus(stored ? 'upTraceDone' : 'upNotStored', { error: !stored });
+    return;
+  }
+  // Xpacio sin plano: sala rectangular de las medidas indicadas con el calco debajo.
+  const dims = { ancho: fieldNumber('upload-ancho'), fondo: fieldNumber('upload-fondo'), alto: fieldNumber('upload-alto') };
+  const errs = comprobarSala(dims);
+  upload.issues = errs;
+  if (errs.length) { paintUpload(); return; }
+  if (!confirmDiscardDraft()) return;
+  const nuevo = salaRectangular({ id: xpacioId, nombre: $('upload-name').value, ...dims, version: 'subido-' + Date.now().toString(36) });
+  const next = registroSubida({ id: xpacioId, plan: nuevo, calco: stamped(nuevoCalco({ ...calco, ancho: dims.ancho })), fichero: upload.fichero });
+  const stored = await almacen.guardar(next);
+  registro = next; resetUpload(); showPlan(next.plan);
+  uploadStatus(stored ? 'upDone' : 'upNotStored', { error: !stored });
+}
+
+// «Volver al plano publicado» (el calco se queda) o, si no hay publicado, «Borrar plano subido».
+async function revertUpload() {
+  if (!registro || !registro.plan || !confirmDiscardDraft()) return;
+  if (registro.calco && publicadoEstado !== 'none') {
+    registro = { ...registro, plan: null, fichero: '' };
+    await almacen.guardar(registro);
+  } else {
+    await almacen.borrar(xpacioId);
+    registro = null;
+  }
+  uploadStatus('');
+  if (publicado) showPlan(publicado);
+  else if (publicadoEstado === 'error') location.reload();
+  else { showNoPlan(); openUpload(); }
+}
+
+// ── Calco: imagen o página 1 del PDF, reescalada a ≤ MAX_LADO px y en dataURL ─
+const loadImage = src => new Promise((resolve, reject) => {
+  const img = new Image();
+  img.onload = () => resolve(img);
+  img.onerror = () => reject(new Error('imagen'));
+  img.src = src;
+});
+const readDataUrl = file => new Promise((resolve, reject) => {
+  const r = new FileReader();
+  r.onload = () => resolve(r.result);
+  r.onerror = () => reject(r.error);
+  r.readAsDataURL(file);
+});
+// Lienzo con fondo blanco: los planos en PNG suelen ser trazo negro sobre transparente.
+function whiteCanvas(w, h) {
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+  return { canvas, ctx };
+}
+function canvasDataUrl(canvas) {
+  const webp = canvas.toDataURL('image/webp', 0.86);
+  return webp.startsWith('data:image/webp') ? webp : canvas.toDataURL('image/png');
+}
+async function traceFromImage(file) {
+  const svg = /\.svg$/i.test(file.name || '') || file.type === 'image/svg+xml';
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await loadImage(url);
+    let w = img.naturalWidth, h = img.naturalHeight;
+    if (!(w > 0 && h > 0)) { if (!svg) throw new Error('imagen sin tamaño'); w = 1600; h = 1200; }
+    const size = escalaCalco(w, h, MAX_LADO);
+    const { canvas, ctx } = whiteCanvas(size.w, size.h);
+    ctx.drawImage(img, 0, 0, size.w, size.h);
+    try { return { dataUrl: canvasDataUrl(canvas), pxAncho: size.w, pxAlto: size.h, fichero: file.name }; }
+    catch (error) {
+      // Algún navegador marca el lienzo como contaminado con SVG: entonces va el SVG tal cual (es vectorial).
+      if (svg) return { dataUrl: await readDataUrl(file), pxAncho: w, pxAlto: h, fichero: file.name };
+      throw error;
+    }
+  } finally { URL.revokeObjectURL(url); }
+}
+// pdf.js solo se carga al subir un PDF, con versión fijada y su worker de la misma versión.
+const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+const PDFJS_SRI = 'sha512-q+4liFwdPC/bNdhUpZx6aXDx/h77yEQtn4I1slHydcbZK34nLaR3cAeYSJshoxIOq3mjEf7xJE8YWIUHMn+oCQ==';
+let pdfjsReady = null;
+function loadPdfJs() {
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  return pdfjsReady || (pdfjsReady = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = PDFJS + 'pdf.min.js'; s.integrity = PDFJS_SRI; s.crossOrigin = 'anonymous'; s.referrerPolicy = 'no-referrer';
+    s.onload = () => {
+      const lib = window.pdfjsLib;
+      if (!lib) { pdfjsReady = null; reject(new Error('pdf.js')); return; }
+      lib.GlobalWorkerOptions.workerSrc = PDFJS + 'pdf.worker.min.js';
+      resolve(lib);
+    };
+    s.onerror = () => { pdfjsReady = null; s.remove(); reject(new Error('pdf.js')); };
+    document.head.append(s);
+  }));
+}
+async function traceFromPdf(file) {
+  const lib = await loadPdfJs();
+  // isEvalSupported: false — sin eval en las fuentes del PDF (CVE-2024-4367 en pdf.js ≤ 4.1).
+  const doc = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()), isEvalSupported: false }).promise;
+  try {
+    const page = await doc.getPage(1);
+    const base = page.getViewport({ scale: 1 });
+    const viewport = page.getViewport({ scale: escalaPdf(base.width, base.height, MAX_LADO) });
+    const w = Math.max(1, Math.floor(viewport.width)), h = Math.max(1, Math.floor(viewport.height));
+    const { canvas, ctx } = whiteCanvas(w, h);
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    return { dataUrl: canvasDataUrl(canvas), pxAncho: w, pxAlto: h, fichero: file.name };
+  } finally { doc.destroy(); }
+}
+
+// ── Controles del calco ──────────────────────────────────────────────────────
+function renderTrace() {
+  const c = calcoActual();
+  $('trace').hidden = !c;
+  if (!c) return;
+  $('trace-file').textContent = `${c.fichero || '—'} · ${c.pxAncho}×${c.pxAlto} px`;
+  if (document.activeElement !== $('trace-width')) $('trace-width').value = c.ancho;
+  $('trace-opacity').value = c.opacidad;
+  $('trace-opacity-out').textContent = Math.round(c.opacidad * 100) + ' %';
+}
+let traceTimer = 0;
+function updateTrace(patch) {
+  if (!calcoActual()) return;
+  registro = { ...registro, calco: { ...registro.calco, ...patch } };
+  clearTimeout(traceTimer);
+  traceTimer = setTimeout(async () => { if (registro && !(await almacen.guardar(registro))) uploadStatus('upNotStored', { error: true }); }, 300);
+}
+$('trace-width').addEventListener('input', e => {
+  const v = parseFloat(e.target.value);
+  if (!(v >= 0.5 && v <= 2000)) return;
+  updateTrace({ ancho: round(v) }); renderPlanta();
+});
+$('trace-opacity').addEventListener('input', e => {
+  const v = parseFloat(e.target.value);
+  if (!(v > 0 && v <= 1)) return;
+  updateTrace({ opacidad: round(v) });
+  $('planta').querySelector('.calco-img')?.setAttribute('opacity', v);
+  $('trace-opacity-out').textContent = Math.round(v * 100) + ' %';
+});
+$('trace-remove').addEventListener('click', async () => {
+  if (!registro) return;
+  clearTimeout(traceTimer);
+  if (registro.plan) { registro = { ...registro, calco: null }; await almacen.guardar(registro); }
+  else { await almacen.borrar(xpacioId); registro = null; }
+  if (plan) { renderPlanta(); renderSource(); }
+  renderTrace();
+});
+
+// ── Panel ▤: el mismo botón de la barra, sin estado propio ───────────────────
+function openUpload({ focus = true } = {}) {
+  const panel = $('advanced-tools'), toggle = $('header-advanced-toggle');
+  if (panel && toggle && !panel.open) toggle.click();
+  if (focus) { $('upload').focus({ preventScroll: true }); $('upload').scrollIntoView({ block: 'nearest' }); }
+}
+// responsive-shell.js atiende el botón ▤; galaxy-shell avisa con admira:shell-ready (o ya lo hizo).
+function whenShellReady(fn) {
+  let done = false;
+  const run = () => { if (!done) { done = true; fn(); } };
+  document.addEventListener('admira:shell-ready', run, { once: true });
+  if (window.AdmiraExpert) setTimeout(run, 0);
+}
+// Los botones de .advanced-actions cierran el panel al pulsarlos (responsive-shell.js): los de
+// esta sección no son acciones de un clic, así que el clic no sale de ella.
+$('upload').addEventListener('click', e => e.stopPropagation());
+$('upload-file').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; chooseFile(f); });
+const drop = $('upload-drop');
+for (const type of ['dragenter', 'dragover']) drop.addEventListener(type, e => { e.preventDefault(); drop.classList.add('over'); });
+for (const type of ['dragleave', 'dragend']) drop.addEventListener(type, () => drop.classList.remove('over'));
+drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); chooseFile(e.dataTransfer && e.dataTransfer.files[0]); });
+$('upload-apply').addEventListener('click', applyUpload);
+$('upload-cancel').addEventListener('click', () => { uploadSeq++; resetUpload(); uploadStatus(''); paintUpload(); });
+$('open-upload').addEventListener('click', () => openUpload());
+
+// ── Arranque: primero lo subido en este navegador; si no, el plano publicado ─
+async function loadPublished() {
+  let res;
+  try { res = await fetch(`data/xpacios/${xpacioId}.json`, { cache: 'no-store' }); } catch { publicadoEstado = 'error'; return; }
+  // Pages responde con la portada (200, HTML) a lo que no existe: también es «sin plano».
+  if (res.status === 404 || (res.ok && !/json/i.test(res.headers.get('content-type') || ''))) { publicadoEstado = 'none'; return; }
+  let data = null;
+  try { data = await res.json(); } catch {}
+  if (!res.ok || !data || data.schema !== SCHEMA || !Array.isArray(data.paredes) || !Array.isArray(data.pantallas)) { publicadoEstado = 'error'; return; }
+  publicado = data; publicadoEstado = 'ok';
+}
+
+async function init() {
+  translate();
+  $('upload-file').accept = ACEPTA;
+  $('back').href = `/?locationId=${encodeURIComponent(xpacioId)}&lang=${lang}`;
+  paintUpload();
+  const [stored] = await Promise.all([almacen.leer(xpacioId), loadPublished()]);
+  registro = stored;
+  const mode = params.get('modo') === 'obra' ? 'obra' : 'actual';
+  if (registro && registro.plan) showPlan(registro.plan, mode);
+  else if (publicado) showPlan(publicado, mode);
+  else if (publicadoEstado === 'error') setStatus('loadError');
+  else showNoPlan();
+  if (params.get('subir') === '1' || (!plan && publicadoEstado === 'none')) whenShellReady(() => openUpload());
+  $('upload-nostore').hidden = await almacen.disponible();
 }
 init();

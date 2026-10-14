@@ -112,6 +112,56 @@ td code{font-size:12px;color:var(--accent)}
 #planta .wall-label{font-size:30px}#planta .furniture-label{font-size:26px}#planta .scr-label{font-size:28px}
 #alzado .scr-label{font-size:26px}#alzado .dim{font-size:24px}#alzado .furniture-label{font-size:24px}#alzado .guide-label{font-size:20px}
 .scr-label.group{fill:var(--accent)}
+/* Calco subido: sobre el suelo, debajo de lo demás, sin capturar el puntero */
+.calco-img{pointer-events:none}
+.source button,.no-plan button{margin-left:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:7px;padding:4px 10px;font-size:12px;font-weight:600}
+.source button:hover,.no-plan button:hover{border-color:var(--accent)}
+.source .source-upload strong{color:var(--brand)}
+.no-plan{margin:10px 0 16px;padding:14px 16px;border:1px dashed var(--line);border-radius:12px;background:var(--card2);color:var(--ink);font-size:14px;line-height:1.5}
+.no-plan button{margin:8px 0 0;display:inline-block;background:var(--brand);color:#0b1408;border-color:var(--brand);padding:7px 14px;font-size:13px}
+/* ▤ Subir plano · vive en el panel derecho del shell (≈180 px útiles): todo en una columna.
+   Dentro del panel mandan los colores del shell (--brand, --accent, --line…). */
+.upload{display:grid;gap:9px;min-width:0;color:var(--ink);font-size:12.5px;line-height:1.4;outline:none;border-radius:8px}
+.upload:focus-visible{outline:2px solid var(--brand);outline-offset:4px}
+.upload-title{margin:0;font:700 12px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--brand)}
+.upload-hint{margin:0;color:var(--mut);font-size:11.5px;line-height:1.4;overflow-wrap:anywhere}
+.upload-drop{position:relative;display:grid;gap:4px;justify-items:center;text-align:center;padding:16px 8px;border:1.5px dashed var(--line);border-radius:10px;background:var(--card2);cursor:pointer;transition:border-color .15s,background .15s}
+.upload-drop:hover,.upload-drop:focus-within,.upload-drop.over{border-color:var(--brand);background:rgba(120,243,255,.07)}
+.upload-drop:focus-within{outline:2px solid var(--brand);outline-offset:2px}
+.upload-drop input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
+.upload-drop-main{font-weight:650;font-size:12.5px;color:var(--ink);overflow-wrap:anywhere}
+.upload-drop-types{font:10px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.03em;color:var(--mut)}
+.upload-preview{display:grid;gap:6px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--card2);overflow-wrap:anywhere}
+.upload-preview img{display:block;width:100%;max-height:150px;object-fit:contain;border-radius:4px;background:#fff}
+.upload-preview strong{font-size:13px;color:var(--ink)}
+.upload-meta{color:var(--mut);font-size:11.5px}
+.upload-meta code{color:var(--brand);font-size:11px}
+.upload-issues{list-style:none;margin:0;padding:0;display:grid;gap:4px;max-height:200px;overflow:auto;font-size:11.5px;line-height:1.35}
+.upload-issues li{padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--card2);overflow-wrap:anywhere}
+.upload-issues li.error{border-color:rgba(255,109,109,.55)}
+.upload-issues li.error::before{content:"✖ ";color:var(--err)}
+.upload-issues li.aviso::before{content:"▲ ";color:var(--accent)}
+.upload-issues li.head,.upload-issues li.more{border:0;background:none;padding:2px 0;color:var(--mut)}
+.upload-room{margin:0;padding:8px;min-width:0;display:grid;gap:8px;border:1px solid var(--line);border-radius:8px}
+.upload-room legend{padding:0 4px;font:700 10.5px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.upload-room label,.trace label{display:grid;gap:3px;min-width:0;font-size:11px;color:var(--mut)}
+.upload-room input,.trace input[type=number]{width:100%;min-width:0;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:6px 7px;font-size:13px}
+.upload-dims{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.upload-dims input{padding:6px 3px;text-align:center;-moz-appearance:textfield;appearance:textfield}
+.upload-dims input::-webkit-inner-spin-button,.upload-dims input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.upload-unit{margin:0;font-size:10.5px;line-height:1.35;color:var(--mut)}
+#advanced-tools .upload .upload-apply{border-color:rgba(255,216,102,.6);color:var(--accent)}
+#advanced-tools .upload .upload-apply:hover{background:var(--accent);color:#1a0e00}
+#advanced-tools .upload .upload-apply:disabled{opacity:.45;cursor:progress}
+.upload-link{justify-self:start;border:0;background:none;padding:0;color:var(--mut);font-size:11.5px;text-decoration:underline;cursor:pointer}
+.upload-link:hover{color:var(--ink)}
+.upload-status{margin:0;font-size:11.5px;line-height:1.4;color:var(--good,#88ffaa);overflow-wrap:anywhere}
+.upload-status:empty{display:none}
+.upload-status.err{color:var(--err)}
+.trace{display:grid;gap:8px;padding-top:10px;border-top:1px solid var(--line)}
+.trace input[type=range]{width:100%;margin:2px 0 0;accent-color:var(--brand)}
+.trace output{color:var(--ink)}
+.upload-note{margin:0;padding:7px 8px;border:1px dashed var(--line);border-radius:8px;font-size:10.5px;line-height:1.4;color:var(--mut)}
 @media(max-width:1000px){.views{grid-template-columns:1fr}.lower{grid-template-columns:1fr}}
 @media(max-width:600px){main{padding:22px 16px 48px}.modes{width:100%}.modes button{flex:1;padding:9px 8px}.proposal-title{flex-basis:100%}.toolbar-spacer{display:none}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
