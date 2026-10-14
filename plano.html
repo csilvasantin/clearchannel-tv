@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Plano y obras · Clear Channel</title>
+  <meta name="description" content="Plano en planta y en alzado de un Xpacio con su inventario ITIL de pantallas, y propuestas de obra para cambiar su distribución.">
+  <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
+  <link rel="canonical" href="https://www.clearchannel.tv/plano.html">
+  <link rel="stylesheet" href="plano.css?v=20261014-plano-1">
+  <link rel="stylesheet" href="brand.css">
+  <script src="brand.js"></script>
+  <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
+  <script>
+  // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones manda; plano.mjs escucha admira:lang.
+  window.ADMIRA_SHELL = { section: { es: '/ plano y obras', en: '/ floor plan and works' }, setLang() {} };
+  </script>
+  <script defer src="/galaxy-shell.js?v=20261014-redistribucion-1"></script>
+  <script type="module" src="plano.mjs?v=20261014-plano-1"></script>
+</head>
+<body>
+  <main>
+    <div class="intro">
+      <div>
+        <a id="back" class="back" href="/" data-copy="back">← Volver a la ficha</a>
+        <p class="eyebrow" data-copy="eyebrow">Plano del Xpacio · inventario ITIL</p>
+        <h1 id="title">Plano y obras</h1>
+        <p id="address" class="address"></p>
+      </div>
+      <div class="modes" role="group" data-copy-aria="modes" aria-label="Qué distribución ver">
+        <button type="button" id="mode-actual" aria-pressed="true" data-copy="current">Distribución actual</button>
+        <button type="button" id="mode-obra" aria-pressed="false" data-copy="works">Propuesta de obra</button>
+      </div>
+    </div>
+    <p id="page-status" role="status" class="page-status" data-copy="loading">Cargando el plano…</p>
+    <p id="source" class="source" hidden></p>
+
+    <div id="workspace" hidden>
+      <div id="toolbar" class="toolbar" hidden>
+        <input id="proposal-title" class="proposal-title" maxlength="80" data-copy-aria="proposalName" aria-label="Nombre de la propuesta">
+        <span class="toolbar-label" data-copy="add">Añadir</span>
+        <button type="button" data-add="vertical" data-copy="addVertical">▯ Vertical 55″</button>
+        <button type="button" data-add="horizontal" data-copy="addHorizontal">▭ Horizontal 55″</button>
+        <button type="button" data-add="mosaico-h" data-copy="addH">▯▭▯ Mosaico H</button>
+        <button type="button" data-add="mosaico-doble-h" data-copy="addMosaic">▯▭▯▯▭▯ Mosaico doble H</button>
+        <span class="toolbar-spacer"></span>
+        <span id="saved" class="saved" role="status"></span>
+        <button type="button" id="reset" class="ghost" data-copy="reset">Volver a la distribución actual</button>
+      </div>
+
+      <div class="views">
+        <section class="card" aria-labelledby="planta-title">
+          <div class="card-head"><h2 id="planta-title" data-copy="plan">Planta</h2><span class="hint" data-copy="planHint">Pulsa una pared para ver su alzado</span></div>
+          <div class="svg-wrap"><svg id="planta" role="img" data-copy-aria="planAria" aria-label="Plano en planta"></svg></div>
+        </section>
+        <section class="card" aria-labelledby="alzado-title">
+          <div class="card-head"><h2 id="alzado-title" data-copy="elevation">Alzado</h2><div id="wall-tabs" class="wall-tabs" role="tablist"></div></div>
+          <div class="svg-wrap"><svg id="alzado" role="img" data-copy-aria="elevationAria" aria-label="Alzado de la pared"></svg></div>
+          <p id="drag-hint" class="hint" hidden data-copy="dragHint">Arrastra una pantalla en el alzado o muévela con las flechas (Mayús: 10 cm). Los mosaicos se mueven enteros salvo que lo desactives.</p>
+        </section>
+      </div>
+
+      <div class="lower">
+        <section class="card inventory" aria-labelledby="inv-title">
+          <div class="card-head"><h2 id="inv-title" data-copy="inventory">Inventario ITIL · pantallas</h2><span id="inv-count" class="hint"></span></div>
+          <div class="table-wrap"><table id="inventory"></table></div>
+        </section>
+        <aside class="card inspector" id="inspector" aria-labelledby="insp-title" hidden>
+          <div class="card-head"><h2 id="insp-title" data-copy="selected">Pantalla seleccionada</h2></div>
+          <div id="inspector-body"></div>
+        </aside>
+      </div>
+
+      <section class="card order" id="order" aria-labelledby="order-title" hidden>
+        <div class="card-head">
+          <h2 id="order-title" data-copy="order">Orden de obra</h2>
+          <div class="order-actions">
+            <button type="button" id="export" data-copy="export">Descargar orden de obra (JSON)</button>
+          </div>
+        </div>
+        <p class="hint" data-copy="orderNote">Borrador en este navegador. Las altas y bajas de CI se aplican en Yokup, el maestro del ITIL, cuando la obra se apruebe y se ejecute.</p>
+        <div id="validation"></div>
+        <ol id="actions" class="actions"></ol>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

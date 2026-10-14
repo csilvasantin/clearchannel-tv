@@ -198,3 +198,29 @@ test('el avatar no se come el alias /cli de /demo', () => {
   assert.match(help, /\/avatar best/);
   assert.match(help, /sigue siendo \/demo/);
 });
+
+test('/redistribucion opens the floor plan in works mode for the named or open Xpacio', () => {
+  for (const input of ['/redistribucion starbucks', '/redistribución Starbucks Paseo de Gracia', '/plano alsea-sbux-021', '/obras pg103', 'redistribuir xpacio=paseo de gracia']) {
+    const opened = [];
+    const r = C.execute(input, fakeCtx({open: url => { opened.push(url); return {ok: true}; }}), 'es');
+    assert.equal(r.ok, true, input);
+    assert.deepEqual(opened, ['/plano.html?locationId=alsea-sbux-021&modo=obra&lang=es'], input);
+  }
+  const fromProfile = [];
+  C.execute('/redistribucion', fakeCtx({location: () => ({id: 'alsea-sbux-021', name: 'Starbucks Paseo de Gracia'}), open: url => fromProfile.push(url)}), 'en');
+  assert.deepEqual(fromProfile, ['/plano.html?locationId=alsea-sbux-021&modo=obra&lang=en']);
+  const noPlan = C.execute('/redistribucion', fakeCtx({location: () => ({id: 'xtanco-valencia', name: 'Xtanco Valencia'}), open: () => assert.fail('must not open')}), 'es');
+  assert.equal(noPlan.ok, false);
+  assert.match(noPlan.lines[0], /Xtanco Valencia aún no tiene plano/);
+  assert.equal(C.execute('/plano mercadona', fakeCtx({open: () => assert.fail('must not open')}), 'es').ok, false);
+  // El motor común de la suite no quita tildes: la forma acentuada va como alias literal.
+  assert.ok(C.VERBS.find(v => v.id === 'redistribucion').aliases.includes('redistribución'));
+  assert.equal(C.planoUrl('alsea-sbux-021', 'es', 'https://www.admira.biz/'), 'https://www.admira.biz/plano.html?locationId=alsea-sbux-021&modo=obra&lang=es');
+});
+
+test('every floor plan in the registry has its data file', () => {
+  for (const p of C.PLANOS) {
+    const plan = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'xpacios', p.id + '.json'), 'utf8'));
+    assert.equal(plan.id, p.id);
+  }
+});
