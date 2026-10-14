@@ -10,9 +10,9 @@
     "deployedAt": "2026-10-09T00:09:34+0200",
     "dirty": false,
     "novedades": [
-      "Plano del laboratorio AdmiraNeXT de Gran de Gràcia 51 (/plano lab): levantado con la webcam PTZ de admira.live, medidas estimadas ±15 cm.",
-      "Inventario ITIL de Yokup en el plano: 7 pantallas, 3 players y la webcam con sus códigos GDG51-…, y enlace «Ver en Yokup (ITIL)».",
-      "Plano compartido: /data/xpacios/<id>.json se puede leer desde admira.store, admira.studio y admira.tv (CORS de solo lectura); rótulos legibles en salas pequeñas."
+      "SneakerStore: fondo con pantalla LED y puerta central; mesa de caja pegada a la pared derecha.",
+      "El LED comparte el canal horizontal validado; nueva vista Fondo LED y migración conservando las ediciones.",
+      "Guía ES/EN, tutorial y contratos MCP actualizados."
     ],
     "domains": [
       "www.clearchannel.tv",
