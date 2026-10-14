@@ -72,9 +72,9 @@ export function sortearMedidas(tipo, rnd) {
 // ── Geometría auxiliar ───────────────────────────────────────────────────────
 const solapa = (a, b, g = 0) => a.x < b.x + b.w + g - EPS && b.x < a.x + a.w + g - EPS && a.y < b.y + b.d + g - EPS && b.y < a.y + a.d + g - EPS;
 
-// ── Elementos ya situados (vía «con foto o vídeo», próximamente) ─────────────
+// ── Elementos ya situados (vía «con foto o vídeo», plano-foto.mjs) ───────────
 // La estimación a partir de fotos o vídeo del local (tamaños conocidos y ángulos de la óptica,
-// como el levantamiento del laboratorio con la webcam) dará medidas y elementos ya situados:
+// como el levantamiento del laboratorio con la webcam; Gemini Pro en /xpacio/estimar) da medidas y elementos ya situados:
 // { huecos?, mobiliario?, pantallas? } con el convenio de la sala (paredes F, D, P e I; muebles en
 // x, y, w, d; pantallas con pared, s y z). Se respetan tal cual y lo que traen no se inventa: si
 // trae pantallas, no se añaden las típicas; si trae muebles, no se añaden muebles; si trae huecos,

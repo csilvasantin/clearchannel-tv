@@ -11,8 +11,9 @@ export const BIZ_ASSET_FILES = Object.freeze([
   // laboratorio de Gran de Gràcia 51 (DCL-6ae9d5b0e2d48ee2fd9c7b19).
   'plano.html', 'plano.mjs', 'plano-core.mjs', 'plano-subida.mjs', 'plano.css', 'data/xpacios/alsea-sbux-021.json',
   'data/xpacios/lab-gran-de-gracia-51.json',
-  // ▤ Creación de Xpacios (DCL-35708977d7b8520386dad95f): planos inventados por tipo.
-  'plano-generador.mjs',
+  // ▤ Creación de Xpacios (DCL-35708977d7b8520386dad95f): planos inventados por tipo; «Con foto o vídeo»
+  // (DCL-ddf3203078fe9471f3796130): estimación con Gemini Pro en api.admira.store/xpacio/estimar.
+  'plano-generador.mjs', 'plano-foto.mjs',
   // ▤ Creador de incidencias (DCL-34d5bbccb9cc227bb752a419): mando de fallos de laboratorio + agente detector.
   'plano-incidencias.mjs', 'plano-incidencias.css', 'incidencias-core.mjs', 'incidencias-adaptadores.mjs',
   // El laboratorio también como ficha del mapa (OMNIP_LOCATIONS_EXTRA): sin tocar el catálogo KV.

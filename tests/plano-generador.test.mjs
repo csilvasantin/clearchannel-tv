@@ -163,7 +163,7 @@ test('the generator ships with the floor plan page on admira.biz', () => {
   assert.ok(BIZ_ASSET_FILES.includes('plano-generador.mjs'));
   const html = readFileSync(new URL('../plano.html', import.meta.url), 'utf8');
   const page = readFileSync(new URL('../plano.mjs', import.meta.url), 'utf8');
-  assert.match(page, /plano-generador\.mjs\?v=20261014-crear-1/);
+  assert.match(page, /plano-generador\.mjs\?v=20261014-foto-1/);
   assert.match(html, /id="create"[^>]*data-shell-slot="advanced"/);
   assert.ok(html.indexOf('id="upload"') < html.indexOf('id="create"'), '«Creación de Xpacios» va debajo de «Subir plano»');
   const index = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
