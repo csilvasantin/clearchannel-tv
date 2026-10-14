@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Laboratorio AdmiraNeXT · Gran de Gràcia 51 en el mapa y con plano: planta y alzado levantados con la webcam de admira.live, 7 pantallas y sus players.",
-    "Inventario ITIL del laboratorio en Yokup (11 CI GDG51-…): el plano enlaza «Ver en Yokup (ITIL)» y lista players y dispositivos.",
-    "Plano compartido: www.admira.biz/data/xpacios/<id>.json se puede leer desde admira.store, admira.studio y admira.tv."
+    "Creación de Xpacios en ▤ Modo avanzado del plano: si no tenemos el plano, nos lo inventamos por tipo (cafetería, estanco, kiosco, farmacia, moda…).",
+    "Con medidas a mano o «Creación total», sorteadas según la media del tipo, con puerta, escaparate, mobiliario típico y pantallas en propuesta.",
+    "El plano generado se guarda en este navegador como inventado y se puede abrir desde la portada (▤ Creación de Xpacios) o con ?crear=1."
   ],
   "nativeClearChannel": {
     "enabled": true,
