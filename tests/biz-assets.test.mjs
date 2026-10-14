@@ -58,7 +58,10 @@ test('published floor plans are shared read-only with any origin; an id without 
   const env = {ASSETS:{fetch(request) {
     const path = new URL(request.url).pathname;
     calls.push(path);
-    if (path === '/__admira_biz/data/xpacios/lab-gran-de-gracia-51.json') return new Response('{"schema":"admira.xpacio-plano/1"}', {headers:{'content-type':'application/json','set-cookie':'x=1'}});
+    if (path === '/__admira_biz/data/xpacios/lab-gran-de-gracia-51.json') {
+      if (request.headers.get('if-none-match') === '"v1"') return new Response(null, {status:304, headers:{etag:'"v1"'}});
+      return new Response('{"schema":"admira.xpacio-plano/1"}', {headers:{'content-type':'application/json','set-cookie':'x=1',etag:'"v1"'}});
+    }
     // Pages responde a lo que no existe con la portada (200, HTML).
     if (path.startsWith('/data/xpacios/')) return new Response('<!doctype html><title>Portada</title>', {headers:{'content-type':'text/html; charset=utf-8'}});
     return new Response('{}', {headers:{'content-type':'application/javascript'}});
@@ -72,6 +75,11 @@ test('published floor plans are shared read-only with any origin; an id without 
   assert.equal(plan.headers.get('content-type'), 'application/json; charset=utf-8');
   assert.equal(JSON.parse(await plan.text()).schema, 'admira.xpacio-plano/1');
   assert.equal(calls.pop(), '/__admira_biz/data/xpacios/lab-gran-de-gracia-51.json');
+  // Revalidación: el navegador manda If-None-Match y el plano no ha cambiado → 304 con CORS, no 404.
+  const fresh = await worker.fetch(new Request('https://www.admira.biz/data/xpacios/lab-gran-de-gracia-51.json', {headers:{Origin:'https://www.admira.store','If-None-Match':'"v1"'}}), env);
+  assert.equal(fresh.status, 304);
+  assert.equal(fresh.headers.get('access-control-allow-origin'), '*');
+  assert.equal(fresh.headers.get('etag'), '"v1"');
   const missing = await worker.fetch(new Request('https://www.admira.biz/data/xpacios/mi-tienda.json'), env);
   assert.equal(missing.status, 404);
   assert.equal(missing.headers.get('access-control-allow-origin'), '*');

@@ -206,7 +206,10 @@ function sharedPlanPreflight() {
 }
 function sharedPlan(response, pathname) {
   var type = response.headers.get('content-type') || '';
-  if (!response.ok || type.includes('text/html')) {
+  // Un 304 (If-None-Match del navegador) es el plano vigente sin cuerpo, no un «sin plano»:
+  // tratarlo como error devolvía 404 en cada segunda carga y el gemelo caía a su copia local.
+  var notModified = response.status === 304;
+  if (!notModified && (!response.ok || type.includes('text/html'))) {
     var id = pathname.split('/').pop().replace(/\.json$/, '');
     return new Response(JSON.stringify({ error: 'sin-plano', id: id }), { status: 404, headers: Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=60' }, PLANO_CORS) });
   }
@@ -216,7 +219,7 @@ function sharedPlan(response, pathname) {
   headers.set('Cache-Control', 'public, max-age=300');
   headers.delete('Access-Control-Allow-Credentials');
   headers.delete('Set-Cookie');
-  return new Response(response.body, { status: response.status, headers: headers });
+  return new Response(notModified ? null : response.body, { status: response.status, headers: headers });
 }
 
 export default {
