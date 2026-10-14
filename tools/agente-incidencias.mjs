@@ -53,9 +53,12 @@ export async function pasada({ plan, estados = {}, fetcher = fetch, ahora = Date
       if (e.accion) {
         const accion = e.accion, res = recurso(plan, p, t.id), via = carril(res, { publico, mcp });
         const body = v.body;
-        if (seco || !via || !body) {
-          e = { ...e, error: seco ? 'seco' : 'sin_carril' };
-          hechos.push({ clave, accion, recurso: res, omitida: seco ? 'seco' : 'sin_carril' });
+        // Una pantalla que no es de laboratorio (CI de cliente) va SIEMPRE en seco, sea cual sea el tipo y
+        // aunque haya credencial: ni formato girado ni popup ni medio abrir abren incidencias ITIL reales.
+        const enSeco = seco || !p.lab;
+        if (enSeco || !via || !body) {
+          e = { ...e, error: enSeco ? 'seco' : 'sin_carril' };
+          hechos.push({ clave, accion, recurso: res, omitida: enSeco ? 'seco' : 'sin_carril' });
         } else {
           let r;
           try { r = accion === 'abrir' ? await via.abrir(body) : await via.cerrar(body); } catch (err) { r = { ok: false, error: String(err && err.message || err) }; }

@@ -12,7 +12,7 @@ import {
 import { mando, yokupPublico } from './incidencias-adaptadores.mjs?v=20261014-bugito-1';
 import {
   BANCO, BUGITO_SCREEN, BUGITO_ORIGIN, GRACIA_BANCO_MS, pantallaBanco, resolverIncidencia, playerUrl, caraUrl, baseLocal,
-  estadoBugito, mensajeBugito, esDeBugito
+  estadoBugito, mensajeBugito, esDeBugito, debePausar
 } from './bugito-core.mjs?v=20261014-bugito-1';
 
 const $ = id => document.getElementById(id);
@@ -38,7 +38,9 @@ const textos = {
     stage: { abierta: 'abierta', en_curso: 'en curso', recuperada: 'recuperada', cerrada: 'cerrada' },
     unknown: x => `Bugito no conoce «${x}». Prueba: girar, resolucion, popup, medias o normal.`,
     launched: (n) => `Bugito lanza «${n}» en el player virtual.`, shown: 'Bugito a la vista.', hidden: 'Bugito escondido (vuelve con /bugito).',
-    presel: n => `Preseleccionada: ${n}. Pulsa el botón para lanzarla.`
+    presel: n => `Preseleccionada: ${n}. Pulsa el botón para lanzarla.`,
+    resume: 'Reanudar', pausaOculta: 'Player en pausa mientras la pestaña está oculta.',
+    pausaInactivo: 'Player en pausa tras 5 min sin actividad: es un player de verdad y así no escribe en /signage/now para nada.'
   },
   en: {
     back: '← Incident creator (▤ floor plan advanced mode)', eyebrow: 'Incident creator · test bench', title: 'Bugito breaks, the agent watches',
@@ -58,7 +60,9 @@ const textos = {
     stage: { abierta: 'open', en_curso: 'in progress', recuperada: 'recovered', cerrada: 'closed' },
     unknown: x => `Bugito does not know “${x}”. Try: rotate, resolution, popup, half or normal.`,
     launched: (n) => `Bugito launches “${n}” on the virtual player.`, shown: 'Bugito in sight.', hidden: 'Bugito hidden (/bugito brings him back).',
-    presel: n => `Preselected: ${n}. Press the button to launch it.`
+    presel: n => `Preselected: ${n}. Press the button to launch it.`,
+    resume: 'Resume', pausaOculta: 'Player paused while the tab is hidden.',
+    pausaInactivo: 'Player paused after 5 min without activity: it is a real player, so it stops writing to /signage/now.'
   }
 };
 const LANGUAGE_KEY = (window.ADMIRA_SITE_BRAND?.id || 'clearchannel') + '-lang';
@@ -87,6 +91,8 @@ function urlCara() {
 const prueba = { tipo: '', envio: null, acuse: null, vuelta: null, vueltaAcuse: null, marcas: new Set(), mensaje: '', error: false };
 const detectores = {}, observaciones = {}, incidencias = {};
 let lectura = null, ultimoYokup = 0, ocupado = false, sondeo = 0, ultimoMensaje = '', caraLista = false;
+// El player del banco es un player REAL: con la pestaña oculta o 5 min sin actividad se descarga.
+let ultimoGesto = Date.now(), pausado = '';
 const clave = id => `admira.bugito.${BANCO.id}.${id}`;
 for (const t of CATALOGO) { try { detectores[t.id] = JSON.parse(localStorage.getItem(clave(t.id)) || 'null'); } catch { detectores[t.id] = null; } }
 const guardar = id => { try { localStorage.setItem(clave(id), JSON.stringify(detectores[id])); } catch { /* sin almacenamiento */ } };
@@ -131,14 +137,14 @@ window.addEventListener('message', ev => {
   if (!esDeBugito(ev, $('bb-cara-frame').contentWindow, caraOrigen)) return;
   const d = ev.data;
   if (d.type === 'da-bugito-listo') { caraLista = true; avisarBugito(true); }
-  else if (d.type === 'da-bugito-lanzar') lanzar(String(d.incidencia || ''));
+  else if (d.type === 'da-bugito-lanzar') { gesto(); lanzar(String(d.incidencia || '')); }
 });
 
 // ── Pintar ────────────────────────────────────────────────────────────────────────────────
 function traducir() {
   document.querySelectorAll('[data-bb]').forEach(n => { const v = textos[lang][n.dataset.bb]; if (typeof v === 'string') n.textContent = v; });
   $('bb-toggle').textContent = document.querySelector('.bugito-banco').classList.contains('sin-bugito') ? tr('show') : tr('hide');
-  pintarMenu(); pintar();
+  pintarMenu(); pintar(); pintarPausa();
 }
 function pintarMenu() {
   const menu = $('bb-menu'), titulo = $('bb-menu-title');
@@ -221,7 +227,7 @@ function vuelta() {
   return enCurso;
 }
 async function vueltaUnica() {
-  if (!P || document.hidden) return;
+  if (!P || document.hidden || pausado) return;
   const ahora = Date.now();
   let senal = null;
   try { senal = await red.mando.senal(BUGITO_SCREEN); } catch { senal = null; }
@@ -260,6 +266,7 @@ function programar() { clearTimeout(sondeo); sondeo = setTimeout(async () => { t
 
 // ── Lanzar (botones, chips de Bugito y /bugito <incidencia>) ──────────────────────────────
 async function lanzar(texto) {
+  gesto(); if (pausado) reanudarPlayer();
   const id = resolverIncidencia(texto);
   if (!id) { prueba.mensaje = tr('unknown', String(texto || '').slice(0, 40)); prueba.error = true; pintar(); return prueba.mensaje; }
   if (!P || ocupado) return '';
@@ -284,6 +291,29 @@ async function lanzar(texto) {
   vuelta().catch(() => {});
   return r.ok ? tr('launched', nombre(id)) : prueba.mensaje;
 }
+// ── El player: pausa con la pestaña oculta o sin actividad, «Reanudar» lo vuelve a cargar ────────
+function gesto() { ultimoGesto = Date.now(); }
+function pausarPlayer(motivo) {
+  if (!motivo) return;
+  if (pausado) { pausado = motivo === 'inactivo' ? 'inactivo' : pausado; pintarPausa(); return; }
+  pausado = motivo;
+  $('bb-player-frame').src = 'about:blank';   // descargado: deja de latir y de escribir /signage/now
+  pintarPausa();
+}
+function reanudarPlayer() {
+  if (!pausado) return;
+  pausado = ''; gesto();
+  $('bb-player-frame').src = playerUrl({ base: playerBase, lang });
+  pintarPausa(); vuelta().catch(() => {});
+}
+function pintarPausa() {
+  $('bb-pausa').hidden = !pausado;
+  $('bb-pausa-texto').textContent = pausado === 'inactivo' ? tr('pausaInactivo') : pausado ? tr('pausaOculta') : '';
+}
+function vigilarPausa() {
+  const motivo = debePausar({ oculta: document.hidden, ultimoGesto });
+  if (motivo) pausarPlayer(motivo);
+}
 function alternarBugito(mostrar) {
   const main = document.querySelector('.bugito-banco');
   const ver = typeof mostrar === 'boolean' ? mostrar : main.classList.contains('sin-bugito');
@@ -307,7 +337,13 @@ function arrancar() {
     lang = next; traducir();
     try { $('bb-cara-frame').contentWindow.postMessage({ type: 'da-bugito', ...mensajeBugito(estadoActual().estado, { lang, silencio: true }) }, caraOrigen); } catch { /* sin cara */ }
   });
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) vuelta().catch(() => {}); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { pausarPlayer('oculta'); return; }
+    if (pausado === 'oculta') reanudarPlayer(); else vuelta().catch(() => {});
+  });
+  for (const ev of ['pointerdown', 'keydown', 'wheel', 'touchstart']) document.addEventListener(ev, gesto, { passive: true, capture: true });
+  $('bb-reanudar').addEventListener('click', reanudarPlayer);
+  setInterval(vigilarPausa, 15000);
   $('bb-screen').textContent = BUGITO_SCREEN;
   $('bb-player-frame').src = playerUrl({ base: playerBase, lang });
   montarCara();

@@ -59,8 +59,18 @@ export function playerUrl({ base = PLAYER_BASE, lang = 'es' } = {}) {
   u.searchParams.set('clean', '1');
   u.searchParams.set('muted', '1');
   u.searchParams.set('fit', 'screen');
+  // Playlist corta y lenta: es un player real que escribe /signage/now en cada cambio de pieza.
+  for (const [k, v] of Object.entries(PLAYLIST_BANCO)) u.searchParams.set(k, v);
   u.searchParams.set('name', lang === 'en' ? "Bugito's virtual player" : 'Player virtual de Bugito');
   return u.href;
+}
+// Sólo imágenes, tres piezas de 40 s: ~1,5 cambios de pieza por minuto mientras el banco está a la vista.
+export const PLAYLIST_BANCO = Object.freeze({ medio: 'image', max: '3', img: '40' });
+// El banco pausa (descarga) el player con la pestaña oculta y tras INACTIVO_MS sin que nadie lo toque.
+export const INACTIVO_MS = 5 * 60000;
+export function debePausar({ oculta = false, ultimoGesto = 0, ahora = Date.now(), inactivoMs = INACTIVO_MS } = {}) {
+  if (oculta) return 'oculta';
+  return ahora - ultimoGesto >= inactivoMs ? 'inactivo' : '';
 }
 export function caraUrl({ base = BUGITO_CARA, lang = 'es' } = {}) {
   const u = new URL(base);

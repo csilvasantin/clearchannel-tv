@@ -9,7 +9,7 @@ import {
 } from '../incidencias-core.mjs';
 import {
   BANCO, BUGITO_SCREEN, BUGITO_ORIGIN, GRACIA_BANCO_MS, pantallaBanco, resolverIncidencia, INCIDENCIAS, playerUrl, caraUrl, baseLocal,
-  estadoBugito, mensajeBugito, esDeBugito, bancoEsLab
+  estadoBugito, mensajeBugito, esDeBugito, bancoEsLab, debePausar, INACTIVO_MS
 } from '../bugito-core.mjs';
 import { pasada } from '../tools/agente-incidencias.mjs';
 import { BIZ_ASSET_FILES, bizAssetPath } from '../server/biz-assets.mjs';
@@ -133,7 +133,8 @@ test('alias de las órdenes (verbo /bugito, chips de Bugito, ?incidencia=)', () 
 test('URL del player virtual y de la cara de Bugito; las copias locales sólo valen en localhost', () => {
   const pu = new URL(playerUrl());
   assert.equal(pu.origin + pu.pathname, 'https://admira.tv/canal.html');
-  assert.deepEqual(Object.fromEntries(pu.searchParams), { screen: 'virtual-lab-bugito', playerType: 'virtual', clean: '1', muted: '1', fit: 'screen', name: 'Player virtual de Bugito' });
+  assert.deepEqual(Object.fromEntries(pu.searchParams), { screen: 'virtual-lab-bugito', playerType: 'virtual', clean: '1', muted: '1', fit: 'screen',
+    medio: 'image', max: '3', img: '40', name: 'Player virtual de Bugito' }, 'playlist corta y lenta: sólo imágenes, 3 piezas de 40 s');
   const cu = new URL(caraUrl({ lang: 'en' }));
   assert.equal(cu.origin + cu.pathname, 'https://digitalavatar.ai/nube.html', 'la nube de Admirito: no hay página aparte');
   assert.deepEqual(Object.fromEntries(cu.searchParams), { dock: '1', personaje: 'bugito', lang: 'en', audio: 'off' });
@@ -212,4 +213,38 @@ test('la página del banco y el botón «Probar con Bugito» del ▤ Creador de 
   for (const f of ['bugito.html', 'bugito.mjs', 'bugito.css', 'bugito-core.mjs']) assert.ok(BIZ_ASSET_FILES.includes(f), f);
   assert.equal(bizAssetPath(new URL('https://www.admira.biz/bugito')), '/__admira_biz/bugito');
   assert.equal(bizAssetPath(new URL('https://www.admira.biz/bugito.html')), '/__admira_biz/bugito');
+});
+
+test('revisión: con credencial y --todas, las pantallas de clientes tampoco abren incidencias ITIL de ningún tipo', async () => {
+  const starbucks = JSON.parse(readFileSync(new URL('../data/xpacios/alsea-sbux-021.json', import.meta.url), 'utf8'));
+  const llamadas = [];
+  const fetcher = async (url) => {
+    llamadas.push(String(url));
+    if (String(url).includes('/signage/now')) return new Response(JSON.stringify(senal({ width: 2560, height: 1440, painted: 'vertical', canvas: { w: 600, h: 1440 }, overlay: 40, visible: 40, fit: 'fill' })), { status: 200 });
+    return new Response(JSON.stringify({ jsonrpc: '2.0', id: 1, result: { structuredContent: { id: 'INC-ITIL9' } } }), { status: 200 });
+  };
+  const credencial = { token: 'ykm_x', scopes: ['incidents', 'incidents:write'], endpoint: 'https://yokup.com/mcp' };
+  let estados = {}, hechos = [];
+  for (let i = 0; i <= 4; i++) { const r = await pasada({ plan: starbucks, estados, fetcher, ahora: T0 + i * GRACIA_MS, todas: true, credencial }); estados = r.estados; hechos.push(...r.hechos); }
+  assert.ok(hechos.some((h) => h.accion === 'abrir'), 'detecta');
+  assert.ok(hechos.filter((h) => h.accion).every((h) => h.omitida === 'seco'), 'pero todo en seco');
+  assert.equal(llamadas.filter((u) => /yokup/.test(u)).length, 0, 'ni MCP ni carril público');
+  // Aunque alguien llame a pasada con todas:false y seco:false sobre un plano de clientes: no vigila nada.
+  const nada = await pasada({ plan: starbucks, fetcher, ahora: T0, credencial });
+  assert.deepEqual(nada.hechos, []);
+});
+
+test('revisión: el player del banco es real; se pausa con la pestaña oculta y tras 5 min sin actividad', () => {
+  assert.equal(INACTIVO_MS, 5 * 60000);
+  assert.equal(debePausar({ oculta: true, ultimoGesto: T0, ahora: T0 }), 'oculta');
+  assert.equal(debePausar({ ultimoGesto: T0, ahora: T0 + INACTIVO_MS - 1 }), '');
+  assert.equal(debePausar({ ultimoGesto: T0, ahora: T0 + INACTIVO_MS }), 'inactivo');
+  const ui = readFileSync(new URL('../bugito.mjs', import.meta.url), 'utf8');
+  const html = readFileSync(new URL('../bugito.html', import.meta.url), 'utf8');
+  assert.match(ui, /\$\('bb-player-frame'\)\.src = 'about:blank';/, 'pausar = descargar el iframe');
+  assert.match(ui, /if \(document\.hidden\) \{ pausarPlayer\('oculta'\); return; \}/);
+  assert.match(ui, /setInterval\(vigilarPausa, 15000\)/);
+  assert.match(ui, /if \(!P \|\| document\.hidden \|\| pausado\) return;/, 'pausado, el detector no sondea');
+  assert.match(ui, /gesto\(\); if \(pausado\) reanudarPlayer\(\);/, 'lanzar una incidencia lo reanuda');
+  assert.match(html, /<button type="button" id="bb-reanudar" data-bb="resume">Reanudar<\/button>/);
 });
