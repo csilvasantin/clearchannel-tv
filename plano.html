@@ -17,6 +17,9 @@
   </script>
   <script defer src="/galaxy-shell.js?v=20261014-lab-1"></script>
   <script type="module" src="plano.mjs?v=20261014-crear-1"></script>
+  <!-- ▤ Creador de incidencias (DCL-34d5bbccb9cc227bb752a419): módulo propio, sello propio. -->
+  <link rel="stylesheet" href="plano-incidencias.css?v=20261014-incidencias-1">
+  <script type="module" src="plano-incidencias.mjs?v=20261014-incidencias-1"></script>
 </head>
 <body>
   <main>
@@ -156,6 +159,24 @@
       <p class="upload-hint" data-copy="crPhotoText">Estimará el Xpacio a partir de fotos o de un vídeo del local, como el levantamiento del laboratorio con la webcam: tamaños conocidos (pantallas de 27″ o 55″, puertas de unos 2,1 m, baldosa de 20 cm) y los ángulos de la óptica. Saldrán las medidas y las pantallas, puertas y muebles situados, y el generador completará el plano.</p>
     </div>
     <p class="upload-note" data-copy="crNote">Plano generado en este navegador · inventado, no es un levantamiento.</p>
+  </section>
+
+  <!-- ▤ Modo avanzado · Creador de incidencias (DCL-34d5bbccb9cc227bb752a419): mando de fallos de laboratorio
+       (fault-rotate / fault-clear) y el agente detector que abre y cierra la incidencia en Yokup. -->
+  <section id="incidencias" class="upload incidencias" data-shell-slot="advanced" aria-labelledby="inc-title" tabindex="-1">
+    <h3 id="inc-title" class="upload-title" data-inc="title">Creador de incidencias</h3>
+    <p class="upload-hint" data-inc="hint">Envía un fallo a una pantalla de laboratorio y comprueba que el agente lo detecta y abre la incidencia en Yokup.</p>
+    <label><span data-inc="screen">Pantalla</span><select id="inc-screen"></select></label>
+    <label><span data-inc="type">Incidencia</span><select id="inc-type"></select></label>
+    <p id="inc-help" class="upload-unit"></p>
+    <div class="inc-actions">
+      <button type="button" id="inc-send" class="header-circuit-btn inc-send" data-inc="send">Enviar al player</button>
+      <button type="button" id="inc-clear" class="header-circuit-btn" data-inc="clear">Volver a la normalidad</button>
+    </div>
+    <ol id="inc-steps" class="inc-steps" aria-live="polite" hidden></ol>
+    <p id="inc-live" class="upload-unit" aria-live="polite"></p>
+    <p id="inc-status" class="upload-status" role="status"></p>
+    <p class="upload-note" data-inc="note">Sólo pantallas de laboratorio (MBP16 y players virtuales): el mando rechaza cualquier otra. El fallo caduca solo a los 30 min.</p>
   </section>
 </body>
 </html>
