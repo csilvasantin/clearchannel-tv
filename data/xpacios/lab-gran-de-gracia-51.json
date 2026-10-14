@@ -351,6 +351,7 @@
   {
    "id": "mbp16-pantalla",
    "itil": "GDG51-PAN-07",
+   "screenId": "macbookpro16",
    "nombre": "MacBook Pro 16 · pantalla integrada",
    "corto": "MBP16",
    "tipo": "pantalla",
@@ -374,6 +375,7 @@
  ],
  "yokup": {
   "site_id": "4723419e-5bf2-4f7c-b5d2-b87171503754",
+  "project_id": "gran-de-gracia",
   "portal": "https://admira.app/retailer#itil",
   "managed_by": "itil",
   "cis": 11
