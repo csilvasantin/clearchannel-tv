@@ -7,7 +7,7 @@
   <meta name="description" content="Plano en planta y en alzado de un Xpacio con su inventario ITIL de pantallas, y propuestas de obra para cambiar su distribución.">
   <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
   <link rel="canonical" href="https://www.clearchannel.tv/plano.html">
-  <link rel="stylesheet" href="plano.css?v=20261014-crear-1">
+  <link rel="stylesheet" href="plano.css?v=20261014-foto-2">
   <link rel="stylesheet" href="brand.css">
   <script src="brand.js"></script>
   <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
@@ -16,7 +16,7 @@
   window.ADMIRA_SHELL = { section: { es: '/ plano y obras', en: '/ floor plan and works' }, setLang() {} };
   </script>
   <script defer src="/galaxy-shell.js?v=20261014-lab-1"></script>
-  <script type="module" src="plano.mjs?v=20261014-crear-1"></script>
+  <script type="module" src="plano.mjs?v=20261014-foto-2"></script>
   <!-- ▤ Creador de incidencias (DCL-34d5bbccb9cc227bb752a419): módulo propio, sello propio. -->
   <link rel="stylesheet" href="plano-incidencias.css?v=20261014-incidencias-1">
   <script type="module" src="plano-incidencias.mjs?v=20261014-incidencias-1"></script>
@@ -128,7 +128,7 @@
   <!-- ▤ Modo avanzado · Creación de Xpacios (DCL-35708977d7b8520386dad95f): si no hay plano, nos lo inventamos. -->
   <section id="create" class="upload create" data-shell-slot="advanced" aria-labelledby="create-title" tabindex="-1">
     <h3 id="create-title" class="upload-title" data-copy="crTitle">Creación de Xpacios</h3>
-    <p class="upload-hint" data-copy="crHint">Para dar de alta Xpacios que no podremos visitar: al azar según el tipo, con su plano o, próximamente, con fotos o vídeo.</p>
+    <p class="upload-hint" data-copy="crHint">Para dar de alta Xpacios que no podremos visitar: al azar según el tipo, con su plano o con fotos o vídeo del local.</p>
     <div class="create-tabs" role="tablist" data-copy-aria="crTabs" aria-label="Cómo crear el Xpacio">
       <button type="button" role="tab" id="create-tab-random" aria-selected="true" aria-controls="create-random" data-pane="create-random" data-copy="crTabRandom">Aleatorio</button>
       <button type="button" role="tab" id="create-tab-plan" aria-selected="false" aria-controls="create-plan" data-pane="create-plan" tabindex="-1" data-copy="crTabPlan">Con plano</button>
@@ -154,9 +154,23 @@
       <p class="upload-hint" data-copy="crPlanText">Si tienes el plano del Xpacio (JSON, imagen o PDF), súbelo con «Subir plano», aquí arriba: una imagen o un PDF sirven de calco para una sala nueva.</p>
       <button type="button" id="create-go-upload" class="header-circuit-btn create-btn" data-copy="crGoUpload">Ir a Subir plano</button>
     </div>
+    <!-- «Con foto o vídeo» (DCL-ddf3203078fe9471f3796130): fotos o fotogramas de un vídeo → /xpacio/estimar (Gemini Pro) → generador. -->
     <div id="create-photo" class="create-pane" role="tabpanel" aria-labelledby="create-tab-photo" hidden>
-      <p class="create-soon" data-copy="crSoon">Próximamente · todavía no funciona</p>
-      <p class="upload-hint" data-copy="crPhotoText">Estimará el Xpacio a partir de fotos o de un vídeo del local, como el levantamiento del laboratorio con la webcam: tamaños conocidos (pantallas de 27″ o 55″, puertas de unos 2,1 m, baldosa de 20 cm) y los ángulos de la óptica. Saldrán las medidas y las pantallas, puertas y muebles situados, y el generador completará el plano.</p>
+      <p class="upload-hint" data-copy="crPhotoText">Sube hasta 8 fotos del local o un vídeo recorriéndolo. Gemini estima las medidas con tamaños conocidos (puertas, pantallas de 27″ o 55″, baldosa de 20 cm, mostradores) y sitúa puertas, muebles y pantallas; el generador completa el resto según el tipo.</p>
+      <label id="photo-drop" class="upload-drop">
+        <input id="photo-file" type="file" multiple accept="image/*,video/*">
+        <span class="upload-drop-main" data-copy="phDrop">Suelta aquí fotos o un vídeo, o pulsa para elegirlos</span>
+        <span class="upload-drop-types" data-copy="phTypes">Hasta 8 fotos · o 1 vídeo (se sacan 6–8 fotogramas aquí)</span>
+      </label>
+      <ul id="photo-thumbs" class="photo-thumbs" hidden></ul>
+      <label class="create-field"><span data-copy="crType">Tipo de Xpacio</span><select id="photo-type"></select></label>
+      <label class="create-field"><span data-copy="phNotes">Pistas (opcional)</span><textarea id="photo-notes" rows="2" maxlength="300" data-copy-placeholder="phNotesPh" placeholder="P. ej.: la entrada es la puerta de cristal; el techo es de 3 m"></textarea></label>
+      <button type="button" id="photo-estimate" class="header-circuit-btn create-btn create-total" data-copy="phEstimate" disabled>Estimar el Xpacio</button>
+      <div id="photo-progress" class="photo-progress" hidden><progress></progress><span id="photo-progress-text" aria-live="polite"></span></div>
+      <div id="photo-preview" class="upload-preview" hidden></div>
+      <button type="button" id="photo-apply" class="header-circuit-btn upload-apply" hidden data-copy="crApply">Usar este plano</button>
+      <p id="photo-status" class="upload-status" role="status"></p>
+      <p class="upload-note" data-copy="phPrivacy">Las fotos van a Gemini (Google) por el worker de Admira solo para estimar: no se guardan. El plano queda en este navegador, como estimado.</p>
     </div>
     <p class="upload-note" data-copy="crNote">Plano generado en este navegador · inventado, no es un levantamiento.</p>
   </section>

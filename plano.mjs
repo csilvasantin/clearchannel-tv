@@ -13,7 +13,12 @@ import {
   anchoSala, nuevoCalco, calcoValido, geometriaCalco, registroSubida, almacenPlanos, nombreDeFichero, conTiempo, ESPERA_IDB
 } from './plano-subida.mjs?v=20261014-subir-1';
 // ▤ Creación de Xpacios (DCL-35708977d7b8520386dad95f): plano inventado según el tipo de Xpacio.
-import { TIPOS, generarXpacio, medidasMedias, nuevaSemilla, resumenGenerado } from './plano-generador.mjs?v=20261014-crear-1';
+import { TIPOS, generarXpacio, medidasMedias, nuevaSemilla, resumenGenerado } from './plano-generador.mjs?v=20261014-foto-1';
+// ▤ Creación de Xpacios · «Con foto o vídeo» (DCL-ddf3203078fe9471f3796130): estimación con Gemini Pro en api.admira.store.
+import {
+  MAX_FOTOS, MAX_BYTES_FOTO, ESCALONES, ESPERA_ESTIMADOR, ACEPTA_FOTO, urlEstimador, tiemposFotogramas, escalaFoto, bytesDataUrl,
+  clasificarFicheros, claveError, origenEstimador, planoDesdeEstimacion, resumenEstimado
+} from './plano-foto.mjs?v=20261014-foto-2';
 
 const copy = {
   es: {
@@ -39,12 +44,35 @@ const copy = {
     devices: 'Players y dispositivos · ITIL', thDevice: 'Dispositivo', thKind: 'Tipo', thRole: 'Función',
     // ▤ Subir plano
     noPlanUpload: 'Este Xpacio aún no tiene plano: súbelo o créalo desde ▤ Modo avanzado.', openUpload: '▤ Subir plano', openCreate: '▤ Crear Xpacio',
-    crTitle: 'Creación de Xpacios', crHint: 'Para dar de alta Xpacios que no podremos visitar: al azar según el tipo, con su plano o, próximamente, con fotos o vídeo.',
+    crTitle: 'Creación de Xpacios', crHint: 'Para dar de alta Xpacios que no podremos visitar: al azar según el tipo, con su plano o con fotos o vídeo del local.',
     crTabs: 'Cómo crear el Xpacio', crTabRandom: 'Aleatorio', crTabPlan: 'Con plano', crTabPhoto: 'Con foto o vídeo',
     crRandomHint: 'Elige el tipo y las medidas, o «Creación total» para sortearlas según la media del tipo.',
     crPlanText: 'Si tienes el plano del Xpacio (JSON, imagen o PDF), súbelo con «Subir plano», aquí arriba: una imagen o un PDF sirven de calco para una sala nueva.', crGoUpload: 'Ir a Subir plano',
-    crSoon: 'Próximamente · todavía no funciona',
-    crPhotoText: 'Estimará el Xpacio a partir de fotos o de un vídeo del local, como el levantamiento del laboratorio con la webcam: tamaños conocidos (pantallas de 27″ o 55″, puertas de unos 2,1 m, baldosa de 20 cm) y los ángulos de la óptica. Saldrán las medidas y las pantallas, puertas y muebles situados, y el generador completará el plano.',
+    crPhotoText: 'Sube hasta 8 fotos del local o un vídeo recorriéndolo. Gemini estima las medidas con tamaños conocidos (puertas, pantallas de 27″ o 55″, baldosa de 20 cm, mostradores) y sitúa puertas, muebles y pantallas; el generador completa el resto según el tipo.',
+    phDrop: 'Suelta aquí fotos o un vídeo, o pulsa para elegirlos', phTypes: 'Hasta 8 fotos · o 1 vídeo (se sacan 6–8 fotogramas aquí)',
+    phNotes: 'Pistas (opcional)', phNotesPh: 'P. ej.: la entrada es la puerta de cristal; el techo es de 3 m', phEstimate: 'Estimar el Xpacio',
+    phPrivacy: 'Las fotos van a Gemini (Google) por el worker de Admira solo para estimar: no se guardan. El plano queda en este navegador, como estimado.',
+    phReading: 'Preparando las fotos…', phFrames: (i, n) => `Sacando fotogramas del vídeo… ${i}/${n}`,
+    phCount: (n, video) => video ? `${n} fotogramas de «${video}»` : `${n} de ${MAX_FOTOS} fotos`, phRemove: n => `Quitar la foto ${n}`, phClear: 'Quitar todas',
+    phWorking: sec => `Gemini está estimando el Xpacio… ${sec} s (suele tardar entre 1 y 2 minutos)`,
+    phDone: 'Estimación lista: revisa la vista previa y pulsa «Usar este plano».', phApplied: 'Plano estimado y guardado en este navegador.',
+    phLimitIp: 'Has llegado al tope de estimaciones de hoy desde esta conexión. Vuelve a probar mañana.',
+    phLimitDay: 'Hoy se ha llegado al tope de estimaciones (o de gasto) de admira.biz. Vuelve a probar mañana.',
+    phTooBig: 'Las fotos pesan demasiado incluso reducidas: prueba con menos.', phOrigin: 'La estimación con fotos solo funciona en www.admira.biz y www.admira.store: abre este plano allí.',
+    phOff: 'La estimación con fotos está desactivada ahora mismo.', phQuotaDown: 'El control de cupo del estimador no responde: por seguridad no se estima. Vuelve a probar en unos minutos.',
+    phTimeout: 'Gemini no ha respondido a tiempo. Vuelve a probar, quizá con menos fotos.', phInvalid: 'Gemini ha devuelto una estimación incoherente. Prueba con otras fotos.',
+    phBusy: 'Gemini no está disponible ahora mismo. Vuelve a probar en unos minutos.', phError: 'No se pudo estimar el Xpacio.',
+    phNetwork: 'No se pudo conectar con el estimador (api.admira.store).',
+    noImagen: f => `«${f}» no es una imagen ni un vídeo.`, imagenGrande: f => `«${f}» pesa más de 40 MB.`, videoGrande: f => `«${f}» pesa más de 1 GB.`,
+    soloVideo: () => 'Con un vídeo se usan solo sus fotogramas: el resto de ficheros se ignora.', maxFotos: f => `«${f}»: ya hay ${MAX_FOTOS} fotos.`,
+    phDecode: f => `No se pudo leer «${f}» en este navegador (prueba con JPG o PNG).`, phVideoError: f => `No se pudo leer el vídeo «${f}» en este navegador (prueba con MP4).`,
+    phHead: (t, m2, c) => `${t} · ${m2} m² · confianza ${c} %`,
+    phDims: r => `${fmt(r.ancho)} × ${fmt(r.largo)} m y ${fmt(r.alto)} m de alto · confianza: ancho ${pct(r.confianza.ancho)} %, largo ${pct(r.confianza.largo)} %, alto ${pct(r.confianza.alto)} %`,
+    phSeen: r => `Visto en las fotos: ${r.huecosEstimados} ${r.huecosEstimados === 1 ? 'hueco' : 'huecos'}, ${r.mueblesEstimados} ${r.mueblesEstimados === 1 ? 'mueble' : 'muebles'} y ${r.pantallasEstimadas} ${r.pantallasEstimadas === 1 ? 'pantalla estimada' : 'pantallas estimadas'}`,
+    phAdded: r => `Completado según el tipo: ${r.huecos - r.huecosEstimados} ${r.huecos - r.huecosEstimados === 1 ? 'hueco' : 'huecos'}, ${r.muebles - r.mueblesEstimados} ${r.muebles - r.mueblesEstimados === 1 ? 'mueble' : 'muebles'} y ${r.pantallas - r.pantallasEstimadas} ${r.pantallas - r.pantallasEstimadas === 1 ? 'pantalla' : 'pantallas'} en propuesta`,
+    phRefs: 'Referencias de tamaño', phModelNotes: m => `Notas de ${m}`, phDiscarded: n => `${n} ${n === 1 ? 'elemento descartado' : 'elementos descartados'} por incoherente${n === 1 ? '' : 's'}`,
+    phFrom: (m, n) => `${m} · ${n} ${n === 1 ? 'foto' : 'fotos'}`, phSimulated: 'Respuesta simulada (?simula=1): no se ha llamado a Gemini.',
+    photoLine: m => `Plano estimado en este navegador · desde fotos, con ${m}`,
     crType: 'Tipo de Xpacio', crWidth: 'Ancho', crLength: 'Largo', crManual: 'Crear con estas medidas', crTotal: 'Creación total', crApply: 'Usar este plano',
     crNote: 'Plano generado en este navegador · inventado, no es un levantamiento.',
     crArea: (m2, t) => `≈ ${m2} m² · ancho = fachada, largo = fondo · media del tipo: ${t.m2[1]} m² (${t.m2[0]}–${t.m2[2]})`,
@@ -87,12 +115,35 @@ const copy = {
     devices: 'Players and devices · ITIL', thDevice: 'Device', thKind: 'Type', thRole: 'Role',
     // ▤ Upload floor plan
     noPlanUpload: 'This Xpace has no floor plan yet: upload or create it from ▤ Advanced mode.', openUpload: '▤ Upload floor plan', openCreate: '▤ Create Xpace',
-    crTitle: 'Xpace creation', crHint: 'To register Xpaces we will not be able to visit: at random by type, with their floor plan or, soon, with photos or video.',
+    crTitle: 'Xpace creation', crHint: 'To register Xpaces we will not be able to visit: at random by type, with their floor plan or with photos or video of the premises.',
     crTabs: 'How to create the Xpace', crTabRandom: 'Random', crTabPlan: 'With a floor plan', crTabPhoto: 'With photo or video',
     crRandomHint: 'Choose the type and the sizes, or “Full creation” to draw them from the type average.',
     crPlanText: 'If you have the Xpace floor plan (JSON, image or PDF), upload it with “Upload floor plan”, just above: an image or a PDF works as a trace for a new room.', crGoUpload: 'Go to Upload floor plan',
-    crSoon: 'Coming soon · not working yet',
-    crPhotoText: 'It will estimate the Xpace from photos or a video of the premises, like the lab survey with the webcam: known sizes (27″ or 55″ screens, doors of about 2.1 m, 20 cm floor tiles) and the lens angles. It will give the sizes and the placed screens, doors and furniture, and the generator will complete the plan.',
+    crPhotoText: 'Upload up to 8 photos of the premises or a video walking through them. Gemini estimates the sizes from known objects (doors, 27″ or 55″ screens, 20 cm floor tiles, counters) and places doors, furniture and screens; the generator completes the rest by type.',
+    phDrop: 'Drop photos or a video here, or click to choose them', phTypes: 'Up to 8 photos · or 1 video (6–8 frames are taken here)',
+    phNotes: 'Hints (optional)', phNotesPh: 'E.g.: the entrance is the glass door; the ceiling is 3 m high', phEstimate: 'Estimate the Xpace',
+    phPrivacy: 'Photos go to Gemini (Google) through the Admira worker only to estimate: they are not stored. The floor plan stays in this browser, marked as estimated.',
+    phReading: 'Preparing the photos…', phFrames: (i, n) => `Taking frames from the video… ${i}/${n}`,
+    phCount: (n, video) => video ? `${n} frames from “${video}”` : `${n} of ${MAX_FOTOS} photos`, phRemove: n => `Remove photo ${n}`, phClear: 'Remove all',
+    phWorking: sec => `Gemini is estimating the Xpace… ${sec} s (it usually takes 1 to 2 minutes)`,
+    phDone: 'Estimate ready: check the preview and click “Use this floor plan”.', phApplied: 'Estimated floor plan saved in this browser.',
+    phLimitIp: 'You have reached today’s estimate limit from this connection. Try again tomorrow.',
+    phLimitDay: 'admira.biz has reached today’s estimate (or spending) limit. Try again tomorrow.',
+    phTooBig: 'The photos are too heavy even after resizing: try fewer.', phOrigin: 'Estimating from photos only works on www.admira.biz and www.admira.store: open this floor plan there.',
+    phOff: 'Estimating from photos is switched off right now.', phQuotaDown: 'The estimator quota control is not answering: to be safe, nothing is estimated. Try again in a few minutes.',
+    phTimeout: 'Gemini did not answer in time. Try again, maybe with fewer photos.', phInvalid: 'Gemini returned an inconsistent estimate. Try other photos.',
+    phBusy: 'Gemini is not available right now. Try again in a few minutes.', phError: 'The Xpace could not be estimated.',
+    phNetwork: 'Could not reach the estimator (api.admira.store).',
+    noImagen: f => `“${f}” is not an image or a video.`, imagenGrande: f => `“${f}” is larger than 40 MB.`, videoGrande: f => `“${f}” is larger than 1 GB.`,
+    soloVideo: () => 'With a video only its frames are used: the other files are ignored.', maxFotos: f => `“${f}”: there are already ${MAX_FOTOS} photos.`,
+    phDecode: f => `“${f}” could not be read in this browser (try JPG or PNG).`, phVideoError: f => `The video “${f}” could not be read in this browser (try MP4).`,
+    phHead: (t, m2, c) => `${t} · ${m2} m² · confidence ${c} %`,
+    phDims: r => `${fmt(r.ancho)} × ${fmt(r.largo)} m, ${fmt(r.alto)} m high · confidence: width ${pct(r.confianza.ancho)} %, length ${pct(r.confianza.largo)} %, height ${pct(r.confianza.alto)} %`,
+    phSeen: r => `Seen in the photos: ${r.huecosEstimados} ${r.huecosEstimados === 1 ? 'opening' : 'openings'}, ${r.mueblesEstimados} furniture ${r.mueblesEstimados === 1 ? 'item' : 'items'} and ${r.pantallasEstimadas} estimated ${r.pantallasEstimadas === 1 ? 'screen' : 'screens'}`,
+    phAdded: r => `Completed by type: ${r.huecos - r.huecosEstimados} ${r.huecos - r.huecosEstimados === 1 ? 'opening' : 'openings'}, ${r.muebles - r.mueblesEstimados} furniture ${r.muebles - r.mueblesEstimados === 1 ? 'item' : 'items'} and ${r.pantallas - r.pantallasEstimadas} proposed ${r.pantallas - r.pantallasEstimadas === 1 ? 'screen' : 'screens'}`,
+    phRefs: 'Size references', phModelNotes: m => `${m} notes`, phDiscarded: n => `${n} inconsistent ${n === 1 ? 'element' : 'elements'} discarded`,
+    phFrom: (m, n) => `${m} · ${n} ${n === 1 ? 'photo' : 'photos'}`, phSimulated: 'Simulated answer (?simula=1): Gemini was not called.',
+    photoLine: m => `Floor plan estimated in this browser · from photos, with ${m}`,
     crType: 'Xpace type', crWidth: 'Width', crLength: 'Length', crManual: 'Create with these sizes', crTotal: 'Full creation', crApply: 'Use this floor plan',
     crNote: 'Floor plan generated in this browser · made up, not a survey.',
     crArea: (m2, t) => `≈ ${m2} m² · width = frontage, length = depth · type average: ${t.m2[1]} m² (${t.m2[0]}–${t.m2[2]})`,
@@ -124,6 +175,7 @@ try { savedLang = localStorage.getItem(LANGUAGE_KEY) || ''; } catch {}
 let lang = localeFor(location.hostname, location.search, savedLang);
 const tr = (key, ...args) => { const v = copy[lang][key]; return typeof v === 'function' ? v(...args) : v; };
 const fmt = n => round(n).toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const pct = v => Math.round((Number(v) || 0) * 100);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 const xpacioId = /^[a-z0-9][a-z0-9-]{0,79}$/.test(params.get('locationId') || '') ? params.get('locationId') : 'alsea-sbux-021';
@@ -166,6 +218,7 @@ function translate() {
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-copy]').forEach(n => { n.textContent = tr(n.dataset.copy); });
   document.querySelectorAll('[data-copy-aria]').forEach(n => n.setAttribute('aria-label', tr(n.dataset.copyAria)));
+  document.querySelectorAll('[data-copy-placeholder]').forEach(n => n.setAttribute('placeholder', tr(n.dataset.copyPlaceholder)));
   if (state.statusKey) setStatus(state.statusKey);
 }
 
@@ -641,7 +694,7 @@ document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click',
 document.addEventListener('admira:lang', e => {
   const next = e.detail?.lang === 'es' ? 'es' : 'en'; if (next === lang) return;
   lang = next; translate(); setBackLink(); if (plan) { renderSource(); renderAll(); }
-  renderTrace(); paintUpload(); paintUploadStatus(); paintCreate();
+  renderTrace(); paintUpload(); paintUploadStatus(); paintCreate(); paintPhoto();
 });
 
 function renderSource() {
@@ -650,8 +703,10 @@ function renderSource() {
   const parts = [];
   // Lo subido en este navegador va delante, con su vuelta atrás.
   if (registro && registro.plan) {
-    const gen = registro.plan.generador, tipo = gen && TIPOS[gen.tipo];
-    const what = gen ? `<strong>${tr('generatedLine')}</strong> · ${esc(tipo ? tipo[lang] : gen.tipo || '')} · ${esc(tr('crSeed', gen.semilla))}` : `<strong>${tr('uploadedLine')}</strong> · ${esc(registro.fichero || '—')}`;
+    const gen = registro.plan.generador, tipo = gen && TIPOS[gen.tipo], est = gen && gen.estimacion;
+    // Estimado desde fotos: nunca se presenta como medido; el modelo y la confianza, a la vista.
+    const what = est ? `<strong>${esc(tr('photoLine', est.modeloNombre || 'Gemini'))}</strong> · ${esc(tipo ? tipo[lang] : gen.tipo || '')}${est.simulada ? ' · ' + esc(tr('phSimulated')) : ''}`
+      : gen ? `<strong>${tr('generatedLine')}</strong> · ${esc(tipo ? tipo[lang] : gen.tipo || '')} · ${esc(tr('crSeed', gen.semilla))}` : `<strong>${tr('uploadedLine')}</strong> · ${esc(registro.fichero || '—')}`;
     parts.push(`<span class="source-upload">${what} · ${esc(when(registro.subidoEn))} <button type="button" id="source-revert">${tr(publicadoEstado === 'none' ? 'deleteUploaded' : 'backPublished')}</button></span>`);
   } else if (calcoActual()) {
     const c = calcoActual();
@@ -704,7 +759,7 @@ function showPlan(next, mode = 'actual') {
   $('workspace').hidden = false;
   $('mode-actual').parentElement.hidden = false;
   setMode(mode);
-  renderTrace(); paintUpload(); paintCreate();
+  renderTrace(); paintUpload(); paintCreate(); paintPhoto();
 }
 function showNoPlan() {
   clearTimeout(saveTimer);
@@ -718,7 +773,7 @@ function showNoPlan() {
   $('source').hidden = true;
   $('no-plan').hidden = false;
   $('mode-actual').parentElement.hidden = true; // sin plano no hay distribución que ver
-  renderTrace(); paintUpload(); paintCreate();
+  renderTrace(); paintUpload(); paintCreate(); paintPhoto();
 }
 
 // ── ▤ Subir plano ────────────────────────────────────────────────────────────
@@ -1080,7 +1135,7 @@ async function applyCreate() {
   showPlan(next.plan);
 }
 $('create').addEventListener('click', e => e.stopPropagation());
-// Tres vías: aleatorio (aquí), con plano («Subir plano», arriba) y con foto o vídeo (próximamente).
+// Tres vías: aleatorio (aquí), con plano («Subir plano», arriba) y con foto o vídeo (estimación con Gemini).
 const createTabs = [...document.querySelectorAll('#create [role="tab"]')];
 function selectCreateTab(tab, { focus = false } = {}) {
   for (const t of createTabs) {
@@ -1103,6 +1158,183 @@ for (const id of ['create-ancho', 'create-largo', 'create-alto']) $(id).addEvent
 $('create-manual').addEventListener('click', () => createPlan(false));
 $('create-total').addEventListener('click', () => createPlan(true));
 $('create-apply').addEventListener('click', applyCreate);
+
+// ── ▤ Creación de Xpacios · «Con foto o vídeo» ───────────────────────────────
+// Hasta 8 fotos o los fotogramas de un vídeo, reescalados aquí a JPEG (≤ 1600 px, ≤ 800 KB), van a
+// /xpacio/estimar (Gemini Pro en el worker pixer-eleven). Con la respuesta, plano-foto.mjs arma el
+// plano con el generador y se guarda como los otros: mismo IndexedDB y misma confirmación del
+// borrador. El vídeo no sale del navegador; las fotos no se guardan en el worker.
+const photo = { tipo: 'cafeteria', fotos: [], video: '', plan: null, busy: false, preparing: false, seq: 0, t0: 0, timer: 0, status: null, avisos: [] };
+const loadBitmap = file => (window.createImageBitmap ? createImageBitmap(file, { imageOrientation: 'from-image' }).catch(() => null) : Promise.resolve(null))
+  .then(bmp => bmp || (async () => { const url = URL.createObjectURL(file); try { return await loadImage(url); } finally { URL.revokeObjectURL(url); } })());
+// Dibuja la fuente (imagen, bitmap o vídeo) en JPEG y baja calidad o tamaño hasta que quepa.
+function fotoJpeg(source, w, h) {
+  for (const { lado, calidad } of ESCALONES) {
+    const size = escalaFoto(w, h, lado);
+    const canvas = document.createElement('canvas');
+    canvas.width = size.w; canvas.height = size.h;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, size.w, size.h);
+    ctx.drawImage(source, 0, 0, size.w, size.h);
+    const dataUrl = canvas.toDataURL('image/jpeg', calidad);
+    if (bytesDataUrl(dataUrl) <= MAX_BYTES_FOTO) return { dataUrl, w: size.w, h: size.h };
+  }
+  throw new Error('foto-grande');
+}
+async function fotoDeImagen(file) {
+  const img = await loadBitmap(file);
+  const w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+  if (!(w > 0 && h > 0)) throw new Error('imagen');
+  try { return { ...fotoJpeg(img, w, h), nombre: file.name || 'foto', origen: 'foto' }; } finally { if (img.close) img.close(); }
+}
+const esperar = (node, type, ms) => new Promise((resolve, reject) => {
+  const done = ok => { clearTimeout(t); node.removeEventListener(type, onOk); node.removeEventListener('error', onErr); ok ? resolve() : reject(new Error(type)); };
+  const onOk = () => done(true), onErr = () => done(false), t = setTimeout(() => done(false), ms);
+  node.addEventListener(type, onOk); node.addEventListener('error', onErr);
+});
+async function fotogramasDeVideo(file, seq) {
+  const url = URL.createObjectURL(file), video = document.createElement('video');
+  video.muted = true; video.playsInline = true; video.preload = 'auto'; video.src = url;
+  try {
+    await esperar(video, 'loadeddata', 20000);
+    let dur = video.duration;
+    if (!Number.isFinite(dur)) { video.currentTime = 1e7; await esperar(video, 'seeked', 8000); dur = video.duration; } // webm sin duración en la cabecera
+    const tiempos = tiemposFotogramas(dur), out = [];
+    if (!tiempos.length || !(video.videoWidth > 0)) throw new Error('video');
+    for (const [i, t] of tiempos.entries()) {
+      if (seq !== photo.seq) return null;
+      photoStatus('phFrames', [i + 1, tiempos.length]);
+      video.currentTime = t; await esperar(video, 'seeked', 8000);
+      out.push({ ...fotoJpeg(video, video.videoWidth, video.videoHeight), nombre: `${file.name || 'video'} · ${t.toFixed(1)} s`, origen: 'video' });
+    }
+    return out;
+  } finally { video.removeAttribute('src'); video.load(); URL.revokeObjectURL(url); }
+}
+async function chooseMedia(files) {
+  const seq = ++photo.seq;
+  const fromVideo = !!photo.video;
+  const { video, fotos, errores } = clasificarFicheros(files, fromVideo ? 0 : photo.fotos.length);
+  photo.avisos = errores.map(e => tr(e.error, e.fichero));
+  if (!video && !fotos.length) { paintPhoto(); return; }
+  photo.plan = null; photo.preparing = true; photoStatus(video ? 'phFrames' : 'phReading', video ? [0, '…'] : []); paintPhoto();
+  try {
+    if (video) {
+      const frames = await fotogramasDeVideo(video, seq);
+      if (!frames || seq !== photo.seq) return;
+      photo.fotos = frames; photo.video = video.name || 'video';
+    } else {
+      const nuevas = [];
+      for (const f of fotos) {
+        try { nuevas.push(await fotoDeImagen(f)); } catch { photo.avisos.push(tr('phDecode', f.name || '')); }
+        if (seq !== photo.seq) return;
+      }
+      photo.fotos = (fromVideo ? [] : photo.fotos).concat(nuevas).slice(0, MAX_FOTOS); photo.video = '';
+    }
+    photoStatus('');
+  } catch {
+    if (seq === photo.seq) { if (video) { photo.fotos = []; photo.video = ''; } photoStatus(video ? 'phVideoError' : 'phError', [video ? video.name : ''], true); }
+  } finally {
+    if (seq === photo.seq) { photo.preparing = false; paintPhoto(); }
+  }
+}
+function photoStatus(key, args = [], error = false) { photo.status = key ? { key, args, error } : null; paintPhotoStatus(); }
+function paintPhotoStatus() {
+  const st = $('photo-status'), s = photo.status;
+  st.textContent = s ? tr(s.key, ...s.args) : '';
+  st.classList.toggle('err', !!(s && s.error));
+}
+function paintPhoto() {
+  const select = $('photo-type');
+  select.replaceChildren(...Object.entries(TIPOS).map(([id, t]) => Object.assign(document.createElement('option'), { value: id, textContent: t[lang], selected: id === photo.tipo })));
+  const thumbs = $('photo-thumbs');
+  thumbs.replaceChildren(...photo.fotos.map((f, i) => {
+    const li = document.createElement('li');
+    const img = Object.assign(document.createElement('img'), { src: f.dataUrl, alt: '', loading: 'lazy', decoding: 'async' });
+    img.title = f.nombre;
+    const n = Object.assign(document.createElement('span'), { className: 'photo-n', textContent: String(i + 1) });
+    const x = Object.assign(document.createElement('button'), { type: 'button', className: 'photo-x', textContent: '×' });
+    x.setAttribute('aria-label', tr('phRemove', i + 1)); x.disabled = photo.busy;
+    x.addEventListener('click', () => { photo.seq++; photo.fotos.splice(i, 1); if (!photo.fotos.length) photo.video = ''; photo.plan = null; paintPhoto(); });
+    li.append(img, n, x);
+    return li;
+  }));
+  if (photo.fotos.length) {
+    const li = document.createElement('li'); li.className = 'photo-count';
+    const clear = Object.assign(document.createElement('button'), { type: 'button', className: 'upload-link', textContent: tr('phClear') });
+    clear.disabled = photo.busy;
+    clear.addEventListener('click', () => { photo.seq++; photo.fotos = []; photo.video = ''; photo.plan = null; photo.avisos = []; photoStatus(''); paintPhoto(); });
+    li.append(Object.assign(document.createElement('span'), { textContent: tr('phCount', photo.fotos.length, photo.video) }), clear);
+    thumbs.append(li);
+  }
+  thumbs.hidden = !photo.fotos.length;
+  $('photo-estimate').disabled = !photo.fotos.length || photo.busy || photo.preparing;
+  $('photo-file').disabled = photo.busy;
+  $('photo-progress').hidden = !photo.busy;
+  const preview = $('photo-preview'), r = photo.plan && resumenEstimado(photo.plan);
+  if (r) {
+    const loc = lang === 'es' ? 'es-ES' : 'en-GB';
+    const lines = [tr('phDims', r), tr('phSeen', r)];
+    if (r.huecos + r.muebles + r.pantallas > r.huecosEstimados + r.mueblesEstimados + r.pantallasEstimadas) lines.push(tr('phAdded', r));
+    if (r.descartes) lines.push(tr('phDiscarded', r.descartes));
+    lines.push(tr('phFrom', r.modelo, r.fotos) + (r.simulada ? ' · ' + tr('phSimulated') : ''));
+    const refs = r.referencias.map(x => `<li>${esc(x.objeto)}${x.supuesto ? ` · <span>${esc(x.supuesto)}</span>` : ''}${x.foto ? ` <span class="photo-ref-n">#${x.foto}</span>` : ''}</li>`).join('');
+    preview.innerHTML = `<strong>${esc(tr('phHead', TIPOS[r.tipo][lang], r.m2.toLocaleString(loc), pct(r.confianza.global)))}</strong>`
+      + `<meter class="photo-conf" min="0" max="1" low="0.4" high="0.7" optimum="1" value="${Number(r.confianza.global) || 0}"></meter>`
+      + lines.map(l => `<span class="upload-meta">${esc(l)}</span>`).join('')
+      + (refs ? `<span class="upload-meta photo-refs-title">${esc(tr('phRefs'))}</span><ul class="photo-refs">${refs}</ul>` : '')
+      + (r.notas ? `<span class="upload-meta"><b>${esc(tr('phModelNotes', r.modelo))}:</b> ${esc(r.notas)}</span>` : '');
+  } else preview.replaceChildren();
+  preview.hidden = !r;
+  $('photo-apply').hidden = !r;
+  const issues = photo.avisos;
+  const st = $('photo-status');
+  if (!photo.status && issues.length) { st.textContent = issues.join(' '); st.classList.add('err'); } else paintPhotoStatus();
+}
+function tickPhoto() { $('photo-progress-text').textContent = tr('phWorking', Math.round((Date.now() - photo.t0) / 1000)); }
+async function estimarXpacio() {
+  if (!photo.fotos.length || photo.busy || photo.preparing) return;
+  // Desde otro dominio el navegador bloquearía la respuesta (CORS) y parecería un fallo de red.
+  if (!origenEstimador(location.origin)) { photoStatus('phOrigin', [], true); return; }
+  const seq = ++photo.seq, ctrl = new AbortController(), corte = setTimeout(() => ctrl.abort(), ESPERA_ESTIMADOR);
+  photo.busy = true; photo.plan = null; photo.avisos = []; photo.t0 = Date.now(); photoStatus('');
+  tickPhoto(); photo.timer = setInterval(tickPhoto, 1000); paintPhoto();
+  try {
+    let res, body = null;
+    try {
+      res = await fetch(urlEstimador(location.search, location.hostname), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'omit', signal: ctrl.signal,
+        body: JSON.stringify({ tipo: photo.tipo, fotos: photo.fotos.map(f => f.dataUrl), notas: $('photo-notes').value.trim().slice(0, 300), lang })
+      });
+      try { body = await res.json(); } catch {}
+    } catch (error) { if (seq === photo.seq) photoStatus(error && error.name === 'AbortError' ? 'phTimeout' : 'phNetwork', [], true); return; }
+    if (seq !== photo.seq) return;
+    if (!res.ok || !body || !body.ok) { photoStatus(claveError(res.status, body), [], true); return; }
+    const base = createBase();
+    photo.plan = planoDesdeEstimacion({ respuesta: body, tipo: photo.tipo, id: xpacioId, nombre: base && base.nombre, direccion: base && base.direccion, semilla: nuevaSemilla() });
+    photoStatus('phDone');
+  } catch { if (seq === photo.seq) photoStatus('phInvalid', [], true); }
+  finally {
+    clearTimeout(corte); clearInterval(photo.timer);
+    photo.busy = false; paintPhoto();
+  }
+}
+async function applyPhoto() {
+  if (!photo.plan || !confirmDiscardDraft()) return;
+  const next = registroSubida({ id: xpacioId, plan: photo.plan, calco: registro && registro.calco, fichero: '' });
+  const stored = await almacen.guardar(next);
+  registro = next; photo.plan = null;
+  photoStatus(stored ? 'phApplied' : 'upNotStored', [], !stored);
+  showPlan(next.plan);
+}
+$('photo-file').accept = ACEPTA_FOTO;
+$('photo-file').addEventListener('change', e => { const files = [...(e.target.files || [])]; e.target.value = ''; chooseMedia(files); });
+const photoDrop = $('photo-drop');
+for (const type of ['dragenter', 'dragover']) photoDrop.addEventListener(type, e => { e.preventDefault(); photoDrop.classList.add('over'); });
+for (const type of ['dragleave', 'dragend']) photoDrop.addEventListener(type, () => photoDrop.classList.remove('over'));
+photoDrop.addEventListener('drop', e => { e.preventDefault(); photoDrop.classList.remove('over'); if (!photo.busy) chooseMedia(e.dataTransfer && e.dataTransfer.files); });
+$('photo-type').addEventListener('change', e => { photo.tipo = TIPOS[e.target.value] ? e.target.value : 'cafeteria'; photo.plan = null; paintPhoto(); });
+$('photo-estimate').addEventListener('click', estimarXpacio);
+$('photo-apply').addEventListener('click', applyPhoto);
 
 // ?subir=1 o ?crear=1 ya abrieron el panel: fuera de la URL, para que recargar no lo vuelva a abrir.
 function dropUploadParam() {
@@ -1131,6 +1363,7 @@ async function init() {
   paintUpload();
   fillCreateDims(medidasMedias(creation.tipo));
   paintCreate();
+  paintPhoto();
   // Lo subido manda, pero IndexedDB no puede dejar la página en «Cargando…»: tope de 1,5 s.
   const [stored] = await Promise.all([conTiempo(almacen.leer(xpacioId), ESPERA_IDB, null), loadPublished()]);
   registro = stored;

@@ -72,7 +72,7 @@ Misión DCL-35708977d7b8520386dad95f (Hoy #225), orden de Carlos del 14-oct-2026
 
 1. **Aleatorio:** el generador, que se describe abajo.
 2. **Con plano:** es «Subir plano». La pestaña lo explica y lleva a esa sección; no lo duplica.
-3. **Con foto o vídeo:** **próximamente, todavía no funciona**. La pestaña lo dice y explica lo que hará: estimar el Xpacio a partir de fotos o de un vídeo del local, como el levantamiento del laboratorio con la webcam. Usará tamaños conocidos (pantallas de 27″ o 55″, puertas de unos 2,1 m, baldosa de 20 cm) y los ángulos de la óptica. Su punto de entrada ya está en el generador: `generarXpacio({ tipo, ancho, largo, alto, elementos })`, donde `elementos = { huecos?, mobiliario?, pantallas? }` son los elementos ya situados con el convenio de la sala.
+3. **Con foto o vídeo:** estima el Xpacio a partir de fotos o de un vídeo del local, como el levantamiento del laboratorio con la webcam (ver «Con foto o vídeo», abajo). Su entrada en el generador es `generarXpacio({ tipo, ancho, largo, alto, elementos })`, donde `elementos = { huecos?, mobiliario?, pantallas? }` son los elementos ya situados con el convenio de la sala.
    - Los elementos se respetan tal cual y no se inventan los de una categoría que ya venga dada. Si no hay puerta, se pone una.
    - Las pantallas dadas quedan en `estado: "estimada"`.
    - Los muebles inventados no pueden quedar delante de ellas.
@@ -125,6 +125,24 @@ La pestaña «Aleatorio» funciona así:
 | Laboratorio / showroom | 40 (15–80) | 2,7–3,3 | 0,8–1,6 |
 
 Un plano generado es una hipótesis para enseñar y comercializar el Xpacio; no es un levantamiento. Lo que se instale de verdad se da de alta en Yokup, el maestro del ITIL.
+
+### Con foto o vídeo
+
+Misión DCL-ddf3203078fe9471f3796130 (Hoy #403), orden de Carlos del 14-oct-2026: la tercera vía de «Creación de Xpacios», para dar de alta Xpacios que no podremos visitar con lo que nos manden del local.
+
+- **Entrada:** hasta 8 fotos (cualquier imagen que el navegador sepa leer) o un vídeo. Del vídeo, el navegador saca 6 fotogramas si dura menos de 4 s y 8 si no, en el centro de tramos iguales (`<video>` + canvas); el vídeo no sale del equipo. Cada foto o fotograma se reescala a JPEG de 1600 px de lado mayor y, si pasa de 800 KB, baja calidad y tamaño (`ESCALONES`): el worker admite fotos de 1 MB y un cuerpo de 9 MB, y así 8 caben siempre. Se ven en miniaturas con su número y se pueden quitar.
+- **Tipo y pistas:** el tipo de Xpacio (los mismos 11 del generador) y unas pistas opcionales (300 caracteres; p. ej. qué puerta es la entrada). El worker las pasa a Gemini como datos, no como instrucciones.
+- **Estimación:** `POST https://api.admira.store/xpacio/estimar` (worker pixer-eleven, `src/xpacio-estimar.mjs`) con `{tipo, fotos:[dataURL], notas, lang}`. El worker llama a **Gemini 3.1 Pro** (preview) con visión, razonamiento alto y salida JSON estructurada; Gemini 2.5 Pro ya no se ofrece a proyectos nuevos de la Gemini API (404). Tarda de 1 a 2 minutos: la página enseña un progreso con los segundos y corta a los 180 s. Devuelve medidas, confianza por medida y global, las referencias de tamaño usadas (objeto, tamaño supuesto y foto) y los huecos, muebles y pantallas vistos, con las paredes F, D, P e I de este esquema. El worker valida y acota todo (rangos físicos, número de elementos, tipos) y descarta lo incoherente.
+- **Plano:** `plano-foto.mjs` (puro) pasa la respuesta a `generarXpacio`: lo visto se respeta tal cual (pantallas en estado «estimada», con su confianza) y lo que falta lo pone el generador según el tipo (si no se ve ninguna puerta, una en la fachada; sin muebles o sin pantallas vistos, los típicos en propuesta). Dos pantallas vistas que se pisan en la misma pared se separan lo justo (`desolaparPantallas`, con los 5 cm de separación de `plano-core`).
+- **Vista previa:** tipo, m² y confianza (con su barra), medidas y confianza de cada una, qué se ha visto y qué ha completado el generador, elementos descartados, referencias y las notas del modelo. «Usar este plano» lo guarda como los otros (IndexedDB, confirmación del borrador). La fuente dice «Plano estimado desde fotos · Gemini 3.1 Pro · confianza N %» y «Medidas aproximadas, por confirmar en el sitio»: nunca se presenta como medido. `generador.estimacion` guarda modelo, fotos, confianza, referencias, notas y descartes.
+- **Privacidad y coste:** las fotos solo viajan a Gemini en esa petición; el worker no las guarda. Cada estimación cuesta unos 0,13–0,15 $ (≈ 10.000 tokens de entrada y 9.000–11.000 de salida con el razonamiento, al precio de lista de Gemini 3 Pro: 2 $ y 12 $ por millón; por confirmar en la factura de Google). Para que no se pueda quemar la clave (topes decididos por Carlos el 14-oct-2026):
+  - CORS y `Origin` solo de admira.biz y admira.store. localhost solo con el worker en `wrangler dev`. Desde otro dominio (clearchannel.tv, admira.app) la pestaña lo dice sin intentarlo.
+  - Cupo **atómico** en un Durable Object propio del worker (`XpacioCupo`): **30 estimaciones al día** en total, **5 por IP** (las IPv6 se agrupan por /64) y **5 $ de coste al día**. Cada reserva aparta el peor caso de una llamada (0,168 $: la salida va acotada a 12.000 tokens) y se liquida con el coste real. El cupo se reserva antes de leer las fotos; si el DO no responde, no se estima (429 `cupo-no-disponible`).
+  - Vars `XPACIO_ESTIMAR_TOPE_DIA`, `XPACIO_ESTIMAR_TOPE_IP` y `XPACIO_ESTIMAR_TOPE_USD`. `XPACIO_ESTIMAR_OFF=1` la corta (403).
+  - Pendiente de Carlos: una clave de Gemini propia en un proyecto de GCP con cuota diaria y alerta de presupuesto, y Turnstile o sesión para exigir que sea una persona.
+- **Pruebas sin Gemini:** con la página en localhost, `?estimador=http://localhost:<puerto>` apunta a un worker local (`wrangler dev`); fuera de localhost se ignora, para que un enlace no pueda mandar las fotos a otro sitio. Con ese worker local, `?simula=1` pide una respuesta fija (sin Gemini y sin gastar cupo), y la fuente lo dice («respuesta simulada»). En producción el worker no la da.
+
+**Validación con el laboratorio** (`lab-gran-de-gracia-51`, 3,45 × 3,50 × 3,10 m ± 15 cm, 7 pantallas), con las fotos de la webcam PTZ: el error en ancho y largo va del 0 al 30 % (casi siempre se queda corto) y en el alto del 6 al 16 %. Encuentra las pantallas que salen en las fotos (las 4 de la mesa larga, en su pared, en 3 de 4 pruebas) y no inventa las 3 del puesto de Carlos, que quedan detrás de la cámara; a veces cuenta como pantalla la de la recreativa (en el plano es un mueble). Sirve para dar de alta un Xpacio que no se puede visitar, no para pedir una obra sin medir. Detalle en el PR del 14-oct-2026.
 
 ## Laboratorio AdmiraNeXT · Gran de Gràcia 51 (`lab-gran-de-gracia-51`)
 

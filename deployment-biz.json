@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Creación de Xpacios en ▤ Modo avanzado del plano: si no tenemos el plano, nos lo inventamos por tipo (cafetería, estanco, kiosco, farmacia, moda…).",
-    "Con medidas a mano o «Creación total», sorteadas según la media del tipo, con puerta, escaparate, mobiliario típico y pantallas en propuesta.",
-    "El plano generado se guarda en este navegador como inventado y se puede abrir desde la portada (▤ Creación de Xpacios) o con ?crear=1."
+    "Creación de Xpacios · «Con foto o vídeo» ya funciona: hasta 8 fotos del local o un vídeo (el navegador saca 6–8 fotogramas) y Gemini 3.1 Pro estima medidas, puertas, muebles y pantallas.",
+    "Con tamaños conocidos (puertas, pantallas de 27″ o 55″, baldosa de 20 cm) y su confianza a la vista; el generador completa lo que no se ve según el tipo.",
+    "Se guarda en este navegador como «Plano estimado desde fotos», con medidas por confirmar; las fotos no se guardan y el uso tiene tope diario."
   ],
   "nativeClearChannel": {
     "enabled": true,
