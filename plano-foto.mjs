@@ -12,7 +12,9 @@ import { TIPOS, generarXpacio } from './plano-generador.mjs?v=20261014-foto-1';
 
 export const ESTIMADOR = 'https://api.admira.store/xpacio/estimar';
 export const MAX_FOTOS = 8;
-export const MAX_BYTES_FOTO = 1.5 * 1024 * 1024; // binario tras reescalar (el worker no admite más)
+// El worker admite fotos de 1 MB y un cuerpo de 9 MB: con 800 KB por foto, 8 caben siempre
+// (8 × 0,8 MB × 4/3 del base64 ≈ 8,5 MB).
+export const MAX_BYTES_FOTO = 800 * 1024; // binario tras reescalar
 export const LADO_FOTO = 1600;                   // lado mayor de la foto que se envía
 export const MAX_VIDEO = 1024 * 1024 * 1024;     // el vídeo no sale del navegador: solo sus fotogramas
 export const MAX_IMAGEN = 40 * 1024 * 1024;
@@ -21,7 +23,8 @@ export const ACEPTA_FOTO = 'image/*,video/*';
 
 // URL del estimador. En producción, siempre api.admira.store. Solo con la página servida en
 // localhost se puede apuntar a un worker local (?estimador=http://localhost:8787): un enlace no
-// puede mandar las fotos a otro host. ?simula=1 pide la respuesta fija (sin Gemini).
+// puede mandar las fotos a otro host. ?simula=1 pide la respuesta fija (sin Gemini); el worker
+// solo la da a una página en localhost contra un worker en `wrangler dev`.
 const LOCAL_HOST = /^(localhost|127\.0\.0\.1)$/;
 const LOCAL_URL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d{1,5})?\/?$/;
 export function urlEstimador(search = '', hostname = '') {
@@ -74,9 +77,17 @@ export function clasificarFicheros(files, enLista = 0) {
   return { video: null, fotos, errores };
 }
 
+// Orígenes que atiende el estimador (los mismos que el worker; localhost, para pruebas con un
+// worker en `wrangler dev`). Desde otro dominio (p. ej. clearchannel.tv) ni se intenta: el
+// navegador bloquearía la respuesta por CORS y parecería un fallo de red.
+export const ORIGENES_ESTIMADOR = Object.freeze(['https://www.admira.biz', 'https://admira.biz', 'https://www.admira.store', 'https://admira.store']);
+export const origenEstimador = origin => ORIGENES_ESTIMADOR.includes(origin) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d{1,5})?$/.test(String(origin));
+
 // Mensaje del error del worker (código → clave de copy de plano.mjs).
 export function claveError(status, cuerpo) {
   const e = cuerpo && cuerpo.error;
+  if (e === 'cupo-no-disponible') return 'phQuotaDown';
+  if (e === 'desactivado') return 'phOff';
   if (status === 429 || e === 'limite') return cuerpo && cuerpo.motivo === 'ip' ? 'phLimitIp' : 'phLimitDay';
   if (status === 413 || e === 'foto-demasiado-grande' || e === 'cuerpo-demasiado-grande') return 'phTooBig';
   if (status === 403) return 'phOrigin';

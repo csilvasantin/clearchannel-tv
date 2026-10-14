@@ -17,8 +17,8 @@ import { TIPOS, generarXpacio, medidasMedias, nuevaSemilla, resumenGenerado } fr
 // ▤ Creación de Xpacios · «Con foto o vídeo» (DCL-ddf3203078fe9471f3796130): estimación con Gemini Pro en api.admira.store.
 import {
   MAX_FOTOS, MAX_BYTES_FOTO, ESCALONES, ESPERA_ESTIMADOR, ACEPTA_FOTO, urlEstimador, tiemposFotogramas, escalaFoto, bytesDataUrl,
-  clasificarFicheros, claveError, planoDesdeEstimacion, resumenEstimado
-} from './plano-foto.mjs?v=20261014-foto-1';
+  clasificarFicheros, claveError, origenEstimador, planoDesdeEstimacion, resumenEstimado
+} from './plano-foto.mjs?v=20261014-foto-2';
 
 const copy = {
   es: {
@@ -57,8 +57,9 @@ const copy = {
     phWorking: sec => `Gemini está estimando el Xpacio… ${sec} s (suele tardar entre 1 y 2 minutos)`,
     phDone: 'Estimación lista: revisa la vista previa y pulsa «Usar este plano».', phApplied: 'Plano estimado y guardado en este navegador.',
     phLimitIp: 'Has llegado al tope de estimaciones de hoy desde esta conexión. Vuelve a probar mañana.',
-    phLimitDay: 'Hoy se ha llegado al tope de estimaciones de admira.biz. Vuelve a probar mañana.',
-    phTooBig: 'Las fotos pesan demasiado incluso reducidas: prueba con menos.', phOrigin: 'El estimador solo atiende a admira.biz y admira.store.',
+    phLimitDay: 'Hoy se ha llegado al tope de estimaciones (o de gasto) de admira.biz. Vuelve a probar mañana.',
+    phTooBig: 'Las fotos pesan demasiado incluso reducidas: prueba con menos.', phOrigin: 'La estimación con fotos solo funciona en www.admira.biz y www.admira.store: abre este plano allí.',
+    phOff: 'La estimación con fotos está desactivada ahora mismo.', phQuotaDown: 'El control de cupo del estimador no responde: por seguridad no se estima. Vuelve a probar en unos minutos.',
     phTimeout: 'Gemini no ha respondido a tiempo. Vuelve a probar, quizá con menos fotos.', phInvalid: 'Gemini ha devuelto una estimación incoherente. Prueba con otras fotos.',
     phBusy: 'Gemini no está disponible ahora mismo. Vuelve a probar en unos minutos.', phError: 'No se pudo estimar el Xpacio.',
     phNetwork: 'No se pudo conectar con el estimador (api.admira.store).',
@@ -127,8 +128,9 @@ const copy = {
     phWorking: sec => `Gemini is estimating the Xpace… ${sec} s (it usually takes 1 to 2 minutes)`,
     phDone: 'Estimate ready: check the preview and click “Use this floor plan”.', phApplied: 'Estimated floor plan saved in this browser.',
     phLimitIp: 'You have reached today’s estimate limit from this connection. Try again tomorrow.',
-    phLimitDay: 'admira.biz has reached today’s estimate limit. Try again tomorrow.',
-    phTooBig: 'The photos are too heavy even after resizing: try fewer.', phOrigin: 'The estimator only serves admira.biz and admira.store.',
+    phLimitDay: 'admira.biz has reached today’s estimate (or spending) limit. Try again tomorrow.',
+    phTooBig: 'The photos are too heavy even after resizing: try fewer.', phOrigin: 'Estimating from photos only works on www.admira.biz and www.admira.store: open this floor plan there.',
+    phOff: 'Estimating from photos is switched off right now.', phQuotaDown: 'The estimator quota control is not answering: to be safe, nothing is estimated. Try again in a few minutes.',
     phTimeout: 'Gemini did not answer in time. Try again, maybe with fewer photos.', phInvalid: 'Gemini returned an inconsistent estimate. Try other photos.',
     phBusy: 'Gemini is not available right now. Try again in a few minutes.', phError: 'The Xpace could not be estimated.',
     phNetwork: 'Could not reach the estimator (api.admira.store).',
@@ -1158,7 +1160,7 @@ $('create-total').addEventListener('click', () => createPlan(true));
 $('create-apply').addEventListener('click', applyCreate);
 
 // ── ▤ Creación de Xpacios · «Con foto o vídeo» ───────────────────────────────
-// Hasta 8 fotos o los fotogramas de un vídeo, reescalados aquí a JPEG (≤ 1600 px, ≤ 1,5 MB), van a
+// Hasta 8 fotos o los fotogramas de un vídeo, reescalados aquí a JPEG (≤ 1600 px, ≤ 800 KB), van a
 // /xpacio/estimar (Gemini Pro en el worker pixer-eleven). Con la respuesta, plano-foto.mjs arma el
 // plano con el generador y se guarda como los otros: mismo IndexedDB y misma confirmación del
 // borrador. El vídeo no sale del navegador; las fotos no se guardan en el worker.
@@ -1277,7 +1279,7 @@ function paintPhoto() {
     lines.push(tr('phFrom', r.modelo, r.fotos) + (r.simulada ? ' · ' + tr('phSimulated') : ''));
     const refs = r.referencias.map(x => `<li>${esc(x.objeto)}${x.supuesto ? ` · <span>${esc(x.supuesto)}</span>` : ''}${x.foto ? ` <span class="photo-ref-n">#${x.foto}</span>` : ''}</li>`).join('');
     preview.innerHTML = `<strong>${esc(tr('phHead', TIPOS[r.tipo][lang], r.m2.toLocaleString(loc), pct(r.confianza.global)))}</strong>`
-      + `<meter class="photo-conf" min="0" max="1" low="0.4" high="0.7" optimum="1" value="${r.confianza.global}"></meter>`
+      + `<meter class="photo-conf" min="0" max="1" low="0.4" high="0.7" optimum="1" value="${Number(r.confianza.global) || 0}"></meter>`
       + lines.map(l => `<span class="upload-meta">${esc(l)}</span>`).join('')
       + (refs ? `<span class="upload-meta photo-refs-title">${esc(tr('phRefs'))}</span><ul class="photo-refs">${refs}</ul>` : '')
       + (r.notas ? `<span class="upload-meta"><b>${esc(tr('phModelNotes', r.modelo))}:</b> ${esc(r.notas)}</span>` : '');
@@ -1291,6 +1293,8 @@ function paintPhoto() {
 function tickPhoto() { $('photo-progress-text').textContent = tr('phWorking', Math.round((Date.now() - photo.t0) / 1000)); }
 async function estimarXpacio() {
   if (!photo.fotos.length || photo.busy || photo.preparing) return;
+  // Desde otro dominio el navegador bloquearía la respuesta (CORS) y parecería un fallo de red.
+  if (!origenEstimador(location.origin)) { photoStatus('phOrigin', [], true); return; }
   const seq = ++photo.seq, ctrl = new AbortController(), corte = setTimeout(() => ctrl.abort(), ESPERA_ESTIMADOR);
   photo.busy = true; photo.plan = null; photo.avisos = []; photo.t0 = Date.now(); photoStatus('');
   tickPhoto(); photo.timer = setInterval(tickPhoto, 1000); paintPhoto();

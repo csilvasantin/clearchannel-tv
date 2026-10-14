@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   ESTIMADOR, MAX_FOTOS, MAX_BYTES_FOTO, urlEstimador, tiemposFotogramas, escalaFoto, bytesDataUrl, clasificarFicheros, claveError,
-  elementosDeEstimacion, planoDesdeEstimacion, resumenEstimado, desolaparPantallas
+  elementosDeEstimacion, planoDesdeEstimacion, resumenEstimado, desolaparPantallas, origenEstimador
 } from '../plano-foto.mjs';
 import { leerPlanoJson } from '../plano-subida.mjs';
 import { validate } from '../plano-core.mjs';
@@ -56,7 +56,9 @@ test('reescalado y tamaño de la foto', () => {
   assert.deepEqual(escalaFoto(1080, 1920, 1280), { w: 720, h: 1280 });
   assert.equal(bytesDataUrl('data:image/jpeg;base64,QUJD'), 3);
   assert.equal(bytesDataUrl('data:image/jpeg;base64,QUI='), 2);
-  assert.ok(MAX_BYTES_FOTO === 1.5 * 1024 * 1024);
+  // 8 fotos de 800 KB en base64 caben en el cuerpo de 9 MB del worker (fotos de hasta 1 MB).
+  assert.equal(MAX_BYTES_FOTO, 800 * 1024);
+  assert.ok(8 * Math.ceil(MAX_BYTES_FOTO / 3) * 4 + 4096 < 9 * 1024 * 1024);
 });
 
 test('ficheros: un vídeo manda; si no, hasta 8 imágenes', () => {
@@ -79,6 +81,13 @@ test('errores del worker → mensaje claro', () => {
   assert.equal(claveError(502, { error: 'estimacion-no-valida' }), 'phInvalid');
   assert.equal(claveError(503, { error: 'gemini-saturado' }), 'phBusy');
   assert.equal(claveError(500, null), 'phError');
+  assert.equal(claveError(429, { error: 'cupo-no-disponible' }), 'phQuotaDown');
+  assert.equal(claveError(429, { error: 'limite', motivo: 'coste' }), 'phLimitDay');
+  assert.equal(claveError(403, { error: 'desactivado' }), 'phOff');
+  assert.equal(claveError(403, { error: 'origen-no-permitido' }), 'phOrigin');
+  // El origen se comprueba antes de llamar: desde otro dominio, «origen no permitido», no «sin red».
+  for (const o of ['https://www.admira.biz', 'https://admira.store', 'http://localhost:8765']) assert.ok(origenEstimador(o), o);
+  for (const o of ['https://www.clearchannel.tv', 'https://www.admira.app', 'https://evil.example', 'http://localhost.evil.example']) assert.ok(!origenEstimador(o), o);
 });
 
 test('la estimación se convierte en elementos del generador; lo vacío no se pasa', () => {
@@ -141,8 +150,8 @@ test('«Con foto o vídeo» funciona en la página: sin «próximamente» y publ
   assert.ok(BIZ_ASSET_FILES.includes('plano-foto.mjs'));
   const html = readFileSync(new URL('../plano.html', import.meta.url), 'utf8');
   const page = readFileSync(new URL('../plano.mjs', import.meta.url), 'utf8');
-  assert.match(page, /plano-foto\.mjs\?v=20261014-foto-1/);
-  assert.match(html, /plano\.mjs\?v=20261014-foto-1/);
+  assert.match(page, /plano-foto\.mjs\?v=20261014-foto-2/);
+  assert.match(html, /plano\.mjs\?v=20261014-foto-2/);
   assert.match(html, /id="photo-file"[^>]*multiple/);
   assert.match(html, /id="photo-estimate"/);
   assert.doesNotMatch(html, /Próximamente · todavía no funciona/);
