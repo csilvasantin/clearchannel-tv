@@ -161,3 +161,11 @@ export function esDeBugito(ev, ventanaCara, origenCara = BUGITO_ORIGIN) {
 }
 // La pantalla del banco es de laboratorio para el mando (espejo de la salvaguarda del backend).
 export const bancoEsLab = () => pantallaLab(BUGITO_SCREEN);
+
+// La orden física del MBP16 usa su executor nativo; no cambia el player virtual.
+export const BUGITO_DISPLAY_API = 'https://brain.digitalavatar.ai/bugito/display';
+export function resolverPantalla(texto) {
+  const t = String(texto || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ');
+  const m = /^(apagar|apaga|encender|enciende)(?: (?:la )?pantalla)?(?: (?:del? )?mbp16)?$/.exec(t);
+  return m ? { target: 'mbp16', action: /^(apagar|apaga)$/.test(m[1]) ? 'off' : 'on' } : null;
+}

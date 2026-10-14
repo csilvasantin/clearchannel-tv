@@ -22,7 +22,7 @@
   <!-- Opción B · login de owner para el dispositivo real (la cuenta propia por Google, no un token maestro). -->
   <script src="https://accounts.google.com/gsi/client" async></script>
   <script defer src="bugito-super.js?v=20261014-bugito-3"></script>
-  <script type="module" src="bugito.mjs?v=20261014-bugito-3"></script>
+  <script type="module" src="bugito.mjs?v=20261014-display-mbp16-1"></script>
 </head>
 <body>
   <main class="bugito-banco">
@@ -81,6 +81,13 @@
           <p id="bb-menu-title" class="bb-menu-title" data-bb="menu">¿Qué rompo?</p>
         </div>
         <button type="button" id="bb-normal" class="bb-normal" data-bb="normal">Volver a la normalidad</button>
+        <div class="bb-menu" role="group" aria-label="Pantalla del MBP16">
+          <button type="button" id="bb-display-off">Apagar pantalla del MBP16</button>
+          <button type="button" id="bb-display-on">Encender pantalla del MBP16</button>
+          <p id="bb-display-note">Pantalla física del MBP16. El ordenador sigue trabajando. Requiere sesión de owner.</p>
+          <p id="bb-display-status" role="status"></p>
+          <a href="https://www.admira.app/supervisor" target="_blank" rel="noopener">Supervisor</a>
+        </div>
         <ol id="bb-pasos" class="inc-steps bb-pasos" aria-live="polite" hidden></ol>
         <p id="bb-status" class="upload-status bb-status" role="status"></p>
         <p class="bb-note" data-bb="note">Sólo players virtuales de laboratorio (virtual-lab-*): el mando rechaza cualquier otra pantalla. Cada fallo caduca solo a los 30 min.</p>

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
 import { CATALOGO, orden, tipoIncidencia } from '../incidencias-core.mjs';
-import { resolverIncidencia } from '../bugito-core.mjs';
+import { resolverIncidencia, resolverPantalla } from '../bugito-core.mjs';
 
 const screen = 'virtual-lab-bugito';
 const ui = readFileSync(new URL('../bugito.mjs', import.meta.url), 'utf8');
@@ -36,7 +36,7 @@ function banco() {
   const incidencias = Object.fromEntries(CATALOGO.map((t, i) => [t.id, { id: `INC-BOTON${i}`, stage: 'abierta' }]));
   const detectores = Object.fromEntries(CATALOGO.map((t, i) => [t.id, { incidencia: `INC-BOTON${i}`, fase: 'fallo', ultima: null }]));
   const context = vm.createContext({
-    CATALOGO, tipoIncidencia, orden, resolverIncidencia, prueba, incidencias, detectores,
+    CATALOGO, tipoIncidencia, orden, resolverIncidencia, resolverPantalla, prueba, incidencias, detectores,
     objetivo: { screen }, P: { screen, lab: true }, ocupado: false, pausado: '',
     // Opción B (dispositivo real): en el banco de laboratorio no hay objetivo real; lanzar() sigue por el camino de siempre.
     objetivoRealActivo: null, lanzarReal: async () => '',

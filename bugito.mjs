@@ -14,8 +14,8 @@ import {
   BANCO, BUGITO_ORIGIN, GRACIA_BANCO_MS, resolverIncidencia, playerUrl, caraUrl, baseLocal,
   estadoBugito, mensajeBugito, esDeBugito, debePausar,
   OBJETIVO_BANCO, labScreenPara, bancoPara, pantallaDe,
-  MANDO_ARM, MANDO_CMD_REAL, SIGNAGE_SCREENS, esPantallaReal, objetivoReal
-} from './bugito-core.mjs?v=20261014-bugito-3';
+  MANDO_ARM, MANDO_CMD_REAL, SIGNAGE_SCREENS, esPantallaReal, objetivoReal, BUGITO_DISPLAY_API, resolverPantalla
+} from './bugito-core.mjs?v=20261014-display-mbp16-1';
 
 const $ = id => document.getElementById(id);
 const SONDEO_MS = 3000, ACUSE_MAX_MS = 90000, ESTADO_YOKUP_MS = 12000;
@@ -41,7 +41,7 @@ const textos = {
     opened: id => `Incidencia ${id} abierta en Yokup.`, closed: id => `Incidencia ${id || ''} cerrada: vuelve a la normalidad.`, yokupError: e => `Yokup no responde: ${e}.`,
     held: id => `La incidencia ${id || ''} la lleva un técnico del portal: se cierra allí.`,
     stage: { abierta: 'abierta', en_curso: 'en curso', recuperada: 'recuperada', cerrada: 'cerrada' },
-    unknown: x => `Bugito no conoce «${x}». Prueba: girar, resolucion, popup, medias o normal.`,
+    unknown: x => `Bugito no conoce «${x}». Prueba: apagar MBP16, encender MBP16, girar, resolucion, popup, medias o normal.`,
     launched: (n) => `Bugito lanza «${n}» en el player virtual.`, shown: 'Bugito a la vista.', hidden: 'Bugito escondido (vuelve con /bugito).',
     presel: n => `Preseleccionada: ${n}. Pulsa el botón para lanzarla.`,
     resume: 'Reanudar', pausaOculta: 'Player en pausa mientras la pestaña está oculta.',
@@ -78,7 +78,7 @@ const textos = {
     opened: id => `Incident ${id} opened in Yokup.`, closed: id => `Incident ${id || ''} closed: back to normal.`, yokupError: e => `Yokup is not answering: ${e}.`,
     held: id => `Incident ${id || ''} is handled by a portal technician: it is closed there.`,
     stage: { abierta: 'open', en_curso: 'in progress', recuperada: 'recovered', cerrada: 'closed' },
-    unknown: x => `Bugito does not know “${x}”. Try: rotate, resolution, popup, half or normal.`,
+    unknown: x => `Bugito does not know “${x}”. Try: apagar MBP16, encender MBP16, rotate, resolution, popup, half or normal.`,
     launched: (n) => `Bugito launches “${n}” on the virtual player.`, shown: 'Bugito in sight.', hidden: 'Bugito hidden (/bugito brings him back).',
     presel: n => `Preselected: ${n}. Press the button to launch it.`,
     resume: 'Resume', pausaOculta: 'Player paused while the tab is hidden.',
@@ -187,6 +187,9 @@ window.addEventListener('message', ev => {
 
 // ── Pintar ────────────────────────────────────────────────────────────────────────────────
 function traducir() {
+  $('bb-display-off').textContent = lang === 'en' ? 'Turn off MBP16 display' : 'Apagar pantalla del MBP16';
+  $('bb-display-on').textContent = lang === 'en' ? 'Wake MBP16 display' : 'Encender pantalla del MBP16';
+  $('bb-display-note').textContent = lang === 'en' ? 'Physical MBP16 display. The computer keeps running. Requires owner login.' : 'Pantalla física del MBP16. El ordenador sigue trabajando. Requiere sesión de owner.';
   document.querySelectorAll('[data-bb]').forEach(n => { const v = textos[lang][n.dataset.bb]; if (typeof v === 'string') n.textContent = v; });
   $('bb-toggle').textContent = document.querySelector('.bugito-banco').classList.contains('sin-bugito') ? tr('show') : tr('hide');
   // El selector: la opción «banco» y el rótulo del objetivo activo se retraducen (son dinámicos).
@@ -320,6 +323,8 @@ function programar() { clearTimeout(sondeo); sondeo = setTimeout(async () => { t
 
 // ── Lanzar (botones, chips de Bugito y /bugito <incidencia>) ──────────────────────────────
 async function lanzar(texto, { retirar = false } = {}) {
+  const pantalla = resolverPantalla(texto);
+  if (pantalla && !retirar) return enviarPantalla(pantalla);
   gesto(); if (pausado) reanudarPlayer();
   const id = resolverIncidencia(texto);
   if (!id) { prueba.mensaje = tr('unknown', String(texto || '').slice(0, 40)); prueba.error = true; pintar(); return prueba.mensaje; }
@@ -545,4 +550,33 @@ async function lanzarReal(id) {
   prueba.error = !r2.ok; pintar();
   return prueba.mensaje;
 }
+let pantallaOcupada = false;
+async function enviarPantalla(ordenFisica) {
+  const estado = $('bb-display-status');
+  const decir = (es, en) => { estado.textContent = lang === 'en' ? en : es; return estado.textContent; };
+  if (pantallaOcupada) return estado.textContent;
+  const token = superApi()?.token();
+  if (!token) {
+    $('bb-super').open = true;
+    return decir('Entra con tu cuenta de owner para controlar la pantalla del MBP16.', 'Sign in as owner to control the MBP16 display.');
+  }
+  const apagar = ordenFisica.action === 'off';
+  if (!confirm(lang === 'en' ? (apagar ? 'Turn off the physical MBP16 display? The computer keeps running.' : 'Wake the physical MBP16 display?') : (apagar ? '¿Apagar la pantalla física del MBP16? El ordenador seguirá trabajando.' : '¿Encender la pantalla física del MBP16?')))
+    return decir('Cancelado.', 'Cancelled.');
+  pantallaOcupada = true;
+  $('bb-display-off').disabled = $('bb-display-on').disabled = true;
+  try {
+    const headers = { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' };
+    const arm = await fetch(BUGITO_DISPLAY_API + '/arm', { method: 'POST', headers, body: JSON.stringify(ordenFisica) });
+    const a = await arm.json();
+    if (!arm.ok || !a.nonce) throw new Error(a.error || 'HTTP ' + arm.status);
+    const response = await fetch(BUGITO_DISPLAY_API, { method: 'POST', headers, body: JSON.stringify({ ...ordenFisica, confirm: a.nonce }) });
+    const d = await response.json();
+    if (!response.ok || !d.ok) throw new Error(d.error || 'HTTP ' + response.status);
+    return decir(`Orden de ${apagar ? 'apagado' : 'encendido'} del MBP16 en cola (${d.id}). Comprueba el resultado en el Supervisor.`, `MBP16 display ${apagar ? 'off' : 'on'} queued (${d.id}). Check the physical result in Supervisor.`);
+  } catch (e) { return decir('No se ha confirmado la orden: ' + e.message, 'Command not confirmed: ' + e.message); }
+  finally { pantallaOcupada = false; $('bb-display-off').disabled = $('bb-display-on').disabled = false; }
+}
+$('bb-display-off').addEventListener('click', () => enviarPantalla({ target: 'mbp16', action: 'off' }));
+$('bb-display-on').addEventListener('click', () => enviarPantalla({ target: 'mbp16', action: 'on' }));
 arrancar();
