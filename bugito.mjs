@@ -8,13 +8,13 @@
 import { localeFor } from './walk-core.mjs?v=20261010-evidence-1';
 import {
   CATALOGO, DEMO_PREFIX, tipoIncidencia, orden, anotar, recurso, fichaYokup, incidenciaDe, pasos, vueltaDetector, medidaTexto
-} from './incidencias-core.mjs?v=20261014-bugito-1';
+} from './incidencias-core.mjs?v=20261014-bugito-3';
 import { mando, yokupPublico } from './incidencias-adaptadores.mjs?v=20261014-bugito-1';
 import {
   BANCO, BUGITO_ORIGIN, GRACIA_BANCO_MS, resolverIncidencia, playerUrl, caraUrl, baseLocal,
   estadoBugito, mensajeBugito, esDeBugito, debePausar,
   OBJETIVO_BANCO, labScreenPara, bancoPara, pantallaDe
-} from './bugito-core.mjs?v=20261014-bugito-2';
+} from './bugito-core.mjs?v=20261014-bugito-3';
 
 const $ = id => document.getElementById(id);
 const SONDEO_MS = 3000, ACUSE_MAX_MS = 90000, ESTADO_YOKUP_MS = 12000;
@@ -31,6 +31,9 @@ const textos = {
     sending: 'Bugito manda la orden…', sent: c => `Orden «${c}» en la cola del player virtual.`, rejected: r => `El mando la rechaza: ${r}.`, netError: 'Sin conexión con el mando.',
     waitAck: 'esperando al player…', noAck: 'sin acuse: ¿está el player virtual abierto?', ackOk: 'ejecutada', ackFail: 'el player no la pudo ejecutar',
     clearSent: 'Vuelta a la normalidad',
+    quitar: { 'formato-girado': 'Quitar giro', 'cambio-resolucion': 'Quitar resolución', 'popup-encima': 'Quitar popup', 'medio-abrir': 'Quitar apertura parcial' },
+    quitarAyuda: n => `Retira únicamente «${n}». Los demás fallos siguen activos.`,
+    retirada: n => `Retirada de «${n}» enviada al player virtual.`,
     noSignal: m => ({ 'sin-respuesta': 'esperando el primer latido del player virtual (/signage/now)…', 'no-declara': 'el player virtual aún no ha declarado su estado', 'latido-viejo': 'el último latido es de hace más de 5 min', standby: 'el player está en standby' }[m] || m),
     noMeasure: 'sin medida (el canal aún no declara esta medida)', waiting: 'esperando al player…',
     fases: { casa: 'en orden', sospecha: s => `no casa · abre en ${s} s`, fallo: 'incidencia', recuperando: s => `vuelve a casar · cierra en ${s} s` },
@@ -56,6 +59,9 @@ const textos = {
     sending: 'Bugito sends the order…', sent: c => `Order “${c}” queued for the virtual player.`, rejected: r => `The remote rejects it: ${r}.`, netError: 'No connection to the remote.',
     waitAck: 'waiting for the player…', noAck: 'no receipt: is the virtual player open?', ackOk: 'executed', ackFail: 'the player could not run it',
     clearSent: 'Back to normal',
+    quitar: { 'formato-girado': 'Remove rotation', 'cambio-resolucion': 'Remove resolution change', 'popup-encima': 'Remove popup', 'medio-abrir': 'Remove partial opening' },
+    quitarAyuda: n => `Removes only “${n}”. Other faults stay active.`,
+    retirada: n => `Removal of “${n}” sent to the virtual player.`,
     noSignal: m => ({ 'sin-respuesta': 'waiting for the virtual player\'s first heartbeat (/signage/now)…', 'no-declara': 'the virtual player has not reported its state yet', 'latido-viejo': 'last heartbeat is older than 5 min', standby: 'the player is in standby' }[m] || m),
     noMeasure: 'no measure (the channel does not report it yet)', waiting: 'waiting for the player…',
     fases: { casa: 'all good', sospecha: s => `mismatch · opens in ${s} s`, fallo: 'incident', recuperando: s => `matches again · closes in ${s} s` },
@@ -101,7 +107,7 @@ function urlCara() {
 
 // ── Estado del banco ──────────────────────────────────────────────────────────────────────
 // La prueba = la última orden de Bugito (con su acuse); los detectores corren para TODOS los tipos a la vez.
-const prueba = { tipo: '', envio: null, acuse: null, vuelta: null, vueltaAcuse: null, marcas: new Set(), mensaje: '', error: false };
+const prueba = { tipo: '', retirando: false, envio: null, acuse: null, vuelta: null, vueltaAcuse: null, marcas: new Set(), mensaje: '', error: false };
 const detectores = {}, observaciones = {}, incidencias = {};
 let lectura = null, ultimoYokup = 0, ocupado = false, sondeo = 0, ultimoMensaje = '', caraLista = false;
 // El player del banco es un player REAL: con la pestaña oculta o 5 min sin actividad se descarga.
@@ -166,14 +172,19 @@ function traducir() {
 function pintarMenu() {
   const menu = $('bb-menu'), titulo = $('bb-menu-title');
   menu.replaceChildren(titulo, ...CATALOGO.map(t => {
+    const fila = document.createElement('div'); fila.className = 'bb-fault-actions';
     const b = document.createElement('button');
     b.type = 'button'; b.dataset.tipo = t.id; b.title = t.ayuda[lang] || t.ayuda.es;
-    b.setAttribute('aria-pressed', String(prueba.tipo === t.id && !!prueba.envio && !prueba.vuelta));
+    b.setAttribute('aria-pressed', String(prueba.tipo === t.id && !!prueba.envio && !prueba.vuelta && !prueba.retirando));
     const ico = document.createElement('span'); ico.className = 'ico'; ico.setAttribute('aria-hidden', 'true'); ico.textContent = ICONO[t.id] || '⚡';
     const txt = document.createElement('span'); txt.textContent = t[lang] || t.es;
     b.append(ico, txt);
     b.addEventListener('click', () => lanzar(t.id));
-    return b;
+    const quitar = document.createElement('button');
+    quitar.type = 'button'; quitar.className = 'bb-remove'; quitar.dataset.retirar = t.id;
+    quitar.textContent = tr('quitar')[t.id]; quitar.title = tr('quitarAyuda', t[lang] || t.es);
+    quitar.addEventListener('click', () => lanzar(t.id, { retirar: true }));
+    fila.append(b, quitar); return fila;
   }));
   const pre = resolverIncidencia(params.get('incidencia'));
   if (pre && pre !== 'normal' && !prueba.envio) { const b = menu.querySelector(`[data-tipo="${pre}"]`); if (b) b.classList.add('pre'); }
@@ -191,7 +202,7 @@ function enlace(id, stage) {
 function pintar() {
   for (const b of $('bb-menu').querySelectorAll('button')) {
     b.disabled = ocupado || !P;
-    b.setAttribute('aria-pressed', String(prueba.tipo === b.dataset.tipo && !!prueba.envio && !prueba.vuelta));
+    if (b.dataset.tipo) b.setAttribute('aria-pressed', String(prueba.tipo === b.dataset.tipo && !!prueba.envio && !prueba.vuelta && !prueba.retirando));
   }
   $('bb-normal').disabled = ocupado || !P;
   // Pasos de la prueba en curso.
@@ -282,31 +293,36 @@ async function vueltaUnica() {
 function programar() { clearTimeout(sondeo); sondeo = setTimeout(async () => { try { await vuelta(); } catch { /* el siguiente sondeo lo reintenta */ } programar(); }, SONDEO_MS); }
 
 // ── Lanzar (botones, chips de Bugito y /bugito <incidencia>) ──────────────────────────────
-async function lanzar(texto) {
+async function lanzar(texto, { retirar = false } = {}) {
   gesto(); if (pausado) reanudarPlayer();
   const id = resolverIncidencia(texto);
   if (!id) { prueba.mensaje = tr('unknown', String(texto || '').slice(0, 40)); prueba.error = true; pintar(); return prueba.mensaje; }
   if (!P || ocupado) return '';
   const normal = id === 'normal';
+  retirar = retirar && !normal;
   // La orden la construye el Creador de incidencias: dirigida a la cola de la propia pantalla de laboratorio.
-  const o = orden(normal ? CATALOGO[0].id : id, objetivo.screen, { vuelta: normal });
+  const o = orden(normal ? CATALOGO[0].id : id, objetivo.screen, { vuelta: normal || retirar, individual: retirar });
   if (!o.ok) { prueba.mensaje = tr('rejected', o.error); prueba.error = true; pintar(); return prueba.mensaje; }
   ocupado = true; prueba.mensaje = tr('sending'); prueba.error = false;
-  if (!normal) Object.assign(prueba, { tipo: id, envio: { ok: true, en: Date.now(), cmd: o.body.cmd, pendiente: true }, acuse: null, vuelta: null, vueltaAcuse: null, marcas: new Set() });
+  if (!normal) Object.assign(prueba, { tipo: id, retirando: retirar, envio: { ok: true, en: Date.now(), cmd: o.body.cmd, pendiente: true }, acuse: null, vuelta: null, vueltaAcuse: null, marcas: new Set() });
   pintar();
   let r;
   try { r = await red.mando.enviar(o.body); } catch { r = { ok: false, error: tr('netError') }; }
   r = { ...r, en: Date.now(), cmd: o.body.cmd };
   if (normal) { prueba.vuelta = r; prueba.vueltaAcuse = null; }
   else {
-    prueba.envio = r; incidencias[id] = null;
+    prueba.envio = r;
     // Una prueba nueva no hereda el «resuelta» de la anterior.
-    if (detectores[id]) { detectores[id] = { ...detectores[id], ultima: null }; guardar(id); }
+    // Al retirar se conserva la incidencia abierta: el vigilante la cierra con la medida real.
+    if (!retirar) {
+      incidencias[id] = null;
+      if (detectores[id]) { detectores[id] = { ...detectores[id], ultima: null }; guardar(id); }
+    }
   }
-  prueba.mensaje = r.ok ? tr('sent', o.body.cmd) : tr('rejected', r.error); prueba.error = !r.ok;
+  prueba.mensaje = r.ok ? (retirar ? tr('retirada', nombre(id)) : tr('sent', o.body.cmd)) : tr('rejected', r.error); prueba.error = !r.ok;
   ocupado = false; pintar();
   vuelta().catch(() => {});
-  return r.ok ? tr('launched', nombre(id)) : prueba.mensaje;
+  return r.ok ? tr(retirar ? 'retirada' : 'launched', nombre(id)) : prueba.mensaje;
 }
 // ── El player: pausa con la pestaña oculta o sin actividad, «Reanudar» lo vuelve a cargar ────────
 function gesto() { ultimoGesto = Date.now(); }
@@ -342,6 +358,7 @@ function alternarBugito(mostrar) {
 window.AdmiraBugito = {
   toggle: () => alternarBugito(),
   lanzar: arg => lanzar(arg),
+  retirar: arg => lanzar(arg, { retirar: true }),
   estado: () => ({ ...estadoActual(), screen: objetivo.screen, objetivo: { ...objetivo }, detectores: JSON.parse(JSON.stringify(detectores)) })
 };
 
@@ -415,7 +432,7 @@ function aplicarSeleccion() {
 function aplicarObjetivo(nuevo) {
   objetivo = { ...OBJETIVO_BANCO, ...nuevo };
   banco = bancoPara(objetivo); P = pantallaDe(objetivo);
-  Object.assign(prueba, { tipo: '', envio: null, acuse: null, vuelta: null, vueltaAcuse: null, marcas: new Set(), mensaje: '', error: false });
+  Object.assign(prueba, { tipo: '', retirando: false, envio: null, acuse: null, vuelta: null, vueltaAcuse: null, marcas: new Set(), mensaje: '', error: false });
   for (const t of CATALOGO) { incidencias[t.id] = null; if (detectores[t.id]) detectores[t.id] = { ...detectores[t.id], ultima: null }; }
   $('bb-screen').textContent = objetivo.screen;
   const b = $('bb-objetivo-breadcrumb');
