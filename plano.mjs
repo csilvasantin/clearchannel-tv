@@ -11,7 +11,7 @@ import {
 const copy = {
   es: {
     back: '← Volver a la ficha', eyebrow: 'Plano del Xpacio · inventario ITIL', current: 'Distribución actual', works: 'Propuesta de obra',
-    modes: 'Qué distribución ver', loading: 'Cargando el plano…', noPlan: 'Este Xpacio aún no tiene plano en admira.app.', loadError: 'No se pudo cargar el plano.',
+    modes: 'Qué distribución ver', loading: 'Cargando el plano…', noPlan: 'Este Xpacio aún no tiene plano.', loadError: 'No se pudo cargar el plano.',
     plan: 'Planta', planHint: 'Pulsa una pared para ver su alzado', elevation: 'Alzado', planAria: 'Plano en planta', elevationAria: 'Alzado de la pared',
     dragHint: 'Arrastra una pantalla en el alzado o muévela con las flechas (Mayús: 10 cm). Los mosaicos se mueven enteros salvo que lo desactives.',
     inventory: 'Inventario ITIL · pantallas', selected: 'Pantalla seleccionada',
@@ -32,7 +32,7 @@ const copy = {
   },
   en: {
     back: '← Back to the profile', eyebrow: 'Xpace floor plan · ITIL inventory', current: 'Current layout', works: 'Works proposal',
-    modes: 'Which layout to show', loading: 'Loading the floor plan…', noPlan: 'This Xpace has no floor plan in admira.app yet.', loadError: 'The floor plan could not be loaded.',
+    modes: 'Which layout to show', loading: 'Loading the floor plan…', noPlan: 'This Xpace has no floor plan yet.', loadError: 'The floor plan could not be loaded.',
     plan: 'Floor plan', planHint: 'Click a wall to see its elevation', elevation: 'Elevation', planAria: 'Floor plan', elevationAria: 'Wall elevation',
     dragHint: 'Drag a screen in the elevation or move it with the arrow keys (Shift: 10 cm). Mosaics move as a whole unless you turn it off.',
     inventory: 'ITIL inventory · screens', selected: 'Selected screen',

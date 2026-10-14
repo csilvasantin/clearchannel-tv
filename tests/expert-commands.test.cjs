@@ -215,7 +215,7 @@ test('/redistribucion opens the floor plan in works mode for the named or open X
   assert.equal(C.execute('/plano mercadona', fakeCtx({open: () => assert.fail('must not open')}), 'es').ok, false);
   // El motor común de la suite no quita tildes: la forma acentuada va como alias literal.
   assert.ok(C.VERBS.find(v => v.id === 'redistribucion').aliases.includes('redistribución'));
-  assert.equal(C.planoUrl('alsea-sbux-021', 'es', 'https://www.admira.app/'), 'https://www.admira.app/plano.html?locationId=alsea-sbux-021&modo=obra&lang=es');
+  assert.equal(C.planoUrl('alsea-sbux-021', 'es', 'https://www.admira.biz/'), 'https://www.admira.biz/plano.html?locationId=alsea-sbux-021&modo=obra&lang=es');
 });
 
 test('every floor plan in the registry has its data file', () => {

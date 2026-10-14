@@ -114,7 +114,7 @@
     const found = k.length >= 3 ? new Set([...PLANO_KEYS].filter(([alias]) => alias.startsWith(k)).map(([, p]) => p)) : new Set();
     return found.size === 1 ? [...found][0] : null;
   }
-  // Misma web si ya estamos en admira.app/admira.biz; desde fuera, admira.app.
+  // Misma web si ya estamos en admira.biz; desde fuera (admira.store), www.admira.biz.
   function planoUrl(id, lang, origin) {
     const path = '/plano.html?locationId=' + encodeURIComponent(id) + '&modo=obra&lang=' + (lang === 'en' ? 'en' : 'es');
     return origin ? String(origin).replace(/\/+$/, '') + path : path;

@@ -1,6 +1,6 @@
 # Plano y obras de un Xpacio · /redistribucion
 
-Misión FLT-102063 (encargo #5859 · plano y obras del Xpacio en admira.app), orden de Carlos del 14-oct-2026.
+Misión FLT-102063 (encargo #5859 · plano y obras del Xpacio en admira.biz), orden de Carlos del 14-oct-2026.
 
 ## Qué es
 
@@ -20,8 +20,8 @@ Los mosaicos se mueven enteros salvo que se desmarque «Mover el mosaico entero�
 
 Inicialmente, solo desde el modo experto (⌘):
 
-- **admira.app y admira.biz:** `/redistribucion [xpacio]`. Alias: `/redistribución`, `/redistribuir`, `/plano` y `/obras`. Sin xpacio, usa el de la ficha abierta en la portada. Abre `/plano.html?locationId=<id>&modo=obra`.
-- **admira.store / xpaceos.com:** el mismo verbo en `assets/xpace-shell.js` (repo admira-store). Abre el plano en `https://www.admira.app`. Sin argumento, toma el `?loc=` del gemelo.
+- **admira.biz** (este proyecto; desde el intercambio de dominios de octubre, www.admira.app es Yokup): `/redistribucion [xpacio]`. Alias: `/redistribución`, `/redistribuir`, `/plano` y `/obras`. Sin xpacio, usa el de la ficha abierta en la portada. Abre `/plano.html?locationId=<id>&modo=obra`.
+- **admira.store / xpaceos.com:** el mismo verbo en `assets/xpace-shell.js` (repo admira-store). Abre el plano en `https://www.admira.biz`. Sin argumento, toma el `?loc=` del gemelo.
 
 ## Datos
 
