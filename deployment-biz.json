@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Modo experto: /vision general alsea muestra Alsea México desde arriba con un semáforo por Starbucks: verde OK, amarillo con incidencia, rojo apagado.",
-    "Usa la telemetría real de las pantallas; mientras estas tiendas no tengan pantallas conectadas, enseña estados de demo marcados «DEMO · estados simulados».",
-    "La pastilla de idioma ENG/ESP está en la cabecera de todas las páginas: ya no desaparece al pasar al backoffice tras iniciar sesión."
+    "Bugito ejecuta órdenes físicas por proyecto y establecimiento desde la consola común de las cinco patas.",
+    "La demo Starbucks de Gran de Gràcia 51 se vincula al MBP16: giro, popup, negro, resolución, recorte y restauración.",
+    "Control con sesión owner, protección de duplicados y estados separados de envío, ejecución y medida reciente."
   ],
   "nativeClearChannel": {
     "enabled": true,

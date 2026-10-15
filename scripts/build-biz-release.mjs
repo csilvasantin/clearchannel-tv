@@ -46,6 +46,8 @@ copyFileSync(join(root, 'server/native-clear-channel.mjs'), join(out, 'server/na
 copyFileSync(join(root, 'server/demo-session.mjs'), join(out, 'server/demo-session.mjs'));
 writeFileSync(join(out, 'server/bugito-xpacios.mjs'), readFileSync(join(root, 'server/bugito-xpacios.mjs'),'utf8').replace("'../bugito-xpacios-core.mjs'","'./bugito-xpacios-core.mjs'"));
 copyFileSync(join(root, 'bugito-xpacios-core.mjs'), join(out, 'server/bugito-xpacios-core.mjs'));
+writeFileSync(join(out,'server/bugito-command.mjs'),readFileSync(join(root,'server/bugito-command.mjs'),'utf8').replace("'../bugito-command-core.mjs'","'./bugito-command-core.mjs'"));
+copyFileSync(join(root,'bugito-command-core.mjs'),join(out,'server/bugito-command-core.mjs'));
 buildNativeClearChannel({root,out,config,revision,agent,machine});
 const scoped = join(out, BIZ_ASSET_PREFIX.slice(1));
 for (const file of BIZ_ASSET_FILES.filter(file => file !== 'version.json')) {

@@ -1,4 +1,6 @@
 import {parseIncidentOrder,incidentLevel,INCIDENT_COLORS} from './bugito-xpacios-core.mjs?v=20261015-xpacios-1';
+import {isPhysicalOrder} from './bugito-command-core.mjs?v=20261015-command-1';
+import {runPhysicalOrder} from './bugito-command-ui.mjs?v=20261015-command-1';
 const en=()=>document.documentElement.lang==='en';
 const T=(es,eng)=>en()?eng:es;
 const endpoint='/api/bugito/';
@@ -17,16 +19,17 @@ export async function createIncident(body) {
  }finally{busy=false;}
 }
 export async function runOrder(order) {
+ if(isPhysicalOrder(order))return runPhysicalOrder(order);
  if(!parseIncidentOrder(order))throw Error(errorText('order_format'));
  const d=await createIncident({order});
  return T(`Incidencia ${d.id} abierta y pendiente de gestión · ${d.location.name} · ${d.screen.name}. ${d.url}`,`Incident ${d.id} open, awaiting handling · ${d.location.name} · ${d.screen.name}. ${d.url}`);
 }
 window.BugitoXpacios={runOrder,createIncident,parseIncidentOrder};
 // Register with the existing Expert engine; keep the mascot and old lab commands working.
-function register(E){if(!E?.verb)return;E.verb({name:'bugito',args:'genera una incidencia en el proyecto … en el establecimiento … y en la pantalla …',desc:['Incidencia persistente por proyecto, establecimiento y pantalla; normal, grave o total.','Persistent incident by project, establishment and screen; normal, severe or total.'],run:async(a,log)=>{
+function register(E){if(!E?.verb)return;E.verb({name:'bugito',args:'error <proyecto> <establecimiento> <fallo> | restaurar <proyecto> <establecimiento> | genera una incidencia …',desc:['Incidencia persistente por proyecto, establecimiento y pantalla; normal, grave o total.','Persistent incident by project, establishment and screen; normal, severe or total.'],run:async(a,log)=>{
  const text=a.join(' ');let message;
  try {
-  if(parseIncidentOrder(text))message=await runOrder(text);
+  if(isPhysicalOrder(text)||parseIncidentOrder(text))message=await runOrder(text);
   else if(window.AdmiraBugito)message=text?await window.AdmiraBugito.lanzar(text):window.AdmiraBugito.toggle();
   else if(window.AdmiraAvatar?.handle)return window.AdmiraAvatar.handle('/bugito'+(text?' '+text:''));
   else {location.assign('/bugito?lang='+(en()?'en':'es'));return;}
@@ -38,7 +41,7 @@ async function load(q={}){const r=await fetch(endpoint+'targets?'+new URLSearchP
 const form=document.querySelector('#bugito-xpacios');
 function translate(){
  for(const e of document.querySelectorAll('[data-bx-es]'))e.textContent=T(e.dataset.bxEs,e.dataset.bxEn);
- const orderInput=document.querySelector('#bugito-xpacios [name=order]');if(orderInput)orderInput.placeholder=T('genera una incidencia en el proyecto Starbucks en el establecimiento alsea-sbux-021 y en la pantalla 1','create an incident in project Starbucks in store alsea-sbux-021 and on screen 1');
+ const orderInput=document.querySelector('#bugito-xpacios [name=order]');if(orderInput)orderInput.placeholder=T('/bugito error starbucks gran de gracia 51 pantalla girada','/bugito fault starbucks gran de gracia 51 rotated screen');
  for(const select of document.querySelectorAll('#bugito-xpacios label select'))select.setAttribute('aria-label',select.closest('label').querySelector('span').textContent);
  const legend=document.querySelector('#incident-legend');if(legend)legend.title=T('Estado de las incidencias registradas; la ausencia de señal se consulta en el Supervisor.','Registered incident status; check missing device signals in Supervisor.');
 }
@@ -52,10 +55,11 @@ if(form){
  project.addEventListener('change',async()=>{const version=++revision;options(site,[]);options(screen,[]);if(!project.value)return;try{const d=await load({project:project.value});if(version===revision)options(site,d.locations);}catch(e){if(version===revision)status.textContent=e.message;}});
  site.addEventListener('change',async()=>{const version=++revision;options(screen,[]);if(!site.value)return;try{const d=await load({project:project.value,location:site.value});if(version===revision)options(screen,d.screens);}catch(e){if(version===revision)status.textContent=e.message;}});
  form.addEventListener('submit',async e=>{e.preventDefault();submit.disabled=true;status.textContent=T('Registrando incidencia…','Registering incident…');try{
+  if(isPhysicalOrder(order.value)){status.textContent=await runPhysicalOrder(order.value);return;}
   const body=order.value.trim()?{order:order.value.trim()}:{project:project.value,location:site.value,screen:screen.value,severity:form.querySelector('[name=severity]').value,fault:form.querySelector('[name=fault]').value};
   const d=await createIncident(body);status.replaceChildren(document.createTextNode(T('Incidencia abierta y pendiente de gestión: ','Incident open, awaiting handling: ')));const a=document.createElement('a');a.href=d.url;a.textContent=d.id;a.target='_blank';a.rel='noopener';status.append(a,document.createTextNode(' · '+d.location.name+' · '+d.screen.name));
  }catch(err){status.textContent=err.message;}finally{submit.disabled=false;}});
- order.value=new URLSearchParams(location.search).get('orden')||'';
+ order.value=order.value||new URLSearchParams(location.search).get('orden')||'';
  populate();
 }
 // Canonical snapshot, shared by every marker and cluster. Preserve the last snapshot on errors.
