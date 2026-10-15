@@ -21,9 +21,10 @@
     ]
   },
   "novedades": [
+    "Bugito: /ayuda bugito y /help bugito explican giro, popup, negro y restauración desde las cinco patas.",
+    "Guía ES/EN y tema MCP help bugito con ejemplos completos, destino MBP16 y permisos owner.",
     "Backoffice: el botón «Iniciar sesión con Google» de la puerta ya no sale dentro de un recuadro blanco.",
-    "El texto de la puerta dice ahora «gestión para @admira.com y Mis demos para los usuarios registrados» (en inglés, «My demos for registered users»).",
-    "Mis demos: la tarjeta de Alsea México trae Ver ficha, Tour DooH, Visión general y Ver Gemelo Digital."
+    "El texto de la puerta dice ahora «gestión para @admira.com y Mis demos para los usuarios registrados» (en inglés, «My demos for registered users»). Mis demos: la tarjeta de Alsea México trae Ver ficha, Tour DooH, Visión general y Ver Gemelo Digital."
   ],
   "nativeClearChannel": {
     "enabled": true,

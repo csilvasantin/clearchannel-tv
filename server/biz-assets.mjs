@@ -39,7 +39,7 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'about.html', 'marketplace.html', 'players/index.html', 'page-language.css',
   'backoffice.html', 'central-project-backoffice.mjs', 'tutorial/index.html',
   'demo/index.html', 'demo/demo.mjs', 'version.json',
-  'mcp/native-players.md', 'mcp/player-sync-evidence/fronteras.json',
+  'mcp/native-players.md', 'mcp/bugito.md', 'mcp/expert-ui.md', 'mcp/player-sync-evidence/fronteras.json',
   'mcp/player-sync-evidence/reapertura.json', 'mcp/player-sync-evidence/por-pieza.json'
 ]);
 const assets = new Set(BIZ_ASSET_FILES);

@@ -19,7 +19,9 @@ Use a concrete signed RELEASE value before deploying; assets/ contains the
 reviewed public snapshot. Verify both hostnames, documentation links, the
 existing RPC authentication response, and the frozen domains afterwards.
 
-Rollback: remove only the twelve admira-biz-player-docs route entries from the
+Rollback: remove only the fourteen admira-biz-player-docs route entries from the
 admira.biz zone. The pre-existing wider yokup-site-gate /mcp/* routes then serve
 these paths again. Keep the source/asset snapshot and the deployment ID for
 recovery. Never deploy the shared Yokup gate as part of this documentation task.
+
+Bugito adds `/mcp/bugito.md` and a discovery entry with the same ES/EN guide as the common Expert engine and the public AdmiraNeXT MCP help topic `bugito`. This is documentation only; existing RPC/SSE traffic and its authorization remain owned by GATE.

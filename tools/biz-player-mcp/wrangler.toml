@@ -13,7 +13,7 @@ not_found_handling = "none"
 binding = "GATE"
 service = "yokup-site-gate"
 [vars]
-RELEASE = "v.12.10.2026.r3.16:20"
+RELEASE = "v.15.10.2026.r1.23:53 · OraculoMacMini · MacMini"
 
 [[routes]]
 pattern = "admira.biz/mcp/"
@@ -61,4 +61,12 @@ zone_name = "admira.biz"
 
 [[routes]]
 pattern = "www.admira.biz/mcp/player-sync-evidence/*"
+zone_name = "admira.biz"
+
+[[routes]]
+pattern = "admira.biz/mcp/bugito.md"
+zone_name = "admira.biz"
+
+[[routes]]
+pattern = "www.admira.biz/mcp/bugito.md"
 zone_name = "admira.biz"

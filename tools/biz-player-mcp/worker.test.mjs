@@ -20,3 +20,10 @@ test('only named public evidence is accessible, with no traversal fallback',asyn
  for(const path of ['/mcp/player-sync-evidence/fronteras.json','/mcp/player-sync-evidence/evidencias.zip'])assert.equal((await worker.fetch(new Request('https://admira.biz'+path),env)).status,200);
  for(const path of ['/mcp/player-sync-evidence/private.json','/mcp/player-sync-evidence/../secret.json'])assert.equal((await worker.fetch(new Request('https://admira.biz'+path),env)).status,404);
 });
+
+test('Bugito guide is a read-only exact doc route, RPC still goes to the gate',async()=>{
+ const r=await worker.fetch(new Request('https://www.admira.biz/mcp/bugito.md'),env);assert.equal(await r.text(),'/bugito.md');
+ const post=await worker.fetch(new Request('https://admira.biz/mcp/bugito.md',{method:'POST',headers:{Authorization:'Bearer test-only'},body:'{}'}),env);
+ assert.equal((await post.json()).auth,'Bearer test-only');
+ assert.equal((await worker.fetch(new Request('https://admira.biz/mcp/bugito-private.md'),env)).status,404);
+});
