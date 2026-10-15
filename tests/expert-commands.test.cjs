@@ -298,3 +298,20 @@ test('el panel registra /demo dooh en el motor común y sabe arrancar el tour so
   assert.match(panel, /\{name:'dooh',run:dooh\}/);
   assert.match(panel, /dooh\(circuitId\) \{\s*const r = ctx\.circuit\(circuitId\);[\s\S]*?startCircuitDemo\(\);/);
 });
+
+test('enlace ?ax_cmd: solo /demo dooh [cliente], con guiones o espacios', () => {
+  assert.equal(C.linkedCommand('?ax_cmd=demo-dooh-alsea'), '/demo dooh alsea');
+  assert.equal(C.linkedCommand('?lang=es&ax_cmd=%2Fdemo%20dooh%20alsea'), '/demo dooh alsea');
+  assert.equal(C.linkedCommand('?ax_cmd=DEMO+DOOH+Alcampo'), '/demo dooh alcampo');
+  assert.equal(C.linkedCommand('?ax_cmd=demo-dooh'), '/demo dooh');
+  for (const bad of ['', '?x=1', '?ax_cmd=marca-off', '?ax_cmd=demo-alsea', '?ax_cmd=demo-dooh-alsea;parar', '?ax_cmd=demo dooh <script>', '?ax_cmd=demo-dooh-' + 'a'.repeat(30)]) {
+    assert.equal(C.linkedCommand(bad), null, bad);
+  }
+});
+
+test('el panel ejecuta la orden del enlace por su formulario cuando el circuito y el mapa están listos', () => {
+  const panel = fs.readFileSync(path.join(__dirname, '..', 'expert-panel.js'), 'utf8');
+  assert.match(panel, /const linked = !away && C\.linkedCommand \? C\.linkedCommand\(root\.location && root\.location\.search\) : null;/);
+  assert.match(panel, /circuitDefinitions\(\)\[client\.circuit\][\s\S]*?map\.getSource\('locs'\)/);
+  assert.match(panel, /input\.value = linked; if \(form\.requestSubmit\) form\.requestSubmit\(\)/);
+});
