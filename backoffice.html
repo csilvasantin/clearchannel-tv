@@ -396,7 +396,7 @@ const I18N = {
     central_title:'Proyectos y locales · AdmiraNext', central_intro:'Consulta los proyectos autorizados y sus gemelos desde la gestión central de usuarios.',
     central_connect:'Conectar con AdmiraNext', central_refresh:'Actualizar', central_disconnect:'Desconectar',
     central_manage:'Gestionar proyectos, locales y permisos ↗', central_api:'Contrato API ES / EN ↗',
-    nav_demos:'Mis demos', demo_title:'Demos de clientes', demo_cafebreria:'Cafebrería · Proyecto independiente', demo_map:'Ver ficha', demo_tour:'Tour DooH', demo_twin:'Ver Gemelo Digital ↗', demo_note:'Escenarios de demostración. Abrir el gemelo no confirma emisión en dispositivos físicos.', label_xpace:'Xpacio asociado', xpace_note:'URL del Xpacio en XpaceOS. Déjala vacía para ocultar el botón de gemelo digital.',
+    nav_demos:'Mis demos', demo_title:'Demos de clientes', demo_cafebreria:'Cafebrería · Proyecto independiente', demo_map:'Ver ficha', demo_tour:'Tour DooH', demo_overview:'Visión general', demo_twin:'Ver Gemelo Digital ↗', demo_note:'Escenarios de demostración. Abrir el gemelo no confirma emisión en dispositivos físicos.', label_xpace:'Xpacio asociado', xpace_note:'URL del Xpacio en XpaceOS. Déjala vacía para ocultar el botón de gemelo digital.',
     gate_title:'Backoffice',
     gate_sub:'Inicia sesión con Google. Gestión para <b>@admira.com</b> y demos para las cuentas autorizadas de Carlos.',
     remember:'Recordar en este navegador', enter:'Entrar',
@@ -444,7 +444,7 @@ const I18N = {
     central_title:'Projects and venues · AdmiraNext', central_intro:'View authorized projects and their digital twins through central user management.',
     central_connect:'Connect with AdmiraNext', central_refresh:'Refresh', central_disconnect:'Disconnect',
     central_manage:'Manage projects, venues and permissions ↗', central_api:'API contract ES / EN ↗',
-    nav_demos:'My demos', demo_title:'Client demos', demo_cafebreria:'Cafebrería · Independent project', demo_map:'View location', demo_tour:'DooH Tour', demo_twin:'View Digital Twin ↗', demo_note:'Demo scenarios. Opening the twin does not confirm playback on physical devices.', label_xpace:'Linked Xpace', xpace_note:'Xpace URL on XpaceOS. Leave empty to hide the digital twin button.',
+    nav_demos:'My demos', demo_title:'Client demos', demo_cafebreria:'Cafebrería · Independent project', demo_map:'View location', demo_tour:'DooH Tour', demo_overview:'Overview', demo_twin:'View Digital Twin ↗', demo_note:'Demo scenarios. Opening the twin does not confirm playback on physical devices.', label_xpace:'Linked Xpace', xpace_note:'Xpace URL on XpaceOS. Leave empty to hide the digital twin button.',
     gate_title:'Backoffice',
     gate_sub:'Sign in with Google. Management for <b>@admira.com</b> and demos for Carlos’s authorized accounts.',
     remember:'Remember on this browser', enter:'Sign in',
@@ -564,7 +564,9 @@ function renderDemoAccess() {
     const mapUrl = 'index.html?lang=' + LANG + '&locationId=' + encodeURIComponent(d.locationId);
     // Con orden propia (Alsea México: /demo dooh alsea) el Tour DooH entra por el modo experto (?ax_cmd).
     const tourUrl = 'index.html?lang=' + LANG + (d.command ? '&ax_cmd=' + encodeURIComponent(d.command) : '&circuit=' + encodeURIComponent(d.circuit) + '&tour=1');
-    return `<article class="demo-card"><h3>${escHtml(d.id === 'cafebreria' ? t('demo_cafebreria') : d.title)}</h3><a href="${mapUrl}">${t('demo_map')}</a><a href="${tourUrl}">${t('demo_tour')}</a><a href="${escHtml(d.twinUrl)}" target="_blank" rel="noopener">${t('demo_twin')}</a></article>`;
+    // Visión general (FLT-102505): el circuito desde arriba con el semáforo, por el modo experto.
+    const overviewUrl = d.overview ? 'index.html?lang=' + LANG + '&ax_cmd=' + encodeURIComponent(d.overview) : '';
+    return `<article class="demo-card"><h3>${escHtml(d.id === 'cafebreria' ? t('demo_cafebreria') : d.title)}</h3><a href="${mapUrl}">${t('demo_map')}</a><a href="${tourUrl}">${t('demo_tour')}</a>${overviewUrl ? `<a href="${overviewUrl}">${t('demo_overview')}</a>` : ''}<a href="${escHtml(d.twinUrl)}" target="_blank" rel="noopener">${t('demo_twin')}</a></article>`;
   }).join('');
 }
 async function verifySession(token) {
