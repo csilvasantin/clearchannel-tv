@@ -387,6 +387,23 @@
   document.addEventListener('admira:marcas', e => { if (C.setBrands && e.detail) C.setBrands(e.detail.marcas); renderVerbs(); });
   render(); translate();
   root.AdmiraExpert = Object.freeze({run, layout: () => normalizeLayout(state)});
+  // ?ax_cmd=demo-dooh-alsea (FLT-102469): cuando el motor, el catálogo del circuito y el mapa están
+  // listos, abre el modo experto y envía la orden por el mismo formulario que si se tecleara.
+  const linked = !away && C.linkedCommand ? C.linkedCommand(root.location && root.location.search) : null;
+  if (linked) {
+    let tries = 0;
+    const tick = () => {
+      let ready = false;
+      try {
+        const client = C.resolveDoohClient(linked.split(' ').slice(2).join(' '));
+        ready = !!(root.AdmiraExperto && client && (circuitDefinitions()[client.circuit] || {items: []}).items.length && map.getSource('locs'));
+      } catch (_) {}
+      if (!ready) { if (++tries < 120) setTimeout(tick, 500); return; }
+      try { root.AdmiraExperto.open(); } catch (_) {}
+      setTimeout(() => { input.value = linked; if (form.requestSubmit) form.requestSubmit(); else run(input.value); }, 700);
+    };
+    setTimeout(tick, 800);
+  }
 })(typeof window === 'undefined' ? globalThis : window);
 
 ;(function(){if(typeof document!=='undefined'&&!document.querySelector('script[src*="/suite/experto.js"]')){var s=document.createElement("script");s.src="https://www.admiranext.com/suite/experto.js?v=20261014-personajes-3";document.head.appendChild(s);}})();

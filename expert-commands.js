@@ -152,6 +152,14 @@
     const preferred = globals.filter(c => [c.id, c.circuit, c.label, ...c.aliases].some(a => key(a).startsWith(k)));
     return preferred.length === 1 ? preferred[0] : exact;
   }
+  // Enlace de demo (Carlos, 15-oct-2026 · FLT-102469): ?ax_cmd=demo-dooh-alsea abre el modo experto y
+  // escribe la orden al cargar. Lista blanca: un enlace solo puede pedir /demo dooh [cliente].
+  function linkedCommand(search) {
+    let raw = '';
+    try { raw = new URLSearchParams(String(search || '')).get('ax_cmd') || ''; } catch (_) { return null; }
+    const text = raw.replace(/[-+_]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^\//, '').toLowerCase();
+    return /^demo dooh(?: [a-z0-9]{1,24}){0,3}$/.test(text) ? '/' + text : null;
+  }
   function demoDooh(value, ctx, lang = 'es') {
     const typed = String(value == null ? '' : value).trim(), client = resolveDoohClient(typed);
     const command = '/demo dooh' + (client ? ' ' + client.id : typed ? ' ' + typed : '');
@@ -626,7 +634,7 @@
   }
 
   const api = Object.freeze({
-    CLIENTS, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, planoId, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, resolveDoohClient, demoDooh, parse, execute, isAvatarCommand, errorLines, usage,
+    CLIENTS, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, planoId, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, resolveDoohClient, demoDooh, linkedCommand, parse, execute, isAvatarCommand, errorLines, usage,
     complete, defaultRoutines, sanitizeRoutines, loadRoutines, saveRoutines, addRoutine, removeRoutine, helpLines,
     pickDemoXpacio, demoScreens, registeredSurfaces, liveSurfaces, demoSurfaces,
   });
