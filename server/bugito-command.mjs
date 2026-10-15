@@ -32,7 +32,9 @@ export async function handleBugitoCommand(req,env,fetcher=fetch){
    const page=await env.ASSETS.fetch(new Request(url.origin+'/__admira_biz/bugito'));
    if(!page.ok)throw fail('page_unavailable',503);
    const payload=JSON.stringify({order:b.order,request_id:b.request_id}).replace(/</g,'\\u003c');
-   const html=(await page.text()).replace('</head>',`<base href="/bugito"><script type="application/json" id="bugito-command-intent">${payload}</script></head>`);
+   // The browser resolves scripts/styles while parsing the head. Set the base
+   // before those resources, since this document is served at /api/bugito/launch.
+   const html=(await page.text()).replace(/<head\b[^>]*>/i,head=>`${head}<base href="/bugito"><script type="application/json" id="bugito-command-intent">${payload}</script>`);
    return new Response(html,{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store','Referrer-Policy':'same-origin'}});
   }
   if(req.method==='GET'&&url.pathname.endsWith('/status')){
