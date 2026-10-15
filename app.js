@@ -3051,6 +3051,8 @@ function addLocationsLayer() {
   map.addLayer({
     id:'unclustered-point', type:'circle', source:'locs',
     filter:['!',['has','point_count']],
+    // Co-located inventory records must never cover a more severe incident.
+    layout:{'circle-sort-key':['get','incidentLevel']},
     paint:{
       'circle-color': mapScopeColorExpression(),
       'circle-radius':['interpolate',['linear'],['zoom'], 2,5, 6,7, 12,9],
