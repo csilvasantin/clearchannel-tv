@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Mis demos (backoffice) suma «Alsea México · Starbucks · 10 estados»: Ver ficha (Starbucks Madero, CDMX), Tour DooH global y Gemelo Digital.",
-    "La release de Biz publica la sesión de demo de main: las tarjetas de Mis demos ya no dependen de la revisión congelada.",
-    "Tour DooH global de Alsea México: admira.biz/?circuit=alsea_mexico&tour=1, de Tijuana a Cancún con bajada a pie de puerta."
+    "Modo experto: /demo dooh alsea lanza el Tour DooH de Alsea México, de México entero a la puerta de cada uno de los 10 Starbucks.",
+    "/demo dooh <cliente> recorre cualquier circuito; rutina de un clic «Tour DooH Alsea México» y ayuda en /help. Fuera del mapa abre la portada con el tour.",
+    "Durante el tour se apartan la píldora de estado y el ticker de actividad, que tapaban la ficha de la puerta."
   ],
   "nativeClearChannel": {
     "enabled": true,

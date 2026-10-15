@@ -190,6 +190,15 @@
       document.getElementById('circuit-zoom')?.click();
       return {ok: true, count: total};
     },
+    // /demo dooh (FLT-102469): circuito seleccionado y su Tour DooH; global si lo tiene (Alsea México).
+    dooh(circuitId) {
+      const r = ctx.circuit(circuitId);
+      if (r.ok === false) return r;
+      try { startCircuitDemo(); } catch (_) { return {ok: false, reason: 'not_ready'}; }
+      let global = false;
+      try { global = !!globalTour; } catch (_) {}
+      return {ok: true, count: r.count, global};
+    },
     search(text) {
       const search = document.getElementById('search');
       if (!search) return {ok: false};
@@ -238,7 +247,8 @@
       return record(command.raw,Object.assign({},result,{parsed,command:command.raw}),false);
     }};
     if(def.id==='demo'){
-      engine.registerAdapter({id:'biz-map-demo',demos:[{name:'mapa',run:(args,output)=>action.run({cliente:args.join(' ')},output,{raw:'/demo mapa '+args.join(' ')})}].concat(C.CLIENTS.map(client=>({name:client.id,run:(args,output)=>action.run({cliente:client.id},output,{raw:'/demo '+client.id})})))});
+      const dooh=args=>{const result=C.demoDooh(args.join(' '),ctx,lang());return record(result.command,Object.assign({parsed:{ok:result.ok,verb:{id:'demo',local:true},args:{},raw:result.command}},result),false);};
+      engine.registerAdapter({id:'biz-map-demo',demos:[{name:'mapa',run:(args,output)=>action.run({cliente:args.join(' ')},output,{raw:'/demo mapa '+args.join(' ')})},{name:'dooh',run:dooh}].concat(C.CLIENTS.map(client=>({name:client.id,run:(args,output)=>action.run({cliente:client.id},output,{raw:'/demo '+client.id})})))});
     }else engine.registerAdapter({id:'biz-action-'+def.id,verbs:[action]});
   }
   document.addEventListener('admira:verb-registered',event=>{if(root.AdmiraExperto)suiteAction(root.AdmiraExperto,event.detail);});
