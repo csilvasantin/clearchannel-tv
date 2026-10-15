@@ -1,4 +1,6 @@
-/* Segmentación del globo por cliente/marca (Carlos, 4-oct-2026, 21:55).
+/* Biz usa AdmiraBizContext: sólo el proyecto confirmado por servidor segmenta el globo.
+ * El contrato legado que sigue se conserva para los consumidores sin contexto común.
+ * Segmentación del globo por cliente/marca (Carlos, 4-oct-2026, 21:55).
  * Igual que Contenidos en Pixeria (assets/cliente-activo.js): por defecto el cliente es Admira y
  * Admira lo ve TODO; con otro cliente activo el globo, los clusters, los contadores, la lista de
  * circuitos y el buscador solo enseñan los puntos de ese proyecto. Altadis y JTI nunca se mezclan.
@@ -115,9 +117,10 @@
 
   var session = null;
   try { session = root.sessionStorage; } catch (_) {}
-  var actual = decidir(root.location.search, session);
+  var actual = root.AdmiraBizContext ? root.AdmiraBizContext.actual() : decidir(root.location.search, session);
 
   function fijar(valor) {
+    if (root.AdmiraBizContext) return root.AdmiraContexto.fijar({proyecto: resolver(valor)});
     var next = resolver(valor);
     if (next === actual) return actual;
     actual = next;
@@ -126,12 +129,12 @@
     return actual;
   }
   if (actual) document.documentElement.setAttribute('data-segmento', actual);
-  // marca-blanca.js aplica (o quita) una marca del catálogo: el globo la sigue.
-  document.addEventListener('admira:marca', function (e) { fijar(e.detail && e.detail.id ? e.detail.id : null); });
+  // Sólo los consumidores legados siguen la marca; Biz sigue admira:contexto.
+  if (!root.AdmiraBizContext) document.addEventListener('admira:marca', function (e) { fijar(e.detail && e.detail.id ? e.detail.id : null); });
 
   root.AdmiraSegmento = Object.freeze(Object.assign({}, api, {
-    actual: function () { return actual; },
+    actual: function () { return root.AdmiraBizContext ? root.AdmiraBizContext.actual() : actual; },
     fijar: fijar,
-    filtrarActual: function (list) { return filtrar(list, actual); }
+    filtrarActual: function (list) { return root.AdmiraBizContext ? root.AdmiraBizContext.filtrar(list) : filtrar(list, actual); }
   }));
 })(typeof window === 'undefined' ? globalThis : window);

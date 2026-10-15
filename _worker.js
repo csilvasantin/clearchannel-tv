@@ -1,6 +1,7 @@
 import {clearChannelNativePath,CC_NATIVE_PREFIX} from './server/native-clear-channel.mjs';
 import { handleOrders } from './server/orders.mjs';
 import { handleDemoSession } from './server/demo-session.mjs';
+import {handleContextSession} from './server/biz-context-session.mjs';
 import {handleGlobalDemo} from './server/global-demo.mjs';
 import {onRequest as avatarAsk} from './avatar-ask.js';
 import { bizAssetPath, BIZ_ASSET_PREFIX } from './server/biz-assets.mjs';
@@ -226,6 +227,11 @@ export default {
   async fetch(request, env) {
     if (new URL(request.url).pathname === '/avatar-ask') return avatarAsk({request});
     if (new URL(request.url).pathname === '/api/demo-global') return handleGlobalDemo(request, env);
+    if (new URL(request.url).pathname === '/api/context-session') {
+      const host = new URL(request.url).hostname;
+      if (!/^(www\.)?admira\.biz$|(^|\.)clearchannel-tv\.pages\.dev$/i.test(host)) return new Response('Not found', {status:404});
+      return handleContextSession(request, env);
+    }
     if (new URL(request.url).pathname === '/api/demo-session') return handleDemoSession(request);
     if (new URL(request.url).pathname.startsWith('/api/orders')) return handleOrders(request, env);
     var url = new URL(request.url);

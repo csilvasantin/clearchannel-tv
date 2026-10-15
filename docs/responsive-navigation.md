@@ -60,3 +60,9 @@ Tutorial ES: ☰ Opciones → sello inferior → pasar el ratón → plegar Opci
 
 
 `/idioma` alterna ESP/ENG; `/idioma ESP` y `/idioma ENG` eligen el idioma. El modo nativo comparte `/demo ios` y `/demo android [Fold8|watch]` y requiere proyecto activo, puente Mac y simuladores/emuladores. Ver `/help/#native-players`.
+
+## Contexto común de Biz / Shared Biz context
+
+`/marca <id>` / `/brand <id>` cambia la apariencia conservando el proyecto; `/proyecto <id>` / `/project <id>` cambia el filtro conservando la marca. Seleccionar o quitar con `/proyecto off` exige autorización de servidor; flags locales no conceden permisos. Sin argumento, muestra el estado.
+
+`/brand` preserves project scope; `/project` preserves the brand. Selecting or clearing with `/project off` requires server authorization, never a local role. See [ES/EN contract](contexto-biz.md).

@@ -96,6 +96,7 @@
   const ATTRIBUTES = {
     cliente: {id: 'cliente', aliases: ['client', 'customer', 'circuito', 'circuit'], es: 'cliente', en: 'client', values: CLIENTS},
     texto: {id: 'texto', aliases: ['text', 'q', 'query', 'lugar', 'place'], es: 'texto', en: 'text', free: true},
+    proyecto: {id: 'proyecto', aliases: ['project'], es: 'proyecto', en: 'project', free: true},
     marca: {id: 'marca', aliases: ['brand', 'id', 'web', 'url'], es: 'marca', en: 'brand', brands: true},
     xpacio: {id: 'xpacio', aliases: ['xpace', 'local', 'tienda', 'store', 'punto', 'location'], es: 'xpacio', en: 'xpace', free: true},
   };
@@ -203,17 +204,8 @@
       en: 'White label from the admiranext.com/marcablanca catalogue: /marca <id> dresses the site in that brand, /marca off returns to Admira, /marca alone shows the active one and lists them, /marca <website> opens the analyser in a new tab.',
       run(args, ctx, lang) {
         const M = ctx && ctx.marca;
-        // Segmentación del globo (cliente-segmento.js): /marca <cliente> deja solo sus puntos, aunque
-        // el cliente no tenga marca blanca en el catálogo; /marca off vuelve a Admira (todos).
-        const S = typeof root !== 'undefined' && root && root.AdmiraSegmento;
-        const G = typeof root !== 'undefined' && root && root.AdmiraGlobo;
-        const seg = () => (G ? G.segmento() : null);
-        const segLine = () => { const g = seg(); return g ? (g.cliente === 'admira'
-          ? L(lang, `Globo: Admira, todos los puntos (${g.puntos}).`, `Globe: Admira, all points (${g.puntos}).`)
-          : g.puntos === g.total ? L(lang, `Globo: «${g.cliente}» no tiene puntos propios; se ven todos (${g.total}).`, `Globe: “${g.cliente}” has no points of its own; showing all (${g.total}).`)
-          : L(lang, `Globo segmentado: ${g.cliente}, ${g.puntos} de ${g.total} puntos.`, `Globe segmented: ${g.cliente}, ${g.puntos} of ${g.total} points.`)) : null; };
-        if (S && args.marca && !/^https?:\/\//.test(args.marca)) S.fijar(args.marca === 'off' ? null : args.marca);
-        if (!M) return S && args.marca ? done(segLine()) : fail(L(lang, 'La marca blanca aún no está lista en esta página. Vuelve a intentarlo en un momento.', 'White label is not ready on this page yet. Try again in a moment.'));
+        if (root.AdmiraContexto) return contextCommand('marca', args.marca, lang);
+        if (!M) return fail(L(lang, 'La marca blanca aún no está lista.', 'White label is not ready yet.'));
         const value = args.marca;
         const tag = b => (b && b.propuesta ? L(lang, ' · propuesta automática, no es la marca oficial', ' · automatic proposal, not the official brand') : b && b.ejemplo ? L(lang, ' · marca ficticia de ejemplo', ' · fictional sample brand') : '');
         if (!value) {
@@ -228,7 +220,7 @@
         }
         if (value === 'off') {
           const r = M.desactivar();
-          return done(...(seg() ? [segLine()] : []), r.changed
+          return done(r.changed
             ? L(lang, `Marca ${r.previous.nombre} desactivada: vuelve Admira.`, `${r.previous.nombre} brand turned off: back to Admira.`)
             : L(lang, 'No había ninguna marca blanca activa: ya ves Admira.', 'No white label was active: you already see Admira.'));
         }
@@ -240,14 +232,19 @@
         }
         const later = M.activar(value).then(r => {
           if (r.ok) { if (!BRANDS.some(b => b.id === r.id)) BRANDS = [...BRANDS, {id: r.id, nombre: r.nombre, ejemplo: !!r.ejemplo, propuesta: !!r.propuesta}];
-            return done(...(seg() ? [segLine()] : []), L(lang, `Marca ${r.nombre} (${r.id}) activa${tag(r)}. Se mantiene al navegar en esta pestaña; /marca off vuelve a Admira.`, `${r.nombre} (${r.id}) brand on${tag(r)}. It stays while you browse in this tab; /marca off returns to Admira.`)); }
-          if (r.reason === 'unknown' && S && seg() && seg().cliente !== 'admira') return done(segLine(), L(lang, `(«${value}» no tiene marca blanca en el catálogo: se mantiene el aspecto, solo cambian los puntos.)`, `(“${value}” has no white label in the catalogue: the look stays, only the points change.)`));
+            return done(L(lang, `Marca ${r.nombre} (${r.id}) activa${tag(r)}. Se mantiene al navegar en esta pestaña; /marca off vuelve a Admira.`, `${r.nombre} (${r.id}) brand on${tag(r)}. It stays while you browse in this tab; /marca off returns to Admira.`)); }
           if (r.reason === 'unknown') return fail(L(lang, `La marca «${value}» no está en el catálogo de admiranext.com. No se ha aplicado nada.`, `The brand “${value}” is not in the admiranext.com catalogue. Nothing was applied.`),
             L(lang, 'Disponibles: ', 'Available: ') + brandList(lang) + L(lang, '. Para crearla: /marca <web de la marca>.', '. To create it: /marca <brand website>.'));
           return fail(L(lang, 'No se pudo hablar con admiranext.com: la web sigue con su aspecto normal.', 'Could not reach admiranext.com: the site keeps its normal look.'));
         });
         return {ok: true, lines: [L(lang, `Aplicando la marca ${value}…`, `Applying the ${value} brand…`)], later};
       },
+    },
+    {
+      id: 'proyecto', command: '/proyecto', aliases: ['project'], attributes: ['proyecto'], requires: [],
+      es: 'Filtro autorizado por el servidor: /proyecto <id> conserva la marca; /proyecto off lo retira; sin argumento muestra el contexto.',
+      en: 'Server-authorized filter: /project <id> preserves the brand; /project off clears it; no argument shows the context.',
+      run(args, ctx, lang) { return contextCommand('proyecto', args.proyecto, lang); },
     },
     {
       id: 'idioma', command: '/idioma', aliases: ['language', 'languague'], attributes: [], requires: [],
@@ -363,6 +360,30 @@
     const missing = verb.requires.find(a => !args[a]);
     if (missing) return {ok: false, error: 'missing_attribute', raw, verb, attribute: missing};
     return {ok: true, raw, verb, args, command: canonical(verb, args)};
+  }
+  function contextCommand(field, value, lang) {
+    const context = root.AdmiraContexto;
+    if (!context) return fail(L(lang, 'Contexto no disponible. Vuelve a cargar la página.', 'Context unavailable. Reload the page.'));
+    const command = '/' + field + (value === undefined ? '' : ' ' + value);
+    const later = context.comando(command).then(async state => {
+      if (state.href) return done(L(lang, 'Analizador de marca: ', 'Brand analyser: ') + state.href);
+      const lines = [L(lang, 'Marca: ', 'Brand: ') + (state.marca || 'Admira') + ' · ' + L(lang, 'Proyecto: ', 'Project: ') + (state.proyecto || L(lang, 'vista general', 'general view'))];
+      if (field === 'marca' && value === undefined) {
+        try {setBrands(await root.AdmiraMarca.listar()); lines.push(L(lang, 'Disponibles: ', 'Available: ') + brandList(lang));}
+        catch {lines.push(L(lang, 'Catálogo no disponible ahora.', 'Catalogue currently unavailable.'));}
+      }
+      return done(...lines);
+    }).catch(error => {
+      if (field === 'proyecto' && [401,403].includes(error.status) && context.actual().proyecto) root.AdmiraBizContext?.bloquear();
+      if (error.message.startsWith('brand-')) return fail(L(lang, 'Marca no disponible. Se conserva el contexto anterior.', 'Brand unavailable. Previous context is preserved.'));
+      const denied = error.status === 403 || error.message === 'superuser-required';
+      return fail(denied
+        ? L(lang, 'El servidor no autoriza esta cuenta para cambiar o quitar el proyecto.', 'The server does not authorize this account to change or clear the project.')
+        : error.message === 'expert-mode-required'
+          ? L(lang, 'Abre el modo Experto para usar esta orden.', 'Open Expert mode to use this command.')
+          : L(lang, 'No se pudo actualizar el contexto. Inicia sesión o vuelve a intentarlo.', 'Context could not be updated. Sign in or try again.'));
+    });
+    return {ok:true, lines:[L(lang, 'Comprobando contexto…', 'Checking context…')], later};
   }
   const canonical = (verb, args) => [verb.command, ...verb.attributes.filter(a => args[a]).map(a => args[a])].join(' ');
 

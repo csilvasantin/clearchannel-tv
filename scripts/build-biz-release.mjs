@@ -39,6 +39,7 @@ writeFileSync(join(out, 'version.json'), JSON.stringify(config.preservedVersion,
 const headersPath = join(out, '_headers');
 writeFileSync(headersPath, readFileSync(headersPath, 'utf8') + '\n' + BIZ_ASSET_PREFIX + '/version.json\n  Cache-Control: no-store\n');
 copyFileSync(join(root, '_worker.js'), join(out, '_worker.js'));
+copyFileSync(join(root, 'server/biz-context-session.mjs'), join(out, 'server/biz-context-session.mjs'));
 copyFileSync(join(root, 'server/biz-assets.mjs'), join(out, 'server/biz-assets.mjs'));
 copyFileSync(join(root, 'server/native-clear-channel.mjs'), join(out, 'server/native-clear-channel.mjs'));
 buildNativeClearChannel({root,out,config,revision,agent,machine});

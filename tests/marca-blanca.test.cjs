@@ -198,14 +198,15 @@ test('texts of the bar and panels reach WCAG AA with light, dark and hostile pal
 
 test('the portada and the common shell share the same single mechanism', () => {
   const index = read('index.html');
-  const tag = `<script defer src="marca-blanca.js?v=${STAMP}"></script>`;
-  assert.equal(index.split(tag).length - 1, 1, 'the portada loads marca-blanca.js once');
-  const head = index.slice(0, index.indexOf('</head>'));
-  assert.ok(head.includes(tag) && head.indexOf(tag) < head.indexOf('responsive-shell.js?v='), 'in <head>, before the shell behaviour');
-  assert.ok(index.includes(`expert-panel.js?v=${STAMP}`), 'same stamp as the expert scripts it talks to');
+  const tag = '<script defer src="shared/admira-design/marca-blanca.js?v=5977-1" data-plataforma="biz"></script>';
+  assert.equal(index.split(tag).length - 1, 1, 'one shared brand loader');
+  assert.ok(index.indexOf('biz-context.js') < index.indexOf('shared/admira-design/contexto.js'));
+  assert.ok(index.indexOf('shared/admira-design/contexto.js') < index.indexOf(tag));
+  assert.ok(index.indexOf(tag) < index.indexOf('cliente-segmento.js'));
+  assert.ok(!index.includes('src="marca-blanca.js'), 'legacy loader is not booted in Biz');
   const shell = read('galaxy-shell.js');
-  assert.match(shell, /load\('marca-blanca\.js'\)\.catch\(/, 'galaxy-shell.js loads the very same file, with its own stamp, without blocking the shell');
-  for (const page of pages.filter(p => p !== 'index.html')) assert.ok(!read(page).includes('marca-blanca.js'), `${page}: gets it through galaxy-shell.js`);
+  assert.ok(shell.includes("load('shared/admira-design/contexto.js')"));
+  assert.ok(shell.includes("load('shared/admira-design/marca-blanca.js')"));
   // Every rule of the local sheet only applies while a brand is active on the app platform.
   const css = read('marca-blanca.css').replace(/\/\*[\s\S]*?\*\//g, '');
   const rules = css.replace(/@media[^{]*\{([\s\S]*?\})\s*\}/g, '$1').match(/[^{}]+\{[^{}]*\}/g);

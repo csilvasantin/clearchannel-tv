@@ -16,7 +16,8 @@
   if(!root.document)return;
   function context(){
     const params=new URL(root.location.href).searchParams;
-    const explicit=params.get('project')||params.get('proyecto');
+    if(root.AdmiraContexto)return root.AdmiraContexto.actual().proyecto ? {project:root.AdmiraContexto.actual().proyecto} : {};
+    const explicit=params.get('project');
     if(explicit)return {project:explicit};
     let items=typeof root.selectedLocations==='function'?root.selectedLocations():[];
     if(!items.length&&typeof root.currentCircuitItems==='function')items=root.currentCircuitItems();
