@@ -791,6 +791,12 @@ addEventListener('resize',ccFitIntro);
   document.head.appendChild(engine);
 })();
 </script>
+<style>
+  /* Portada sin modo Experto (Carlos, 15-oct-2026): ⌘ no se ve aquí; en su sitio, la pastilla de idioma
+     con la misma caja que ☰ y ▤ (.mode-toggle). ENG pasa a inglés; ESP vuelve al castellano. */
+  #header-expert-toggle{display:none!important}
+  .mode-toggle.header-lang{font:700 12px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.06em}
+</style>
 </head>
 <body>
 
@@ -821,6 +827,7 @@ addEventListener('resize',ccFitIntro);
       <a id="header-login" class="mode-toggle header-login" href="backoffice.html" data-i18n="login">Login</a>
       <button type="button" id="header-advanced-toggle" class="mode-toggle" aria-expanded="false" aria-controls="advanced-tools" data-mode="advanced" data-shell-es="Modo avanzado" data-shell-en="Advanced mode" title="Modo avanzado">▤</button>
       <button type="button" id="header-expert-toggle" class="mode-toggle" aria-expanded="false" aria-controls="expert-panel" data-mode="expert" data-shell-es="Modo experto" data-shell-en="Expert mode" title="Modo experto">⌘</button>
+      <button type="button" id="header-lang-toggle" class="mode-toggle header-lang" data-lang-target="en" data-admira-compact-control aria-label="Cambiar a inglés" title="Cambiar a inglés">ENG</button>
     </div>
   </div>
 </header>
