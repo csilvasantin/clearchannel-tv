@@ -12,6 +12,9 @@
 .gt-rail li.current{background:#fff;color:var(--gt-deep);border-color:#fff;transform:translateY(-2px);box-shadow:0 0 16px var(--gt-accent)}
 .gt-card{position:fixed;left:24px;bottom:72px;z-index:11;display:flex;gap:14px;align-items:center;width:min(430px,calc(100vw - 48px));box-sizing:border-box;padding:14px 18px 14px 16px;border-radius:16px;background:rgba(3,18,13,.93);border:1px solid color-mix(in srgb,var(--gt-accent) 55%,transparent);border-left:5px solid var(--gt-accent);box-shadow:0 18px 48px rgba(0,0,0,.5);color:#fff;font:13px/1.4 system-ui,-apple-system,'Segoe UI',sans-serif;pointer-events:none;animation:gt-card-in .45s ease both}
 .gt-card[hidden]{display:none}
+/* Con el modo experto abierto, el sello de versión (#admira-sello-chip, 60 px sobre el borde y 25 de alto)
+   queda encima del dock: la ficha sube por encima del sello en vez de pisarlo. */
+@media (min-width:761px){body.mode-expert-open .gt-card{bottom:100px}}
 .gt-card-num{display:flex;align-items:baseline;font:700 40px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--gt-accent)}
 .gt-card-num small{font-size:14px;opacity:.7;margin-left:2px}
 .gt-card-body{display:flex;flex-direction:column;gap:3px;min-width:0}
