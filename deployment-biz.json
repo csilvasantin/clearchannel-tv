@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Mis demos: la tarjeta de Alsea México suma «Visión general», que abre la portada con /vision general alsea (México desde arriba con un semáforo por Starbucks).",
-    "Junto a Ver ficha, Tour DooH y Ver Gemelo Digital; en inglés, «Overview».",
-    "La visión general marca «DEMO · estados simulados» mientras estas tiendas no tengan pantallas conectadas."
+    "Backoffice: el botón «Iniciar sesión con Google» de la puerta ya no sale dentro de un recuadro blanco.",
+    "El texto de la puerta dice ahora «gestión para @admira.com y Mis demos para los usuarios registrados» (en inglés, «My demos for registered users»).",
+    "Mis demos: la tarjeta de Alsea México trae Ver ficha, Tour DooH, Visión general y Ver Gemelo Digital."
   ],
   "nativeClearChannel": {
     "enabled": true,

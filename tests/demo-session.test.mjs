@@ -77,3 +77,11 @@ test('la tarjeta de Alsea México lanza el Tour DooH por el modo experto (?ax_cm
   assert.equal(C.linkedCommand('?lang=es&ax_cmd=' + encodeURIComponent('/demo dooh alsea')), '/demo dooh alsea');
   assert.equal(C.linkedCommand('?lang=es&ax_cmd=' + encodeURIComponent('/vision general alsea')), '/vision general alsea');
 });
+test('puerta del backoffice: botón de Google sin recuadro blanco y texto de demos para registrados', async () => {
+  const { readFileSync } = await import('node:fs');
+  const html = readFileSync(new URL('../backoffice.html', import.meta.url), 'utf8');
+  assert.match(html, /<div id="g-signin" style="[^"]*color-scheme:light/);
+  assert.doesNotMatch(html, /cuentas autorizadas de Carlos|Carlos’s authorized accounts/);
+  assert.match(html, /Mis demos para los usuarios registrados/);
+  assert.match(html, /My demos for registered users/);
+});
