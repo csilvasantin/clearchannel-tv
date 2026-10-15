@@ -5,6 +5,8 @@ export const BIZ_ASSET_PREFIX = '/__admira_biz';
 export const BIZ_ASSET_FILES = Object.freeze([
   'suite/experto.js', 'suite/experto.css', 'suite/demo-ios.mjs', 'suite/demo-android.mjs', 'suite/biz-native-context.js',
   'galaxy-shell.js', 'expert-panel.js', 'responsive-shell.js',
+  // Tour DooH global (FLT-102469): Alsea México, del país entero a la puerta de cada Starbucks.
+  'global-tour.js', 'global-tour.css', 'circuit-overview.js',
   'index.html', 'app.js', 'planner-core.js', 'inventory-evidence.js', 'expert-commands.js', 'intro.js', 'detail.html',
   'walk.html', 'walk.mjs', 'walk-launch.mjs', 'walk-core.mjs', 'walk.css', 'help/index.html',
   // /redistribucion (FLT-102063): plano y obras del Xpacio; ▤ Subir plano (DCL-58288891486617b36ed8777d);

@@ -1,0 +1,267 @@
+/* Tour DooH global: el circuito entero a la vista y, de ahí, a la puerta de cada Xpacio.
+ * Alsea México (Carlos, 15-oct-2026 · FLT-102469): 10 Starbucks en 10 estados. Antes de cada
+ * parada la cámara vuelve a México entero con la ruta trazada; después baja a pie de puerta
+ * (zoom de calle, inclinada en 3D) y gira despacio alrededor de la tienda.
+ * Las funciones de datos son puras (tests/global-tour.test.cjs); el HUD y las capas solo tocan
+ * el DOM y el mapa que se les pasa. */
+(function (root) {
+  'use strict';
+
+  const TOURS = {
+    alsea_mexico: {
+      accent: '#00a862', deep: '#00704a', light: '#d4e9e2',
+      title: {es: 'Alsea · Starbucks México', en: 'Alsea · Starbucks Mexico'},
+      region: {es: 'México', en: 'Mexico'},
+      doorZoom: 18.2, doorPitch: 60,
+      // Dirección corta y estado de cada tienda (las del localizador oficial vienen en
+      // mayúsculas fiscales). Coordenadas: localizador starbucks.com.mx, 6-24 m de OSM.
+      stops: {
+        'alsea-mx-sbux-01-tijuana': {state: 'Baja California', short: 'BC', street: 'Paseo de los Héroes 95 · Zona Río'},
+        'alsea-mx-sbux-02-monterrey': {state: 'Nuevo León', short: 'NL', street: 'Av. Juárez 1102 · Centro'},
+        'alsea-mx-sbux-03-leon': {state: 'Guanajuato', short: 'GTO', street: 'Blvd. Francisco Villa 1820 · Oriental'},
+        'alsea-mx-sbux-04-guadalajara': {state: 'Jalisco', short: 'JAL', street: 'Degollado 202 · Centro'},
+        'alsea-mx-sbux-05-queretaro': {state: 'Querétaro', short: 'QRO', street: 'Av. Constituyentes 57 · Cimatario'},
+        'alsea-mx-sbux-06-cdmx': {state: 'Ciudad de México', short: 'CDMX', street: 'Madero 42 · Centro Histórico'},
+        'alsea-mx-sbux-07-puebla': {state: 'Puebla', short: 'PUE', street: 'Av. 2 Oriente 203 · Centro Histórico'},
+        'alsea-mx-sbux-08-oaxaca': {state: 'Oaxaca', short: 'OAX', street: 'Calz. Porfirio Díaz 27 · Reforma'},
+        'alsea-mx-sbux-09-merida': {state: 'Yucatán', short: 'YUC', street: 'Calle 56A 465 · Paseo de Montejo'},
+        'alsea-mx-sbux-10-cancun': {state: 'Quintana Roo', short: 'QROO', street: 'Av. Bonampak · Puerto Cancún'},
+      },
+    },
+  };
+
+  const TEXT = {
+    es: {stores: 'Starbucks', states: 'estados', screens: 'pantallas DooH', reach: 'impactos/día',
+      store: 'Tienda', door: 'A pie de puerta', overview: 'Vista global', next: 'Siguiente',
+      done: 'Tour completado', circuit: 'circuito DooH', perDay: 'impactos/día'},
+    en: {stores: 'Starbucks', states: 'states', screens: 'DooH screens', reach: 'impressions/day',
+      store: 'Store', door: 'At the door', overview: 'Global view', next: 'Next',
+      done: 'Tour completed', circuit: 'DooH circuit', perDay: 'impressions/day'},
+  };
+  const lang2 = lang => (String(lang || 'es').slice(0, 2) === 'en' ? 'en' : 'es');
+  const pick = (value, lang) => (value && typeof value === 'object' ? (value[lang2(lang)] || value.es || '') : String(value || ''));
+
+  function config(circuitId) {
+    return Object.prototype.hasOwnProperty.call(TOURS, circuitId) ? TOURS[circuitId] : null;
+  }
+
+  function surfacesOf(loc) { return Array.isArray(loc && loc.surfaces) ? loc.surfaces : []; }
+  function impressionsOf(loc) { return surfacesOf(loc).reduce((sum, s) => sum + (Number(s && s.impr) || 0), 0); }
+
+  function stopInfo(cfg, loc, lang) {
+    const extra = (cfg && cfg.stops && cfg.stops[loc.id]) || {};
+    const addrHead = String(loc.addr || '').split(' · ')[0];
+    const name = String(loc.name || '');
+    return {
+      id: loc.id,
+      name,
+      // «Starbucks Tijuana · Plaza Río» → «Plaza Río»; sin « · » queda el nombre entero.
+      place: name.includes(' · ') ? name.split(' · ').slice(1).join(' · ') : name,
+      city: String(loc.city || ''),
+      state: extra.state || String(loc.province || ''),
+      short: extra.short || String(loc.province || '').slice(0, 4).toUpperCase(),
+      street: extra.street || addrHead,
+      storeId: (loc.external && loc.external.storeId) ? String(loc.external.storeId) : '',
+      screens: surfacesOf(loc).length,
+      impressions: impressionsOf(loc),
+      lang: lang2(lang),
+    };
+  }
+
+  function totals(items) {
+    const states = new Set(items.map(l => String(l.province || l.city || l.id)));
+    return {
+      stores: items.length,
+      states: states.size,
+      screens: items.reduce((sum, l) => sum + surfacesOf(l).length, 0),
+      impressions: items.reduce((sum, l) => sum + impressionsOf(l), 0),
+    };
+  }
+
+  function formatCount(n, lang) {
+    const en = lang2(lang) === 'en';
+    if (n >= 1000) {
+      const k = Math.round(n / 100) / 10;
+      return (en ? String(k) : String(k).replace('.', ',')) + ' K';
+    }
+    return String(n);
+  }
+
+  function bounds(items) {
+    const pts = items.map(l => l.coords).filter(c => Array.isArray(c) && c.every(Number.isFinite));
+    if (!pts.length) return null;
+    const lngs = pts.map(c => c[0]), lats = pts.map(c => c[1]);
+    return [[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]];
+  }
+
+  // Arco de vuelo entre dos paradas: curva cuadrática con el vértice desplazado a la
+  // izquierda del trayecto, proporcional a su longitud (se lee como una ruta aérea).
+  function arc(a, b, steps = 24, bend = 0.16) {
+    const mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const dx = b[0] - a[0], dy = b[1] - a[1];
+    const ctrl = [mid[0] - dy * bend, mid[1] + dx * bend];
+    const out = [];
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps, u = 1 - t;
+      out.push([u * u * a[0] + 2 * u * t * ctrl[0] + t * t * b[0], u * u * a[1] + 2 * u * t * ctrl[1] + t * t * b[1]]);
+    }
+    return out;
+  }
+
+  // progress: paradas ya alcanzadas, con fracción para el tramo en curso (2.5 = mitad del
+  // tramo de la 3.ª a la 4.ª parada). La ruta pendiente se dibuja entera bajo la recorrida.
+  function routeData(items, progress) {
+    const coords = items.map(l => l.coords);
+    const legs = [];
+    for (let i = 1; i < coords.length; i++) legs.push(arc(coords[i - 1], coords[i]));
+    const full = legs.reduce((line, leg, i) => line.concat(i ? leg.slice(1) : leg), []);
+    const reached = Math.max(0, Math.min(legs.length, Number(progress) || 0));
+    const whole = Math.floor(reached), part = reached - whole;
+    let done = [];
+    for (let i = 0; i < whole; i++) done = done.concat(i ? legs[i].slice(1) : legs[i]);
+    if (part > 0 && legs[whole]) {
+      const leg = legs[whole], cut = Math.max(1, Math.round(part * (leg.length - 1)));
+      done = done.concat((whole ? leg.slice(1, cut + 1) : leg.slice(0, cut + 1)));
+    }
+    const features = [];
+    if (full.length > 1) features.push({type: 'Feature', properties: {kind: 'pending'}, geometry: {type: 'LineString', coordinates: full}});
+    if (done.length > 1) features.push({type: 'Feature', properties: {kind: 'done'}, geometry: {type: 'LineString', coordinates: done}});
+    return {type: 'FeatureCollection', features};
+  }
+
+  const fold = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  function sameName(a, b) { return fold(a) === fold(b); }
+
+  function stopsData(cfg, items, current, lang) {
+    return {type: 'FeatureCollection', features: items.map((loc, i) => {
+      const info = stopInfo(cfg, loc, lang);
+      const status = i === current ? 'current' : i < current ? 'done' : 'next';
+      return {type: 'Feature', geometry: {type: 'Point', coordinates: loc.coords}, properties: {
+        id: loc.id, order: i + 1, status, rank: status === 'current' ? 0 : status === 'done' ? 1 : 2,
+        // «Oaxaca · Oaxaca» se lee una sola vez.
+        label: sameName(info.city, info.state) || !info.state ? info.city : info.city + '\n' + info.state,
+      }};
+    })};
+  }
+
+  function doorCamera(cfg, loc, index, view3d) {
+    return {center: loc.coords, zoom: (cfg && cfg.doorZoom) || 18, pitch: view3d ? ((cfg && cfg.doorPitch) || 60) : 0,
+      bearing: ((index * 37) % 360) - 20};
+  }
+
+  // ─── Capas del mapa ─────────────────────────────────────────────
+  const ROUTE = 'global-tour-route', STOPS = 'global-tour-stops';
+  const LAYERS = ['gt-route-pending', 'gt-route-glow', 'gt-route-done', 'gt-stop-halo', 'gt-stop', 'gt-stop-num', 'gt-stop-label', 'gt-door-outer', 'gt-door'];
+  const BASE_LAYERS = ['clusters', 'cluster-count', 'locs-glow', 'unclustered-pulse', 'selected-ring', 'unclustered-point'];
+
+  function setBaseLayers(map, visible) {
+    BASE_LAYERS.forEach(id => { try { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none'); } catch (_) {} });
+  }
+
+  function addLayers(map, cfg, font) {
+    if (!map.getSource(ROUTE)) map.addSource(ROUTE, {type: 'geojson', data: {type: 'FeatureCollection', features: []}});
+    if (!map.getSource(STOPS)) map.addSource(STOPS, {type: 'geojson', data: {type: 'FeatureCollection', features: []}});
+    const add = layer => { if (!map.getLayer(layer.id)) map.addLayer(layer); };
+    add({id: 'gt-route-pending', type: 'line', source: ROUTE, maxzoom: 13, filter: ['==', ['get', 'kind'], 'pending'],
+      layout: {'line-cap': 'round', 'line-join': 'round'},
+      paint: {'line-color': '#ffffff', 'line-opacity': 0.55, 'line-width': 1.6, 'line-dasharray': [2, 2.5]}});
+    add({id: 'gt-route-glow', type: 'line', source: ROUTE, maxzoom: 13, filter: ['==', ['get', 'kind'], 'done'],
+      layout: {'line-cap': 'round', 'line-join': 'round'},
+      paint: {'line-color': cfg.accent, 'line-opacity': 0.45, 'line-width': 9, 'line-blur': 5}});
+    add({id: 'gt-route-done', type: 'line', source: ROUTE, maxzoom: 13, filter: ['==', ['get', 'kind'], 'done'],
+      layout: {'line-cap': 'round', 'line-join': 'round'},
+      paint: {'line-color': '#ffffff', 'line-width': 2.6}});
+    add({id: 'gt-stop-halo', type: 'circle', source: STOPS, maxzoom: 13,
+      paint: {'circle-color': cfg.accent, 'circle-blur': 0.7,
+        'circle-radius': ['match', ['get', 'status'], 'current', 30, 'done', 18, 14],
+        'circle-opacity': ['match', ['get', 'status'], 'current', 0.75, 'done', 0.4, 0.22]}});
+    add({id: 'gt-stop', type: 'circle', source: STOPS, maxzoom: 13,
+      paint: {'circle-radius': ['match', ['get', 'status'], 'current', 14, 11],
+        'circle-color': ['match', ['get', 'status'], 'current', '#ffffff', 'done', cfg.deep, '#0d1f19'],
+        'circle-stroke-color': ['match', ['get', 'status'], 'current', cfg.accent, '#ffffff'],
+        'circle-stroke-width': ['match', ['get', 'status'], 'current', 3, 1.6]}});
+    add({id: 'gt-stop-num', type: 'symbol', source: STOPS, maxzoom: 13,
+      layout: {'text-field': ['to-string', ['get', 'order']], 'text-font': font, 'text-size': 12,
+        'text-allow-overlap': true, 'text-ignore-placement': true},
+      paint: {'text-color': ['match', ['get', 'status'], 'current', cfg.deep, '#ffffff']}});
+    add({id: 'gt-stop-label', type: 'symbol', source: STOPS, maxzoom: 13,
+      layout: {'text-field': ['get', 'label'], 'text-font': font, 'text-size': ['match', ['get', 'status'], 'current', 15, 12],
+        'text-anchor': 'top', 'text-offset': [0, 1.35], 'text-line-height': 1.15, 'symbol-sort-key': ['get', 'rank'],
+        'text-padding': 4},
+      paint: {'text-color': '#ffffff', 'text-halo-color': 'rgba(0,20,14,.9)', 'text-halo-width': 1.8,
+        'text-opacity': ['match', ['get', 'status'], 'next', 0.78, 1]}});
+    // A pie de puerta solo un anillo alrededor de la tienda: nada tapa la fachada.
+    add({id: 'gt-door-outer', type: 'circle', source: STOPS, minzoom: 13, filter: ['==', ['get', 'status'], 'current'],
+      paint: {'circle-radius': 44, 'circle-color': 'rgba(0,0,0,0)', 'circle-stroke-color': cfg.accent,
+        'circle-stroke-width': 3, 'circle-stroke-opacity': 0.9, 'circle-pitch-alignment': 'map'}});
+    add({id: 'gt-door', type: 'circle', source: STOPS, minzoom: 13, filter: ['==', ['get', 'status'], 'current'],
+      paint: {'circle-radius': 34, 'circle-color': 'rgba(0,0,0,0)', 'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 2.5, 'circle-stroke-opacity': 0.95, 'circle-pitch-alignment': 'map'}});
+  }
+
+  function setData(map, route, stops) {
+    try { map.getSource(ROUTE)?.setData(route); map.getSource(STOPS)?.setData(stops); } catch (_) {}
+  }
+
+  function removeLayers(map) {
+    LAYERS.slice().reverse().forEach(id => { try { if (map.getLayer(id)) map.removeLayer(id); } catch (_) {} });
+    [ROUTE, STOPS].forEach(id => { try { if (map.getSource(id)) map.removeSource(id); } catch (_) {} });
+  }
+
+  // ─── HUD: marca y raíl de estados arriba, ficha de la puerta abajo ──
+  function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c])); }
+
+  function createHud(doc, cfg, items, lang) {
+    const L = TEXT[lang2(lang)];
+    const sum = totals(items);
+    const infos = items.map(l => stopInfo(cfg, l, lang));
+    const hud = doc.createElement('div');
+    hud.className = 'gt-hud';
+    hud.style.setProperty('--gt-accent', cfg.accent);
+    hud.style.setProperty('--gt-deep', cfg.deep);
+    hud.style.setProperty('--gt-light', cfg.light);
+    hud.setAttribute('role', 'status');
+    hud.innerHTML = `<div class="gt-brand"><span class="gt-dot" aria-hidden="true"></span><div>
+      <strong>${esc(pick(cfg.title, lang))}</strong>
+      <span class="gt-sub">${sum.stores} ${esc(L.stores)} · ${sum.states} ${esc(L.states)} · ${sum.screens} ${esc(L.screens)} · ${esc(formatCount(sum.impressions, lang))} ${esc(L.reach)}</span>
+      </div></div>
+      <ol class="gt-rail">${infos.map((s, i) => `<li data-i="${i}" title="${esc(s.city + ' · ' + s.state)}"><b>${i + 1}</b><span>${esc(s.short)}</span></li>`).join('')}</ol>`;
+    const card = doc.createElement('aside');
+    card.className = 'gt-card';
+    card.hidden = true;
+    card.style.setProperty('--gt-accent', cfg.accent);
+    card.style.setProperty('--gt-deep', cfg.deep);
+    doc.body.append(hud, card);
+    const rail = [...hud.querySelectorAll('.gt-rail li')];
+
+    function setStop(index, phase) {
+      rail.forEach((li, i) => {
+        li.classList.toggle('done', i < index || (i === index && phase === 'door'));
+        li.classList.toggle('current', i === index);
+      });
+      if (phase !== 'door') card.hidden = true;
+    }
+    function door(index) {
+      const s = infos[index];
+      card.innerHTML = `<div class="gt-card-num">${String(index + 1).padStart(2, '0')}<small>/${String(items.length).padStart(2, '0')}</small></div>
+        <div class="gt-card-body"><span class="gt-card-kicker">${esc(L.door)} · ${esc(s.state)}${s.storeId ? ` · ${esc(L.store)} #${esc(s.storeId)}` : ''}</span>
+        <strong>${esc(s.name)}</strong>
+        <span class="gt-card-street">${esc(s.street)} · ${esc(s.city)}</span>
+        <span class="gt-card-stats">${s.screens} ${esc(L.screens)} · ${esc(formatCount(s.impressions, lang))} ${esc(L.perDay)}</span></div>`;
+      card.hidden = false;
+      setStop(index, 'door');
+    }
+    function finish() {
+      rail.forEach(li => { li.classList.add('done'); li.classList.remove('current'); });
+      card.innerHTML = `<div class="gt-card-num">✓</div><div class="gt-card-body"><span class="gt-card-kicker">${esc(L.done)} · ${esc(pick(cfg.region, lang))}</span>
+        <strong>${sum.stores} ${esc(L.stores)} · ${sum.states} ${esc(L.states)}</strong>
+        <span class="gt-card-stats">${sum.screens} ${esc(L.screens)} · ${esc(formatCount(sum.impressions, lang))} ${esc(L.perDay)} · 1 ${esc(L.circuit)}</span></div>`;
+      card.hidden = false;
+    }
+    function destroy() { hud.remove(); card.remove(); }
+    return {setStop, door, finish, destroy, element: hud};
+  }
+
+  root.GlobalTour = {config, stopInfo, totals, formatCount, bounds, arc, routeData, stopsData, doorCamera,
+    addLayers, setData, removeLayers, setBaseLayers, createHud, sameName, TOURS};
+})(typeof window === 'undefined' ? globalThis : window);
