@@ -1,0 +1,438 @@
+{
+  "schema": "admira.xpacio-plano/1",
+  "id": "altadis-xtanco-17",
+  "version": "v.15.10.2026.r1.09:58",
+  "nombre": "Xtanco · VIDEOWALL 8X1 H (2880×640)",
+  "publico": true,
+  "espacio": {
+    "serie": "altadis-18",
+    "tipo": "xtanco",
+    "n": 17
+  },
+  "formato": {
+    "id": "cliente-17",
+    "nombre": "VIDEOWALL 8X1 H",
+    "ancho": 2880,
+    "alto": 640,
+    "grid": {
+      "cols": 8,
+      "rows": 1
+    },
+    "fps": 25,
+    "uso": {
+      "es": "videowall",
+      "en": "video wall"
+    },
+    "zona": "mural"
+  },
+  "fuente": {
+    "titulo": "Espacio tipo Altadis 18 · plano tipo inventado, no es un levantamiento · Xtanco · VIDEOWALL 8X1 H",
+    "medidas": "Xtanco de 5,15 × 8,75 m (45,1 m²) y 2,9 m de alto: las medidas medias del tipo estanco del generador de Xpacios (semilla 1)",
+    "pantallas": "8 × LCD de 46″ vertical del formato cliente-17 (VIDEOWALL 8X1 H, 2880×640), en la zona mural: tamaños físicos supuestos, por confirmar con Altadis",
+    "formato": "admira.studio/adaptaciones/perfil-cliente-18.json · cliente-17 · «ALTADIS Resoluciones y formatos, p. 3» (sha256 16a17b2f81c5713d5d0fc676a02d2192fb95ad07ecb13e29dbec1b09da5239f7)",
+    "requisitos": "MP4 / H264 / 25 fps; SINCRO VW y SINCRO LOGO con la misma duración",
+    "avisos": [
+      "Nombre y proporción no cuadran: «8X1 H» con 2880×640 da celdas de 360×640, verticales. Se modelan 8 verticales; hay que confirmarlo con Altadis."
+    ],
+    "itil": "Sin inventario: pantallas en estado «propuesta» e itil null; el maestro del ITIL es Yokup"
+  },
+  "planta": {
+    "ancho": 5.15,
+    "fondo": 8.75,
+    "alto": 2.9
+  },
+  "paredes": [
+    {
+      "id": "F",
+      "nombre": "Fondo",
+      "a": [
+        0,
+        0
+      ],
+      "b": [
+        5.15,
+        0
+      ]
+    },
+    {
+      "id": "D",
+      "nombre": "Lateral derecho",
+      "a": [
+        5.15,
+        0
+      ],
+      "b": [
+        5.15,
+        8.75
+      ]
+    },
+    {
+      "id": "P",
+      "nombre": "Fachada · calle",
+      "a": [
+        5.15,
+        8.75
+      ],
+      "b": [
+        0,
+        8.75
+      ]
+    },
+    {
+      "id": "I",
+      "nombre": "Lateral izquierdo",
+      "a": [
+        0,
+        8.75
+      ],
+      "b": [
+        0,
+        0
+      ]
+    }
+  ],
+  "huecos": [
+    {
+      "id": "acceso",
+      "tipo": "puerta",
+      "nombre": "Acceso",
+      "pared": "P",
+      "desde": 0.3,
+      "ancho": 0.9,
+      "base": 0,
+      "alto": 2.3
+    },
+    {
+      "id": "escaparate",
+      "tipo": "escaparate",
+      "nombre": "Escaparate",
+      "pared": "P",
+      "desde": 1.5,
+      "ancho": 3.35,
+      "base": 0.3,
+      "alto": 2.3
+    }
+  ],
+  "mobiliario": [
+    {
+      "id": "m-1-bajo",
+      "nombre": "Expositor bajo · cajones de tabaco",
+      "x": 0.4,
+      "y": 0,
+      "w": 4.35,
+      "d": 0.45,
+      "alto": 1
+    },
+    {
+      "id": "m-2",
+      "nombre": "Mostrador · caja",
+      "x": 0.8,
+      "y": 1.35,
+      "w": 3.55,
+      "d": 0.6,
+      "alto": 1
+    },
+    {
+      "id": "m-3",
+      "nombre": "Lineal · regalo y papelería",
+      "x": 0,
+      "y": 2.95,
+      "w": 0.4,
+      "d": 4.8,
+      "alto": 1.8
+    }
+  ],
+  "pantallas": [
+    {
+      "id": "f17-1",
+      "itil": null,
+      "nombre": "VIDEOWALL 8X1 H · 1 de 8",
+      "corto": "1/8",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-17",
+      "celda": 1,
+      "lienzo": [
+        2880,
+        640
+      ],
+      "recorte": {
+        "x": 0,
+        "y": 0,
+        "w": 360,
+        "h": 640
+      },
+      "resolucion": [
+        360,
+        640
+      ],
+      "tecnologia": "lcd",
+      "orientacion": "vertical",
+      "pulgadas": 46,
+      "grupo": "formato-17",
+      "grupoNombre": "VIDEOWALL 8X1 H",
+      "s": 0.57,
+      "z": 1.1,
+      "montaje": "pared-fondo",
+      "separacion": 0.03,
+      "pared": "F",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    },
+    {
+      "id": "f17-2",
+      "itil": null,
+      "nombre": "VIDEOWALL 8X1 H · 2 de 8",
+      "corto": "2/8",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-17",
+      "celda": 2,
+      "lienzo": [
+        2880,
+        640
+      ],
+      "recorte": {
+        "x": 360,
+        "y": 0,
+        "w": 360,
+        "h": 640
+      },
+      "resolucion": [
+        360,
+        640
+      ],
+      "tecnologia": "lcd",
+      "orientacion": "vertical",
+      "pulgadas": 46,
+      "grupo": "formato-17",
+      "grupoNombre": "VIDEOWALL 8X1 H",
+      "s": 1.143,
+      "z": 1.1,
+      "montaje": "pared-fondo",
+      "separacion": 0.03,
+      "pared": "F",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    },
+    {
+      "id": "f17-3",
+      "itil": null,
+      "nombre": "VIDEOWALL 8X1 H · 3 de 8",
+      "corto": "3/8",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-17",
+      "celda": 3,
+      "lienzo": [
+        2880,
+        640
+      ],
+      "recorte": {
+        "x": 720,
+        "y": 0,
+        "w": 360,
+        "h": 640
+      },
+      "resolucion": [
+        360,
+        640
+      ],
+      "tecnologia": "lcd",
+      "orientacion": "vertical",
+      "pulgadas": 46,
+      "grupo": "formato-17",
+      "grupoNombre": "VIDEOWALL 8X1 H",
+      "s": 1.716,
+      "z": 1.1,
+      "montaje": "pared-fondo",
+      "separacion": 0.03,
+      "pared": "F",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    },
+    {
+      "id": "f17-4",
+      "itil": null,
+      "nombre": "VIDEOWALL 8X1 H · 4 de 8",
+      "corto": "4/8",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-17",
+      "celda": 4,
+      "lienzo": [
+        2880,
+        640
+      ],
+      "recorte": {
+        "x": 1080,
+        "y": 0,
+        "w": 360,
+        "h": 640
+      },
+      "resolucion": [
+        360,
+        640
+      ],
+      "tecnologia": "lcd",
+      "orientacion": "vertical",
+      "pulgadas": 46,
+      "grupo": "formato-17",
+      "grupoNombre": "VIDEOWALL 8X1 H",
+      "s": 2.289,
+      "z": 1.1,
+      "montaje": "pared-fondo",
+      "separacion": 0.03,
+      "pared": "F",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    },
+    {
+      "id": "f17-5",
+      "itil": null,
+      "nombre": "VIDEOWALL 8X1 H · 5 de 8",
+      "corto": "5/8",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-17",
+      "celda": 5,
+      "lienzo": [
+        2880,
+        640
+      ],
+      "recorte": {
+        "x": 1440,
+        "y": 0,
+        "w": 360,
+        "h": 640
+      },
+      "resolucion": [
+        360,
+        640
+      ],
+      "tecnologia": "lcd",
+      "orientacion": "vertical",
+      "pulgadas": 46,
+      "grupo": "formato-17",
+      "grupoNombre": "VIDEOWALL 8X1 H",
+      "s": 2.861,
+      "z": 1.1,
+      "montaje": "pared-fondo",
+      "separacion": 0.03,
+      "pared": "F",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    },
+    {
+      "id": "f17-6",
+      "itil": null,
+      "nombre": "VIDEOWALL 8X1 H · 6 de 8",
+      "corto": "6/8",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-17",
+      "celda": 6,
+      "lienzo": [
+        2880,
+        640
+      ],
+      "recorte": {
+        "x": 1800,
+        "y": 0,
+        "w": 360,
+        "h": 640
+      },
+      "resolucion": [
+        360,
+        640
+      ],
+      "tecnologia": "lcd",
+      "orientacion": "vertical",
+      "pulgadas": 46,
+      "grupo": "formato-17",
+      "grupoNombre": "VIDEOWALL 8X1 H",
+      "s": 3.434,
+      "z": 1.1,
+      "montaje": "pared-fondo",
+      "separacion": 0.03,
+      "pared": "F",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    },
+    {
+      "id": "f17-7",
+      "itil": null,
+      "nombre": "VIDEOWALL 8X1 H · 7 de 8",
+      "corto": "7/8",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-17",
+      "celda": 7,
+      "lienzo": [
+        2880,
+        640
+      ],
+      "recorte": {
+        "x": 2160,
+        "y": 0,
+        "w": 360,
+        "h": 640
+      },
+      "resolucion": [
+        360,
+        640
+      ],
+      "tecnologia": "lcd",
+      "orientacion": "vertical",
+      "pulgadas": 46,
+      "grupo": "formato-17",
+      "grupoNombre": "VIDEOWALL 8X1 H",
+      "s": 4.007,
+      "z": 1.1,
+      "montaje": "pared-fondo",
+      "separacion": 0.03,
+      "pared": "F",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    },
+    {
+      "id": "f17-8",
+      "itil": null,
+      "nombre": "VIDEOWALL 8X1 H · 8 de 8",
+      "corto": "8/8",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-17",
+      "celda": 8,
+      "lienzo": [
+        2880,
+        640
+      ],
+      "recorte": {
+        "x": 2520,
+        "y": 0,
+        "w": 360,
+        "h": 640
+      },
+      "resolucion": [
+        360,
+        640
+      ],
+      "tecnologia": "lcd",
+      "orientacion": "vertical",
+      "pulgadas": 46,
+      "grupo": "formato-17",
+      "grupoNombre": "VIDEOWALL 8X1 H",
+      "s": 4.58,
+      "z": 1.1,
+      "montaje": "pared-fondo",
+      "separacion": 0.03,
+      "pared": "F",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    }
+  ],
+  "generador": {
+    "tipo": "estanco",
+    "semilla": 1,
+    "total": false,
+    "medidas": {
+      "ancho": 5.15,
+      "largo": 8.75,
+      "alto": 2.9
+    },
+    "version": 1
+  }
+}

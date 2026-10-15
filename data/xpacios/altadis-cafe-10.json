@@ -1,0 +1,346 @@
+{
+  "schema": "admira.xpacio-plano/1",
+  "id": "altadis-cafe-10",
+  "version": "v.15.10.2026.r1.09:58",
+  "nombre": "Starbucks · GONDOLA LED LIMITS-006 (64×384)",
+  "publico": true,
+  "espacio": {
+    "serie": "altadis-18",
+    "tipo": "cafe",
+    "n": 10
+  },
+  "formato": {
+    "id": "cliente-10",
+    "nombre": "GONDOLA LED LIMITS-006",
+    "ancho": 64,
+    "alto": 384,
+    "grid": {
+      "cols": 1,
+      "rows": 1
+    },
+    "fps": 25,
+    "uso": {
+      "es": "góndola LED",
+      "en": "LED gondola"
+    },
+    "zona": "columna"
+  },
+  "fuente": {
+    "titulo": "Espacio tipo Altadis 18 · plano tipo inventado, no es un levantamiento · Cafetería Starbucks · GONDOLA LED LIMITS-006",
+    "medidas": "Cafetería Starbucks de 7,9 × 12,65 m (99,9 m²) y 3 m de alto: las medidas medias del tipo cafeteria del generador de Xpacios (semilla 2)",
+    "pantallas": "1 × LED de 0,16 × 0,96 m (paso 2,5 mm) del formato cliente-10 (GONDOLA LED LIMITS-006, 64×384), en la zona columna: tamaños físicos supuestos, por confirmar con Altadis",
+    "formato": "admira.studio/adaptaciones/perfil-cliente-18.json · cliente-10 · «ALTADIS Resoluciones y formatos, p. 3» (sha256 16a17b2f81c5713d5d0fc676a02d2192fb95ad07ecb13e29dbec1b09da5239f7)",
+    "requisitos": "MP4 / H264 / 25 fps; SINCRO VW y SINCRO LOGO con la misma duración",
+    "itil": "Sin inventario: pantallas en estado «propuesta» e itil null; el maestro del ITIL es Yokup"
+  },
+  "planta": {
+    "ancho": 7.9,
+    "fondo": 12.65,
+    "alto": 3
+  },
+  "paredes": [
+    {
+      "id": "F",
+      "nombre": "Fondo",
+      "a": [
+        0,
+        0
+      ],
+      "b": [
+        7.9,
+        0
+      ]
+    },
+    {
+      "id": "D",
+      "nombre": "Lateral derecho",
+      "a": [
+        7.9,
+        0
+      ],
+      "b": [
+        7.9,
+        12.65
+      ]
+    },
+    {
+      "id": "P",
+      "nombre": "Fachada · calle",
+      "a": [
+        7.9,
+        12.65
+      ],
+      "b": [
+        0,
+        12.65
+      ]
+    },
+    {
+      "id": "I",
+      "nombre": "Lateral izquierdo",
+      "a": [
+        0,
+        12.65
+      ],
+      "b": [
+        0,
+        0
+      ]
+    }
+  ],
+  "huecos": [
+    {
+      "id": "acceso",
+      "tipo": "puerta",
+      "nombre": "Acceso",
+      "pared": "P",
+      "desde": 0.3,
+      "ancho": 1,
+      "base": 0,
+      "alto": 2.3
+    },
+    {
+      "id": "escaparate",
+      "tipo": "escaparate",
+      "nombre": "Escaparate",
+      "pared": "P",
+      "desde": 1.6,
+      "ancho": 6,
+      "base": 0.3,
+      "alto": 2.3
+    }
+  ],
+  "mobiliario": [
+    {
+      "id": "m-1",
+      "nombre": "Contrabarra · cafetera",
+      "x": 0.6,
+      "y": 0,
+      "w": 4.2,
+      "d": 0.6,
+      "alto": 0.9
+    },
+    {
+      "id": "m-2",
+      "nombre": "Barra · caja",
+      "x": 0.6,
+      "y": 1.5,
+      "w": 4.2,
+      "d": 0.6,
+      "alto": 1.1
+    },
+    {
+      "id": "m-3",
+      "nombre": "Mesa",
+      "x": 2.2,
+      "y": 3.3,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-4",
+      "nombre": "Mesa",
+      "x": 3.9,
+      "y": 3.3,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-5",
+      "nombre": "Mesa",
+      "x": 5.6,
+      "y": 3.3,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-6",
+      "nombre": "Mesa",
+      "x": 0.5,
+      "y": 5,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-7",
+      "nombre": "Mesa",
+      "x": 2.2,
+      "y": 5,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-8",
+      "nombre": "Mesa",
+      "x": 3.9,
+      "y": 5,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-9",
+      "nombre": "Mesa",
+      "x": 5.6,
+      "y": 5,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-10",
+      "nombre": "Mesa",
+      "x": 0.5,
+      "y": 6.7,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-11",
+      "nombre": "Mesa",
+      "x": 2.2,
+      "y": 6.7,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-12",
+      "nombre": "Mesa",
+      "x": 3.9,
+      "y": 6.7,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-13",
+      "nombre": "Mesa",
+      "x": 5.6,
+      "y": 6.7,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-14",
+      "nombre": "Mesa",
+      "x": 0.5,
+      "y": 8.4,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-15",
+      "nombre": "Mesa",
+      "x": 2.2,
+      "y": 8.4,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-16",
+      "nombre": "Mesa",
+      "x": 5.6,
+      "y": 8.4,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-17",
+      "nombre": "Mesa",
+      "x": 2.2,
+      "y": 10.1,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-18",
+      "nombre": "Mesa",
+      "x": 3.9,
+      "y": 10.1,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-19",
+      "nombre": "Mesa",
+      "x": 5.6,
+      "y": 10.1,
+      "w": 0.7,
+      "d": 0.7,
+      "alto": 0.75
+    },
+    {
+      "id": "m-lineal-1",
+      "nombre": "Lineal · café en grano y merchandising",
+      "x": 7.45,
+      "y": 0.8,
+      "w": 0.45,
+      "d": 2.14,
+      "alto": 1.8
+    }
+  ],
+  "pantallas": [
+    {
+      "id": "f10-1",
+      "itil": null,
+      "nombre": "GONDOLA LED LIMITS-006",
+      "corto": "GOND",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-10",
+      "celda": 1,
+      "lienzo": [
+        64,
+        384
+      ],
+      "recorte": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 384
+      },
+      "resolucion": [
+        64,
+        384
+      ],
+      "tecnologia": "led",
+      "orientacion": "vertical",
+      "pulgadas": 38.3,
+      "dimensiones": {
+        "ancho": 0.16,
+        "alto": 0.96
+      },
+      "pasoPixelMm": 2.5,
+      "s": 3.07,
+      "z": 0.9,
+      "montaje": "cabecera-lineal",
+      "separacion": 0.05,
+      "pared": "D",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    }
+  ],
+  "generador": {
+    "tipo": "cafeteria",
+    "semilla": 2,
+    "total": false,
+    "medidas": {
+      "ancho": 7.9,
+      "largo": 12.65,
+      "alto": 3
+    },
+    "version": 1
+  }
+}
