@@ -2,6 +2,9 @@
 // node). Las mismas clases que plano.css (floor, wall, gap-door, furniture, scr-body…) para que el plano del estudio
 // se vea igual que el de plano.html; las pantallas nuevas de una propuesta llevan la clase «new» (verde lima) y las
 // retiradas quedan como fantasma. 100 unidades SVG por metro y la escala --k de plano.mjs.
+// Los 18 espacios Altadis (DCL-d7966deb02734a6f34beb54e): el cubo LED (forma 'cubo-4-caras') se pinta en planta como
+// el cubo que es, sobre su peana, y en alzado con sus 4 caras desplegadas; svgMiniatura dibuja el lienzo de un formato
+// con su rejilla para la galería «Los 18».
 import { round, wallLength, pointOnWall, inwardNormal, footprint, furnitureAgainstWall, criteria } from './plano-core.mjs?v=20261014-plano-1';
 
 export const U = 100;
@@ -18,6 +21,7 @@ export function escala(plan) {
   return Math.min(1, Math.max(0.2, round(span / 14, 3)));
 }
 const corto = s => s.corto || s.nombre || s.id;
+const esCubo = s => s.forma === 'cubo-4-caras' && s.cubo && Array.isArray(s.cubo.centro);
 
 // Planta: suelo, muebles, paredes (la elegida resaltada), huecos, pantallas (con su cono) y rótulos de pared.
 export function svgPlanta(plan, pantallas = plan.pantallas, { wallId, nuevos = new Set(), retiradas = [], lang = 'es' } = {}) {
@@ -42,6 +46,12 @@ export function svgPlanta(plan, pantallas = plan.pantallas, { wallId, nuevos = n
   }
   const pinta = (s, cls) => {
     const w = plan.paredes.find(x => x.id === s.pared); if (!w) return;
+    if (esCubo(s)) {
+      // El cubo, en su sitio de la sala (no en la pared): un cuadrado de su lado con sus 4 caras.
+      const [cx, cy] = s.cubo.centro, h = s.cubo.lado / 2, pts = [[cx - h, cy - h], [cx + h, cy - h], [cx + h, cy + h], [cx - h, cy + h]].map(([x, y]) => `${n(x * U)},${n(y * U)}`).join(' ');
+      out.push(cls === 'ghost' ? tag('polygon', { class: 'scr-ghost', points: pts }) : tag('g', { class: 'scr scr-cubo' + (cls ? ' ' + cls : ''), 'data-id': s.id }, tag('polygon', { class: 'scr-body', points: pts }) + tag('title', {}, esc(s.nombre || s.id))));
+      return;
+    }
     const f = footprint(s), [nx, ny] = inwardNormal(w), p0 = pointOnWall(w, f.x0), p1 = pointOnWall(w, f.x1), off = 10, depth = 12;
     const q = (p, d) => `${n(p[0] * U + nx * d)},${n(p[1] * U + ny * d)}`;
     const body = `${q(p0, off)} ${q(p1, off)} ${q(p1, off + depth)} ${q(p0, off + depth)}`;
@@ -77,6 +87,14 @@ export function svgAlzado(plan, pantallas = plan.pantallas, wallId, { nuevos = n
   for (const s of retiradas.filter(s => s.pared === w.id)) { const f = footprint(s); out.push(tag('rect', { class: 'scr-ghost', x: n(f.x0 * U), y: Y(f.z1), width: n(f.w * U), height: n(f.h * U) })); }
   for (const s of pantallas.filter(s => s.pared === w.id)) {
     const f = footprint(s);
+    if (esCubo(s)) {
+      // Las caras del cubo, desplegadas en fila (como en su lienzo): 1 | 2 | 3 | 4.
+      const caras = s.cubo.caras || [], cw = f.w / Math.max(1, caras.length);
+      out.push(tag('g', { class: 'scr scr-cubo' + (nuevos.has(s.id) ? ' new' : ''), 'data-id': s.id },
+        caras.map((c, i) => tag('rect', { class: 'scr-body', x: n((f.x0 + i * cw) * U), y: Y(f.z1), width: n(cw * U), height: n(f.h * U), rx: 2 }) +
+          tag('text', { class: 'scr-label', x: n((f.x0 + (i + 0.5) * cw) * U), y: n(Y(f.z0 + f.h / 2) + 7 * K), 'text-anchor': 'middle' }, esc(`C${c.cara}`))).join('') + tag('title', {}, esc(s.nombre || s.id))));
+      continue;
+    }
     out.push(tag('g', { class: 'scr' + (nuevos.has(s.id) ? ' new' : ''), 'data-id': s.id },
       tag('rect', { class: 'scr-body', x: n(f.x0 * U), y: Y(f.z1), width: n(f.w * U), height: n(f.h * U), rx: 2 }) +
       tag('text', { class: 'scr-label', x: n(s.s * U), y: n(Y(f.z0 + f.h / 2) + 7 * K), 'text-anchor': 'middle' }, esc(corto(s))) + tag('title', {}, esc(s.nombre || s.id))));
@@ -92,4 +110,15 @@ export function svgAlzado(plan, pantallas = plan.pantallas, wallId, { nuevos = n
   out.push(tag('text', { class: 'dim', x: n(len * U / 2), y: n(Y(0) + 62 * K), 'text-anchor': 'middle' }, `${fmt(len, lang)} m`));
   out.push(tag('text', { class: 'dim', x: n(-16 * K), y: Y(alto / 2), 'text-anchor': 'middle', transform: `rotate(-90 ${n(-16 * K)} ${Y(alto / 2)})` }, `${fmt(alto, lang)} m`));
   return { viewBox: `${n(-mL)} ${n(-mT)} ${n(len * U + mL * 2)} ${n(alto * U + mT + mB)}`, k: K, pared: w.id, cuerpo: out.join('') };
+}
+
+// Miniatura del lienzo de un formato (galería «Los 18»): su proporción dentro de una caja de ancho × alto y las
+// celdas de su rejilla (una por pantalla física). `celdas` como las de espacios-formato.mjs: {x, y, w, h} en píxeles.
+export function svgMiniatura({ ancho, alto, celdas = [] }, { caja = [56, 34] } = {}) {
+  const k = Math.min(caja[0] / ancho, caja[1] / alto), w = Math.max(2, ancho * k), h = Math.max(2, alto * k);
+  const x0 = (caja[0] - w) / 2, y0 = (caja[1] - h) / 2, r = v => round(v, 2);
+  const lineas = celdas.filter(c => c.x > 0 || c.y > 0).map(c => c.x > 0 && c.y === 0
+    ? tag('line', { class: 'mini-celda', x1: r(x0 + c.x * k), y1: r(y0), x2: r(x0 + c.x * k), y2: r(y0 + h) })
+    : c.y > 0 && c.x === 0 ? tag('line', { class: 'mini-celda', x1: r(x0), y1: r(y0 + c.y * k), x2: r(x0 + w), y2: r(y0 + c.y * k) }) : '').join('');
+  return `<svg class="mini" viewBox="0 0 ${caja[0]} ${caja[1]}" width="${caja[0]}" height="${caja[1]}" aria-hidden="true" focusable="false">${tag('rect', { class: 'mini-lienzo', x: r(x0), y: r(y0), width: r(w), height: r(h), rx: 1 })}${lineas}</svg>`;
 }

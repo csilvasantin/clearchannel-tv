@@ -51,8 +51,11 @@ const clone = o => JSON.parse(JSON.stringify(o));
 const ALIAS_ORDEN = {
   crear: 'crear', crea: 'crear', create: 'crear', nuevo: 'crear', nueva: 'crear', new: 'crear', inventar: 'crear',
   reformar: 'reformar', reforma: 'reformar', reform: 'reformar', renovar: 'reformar', renovate: 'reformar', renovation: 'reformar', obra: 'reformar', obras: 'reformar',
-  inventariar: 'inventariar', inventario: 'inventariar', inventaria: 'inventariar', inventory: 'inventariar', survey: 'inventariar', levantamiento: 'inventariar', itil: 'inventariar'
+  inventariar: 'inventariar', inventario: 'inventariar', inventaria: 'inventariar', inventory: 'inventariar', survey: 'inventariar', levantamiento: 'inventariar', itil: 'inventariar',
+  // /arquitecto formatos [NN] [xtanco|starbucks]: «Espacio por formato · Altadis 18» dentro de crear (DCL-d7966deb02734a6f34beb54e).
+  formatos: 'crear', formato: 'crear', formats: 'crear', format: 'crear', altadis: 'crear'
 };
+const FORMATOS_RE = /^(formatos?|formats?|altadis)$/;
 const ALIAS_TIPO = [
   [/\b(cafeteria|cafe|coffee ?shop|coffee)\b/, 'cafeteria'], [/\b(estanco|tobacconist|tobacco)\b/, 'estanco'], [/\b(kiosco|quiosco|kiosk)\b/, 'kiosco'],
   [/\b(farmacia|pharmacy|drugstore)\b/, 'farmacia'], [/\b(moda|ropa|fashion|clothing|boutique)\b/, 'moda'], [/\b(restaurante|restaurant)\b/, 'restaurante'],
@@ -66,6 +69,7 @@ export function tipoDe(texto) {
   return '';
 }
 // «crear cafeteria» · ['reformar'] · '' → {orden, tipo, resto}. orden '' = sin orden (ayuda); null = no es una orden.
+// «formatos 15 starbucks» → {orden: 'crear', tipo: '', resto: '15 starbucks', formatos: true}.
 export function parseOrden(entrada) {
   const partes = (Array.isArray(entrada) ? entrada.join(' ') : String(entrada ?? '')).trim().replace(/^\/?(arquitecto|architect)(@\S+)?\b\s*/i, '');
   if (!partes) return { orden: '', tipo: '', resto: '' };
@@ -73,6 +77,8 @@ export function parseOrden(entrada) {
   const orden = ALIAS_ORDEN[norm(primera)];
   if (!orden) return null;
   const texto = resto.join(' ').slice(0, MAX_DESCRIPCION);
+  // «formatos» no inventa un tipo de Xpacio: el resto dice el formato y el espacio (Xtanco o Starbucks).
+  if (FORMATOS_RE.test(norm(primera))) return { orden, tipo: '', resto: texto, formatos: true };
   return { orden, tipo: orden === 'crear' || orden === 'inventariar' ? tipoDe(texto) : '', resto: texto };
 }
 // Parámetros de la página: ?orden=crear&tipo=cafeteria&locationId=…&lang=es (todo validado). El cargador común

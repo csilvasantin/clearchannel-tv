@@ -12,14 +12,14 @@
   <link rel="stylesheet" href="brand.css">
   <script src="brand.js"></script>
   <!-- Estudio del Arquitecto (DCL-66d9ae0d5e756d0067127f24): su hoja va antes del shell, que gana los empates. -->
-  <link rel="stylesheet" href="arquitecto.css?v=20261014-arquitecto-1">
+  <link rel="stylesheet" href="arquitecto.css?v=20261015-altadis-1">
   <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
   <script>
   // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones manda; arquitecto.mjs escucha admira:lang.
   window.ADMIRA_SHELL = { section: { es: '/ arquitecto · estudio', en: '/ architect · studio' }, setLang() {} };
   </script>
   <script defer src="/galaxy-shell.js?v=20261014-lab-1"></script>
-  <script type="module" src="arquitecto.mjs?v=20261014-arquitecto-1"></script>
+  <script type="module" src="arquitecto.mjs?v=20261015-altadis-1"></script>
 </head>
 <body>
   <main class="arq-estudio">
@@ -51,22 +51,50 @@
           <p class="arq-lead" data-t="ayudaLead">¿Qué hacemos? Pídemelo aquí, con el micro de la nube o en ⌘ Experto:</p>
           <ul class="arq-ordenes">
             <li><code>/arquitecto crear [tipo]</code> <span data-t="ayudaCrear">un Xpacio nuevo, inventado según el tipo (o con tus medidas)</span></li>
+            <li><code>/arquitecto formatos [NN] [xtanco|starbucks]</code> <span data-t="ayudaFormatos">los 18 espacios Altadis: cada formato de pantalla en un Xtanco o en un Starbucks</span></li>
             <li><code>/arquitecto reformar</code> <span data-t="ayudaReformar">una reforma del plano abierto desde una foto, un vídeo o lo que me cuentes, como propuesta de obra</span></li>
             <li><code>/arquitecto inventariar</code> <span data-t="ayudaInventariar">el plano y el inventario ITIL desde una foto, un vídeo o una descripción; al final, alta en Yokup</span></li>
           </ul>
         </section>
 
         <section id="arq-crear" class="arq-pane" role="tabpanel" aria-labelledby="tab-crear" hidden>
-          <label class="arq-field"><span data-t="tipo">Tipo de Xpacio</span><select id="cr-tipo"></select></label>
-          <div class="arq-dims">
-            <label><span data-t="ancho">Ancho</span><input id="cr-ancho" type="number" inputmode="decimal" min="1" max="500" step="0.05"></label>
-            <label><span data-t="largo">Largo</span><input id="cr-largo" type="number" inputmode="decimal" min="1" max="500" step="0.05"></label>
-            <label><span data-t="alto">Alto</span><input id="cr-alto" type="number" inputmode="decimal" min="2" max="30" step="0.05"></label>
+          <!-- Los 18 espacios Altadis (DCL-d7966deb02734a6f34beb54e): crear por tipo o un espacio tipo por formato de pantalla. -->
+          <div id="cr-modo" class="arq-seg arq-modo" role="radiogroup" data-t-aria="modoCrear" aria-label="Qué crear">
+            <button type="button" role="radio" data-modo="tipo" aria-checked="true" data-t="modoTipo">Xpacio por tipo</button>
+            <button type="button" role="radio" data-modo="formato" aria-checked="false" tabindex="-1" data-t="modoFormato">Espacio por formato · Altadis 18</button>
           </div>
-          <label class="arq-field"><span data-t="nombre">Nombre del Xpacio</span><input id="cr-nombre" maxlength="120" autocomplete="off"></label>
-          <div class="arq-actions">
-            <button type="button" id="cr-manual" class="arq-btn" data-t="crManual">Crear con estas medidas</button>
-            <button type="button" id="cr-total" class="arq-btn arq-btn-alt" data-t="crTotal">Creación total</button>
+          <div id="cr-por-tipo" class="arq-pane">
+            <label class="arq-field"><span data-t="tipo">Tipo de Xpacio</span><select id="cr-tipo"></select></label>
+            <div class="arq-dims">
+              <label><span data-t="ancho">Ancho</span><input id="cr-ancho" type="number" inputmode="decimal" min="1" max="500" step="0.05"></label>
+              <label><span data-t="largo">Largo</span><input id="cr-largo" type="number" inputmode="decimal" min="1" max="500" step="0.05"></label>
+              <label><span data-t="alto">Alto</span><input id="cr-alto" type="number" inputmode="decimal" min="2" max="30" step="0.05"></label>
+            </div>
+            <label class="arq-field"><span data-t="nombre">Nombre del Xpacio</span><input id="cr-nombre" maxlength="120" autocomplete="off"></label>
+            <div class="arq-actions">
+              <button type="button" id="cr-manual" class="arq-btn" data-t="crManual">Crear con estas medidas</button>
+              <button type="button" id="cr-total" class="arq-btn arq-btn-alt" data-t="crTotal">Creación total</button>
+            </div>
+          </div>
+          <div id="cr-por-formato" class="arq-pane arq-formatos" hidden>
+            <p class="arq-lead" data-t="formatosLead">Los 18 formatos de pantalla que pide Altadis, cada uno en su espacio tipo: un Xtanco o una cafetería Starbucks, para crear, adaptar y enseñar el contenido a su medida.</p>
+            <div class="arq-dims arq-dims-2">
+              <label><span data-t="formato">Formato</span><select id="cr-formato"></select></label>
+              <span class="arq-field"><span data-t="espacio">Espacio</span>
+                <span id="cr-espacio" class="arq-seg" role="radiogroup" data-t-aria="espacio" aria-label="Espacio">
+                  <button type="button" role="radio" data-espacio="xtanco" aria-checked="true">Xtanco</button>
+                  <button type="button" role="radio" data-espacio="cafe" aria-checked="false" tabindex="-1">Starbucks</button>
+                </span></span>
+            </div>
+            <div id="cr-ficha" class="arq-preview arq-ficha" aria-live="polite"></div>
+            <div class="arq-actions">
+              <a id="cr-gemelo" class="arq-link" href="https://www.admira.store/xpacios/altadis-18/" target="_blank" rel="noopener" data-t="verGemelo">Ver gemelo ↗</a>
+              <a id="cr-studio" class="arq-link" href="https://admira.studio/adaptaciones/" target="_blank" rel="noopener" data-t="crearContenido">Crear y adaptar contenido ↗</a>
+              <a id="cr-plano" class="arq-link" href="plano.html" data-t="abrirPlano">Abrir en Plano y obras →</a>
+              <a id="cr-directo" class="arq-link" href="arquitecto.html" data-t="enlaceDirecto">Enlace directo</a>
+            </div>
+            <div class="arq-galeria-head"><strong data-t="los18">Los 18</strong><span class="hint" data-t="los18Hint">un formato por pantalla física</span></div>
+            <div id="cr-galeria" class="arq-galeria" role="group" data-t-aria="los18" aria-label="Los 18"></div>
           </div>
           <p id="cr-preview" class="arq-preview" hidden></p>
           <div class="arq-actions">
