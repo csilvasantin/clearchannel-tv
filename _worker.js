@@ -1,4 +1,5 @@
 import { handleBugitoXpacios } from './server/bugito-xpacios.mjs';
+import { handleBugitoCommand } from './server/bugito-command.mjs';
 import {clearChannelNativePath,CC_NATIVE_PREFIX} from './server/native-clear-channel.mjs';
 import { handleOrders } from './server/orders.mjs';
 import { handleDemoSession } from './server/demo-session.mjs';
@@ -225,6 +226,7 @@ function sharedPlan(response, pathname) {
 
 export default {
   async fetch(request, env) {
+    if (['/api/bugito/commands','/api/bugito/status','/api/bugito/launch'].includes(new URL(request.url).pathname)) return handleBugitoCommand(request,env);
     if (['/api/bugito/targets','/api/bugito/incidents'].includes(new URL(request.url).pathname)) return handleBugitoXpacios(request,env);
     if (new URL(request.url).pathname === '/avatar-ask') return avatarAsk({request});
     if (new URL(request.url).pathname === '/api/demo-global') return handleGlobalDemo(request, env);
