@@ -113,3 +113,10 @@ test('Biz publica el módulo y la página lo carga antes de app.js', () => {
   assert.match(app, /beginGlobalTour\(items\)/);
   assert.match(app, /watchGlobalTourDeepLink\(c\)/);
 });
+
+test('«Mis demos» de Biz lleva la demo de Alsea México: la release copia la sesión de demo de HEAD', () => {
+  const build = fs.readFileSync(path.join(root, 'scripts/build-biz-release.mjs'), 'utf8');
+  assert.match(build, /copyFileSync\(join\(root, 'server\/demo-session\.mjs'\), join\(out, 'server\/demo-session\.mjs'\)\)/);
+  const session = fs.readFileSync(path.join(root, 'server/demo-session.mjs'), 'utf8');
+  assert.match(session, /circuit: 'alsea_mexico'/);
+});
