@@ -5,13 +5,15 @@ const claims = { aud: GOOGLE_CLIENT_ID, iss: 'https://accounts.google.com', sub:
 test('both Carlos identities receive separate JTI, Alsea and Cafebrería demos; both verified identities can edit the catalogue', () => {
   for (const email of ['csilva@admira.com', 'csilvasantin@gmail.com']) {
     const session = sessionFromClaims({ ...claims, email });
-    assert.deepEqual(session.demos.map(d => d.id), ['jti', 'alsea', 'cafebreria']);
+    assert.deepEqual(session.demos.map(d => d.id), ['jti', 'alsea', 'alsea-mexico', 'cafebreria']);
     assert.equal(session.canManageCatalog, true);
     assert.equal(session.demos[1].locationId, 'alsea-sbux-021');
     assert.equal(session.demos[1].circuit, 'alsea_starbucks');
-    assert.equal(session.demos[2].locationId, 'cafebreria-barcelona');
-    assert.equal(session.demos[2].circuit, 'cafebreria');
-    assert.match(session.demos[2].twinUrl, /highlight=1790375438696-1ladz7/);
+    assert.equal(session.demos[2].locationId, 'alsea-mx-sbux-06-cdmx');
+    assert.equal(session.demos[2].circuit, 'alsea_mexico');
+    assert.equal(session.demos[3].locationId, 'cafebreria-barcelona');
+    assert.equal(session.demos[3].circuit, 'cafebreria');
+    assert.match(session.demos[3].twinUrl, /highlight=1790375438696-1ladz7/);
   }
 });
 test('other staff retain management; unrelated and lookalike accounts get no access', () => {
@@ -33,7 +35,7 @@ test('route fails closed before and after Google validation and never caches ide
   assert.equal(ok.status, 200);
   assert.match(requested, /^https:\/\/oauth2\.googleapis\.com\/tokeninfo\?id_token=/);
   assert.equal(ok.headers.get('Cache-Control'), 'no-store');
-  assert.equal((await ok.json()).demos.length, 3);
+  assert.equal((await ok.json()).demos.length, 4);
 });
 test('the demo session does not depend on the host: it works the same on admira.app and admira.biz', async () => {
   for (const host of ['www.admira.app', 'www.admira.biz', 'admira.biz', 'www.clearchannel.tv']) {

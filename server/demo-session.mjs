@@ -13,6 +13,8 @@ const DEMO_EMAILS = new Set(['csilva@admira.com', 'csilvasantin@gmail.com']);
 export const DEMOS = [
   { id: 'jti', title: 'JTI · Xtanco', locationId: 'xtanco-valencia', circuit: 'jti_xtanco', twinUrl: 'https://www.xpaceos.com/admira-xp/?play=1&loc=xtanco-valencia' },
   { id: 'alsea', title: 'Alsea · Starbucks', locationId: 'alsea-sbux-021', circuit: 'alsea_starbucks', twinUrl: 'https://www.xpaceos.com/admira-xp/?autostart=xtanco&visual=matrix&loc=alsea-sbux-021' },
+  // Tour DooH global (FLT-102469): 10 Starbucks en 10 estados; «Tour DooH» abre ?circuit=alsea_mexico&tour=1.
+  { id: 'alsea-mexico', title: 'Alsea México · Starbucks · 10 estados', locationId: 'alsea-mx-sbux-06-cdmx', circuit: 'alsea_mexico', twinUrl: 'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021' },
   { id: 'cafebreria', title: 'Cafebrería · Proyecto independiente', locationId: 'cafebreria-barcelona', circuit: 'cafebreria', twinUrl: 'https://www.pixeria.com/stock.html?type=xpaces&highlight=1790375438696-1ladz7' },
 ];
 export function sessionFromClaims(claims, now = Date.now()) {
