@@ -1,0 +1,193 @@
+{
+  "schema": "admira.xpacio-plano/1",
+  "id": "altadis-xtanco-10",
+  "version": "v.15.10.2026.r1.09:58",
+  "nombre": "Xtanco · GONDOLA LED LIMITS-006 (64×384)",
+  "publico": true,
+  "espacio": {
+    "serie": "altadis-18",
+    "tipo": "xtanco",
+    "n": 10
+  },
+  "formato": {
+    "id": "cliente-10",
+    "nombre": "GONDOLA LED LIMITS-006",
+    "ancho": 64,
+    "alto": 384,
+    "grid": {
+      "cols": 1,
+      "rows": 1
+    },
+    "fps": 25,
+    "uso": {
+      "es": "góndola LED",
+      "en": "LED gondola"
+    },
+    "zona": "columna"
+  },
+  "fuente": {
+    "titulo": "Espacio tipo Altadis 18 · plano tipo inventado, no es un levantamiento · Xtanco · GONDOLA LED LIMITS-006",
+    "medidas": "Xtanco de 5,15 × 8,75 m (45,1 m²) y 2,9 m de alto: las medidas medias del tipo estanco del generador de Xpacios (semilla 1)",
+    "pantallas": "1 × LED de 0,16 × 0,96 m (paso 2,5 mm) del formato cliente-10 (GONDOLA LED LIMITS-006, 64×384), en la zona columna: tamaños físicos supuestos, por confirmar con Altadis",
+    "formato": "admira.studio/adaptaciones/perfil-cliente-18.json · cliente-10 · «ALTADIS Resoluciones y formatos, p. 3» (sha256 16a17b2f81c5713d5d0fc676a02d2192fb95ad07ecb13e29dbec1b09da5239f7)",
+    "requisitos": "MP4 / H264 / 25 fps; SINCRO VW y SINCRO LOGO con la misma duración",
+    "itil": "Sin inventario: pantallas en estado «propuesta» e itil null; el maestro del ITIL es Yokup"
+  },
+  "planta": {
+    "ancho": 5.15,
+    "fondo": 8.75,
+    "alto": 2.9
+  },
+  "paredes": [
+    {
+      "id": "F",
+      "nombre": "Fondo",
+      "a": [
+        0,
+        0
+      ],
+      "b": [
+        5.15,
+        0
+      ]
+    },
+    {
+      "id": "D",
+      "nombre": "Lateral derecho",
+      "a": [
+        5.15,
+        0
+      ],
+      "b": [
+        5.15,
+        8.75
+      ]
+    },
+    {
+      "id": "P",
+      "nombre": "Fachada · calle",
+      "a": [
+        5.15,
+        8.75
+      ],
+      "b": [
+        0,
+        8.75
+      ]
+    },
+    {
+      "id": "I",
+      "nombre": "Lateral izquierdo",
+      "a": [
+        0,
+        8.75
+      ],
+      "b": [
+        0,
+        0
+      ]
+    }
+  ],
+  "huecos": [
+    {
+      "id": "acceso",
+      "tipo": "puerta",
+      "nombre": "Acceso",
+      "pared": "P",
+      "desde": 0.3,
+      "ancho": 0.9,
+      "base": 0,
+      "alto": 2.3
+    },
+    {
+      "id": "escaparate",
+      "tipo": "escaparate",
+      "nombre": "Escaparate",
+      "pared": "P",
+      "desde": 1.5,
+      "ancho": 3.35,
+      "base": 0.3,
+      "alto": 2.3
+    }
+  ],
+  "mobiliario": [
+    {
+      "id": "m-1",
+      "nombre": "Expositor de tabaco",
+      "x": 0.4,
+      "y": 0,
+      "w": 4.35,
+      "d": 0.45,
+      "alto": 2.1
+    },
+    {
+      "id": "m-2",
+      "nombre": "Mostrador · caja",
+      "x": 0.8,
+      "y": 1.35,
+      "w": 3.55,
+      "d": 0.6,
+      "alto": 1
+    },
+    {
+      "id": "m-3-2",
+      "nombre": "Lineal · regalo y papelería",
+      "x": 0,
+      "y": 3.21,
+      "w": 0.4,
+      "d": 4.54,
+      "alto": 1.8
+    }
+  ],
+  "pantallas": [
+    {
+      "id": "f10-1",
+      "itil": null,
+      "nombre": "GONDOLA LED LIMITS-006",
+      "corto": "GOND",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-10",
+      "celda": 1,
+      "lienzo": [
+        64,
+        384
+      ],
+      "recorte": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 384
+      },
+      "resolucion": [
+        64,
+        384
+      ],
+      "tecnologia": "led",
+      "orientacion": "vertical",
+      "pulgadas": 38.3,
+      "dimensiones": {
+        "ancho": 0.16,
+        "alto": 0.96
+      },
+      "pasoPixelMm": 2.5,
+      "s": 5.67,
+      "z": 0.9,
+      "montaje": "cabecera-lineal",
+      "separacion": 0.05,
+      "pared": "I",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    }
+  ],
+  "generador": {
+    "tipo": "estanco",
+    "semilla": 1,
+    "total": false,
+    "medidas": {
+      "ancho": 5.15,
+      "largo": 8.75,
+      "alto": 2.9
+    },
+    "version": 1
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "schema": "admira.xpacio-plano/1",
+  "id": "altadis-xtanco-13",
+  "version": "v.15.10.2026.r1.09:58",
+  "nombre": "Xtanco · VIDEOWALL 2X1 V (2160×1920)",
+  "publico": true,
+  "espacio": {
+    "serie": "altadis-18",
+    "tipo": "xtanco",
+    "n": 13
+  },
+  "formato": {
+    "id": "cliente-13",
+    "nombre": "VIDEOWALL 2X1 V",
+    "ancho": 2160,
+    "alto": 1920,
+    "grid": {
+      "cols": 2,
+      "rows": 1
+    },
+    "fps": 25,
+    "uso": {
+      "es": "videowall",
+      "en": "video wall"
+    },
+    "zona": "columna"
+  },
+  "fuente": {
+    "titulo": "Espacio tipo Altadis 18 · plano tipo inventado, no es un levantamiento · Xtanco · VIDEOWALL 2X1 V",
+    "medidas": "Xtanco de 5,15 × 8,75 m (45,1 m²) y 2,9 m de alto: las medidas medias del tipo estanco del generador de Xpacios (semilla 1)",
+    "pantallas": "2 × LCD de 55″ vertical del formato cliente-13 (VIDEOWALL 2X1 V, 2160×1920), en la zona columna: tamaños físicos supuestos, por confirmar con Altadis",
+    "formato": "admira.studio/adaptaciones/perfil-cliente-18.json · cliente-13 · «ALTADIS Resoluciones y formatos, p. 3» (sha256 16a17b2f81c5713d5d0fc676a02d2192fb95ad07ecb13e29dbec1b09da5239f7)",
+    "requisitos": "MP4 / H264 / 25 fps; SINCRO VW y SINCRO LOGO con la misma duración",
+    "itil": "Sin inventario: pantallas en estado «propuesta» e itil null; el maestro del ITIL es Yokup"
+  },
+  "planta": {
+    "ancho": 5.15,
+    "fondo": 8.75,
+    "alto": 2.9
+  },
+  "paredes": [
+    {
+      "id": "F",
+      "nombre": "Fondo",
+      "a": [
+        0,
+        0
+      ],
+      "b": [
+        5.15,
+        0
+      ]
+    },
+    {
+      "id": "D",
+      "nombre": "Lateral derecho",
+      "a": [
+        5.15,
+        0
+      ],
+      "b": [
+        5.15,
+        8.75
+      ]
+    },
+    {
+      "id": "P",
+      "nombre": "Fachada · calle",
+      "a": [
+        5.15,
+        8.75
+      ],
+      "b": [
+        0,
+        8.75
+      ]
+    },
+    {
+      "id": "I",
+      "nombre": "Lateral izquierdo",
+      "a": [
+        0,
+        8.75
+      ],
+      "b": [
+        0,
+        0
+      ]
+    }
+  ],
+  "huecos": [
+    {
+      "id": "acceso",
+      "tipo": "puerta",
+      "nombre": "Acceso",
+      "pared": "P",
+      "desde": 0.3,
+      "ancho": 0.9,
+      "base": 0,
+      "alto": 2.3
+    },
+    {
+      "id": "escaparate",
+      "tipo": "escaparate",
+      "nombre": "Escaparate",
+      "pared": "P",
+      "desde": 1.5,
+      "ancho": 3.35,
+      "base": 0.3,
+      "alto": 2.3
+    }
+  ],
+  "mobiliario": [
+    {
+      "id": "m-1",
+      "nombre": "Expositor de tabaco",
+      "x": 0.4,
+      "y": 0,
+      "w": 4.35,
+      "d": 0.45,
+      "alto": 2.1
+    },
+    {
+      "id": "m-2",
+      "nombre": "Mostrador · caja",
+      "x": 0.8,
+      "y": 1.35,
+      "w": 3.55,
+      "d": 0.6,
+      "alto": 1
+    },
+    {
+      "id": "m-3-2",
+      "nombre": "Lineal · regalo y papelería",
+      "x": 0,
+      "y": 4.42,
+      "w": 0.4,
+      "d": 3.33,
+      "alto": 1.8
+    }
+  ],
+  "pantallas": [
+    {
+      "id": "f13-1",
+      "itil": null,
+      "nombre": "VIDEOWALL 2X1 V · 1 de 2",
+      "corto": "1/2",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-13",
+      "celda": 1,
+      "lienzo": [
+        2160,
+        1920
+      ],
+      "recorte": {
+        "x": 0,
+        "y": 0,
+        "w": 1080,
+        "h": 1920
+      },
+      "resolucion": [
+        1080,
+        1920
+      ],
+      "tecnologia": "lcd",
+      "orientacion": "vertical",
+      "pulgadas": 55,
+      "grupo": "formato-13",
+      "grupoNombre": "VIDEOWALL 2X1 V",
+      "s": 4.723,
+      "z": 0.9,
+      "montaje": "cabecera-lineal",
+      "separacion": 0.05,
+      "pared": "I",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    },
+    {
+      "id": "f13-2",
+      "itil": null,
+      "nombre": "VIDEOWALL 2X1 V · 2 de 2",
+      "corto": "2/2",
+      "tipo": "pantalla",
+      "estado": "propuesta",
+      "formato": "cliente-13",
+      "celda": 2,
+      "lienzo": [
+        2160,
+        1920
+      ],
+      "recorte": {
+        "x": 1080,
+        "y": 0,
+        "w": 1080,
+        "h": 1920
+      },
+      "resolucion": [
+        1080,
+        1920
+      ],
+      "tecnologia": "lcd",
+      "orientacion": "vertical",
+      "pulgadas": 55,
+      "grupo": "formato-13",
+      "grupoNombre": "VIDEOWALL 2X1 V",
+      "s": 5.408,
+      "z": 0.9,
+      "montaje": "cabecera-lineal",
+      "separacion": 0.05,
+      "pared": "I",
+      "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
+    }
+  ],
+  "generador": {
+    "tipo": "estanco",
+    "semilla": 1,
+    "total": false,
+    "medidas": {
+      "ancho": 5.15,
+      "largo": 8.75,
+      "alto": 2.9
+    },
+    "version": 1
+  }
+}

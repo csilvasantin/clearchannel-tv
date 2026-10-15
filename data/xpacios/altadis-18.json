@@ -1,0 +1,402 @@
+{
+  "schema": "admira.espacios-formato/1",
+  "version": "v.15.10.2026.r1.09:58",
+  "cliente": "Altadis",
+  "fuente": {
+    "perfil": "admira.studio/adaptaciones/perfil-cliente-18.json",
+    "sha256": "16a17b2f81c5713d5d0fc676a02d2192fb95ad07ecb13e29dbec1b09da5239f7",
+    "pdf": "ALTADIS Resoluciones y formatos, p. 3"
+  },
+  "tipos": {
+    "xtanco": {
+      "es": "Xtanco",
+      "en": "Xtanco",
+      "tipoArquitecto": "estanco"
+    },
+    "cafe": {
+      "es": "Cafetería Starbucks",
+      "en": "Starbucks café",
+      "tipoArquitecto": "cafeteria"
+    }
+  },
+  "formatos": [
+    {
+      "formato": "cliente-01",
+      "n": 1,
+      "nombre": "VERTICAL",
+      "ancho": 1080,
+      "alto": 1920,
+      "grid": {
+        "cols": 1,
+        "rows": 1
+      },
+      "pantallas": 1,
+      "uso": {
+        "es": "tótem / escaparate",
+        "en": "totem / shop window"
+      },
+      "zona": "mostrador",
+      "espacios": {
+        "xtanco": "altadis-xtanco-01",
+        "cafe": "altadis-cafe-01"
+      }
+    },
+    {
+      "formato": "cliente-02",
+      "n": 2,
+      "nombre": "HORIZONTAL",
+      "ancho": 1920,
+      "alto": 1080,
+      "grid": {
+        "cols": 1,
+        "rows": 1
+      },
+      "pantallas": 1,
+      "uso": {
+        "es": "mostrador",
+        "en": "counter"
+      },
+      "zona": "mostrador",
+      "espacios": {
+        "xtanco": "altadis-xtanco-02",
+        "cafe": "altadis-cafe-02"
+      }
+    },
+    {
+      "formato": "cliente-03",
+      "n": 3,
+      "nombre": "VIDEOWALL 2X1 H",
+      "ancho": 1920,
+      "alto": 540,
+      "grid": {
+        "cols": 2,
+        "rows": 1
+      },
+      "pantallas": 2,
+      "uso": {
+        "es": "videowall",
+        "en": "video wall"
+      },
+      "zona": "mural",
+      "espacios": {
+        "xtanco": "altadis-xtanco-03",
+        "cafe": "altadis-cafe-03"
+      }
+    },
+    {
+      "formato": "cliente-04",
+      "n": 4,
+      "nombre": "SINCRO LOGO",
+      "ancho": 1920,
+      "alto": 1080,
+      "grid": {
+        "cols": 1,
+        "rows": 1
+      },
+      "pantallas": 1,
+      "uso": {
+        "es": "logo sincronizado",
+        "en": "synchronised logo"
+      },
+      "zona": "mostrador",
+      "espacios": {
+        "xtanco": "altadis-xtanco-04",
+        "cafe": "altadis-cafe-04"
+      }
+    },
+    {
+      "formato": "cliente-05",
+      "n": 5,
+      "nombre": "SINCRO VW",
+      "ancho": 1920,
+      "alto": 540,
+      "grid": {
+        "cols": 1,
+        "rows": 1
+      },
+      "pantallas": 1,
+      "uso": {
+        "es": "videowall sincronizado",
+        "en": "synchronised video wall"
+      },
+      "zona": "mural",
+      "espacios": {
+        "xtanco": "altadis-xtanco-05",
+        "cafe": "altadis-cafe-05"
+      }
+    },
+    {
+      "formato": "cliente-06",
+      "n": 6,
+      "nombre": "SINCRO VW 4X1 H",
+      "ancho": 3840,
+      "alto": 540,
+      "grid": {
+        "cols": 4,
+        "rows": 1
+      },
+      "pantallas": 4,
+      "uso": {
+        "es": "videowall sincronizado",
+        "en": "synchronised video wall"
+      },
+      "zona": "mural",
+      "espacios": {
+        "xtanco": "altadis-xtanco-06",
+        "cafe": "altadis-cafe-06"
+      }
+    },
+    {
+      "formato": "cliente-07",
+      "n": 7,
+      "nombre": "TABLET",
+      "ancho": 768,
+      "alto": 1024,
+      "grid": {
+        "cols": 1,
+        "rows": 1
+      },
+      "pantallas": 1,
+      "uso": {
+        "es": "tablet",
+        "en": "tablet"
+      },
+      "zona": "mostrador",
+      "espacios": {
+        "xtanco": "altadis-xtanco-07",
+        "cafe": "altadis-cafe-07"
+      }
+    },
+    {
+      "formato": "cliente-08",
+      "n": 8,
+      "nombre": "LED CUBO MADRID-062",
+      "ancho": 1600,
+      "alto": 600,
+      "grid": {
+        "cols": 1,
+        "rows": 1
+      },
+      "pantallas": 1,
+      "uso": {
+        "es": "cubo LED",
+        "en": "LED cube"
+      },
+      "zona": "cubo",
+      "espacios": {
+        "xtanco": "altadis-xtanco-08",
+        "cafe": "altadis-cafe-08"
+      }
+    },
+    {
+      "formato": "cliente-09",
+      "n": 9,
+      "nombre": "LED GRANADA-021",
+      "ancho": 1536,
+      "alto": 192,
+      "grid": {
+        "cols": 1,
+        "rows": 1
+      },
+      "pantallas": 1,
+      "uso": {
+        "es": "barra LED",
+        "en": "LED strip"
+      },
+      "zona": "superstretch",
+      "espacios": {
+        "xtanco": "altadis-xtanco-09",
+        "cafe": "altadis-cafe-09"
+      }
+    },
+    {
+      "formato": "cliente-10",
+      "n": 10,
+      "nombre": "GONDOLA LED LIMITS-006",
+      "ancho": 64,
+      "alto": 384,
+      "grid": {
+        "cols": 1,
+        "rows": 1
+      },
+      "pantallas": 1,
+      "uso": {
+        "es": "góndola LED",
+        "en": "LED gondola"
+      },
+      "zona": "columna",
+      "espacios": {
+        "xtanco": "altadis-xtanco-10",
+        "cafe": "altadis-cafe-10"
+      }
+    },
+    {
+      "formato": "cliente-11",
+      "n": 11,
+      "nombre": "VIDEOWALL 1X2 H",
+      "ancho": 1920,
+      "alto": 2160,
+      "grid": {
+        "cols": 1,
+        "rows": 2
+      },
+      "pantallas": 2,
+      "uso": {
+        "es": "videowall",
+        "en": "video wall"
+      },
+      "zona": "columna",
+      "espacios": {
+        "xtanco": "altadis-xtanco-11",
+        "cafe": "altadis-cafe-11"
+      }
+    },
+    {
+      "formato": "cliente-12",
+      "n": 12,
+      "nombre": "VIDEOWALL 1X2 V",
+      "ancho": 540,
+      "alto": 1920,
+      "grid": {
+        "cols": 1,
+        "rows": 2
+      },
+      "pantallas": 2,
+      "uso": {
+        "es": "videowall vertical",
+        "en": "portrait video wall"
+      },
+      "zona": "columna",
+      "espacios": {
+        "xtanco": "altadis-xtanco-12",
+        "cafe": "altadis-cafe-12"
+      }
+    },
+    {
+      "formato": "cliente-13",
+      "n": 13,
+      "nombre": "VIDEOWALL 2X1 V",
+      "ancho": 2160,
+      "alto": 1920,
+      "grid": {
+        "cols": 2,
+        "rows": 1
+      },
+      "pantallas": 2,
+      "uso": {
+        "es": "videowall",
+        "en": "video wall"
+      },
+      "zona": "columna",
+      "espacios": {
+        "xtanco": "altadis-xtanco-13",
+        "cafe": "altadis-cafe-13"
+      }
+    },
+    {
+      "formato": "cliente-14",
+      "n": 14,
+      "nombre": "VIDEOWALL 3X1 H",
+      "ancho": 2880,
+      "alto": 540,
+      "grid": {
+        "cols": 3,
+        "rows": 1
+      },
+      "pantallas": 3,
+      "uso": {
+        "es": "videowall",
+        "en": "video wall"
+      },
+      "zona": "mural",
+      "espacios": {
+        "xtanco": "altadis-xtanco-14",
+        "cafe": "altadis-cafe-14"
+      }
+    },
+    {
+      "formato": "cliente-15",
+      "n": 15,
+      "nombre": "VIDEOWALL 4X1 H",
+      "ancho": 3840,
+      "alto": 540,
+      "grid": {
+        "cols": 4,
+        "rows": 1
+      },
+      "pantallas": 4,
+      "uso": {
+        "es": "videowall",
+        "en": "video wall"
+      },
+      "zona": "mural",
+      "espacios": {
+        "xtanco": "altadis-xtanco-15",
+        "cafe": "altadis-cafe-15"
+      }
+    },
+    {
+      "formato": "cliente-16",
+      "n": 16,
+      "nombre": "VIDEOWALL 4X1 V",
+      "ancho": 1920,
+      "alto": 852,
+      "grid": {
+        "cols": 4,
+        "rows": 1
+      },
+      "pantallas": 4,
+      "uso": {
+        "es": "videowall",
+        "en": "video wall"
+      },
+      "zona": "mural",
+      "espacios": {
+        "xtanco": "altadis-xtanco-16",
+        "cafe": "altadis-cafe-16"
+      }
+    },
+    {
+      "formato": "cliente-17",
+      "n": 17,
+      "nombre": "VIDEOWALL 8X1 H",
+      "ancho": 2880,
+      "alto": 640,
+      "grid": {
+        "cols": 8,
+        "rows": 1
+      },
+      "pantallas": 8,
+      "uso": {
+        "es": "videowall",
+        "en": "video wall"
+      },
+      "zona": "mural",
+      "espacios": {
+        "xtanco": "altadis-xtanco-17",
+        "cafe": "altadis-cafe-17"
+      }
+    },
+    {
+      "formato": "cliente-18",
+      "n": 18,
+      "nombre": "SHUTTLE STRETCH",
+      "ancho": 1920,
+      "alto": 158,
+      "grid": {
+        "cols": 1,
+        "rows": 1
+      },
+      "pantallas": 1,
+      "uso": {
+        "es": "sede / stretch",
+        "en": "head office / stretch"
+      },
+      "zona": "superstretch",
+      "espacios": {
+        "xtanco": "altadis-xtanco-18",
+        "cafe": "altadis-cafe-18"
+      }
+    }
+  ]
+}

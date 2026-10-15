@@ -21,8 +21,9 @@
     ]
   },
   "novedades": [
-    "Bugito incorpora /bugito apagar MBP16 y /bugito encender MBP16 para controlar la pantalla física sin dormir el ordenador.",
-    "Acceso de owner, destino MBP16 verificado y confirmación de un solo uso. La orden en cola se distingue de la detección física del Supervisor."
+    "El Arquitecto crea «Espacio por formato · Altadis 18»: los 18 formatos de pantalla de Altadis, cada uno en un Xtanco o en un Starbucks, con su ficha y la galería «Los 18».",
+    "36 planos compartidos y su índice (data/xpacios/altadis-18.json) para el gemelo de admira.store y las adaptaciones de admira.studio, con la rejilla y las zonas de Studio.",
+    "/arquitecto formatos [NN] [xtanco|starbucks] y el enlace directo arquitecto.html?formato=cliente-NN&tipo=xtanco|cafe."
   ],
   "nativeClearChannel": {
     "enabled": true,

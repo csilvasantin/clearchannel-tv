@@ -7,6 +7,9 @@
 //   · reformar    → órdenes (lo contado + fotos/vídeo) aplicadas como Propuesta de obra (localStorage admira.plano.<id>,
 //                   la misma clave que plano.html con ?modo=obra) y la orden de obra admira.orden-obra/1 en JSON.
 //   · inventariar → /xpacio/estimar o la descripción → plano + CI ITIL editables → traspaso al Portal del comercio.
+//   · crear · «Espacio por formato · Altadis 18» (DCL-d7966deb02734a6f34beb54e) → espacioDeFormato de espacios-formato.mjs:
+//                   los 18 formatos de Altadis, cada uno en un Xtanco o un Starbucks, con su ficha, la galería «Los 18» y
+//                   los enlaces al gemelo (admira.store) y a las adaptaciones (admira.studio). ?formato=cliente-NN&tipo=…
 // /arquitecto del ⌘ Experto llega aquí por window.AdmiraArquitecto.
 import { localeFor } from './walk-core.mjs?v=20261010-evidence-1';
 import { exportOrder, workOrder, validate, round } from './plano-core.mjs?v=20261014-plano-1';
@@ -16,8 +19,12 @@ import {
   ORDENES, CATEGORIAS, MAX_ORDENES, parseOrden, parametros, tipoDe, leerDescripcion, medidasDe, interpretarReforma, reformaDesdeEstimacion, aplicarReforma,
   planDesdeEstimacion, planDesdeDescripcion, prefijoDe, construirCis, revisarCis, inventarioTraspaso, codificarTraspaso, urlPortal,
   caraUrl, baseLocal, ordenDeNube, CARA_ORIGEN, PREFIJO_RE, normalizarId
-} from './arquitecto-core.mjs?v=20261014-arquitecto-1';
-import { svgPlanta, svgAlzado } from './arquitecto-dibujo.mjs?v=20261014-arquitecto-1';
+} from './arquitecto-core.mjs?v=20261015-altadis-1';
+import { svgPlanta, svgAlzado, svgMiniatura } from './arquitecto-dibujo.mjs?v=20261015-altadis-1';
+import {
+  FORMATOS_ALTADIS, TIPOS_ESPACIO, ZONAS, MONTAJES, REQUISITOS, FISICO, tipoEspacio, formatoDe, zonaDe, celdas, espacioDeFormato, resumenEspacio, urlGemelo, urlStudio, urlArquitecto,
+  parametrosEspacio, leerEspacio
+} from './espacios-formato.mjs?v=20261015-altadis-1';
 import { prepararFotos, estimar, urlEstimador, origenEstimador } from './arquitecto-fotos.mjs?v=20261014-arquitecto-1';
 
 const $ = id => document.getElementById(id);
@@ -30,6 +37,24 @@ const textos = {
     ayudaLead: '¿Qué hacemos? Pídemelo aquí, con el micro de la nube o en ⌘ Experto:',
     ayudaCrear: 'un Xpacio nuevo, inventado según el tipo (o con tus medidas)', ayudaReformar: 'una reforma del plano abierto desde una foto, un vídeo o lo que me cuentes, como propuesta de obra',
     ayudaInventariar: 'el plano y el inventario ITIL desde una foto, un vídeo o una descripción; al final, alta en Yokup',
+    ayudaFormatos: 'los 18 espacios Altadis: cada formato de pantalla en un Xtanco o en un Starbucks',
+    modoCrear: 'Qué crear', modoTipo: 'Xpacio por tipo', modoFormato: 'Espacio por formato · Altadis 18',
+    formatosLead: 'Los 18 formatos de pantalla que pide Altadis, cada uno en su espacio tipo: un Xtanco o una cafetería Starbucks, para crear, adaptar y enseñar el contenido a su medida.',
+    formato: 'Formato', espacio: 'Espacio', verGemelo: 'Ver gemelo ↗', crearContenido: 'Crear y adaptar contenido ↗', abrirPlano: 'Abrir en Plano y obras →', enlaceDirecto: 'Enlace directo',
+    los18: 'Los 18', los18Hint: 'una celda por pantalla física', orient: { vertical: 'vertical', horizontal: 'horizontal' },
+    fisica: r => r.forma ? `cubo LED de ${r.caras} caras de ${r.celda[0]}×${r.celda[1]} px (${fmt(r.panel.w, 3)} × ${fmt(r.panel.h, 3)} m cada una, paso ${dec(r.pasoPixelMm)} mm) sobre peana de ${fmt(r.peana)} m`
+      : r.tecnologia === 'led' ? `LED de ${fmt(r.panel.w)} × ${fmt(r.panel.h)} m (paso ${dec(r.pasoPixelMm)} mm)`
+      : `${r.pantallas} × LCD ${dec(r.pulgadas)}″ ${tr('orient')[r.orientacion]} de ${fmt(r.panel.w)} × ${fmt(r.panel.h)} m · celda ${r.celda[0]}×${r.celda[1]} px${r.pantallas > 1 ? ` · conjunto ${fmt(r.conjunto.w)} × ${fmt(r.conjunto.h)} m` : ''}`,
+    ficha: (r, x) => `<strong>${esc(String(r.n).padStart(2, '0'))} · ${esc(r.nombre)}</strong> · ${r.ancho}×${r.alto} px · ${r.fps} fps · ${esc(x.tipo)}<ul>`
+      + `<li><b>Rejilla</b> ${r.grid.cols}×${r.grid.rows} · ${r.pantallas} ${r.pantallas === 1 ? 'pantalla física' : 'pantallas físicas'}: ${esc(tr('fisica', r))}</li>`
+      + `<li><b>Uso</b> ${esc(r.uso.es)} · <b>Zona</b> ${esc(ZONAS[r.zona].es)} (${esc(ZONAS[r.zona].regla.es)})</li>`
+      + `<li><b>Montaje</b> ${esc(MONTAJES[r.montaje].es)} · pared ${esc(x.pared)} · base a ${fmt(r.base)} m</li>`
+      + `<li><b>Sala</b> ${fmt(r.sala.ancho)} × ${fmt(r.sala.fondo)} m · ${fmt(r.sala.alto)} m de alto · plano tipo inventado</li>`
+      + `<li>${esc(REQUISITOS.es)}${x.sincro.length ? ` · se emite sincronizado con ${esc(x.sincro.join(' o '))}, con la misma duración` : ''}</li>`
+      + r.avisos.map(a => `<li class="arq-aviso">⚠ ${esc(a.es)}</li>`).join('') + '</ul>',
+    abiertaFormatos: (f, t) => `Arquitecto: ${f} en ${t} (Espacio por formato · Altadis 18).`,
+    formatoDesconocido: f => `No conozco ese formato: los de Altadis van del 01 al 18. Te enseño el ${f}.`,
+    espacioFallo: (f, t) => `No he podido montar el ${f} en el ${t}. Prueba con el otro espacio o con otro formato.`,
     tipo: 'Tipo de Xpacio', ancho: 'Ancho', largo: 'Largo', alto: 'Alto', nombre: 'Nombre del Xpacio', crManual: 'Crear con estas medidas', crTotal: 'Creación total', usar: 'Usar este plano',
     fotos: 'Fotos o vídeo (opcional): cómo debe quedar o lo que falta en el plano', describe: 'Cuéntame la reforma', dictar: 'Dictar', proponer: 'Proponer reforma',
     rfPh: 'Añade un videowall 2x2 en la pared derecha, quita la pantalla 3 y gira las del fondo a vertical',
@@ -80,7 +105,7 @@ const textos = {
     demasiadasOrdenes: n => `Como mucho ${n} órdenes por reforma: el resto, en otra.`,
     noCisValidos: 'Corrige los errores del inventario antes del alta.',
     vozCrear: 'Creo el Xpacio con lo que me has contado.', vozOrden: o => `Vamos con «${o}».`, pideFotos: 'Sube fotos o un vídeo del local, o cuéntame cómo es.', pideReforma: 'Cuéntame qué cambiamos o súbeme una foto de cómo debe quedar.',
-    ayudaOrdenes: 'Arquitecto: /arquitecto crear [tipo] · /arquitecto reformar · /arquitecto inventariar', ordenDesconocida: x => `El Arquitecto no conoce «${x}». Prueba: crear, reformar o inventariar.`,
+    ayudaOrdenes: 'Arquitecto: /arquitecto crear [tipo] · /arquitecto formatos · /arquitecto reformar · /arquitecto inventariar', ordenDesconocida: x => `El Arquitecto no conoce «${x}». Prueba: crear, formatos, reformar o inventariar.`,
     abierta: o => `Arquitecto: orden «${o}» abierta en el estudio.`, ocultoMsg: 'Arquitecto oculto (vuelve con /arquitecto).', vistoMsg: 'Arquitecto a la vista.',
     dictadoNo: 'Este navegador no tiene dictado: escribe o usa el micro de la nube.', escuchando: 'Escuchando… (puedes corregir el texto)'
   },
@@ -92,6 +117,24 @@ const textos = {
     ayudaLead: 'What shall we do? Ask me here, with the cloud\'s microphone or in ⌘ Expert:',
     ayudaCrear: 'a new Xpace, invented from its type (or with your measurements)', ayudaReformar: 'a renovation of the open plan from a photo, a video or what you tell me, as a works proposal',
     ayudaInventariar: 'the floor plan and ITIL inventory from a photo, a video or a description; then, registration in Yokup',
+    ayudaFormatos: 'the 18 Altadis spaces: each screen format in a Xtanco or in a Starbucks',
+    modoCrear: 'What to create', modoTipo: 'Xpace by type', modoFormato: 'Space by format · Altadis 18',
+    formatosLead: 'The 18 screen formats Altadis asks for, each in its own typical space: a Xtanco or a Starbucks café, to create, adapt and show content made to measure.',
+    formato: 'Format', espacio: 'Space', verGemelo: 'View digital twin ↗', crearContenido: 'Create and adapt content ↗', abrirPlano: 'Open in Floor plan and works →', enlaceDirecto: 'Direct link',
+    los18: 'The 18', los18Hint: 'one cell per physical screen', orient: { vertical: 'portrait', horizontal: 'landscape' },
+    fisica: r => r.forma ? `${r.caras}-sided LED cube, ${r.celda[0]}×${r.celda[1]} px per side (${fmt(r.panel.w, 3)} × ${fmt(r.panel.h, 3)} m each, ${dec(r.pasoPixelMm)} mm pitch) on a ${fmt(r.peana)} m plinth`
+      : r.tecnologia === 'led' ? `LED of ${fmt(r.panel.w)} × ${fmt(r.panel.h)} m (${dec(r.pasoPixelMm)} mm pitch)`
+      : `${r.pantallas} × ${dec(r.pulgadas)}″ ${tr('orient')[r.orientacion]} LCD of ${fmt(r.panel.w)} × ${fmt(r.panel.h)} m · ${r.celda[0]}×${r.celda[1]} px cell${r.pantallas > 1 ? ` · ${fmt(r.conjunto.w)} × ${fmt(r.conjunto.h)} m overall` : ''}`,
+    ficha: (r, x) => `<strong>${esc(String(r.n).padStart(2, '0'))} · ${esc(r.nombre)}</strong> · ${r.ancho}×${r.alto} px · ${r.fps} fps · ${esc(x.tipo)}<ul>`
+      + `<li><b>Grid</b> ${r.grid.cols}×${r.grid.rows} · ${r.pantallas} physical screen${r.pantallas === 1 ? '' : 's'}: ${esc(tr('fisica', r))}</li>`
+      + `<li><b>Use</b> ${esc(r.uso.en)} · <b>Zone</b> ${esc(ZONAS[r.zona].en)} (${esc(ZONAS[r.zona].regla.en)})</li>`
+      + `<li><b>Mounting</b> ${esc(MONTAJES[r.montaje].en)} · ${esc(x.pared)} wall · bottom at ${fmt(r.base)} m</li>`
+      + `<li><b>Room</b> ${fmt(r.sala.ancho)} × ${fmt(r.sala.fondo)} m · ${fmt(r.sala.alto)} m high · invented typical plan</li>`
+      + `<li>${esc(REQUISITOS.en)}${x.sincro.length ? ` · plays in sync with ${esc(x.sincro.join(' or '))}, at the same duration` : ''}</li>`
+      + r.avisos.map(a => `<li class="arq-aviso">⚠ ${esc(a.en)}</li>`).join('') + '</ul>',
+    abiertaFormatos: (f, t) => `Architect: ${f} in ${t} (Space by format · Altadis 18).`,
+    formatoDesconocido: f => `I don't know that format: Altadis formats go from 01 to 18. Showing ${f}.`,
+    espacioFallo: (f, t) => `I could not lay out ${f} in the ${t}. Try the other space or another format.`,
     tipo: 'Xpace type', ancho: 'Width', largo: 'Depth', alto: 'Height', nombre: 'Xpace name', crManual: 'Create with these measurements', crTotal: 'Full creation', usar: 'Use this plan',
     fotos: 'Photos or video (optional): how it should look or what the plan lacks', describe: 'Describe the renovation', dictar: 'Dictate', proponer: 'Propose renovation',
     rfPh: 'Add a 2x2 video wall on the right wall, remove screen 3 and turn the back ones to portrait',
@@ -140,7 +183,7 @@ const textos = {
     demasiadasOrdenes: n => `At most ${n} orders per renovation: the rest in another one.`,
     noCisValidos: 'Fix the inventory errors before registering.',
     vozCrear: 'Creating the Xpace from what you told me.', vozOrden: o => `Let's go with “${o}”.`, pideFotos: 'Upload photos or a video of the space, or tell me what it is like.', pideReforma: 'Tell me what to change or upload a photo of how it should look.',
-    ayudaOrdenes: 'Architect: /arquitecto crear [type] · /arquitecto reformar · /arquitecto inventariar', ordenDesconocida: x => `The Architect does not know “${x}”. Try: crear, reformar or inventariar.`,
+    ayudaOrdenes: 'Architect: /arquitecto crear [type] · /arquitecto formatos · /arquitecto reformar · /arquitecto inventariar', ordenDesconocida: x => `The Architect does not know “${x}”. Try: crear, formatos, reformar or inventariar.`,
     abierta: o => `Architect: “${o}” open in the studio.`, ocultoMsg: 'Architect hidden (/arquitecto brings him back).', vistoMsg: 'Architect in sight.',
     dictadoNo: 'This browser has no dictation: type or use the cloud\'s microphone.', escuchando: 'Listening… (you can edit the text)'
   }
@@ -151,6 +194,7 @@ try { lang = localeFor(location.hostname, location.search, localStorage.getItem(
 const tr = (k, ...a) => { const v = textos[lang][k]; return typeof v === 'function' ? v(...a) : v; };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const fmt = (n, d = 2) => round(n, d).toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB', { minimumFractionDigits: d === 1 ? 0 : 2, maximumFractionDigits: d });
+const dec = n => String(n).replace('.', lang === 'es' ? ',' : '.');
 const REDUCED = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 
 const params = new URLSearchParams(location.search);
@@ -164,7 +208,8 @@ const estimarUrl = urlEstimador(location.search, location.hostname);
 const st = {
   orden: '', plan: null, origen: '', registro: null, creado: null, tipo: P.tipo || 'cafeteria',
   propuesta: null, ops: [], activas: [], hechos: [], dudas: [], estimacionReforma: null,
-  inv: null, cis: [], wallId: '', estado: 'reposo', fotosRf: [], fotosIn: [], vista: null
+  inv: null, cis: [], wallId: '', estado: 'reposo', fotosRf: [], fotosIn: [], vista: null,
+  modoCrear: 'tipo', formato: FORMATOS_ALTADIS[0].id, espacio: 'xtanco'
 };
 const paredNombre = id => { const p = vistaPlan(); const w = p && p.paredes.find(x => x.id === id); return w ? (w.nombre || id) : id; };
 function pared(id) { return paredNombre(id); }
@@ -200,12 +245,16 @@ function mostrarArquitecto(si) {
 
 // Lo que se le dice a la nube (texto o micro): una orden y/o una descripción para la orden abierta.
 function deVoz({ orden, texto }) {
-  const parsed = parseOrden(texto) || { orden: '', tipo: '', resto: texto };
+  let parsed = parseOrden(texto) || { orden: '', tipo: '', resto: texto };
+  // «formato…» / «format…» sin «/arquitecto» sólo es la orden desde Crear: en Reformar o Inventariar es lo que se cuenta.
+  if (parsed.formatos && parsed.contextual && st.orden !== 'crear') parsed = { orden: '', tipo: '', resto: texto };
+  if (parsed.formatos) { abrirFormatos(parsed.resto); return; }
   const o = orden || parsed.orden || st.orden;
   const resto = orden || parsed.orden ? (parsed.resto || '') : texto;
   if (o && o !== st.orden) abrirOrden(o, { silencio: true });
   if (!o) { nube('dudando', { texto: tr('ayudaOrdenes') }); return; }
   if (o === 'crear') {
+    if (st.modoCrear === 'formato') modoCrear('tipo', { silencio: true });
     const d = leerDescripcion(texto), tipo = d.tipo || parsed.tipo;
     if (tipo) { st.tipo = tipo; pintarTipos(); fillDims(medidasMedias(tipo)); }
     if (d.ancho) $('cr-ancho').value = d.ancho; if (d.largo) $('cr-largo').value = d.largo; if (d.alto) $('cr-alto').value = d.alto;
@@ -333,6 +382,86 @@ $('in-tipo').addEventListener('change', e => { st.tipo = TIPOS[e.target.value] ?
 $('cr-manual').addEventListener('click', () => crear(false));
 $('cr-total').addEventListener('click', () => crear(true));
 $('cr-usar').addEventListener('click', () => usarPlano(st.creado, 'creado'));
+
+// ── Crear · Espacio por formato · Altadis 18 (DCL-d7966deb02734a6f34beb54e) ──
+// Un formato de pantalla de Altadis en su espacio tipo (Xtanco o Starbucks): el plano sale de espacioDeFormato (el mismo
+// que publica data/xpacios/altadis-<tipo>-NN.json), con sus pantallas resaltadas, la ficha y la galería «Los 18».
+const radios = id => [...document.querySelectorAll(`#${id} [role="radio"]`)];
+function marcar(id, attr, valor) { for (const b of radios(id)) { const on = b.dataset[attr] === valor; b.setAttribute('aria-checked', String(on)); b.tabIndex = on ? 0 : -1; } }
+function modoCrear(modo, { silencio = false } = {}) {
+  st.modoCrear = modo === 'formato' ? 'formato' : 'tipo';
+  marcar('cr-modo', 'modo', st.modoCrear);
+  $('cr-por-tipo').hidden = st.modoCrear !== 'tipo'; $('cr-por-formato').hidden = st.modoCrear !== 'formato';
+  $('cr-preview').hidden = true; $('cr-usar').hidden = true; st.creado = null;
+  if (st.modoCrear === 'formato') { mostrarEspacio(st.formato, st.espacio, { silencio }); return; }
+  pintarPlano();
+  // Por tipo: la dirección deja de apuntar a un espacio Altadis (recargar no lo vuelve a abrir).
+  try {
+    const u = new URL(location.href);
+    if (!u.searchParams.has('formato')) return;
+    u.searchParams.delete('formato'); if (Object.hasOwn(TIPOS_ESPACIO, u.searchParams.get('tipo') || '')) u.searchParams.delete('tipo');
+    history.replaceState(history.state, '', u.pathname + u.search + u.hash);
+  } catch { /* sin history */ }
+}
+function pintarFormatos() {
+  $('cr-formato').replaceChildren(...FORMATOS_ALTADIS.map(f => Object.assign(document.createElement('option'), { value: f.id, textContent: `${String(f.n).padStart(2, '0')} · ${f.nombre} · ${f.ancho}×${f.alto}`, selected: f.id === st.formato })));
+  $('cr-galeria').replaceChildren(...FORMATOS_ALTADIS.map(f => {
+    const b = document.createElement('button'), zona = ZONAS[zonaDe(f)];
+    b.type = 'button'; b.className = 'arq-g'; b.dataset.formato = f.id; b.setAttribute('aria-pressed', String(f.id === st.formato));
+    b.title = `${f.nombre} · ${f.ancho}×${f.alto} · ${zona[lang]}`; b.setAttribute('aria-label', b.title);
+    // El cubo es una pantalla con 4 caras: en la miniatura, sus caras.
+    const caras = FISICO[f.id].caras, divisiones = caras ? Array.from({ length: caras }, (_, i) => ({ x: Math.round(i * f.ancho / caras), y: 0 })) : celdas(f);
+    b.innerHTML = svgMiniatura({ ancho: f.ancho, alto: f.alto, celdas: divisiones }) + `<b>${String(f.n).padStart(2, '0')}</b>`;
+    b.addEventListener('click', () => mostrarEspacio(f.id, st.espacio));
+    return b;
+  }));
+}
+function pintarFicha(plan) {
+  const r = resumenEspacio(plan), sincro = r.sincro.map(id => `${formatoDe(id).nombre} (${id})`);
+  $('cr-ficha').innerHTML = tr('ficha', r, { tipo: TIPOS_ESPACIO[tipoEspacio(r.tipo)][lang], pared: paredNombre(r.pared), sincro });
+}
+function mostrarEspacio(formato, tipoPedido, { silencio = false, url = true } = {}) {
+  const tipo = tipoEspacio(tipoPedido);
+  if (!formatoDe(formato)) return false;
+  let plan;
+  try { plan = espacioDeFormato(formato, tipo); } catch { status(tr('espacioFallo', formatoDe(formato).nombre, TIPOS_ESPACIO[tipo][lang]), { error: true }); nube('dudando'); return false; }
+  st.formato = formato; st.espacio = tipo; st.creado = plan; st.wallId = plan.pantallas[0].pared;
+  $('cr-formato').value = formato; marcar('cr-espacio', 'espacio', tipo);
+  for (const b of $('cr-galeria').children) b.setAttribute('aria-pressed', String(b.dataset.formato === formato));
+  pintarPlano(); pintarFicha(plan);
+  $('cr-gemelo').href = urlGemelo(plan.id); $('cr-studio').href = urlStudio(formato);
+  $('cr-plano').href = `plano.html?locationId=${encodeURIComponent(plan.id)}`; $('cr-directo').href = urlArquitecto(formato, tipo);
+  $('cr-usar').hidden = false; status('');
+  // La dirección sigue a lo elegido: copiarla es el enlace directo a este espacio.
+  if (url) try {
+    const u = new URL(location.href);
+    for (const k of ['orden', 'arg', 'espacio']) u.searchParams.delete(k);
+    u.searchParams.set('formato', formato); u.searchParams.set('tipo', tipo);
+    history.replaceState(history.state, '', u.pathname + u.search + u.hash);
+  } catch { /* sin history: el enlace directo sigue ahí */ }
+  if (!silencio) nube('entregando', { orden: 'crear' });
+  return true;
+}
+for (const b of radios('cr-modo')) b.addEventListener('click', () => modoCrear(b.dataset.modo));
+for (const b of radios('cr-espacio')) b.addEventListener('click', () => mostrarEspacio(st.formato, b.dataset.espacio));
+for (const id of ['cr-modo', 'cr-espacio']) $(id).addEventListener('keydown', e => {
+  const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!d) return;
+  e.preventDefault();
+  const bs = radios(id), i = bs.findIndex(b => b.getAttribute('aria-checked') === 'true'), next = bs[(i + d + bs.length) % bs.length];
+  next.click(); next.focus();
+});
+$('cr-formato').addEventListener('change', e => mostrarEspacio(e.target.value, st.espacio));
+// /arquitecto formatos [NN] [xtanco|starbucks] (por voz, la nube o el ⌘ Experto).
+function abrirFormatos(texto = '') {
+  const r = leerEspacio(texto);
+  mostrarArquitecto(true);
+  abrirOrden('crear', { silencio: true });
+  st.formato = r.formato || st.formato; st.espacio = tipoEspacio(r.tipo || st.espacio);
+  modoCrear('formato');
+  // Un formato que no es de los 18 no se calla: se dice y se enseña el que había.
+  if (r.desconocido) { const m = tr('formatoDesconocido', formatoDe(st.formato).nombre); status(m, { error: true }); return m; }
+  return tr('abiertaFormatos', formatoDe(st.formato).nombre, TIPOS_ESPACIO[st.espacio][lang]);
+}
 
 // ── Dictado (Web Speech API) con la transcripción visible y editable ─────────
 function dictado(boton, area) {
@@ -584,7 +713,8 @@ function traducir() {
   document.querySelectorAll('[data-t-title]').forEach(n => n.setAttribute('title', tr(n.dataset.tTitle)));
   $('arq-toggle').textContent = tr(document.querySelector('.arq-estudio').classList.contains('sin-arquitecto') ? 'show' : 'hide');
   $('arq-estado').textContent = tr('estados')[st.estado] || '';
-  pintarTipos(); pintarBaseReforma();
+  pintarTipos(); pintarBaseReforma(); pintarFormatos();
+  if (st.creado && st.creado.formato) pintarFicha(st.creado);
   if (st.ops.length) pintarReforma();
   if (st.inv) pintarCis();
   pintarPlano();
@@ -600,7 +730,8 @@ window.AdmiraArquitecto = {
     if (!orden) { abrirAyuda(); nube('reposo', { texto: undefined }); return tr('ayudaOrdenes'); }
     const p = typeof orden === 'string' && ORDENES.includes(orden) ? { orden, tipo: a.tipo || '' } : parseOrden(orden);
     if (!p || !p.orden) return tr('ordenDesconocida', String(orden).slice(0, 30));
-    if (p.tipo && TIPOS[p.tipo]) { st.tipo = p.tipo; pintarTipos(); fillDims(medidasMedias(p.tipo)); }
+    if (p.formatos) return abrirFormatos(p.resto);
+    if (p.tipo && TIPOS[p.tipo]) { st.tipo = p.tipo; pintarTipos(); fillDims(medidasMedias(p.tipo)); if (st.modoCrear === 'formato') modoCrear('tipo', { silencio: true }); }
     mostrarArquitecto(true);
     abrirOrden(p.orden);
     if (p.orden === 'crear' && p.tipo) crear(true);
@@ -636,8 +767,14 @@ async function init() {
     $('in-nombre').value = st.plan.nombre || '';
   }
   pintarBaseReforma();
-  if (P.orden) abrirOrden(P.orden, { silencio: true }); else pintarPlano();
-  if (P.orden === 'crear' && P.tipo) crear(true);
+  // ?formato=cliente-NN&tipo=xtanco|cafe (o ?espacio=altadis-cafe-NN, o /arquitecto formatos por ?arg=): el espacio Altadis.
+  const PE = parametrosEspacio(location.search);
+  if (PE) {
+    st.formato = PE.formato; st.espacio = tipoEspacio(PE.tipo); abrirOrden('crear', { silencio: true }); modoCrear('formato', { silencio: true });
+    if (PE.desconocido) status(tr('formatoDesconocido', formatoDe(st.formato).nombre), { error: true });
+  }
+  else if (P.orden) abrirOrden(P.orden, { silencio: true }); else pintarPlano();
+  if (!PE && P.orden === 'crear' && P.tipo) crear(true);
   // Validación sin errores de geometría (como en plano.html): sólo como aviso en consola.
   if (st.plan && validate(st.plan).some(i => i.nivel === 'error')) console.warn('[arquitecto] el plano abierto tiene conflictos de geometría');
 }
