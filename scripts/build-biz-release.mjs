@@ -38,11 +38,14 @@ writeFileSync(join(out, 'version.json'), JSON.stringify(config.preservedVersion,
 // Keep every existing baseline header and add its version cache rule for this path.
 const headersPath = join(out, '_headers');
 writeFileSync(headersPath, readFileSync(headersPath, 'utf8') + '\n' + BIZ_ASSET_PREFIX + '/version.json\n  Cache-Control: no-store\n');
-copyFileSync(join(root, '_worker.js'), join(out, '_worker.js'));
+// Named helper exports are for Node tests; workerd accepts only runtime entrypoints.
+writeFileSync(join(out, '_worker.js'),readFileSync(join(root, '_worker.js'),'utf8').replace(/^export\s*\{[^}]+\};?\s*$/gm,''));
 copyFileSync(join(root, 'server/biz-assets.mjs'), join(out, 'server/biz-assets.mjs'));
 copyFileSync(join(root, 'server/native-clear-channel.mjs'), join(out, 'server/native-clear-channel.mjs'));
 // «Mis demos» del backoffice sale de la sesión de demo: va con el worker de HEAD, no con la base (FLT-102469).
 copyFileSync(join(root, 'server/demo-session.mjs'), join(out, 'server/demo-session.mjs'));
+writeFileSync(join(out, 'server/bugito-xpacios.mjs'), readFileSync(join(root, 'server/bugito-xpacios.mjs'),'utf8').replace("'../bugito-xpacios-core.mjs'","'./bugito-xpacios-core.mjs'"));
+copyFileSync(join(root, 'bugito-xpacios-core.mjs'), join(out, 'server/bugito-xpacios-core.mjs'));
 buildNativeClearChannel({root,out,config,revision,agent,machine});
 const scoped = join(out, BIZ_ASSET_PREFIX.slice(1));
 for (const file of BIZ_ASSET_FILES.filter(file => file !== 'version.json')) {
