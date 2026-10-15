@@ -5,6 +5,7 @@ const FILES = new Map([
   ['/mcp/manifest.json', '/manifest.json'],
   ['/mcp/llms.txt', '/llms.txt'],
   ['/mcp/native-players.md', '/native-players.md'],
+  ['/mcp/bugito.md', '/bugito.md'],
 ]);
 export default {
   async fetch(request, env) {

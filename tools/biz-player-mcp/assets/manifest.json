@@ -1282,5 +1282,57 @@
       "yokup.com",
       "clearchannel.tv"
     ]
+  },
+  "bugito": {
+    "guide": "https://www.admiranext.com/mcp/BUGITO.md",
+    "help": "https://www.admiranext.com/help/#bugito",
+    "expertHelp": [
+      "/ayuda bugito",
+      "/help bugito",
+      "/bugito help"
+    ],
+    "applications": [
+      "studio",
+      "store",
+      "tv",
+      "app",
+      "biz"
+    ],
+    "mcp": {
+      "endpoint": "https://www.admiranext.com/mcp",
+      "tool": "help",
+      "arguments": {
+        "tema": "bugito"
+      },
+      "readOnly": true
+    },
+    "ownerRequiredForHardware": true,
+    "demoTarget": {
+      "project": "starbucks",
+      "location": "lab-gran-de-gracia-51",
+      "screen": "macbookpro16",
+      "ci": "GDG51-PAN-07",
+      "demo": true
+    },
+    "commands_es": [
+      "/bugito error starbucks gran de gracia 51 pantalla girada",
+      "/bugito error starbucks gran de gracia 51 popup",
+      "/bugito error starbucks gran de gracia 51 pantalla negra",
+      "/bugito error starbucks gran de gracia 51 resolucion",
+      "/bugito error starbucks gran de gracia 51 recorte",
+      "/bugito restaurar starbucks gran de gracia 51"
+    ],
+    "commands_en": [
+      "/bugito fault starbucks gran de gracia 51 rotated screen",
+      "/bugito fault starbucks gran de gracia 51 popup",
+      "/bugito fault starbucks gran de gracia 51 black screen",
+      "/bugito fault starbucks gran de gracia 51 resolution",
+      "/bugito fault starbucks gran de gracia 51 half screen",
+      "/bugito restore starbucks gran de gracia 51"
+    ],
+    "recoveryClosesIncident": false,
+    "blackMeans": "content standby, not electrical power-off",
+    "executionApi": "https://www.admira.biz/api/bugito/commands",
+    "statusApi": "https://www.admira.biz/api/bugito/status?id=<request_id>"
   }
 }

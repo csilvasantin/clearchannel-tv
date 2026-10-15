@@ -289,3 +289,14 @@ En Experto: /demo android (ambos virtuales), /demo android Fold8 (plegable), /de
 Sincronía física independiente: Fold Media3 code9 / iOS AVAudioPlayer build16; visor Wear OS separado. Beta explícita de cuatro audios y ciclo de 610 s. 174 pares físicos: p95 global 72,04 ms, pero cuña 3 p95 165,96 ms / 6 pares y máximo global 229,53 ms. Reapertura: 60 pares, p95 65,52 ms / máximo 270,39 ms incluido el arranque. Posiciones software, no precisión acústica. Tutorial Motion verificado (animación, no grabación): https://api.yokup.com/media/fleet/9efeb654b5ab0dbe.mp4
 
 Tutorial oficial de comandos Android, distinto del tutorial de sincronía: https://api.yokup.com/media/fleet/dddb19c869cc0feb.mp4 . Animación explicativa, no grabación; exportación, decode y redescarga SHA verificadas.
+
+## Bugito · shared Expert command
+Guide ES/EN: https://www.admira.biz/mcp/bugito.md · https://www.admiranext.com/mcp/BUGITO.md
+Read-only MCP help: https://www.admiranext.com/mcp, tool help, arguments {"tema":"bugito"}.
+/bugito error starbucks gran de gracia 51 pantalla girada
+/bugito error starbucks gran de gracia 51 popup
+/bugito error starbucks gran de gracia 51 pantalla negra
+/bugito error starbucks gran de gracia 51 resolucion
+/bugito error starbucks gran de gracia 51 recorte
+/bugito restaurar starbucks gran de gracia 51
+Studio, Store, TV, App and Biz share this verb. Other apps open Bugito in admira.biz with the full order; valid Google owner login is required there. The configured demo binds the Gran de Gràcia 51 lab to MBP16. Black means content standby, not power-off. Recovery keeps the incident open; camera photos require a clear view and recent signal. Short bench aliases do not select the physical laptop. This documentation grants no hardware permission.
