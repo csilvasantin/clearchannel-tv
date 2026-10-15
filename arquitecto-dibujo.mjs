@@ -3,8 +3,8 @@
 // se vea igual que el de plano.html; las pantallas nuevas de una propuesta llevan la clase «new» (verde lima) y las
 // retiradas quedan como fantasma. 100 unidades SVG por metro y la escala --k de plano.mjs.
 // Los 18 espacios Altadis (DCL-d7966deb02734a6f34beb54e): el cubo LED (forma 'cubo-4-caras') se pinta en planta como
-// el cubo que es, sobre su peana, y en alzado con sus 4 caras desplegadas; svgMiniatura dibuja el lienzo de un formato
-// con su rejilla para la galería «Los 18».
+// el cubo que es, sobre su peana; en el alzado, como la cara que da a la sala (la pantalla del plano). svgMiniatura
+// dibuja el lienzo de un formato con su rejilla para la galería «Los 18».
 import { round, wallLength, pointOnWall, inwardNormal, footprint, furnitureAgainstWall, criteria } from './plano-core.mjs?v=20261014-plano-1';
 
 export const U = 100;
@@ -87,14 +87,6 @@ export function svgAlzado(plan, pantallas = plan.pantallas, wallId, { nuevos = n
   for (const s of retiradas.filter(s => s.pared === w.id)) { const f = footprint(s); out.push(tag('rect', { class: 'scr-ghost', x: n(f.x0 * U), y: Y(f.z1), width: n(f.w * U), height: n(f.h * U) })); }
   for (const s of pantallas.filter(s => s.pared === w.id)) {
     const f = footprint(s);
-    if (esCubo(s)) {
-      // Las caras del cubo, desplegadas en fila (como en su lienzo): 1 | 2 | 3 | 4.
-      const caras = s.cubo.caras || [], cw = f.w / Math.max(1, caras.length);
-      out.push(tag('g', { class: 'scr scr-cubo' + (nuevos.has(s.id) ? ' new' : ''), 'data-id': s.id },
-        caras.map((c, i) => tag('rect', { class: 'scr-body', x: n((f.x0 + i * cw) * U), y: Y(f.z1), width: n(cw * U), height: n(f.h * U), rx: 2 }) +
-          tag('text', { class: 'scr-label', x: n((f.x0 + (i + 0.5) * cw) * U), y: n(Y(f.z0 + f.h / 2) + 7 * K), 'text-anchor': 'middle' }, esc(`C${c.cara}`))).join('') + tag('title', {}, esc(s.nombre || s.id))));
-      continue;
-    }
     out.push(tag('g', { class: 'scr' + (nuevos.has(s.id) ? ' new' : ''), 'data-id': s.id },
       tag('rect', { class: 'scr-body', x: n(f.x0 * U), y: Y(f.z1), width: n(f.w * U), height: n(f.h * U), rx: 2 }) +
       tag('text', { class: 'scr-label', x: n(s.s * U), y: n(Y(f.z0 + f.h / 2) + 7 * K), 'text-anchor': 'middle' }, esc(corto(s))) + tag('title', {}, esc(s.nombre || s.id))));

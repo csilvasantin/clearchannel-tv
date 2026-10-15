@@ -107,8 +107,9 @@ export function zonaDe(formato) {
 }
 
 // ── Pantallas físicas supuestas (ESTIMACIÓN DE LA CASA, por confirmar con Altadis) ──
-// LCD: diagonal en pulgadas por celda (videowall de 46–55″; 43″ en la columna 1X2 V, que con 46″ no cabe bajo un
-// techo de 2,9 m con la base a 0,9 m). LED: paso de píxel en mm; dimensiones = píxeles × paso.
+// LCD: diagonal en pulgadas por celda (videowall de 46–55″). `siNoCabe`: la diagonal de reserva cuando la primera no
+// cabe en la sala (la columna 1X2 V de 46″ no cabe bajo los 2,9 m del Xtanco con la base a 0,9 m; en el Starbucks sí).
+// LED: paso de píxel en mm; dimensiones = píxeles × paso. El cubo: 4 caras iguales del lienzo partido a lo ancho.
 export const FISICO = Object.freeze({
   'cliente-01': Object.freeze({ tecnologia: 'lcd', pulgadas: 55 }),
   'cliente-02': Object.freeze({ tecnologia: 'lcd', pulgadas: 55 }),
@@ -121,7 +122,7 @@ export const FISICO = Object.freeze({
   'cliente-09': Object.freeze({ tecnologia: 'led', pasoPixelMm: 2.5 }),
   'cliente-10': Object.freeze({ tecnologia: 'led', pasoPixelMm: 2.5 }),
   'cliente-11': Object.freeze({ tecnologia: 'lcd', pulgadas: 49 }),
-  'cliente-12': Object.freeze({ tecnologia: 'lcd', pulgadas: 43 }),
+  'cliente-12': Object.freeze({ tecnologia: 'lcd', pulgadas: 46, siNoCabe: 43 }),
   'cliente-13': Object.freeze({ tecnologia: 'lcd', pulgadas: 55 }),
   'cliente-14': Object.freeze({ tecnologia: 'lcd', pulgadas: 55 }),
   'cliente-15': Object.freeze({ tecnologia: 'lcd', pulgadas: 49 }),
@@ -140,9 +141,12 @@ export function aspectoDe(w, h) {
 const CORTO = Object.freeze({ 'cliente-01': 'VERT', 'cliente-02': 'HORIZ', 'cliente-04': 'LOGO', 'cliente-05': 'VW', 'cliente-07': 'TAB', 'cliente-08': 'CUBO', 'cliente-09': 'LED', 'cliente-10': 'GOND', 'cliente-18': 'STR' });
 
 // Las pantallas físicas de un formato, relativas a s = 0 (borde izquierdo) y z = 0 (base): pegadas, sin junta, la
-// fila de arriba del lienzo arriba. Cada una con su celda del lienzo.
-export function pantallasDeFormato(formato) {
-  const f = exigir(formato), fis = FISICO[f.id], cs = celdas(f), { rows } = gridDe(f), N = cs.length, NN = dos(f.n);
+// fila de arriba del lienzo arriba. Cada una con su celda del lienzo. `pulgadas` cambia la diagonal de las LCD.
+// El cubo es una sola pantalla de Studio (1×1), pero en el plano 2D cuenta UNA cara: su recorte, su resolución y sus
+// medidas son las de una cara (colocar elige la que da a la sala); el prisma entero va en `cubo`.
+export function pantallasDeFormato(formato, { pulgadas } = {}) {
+  const f = exigir(formato), fis = FISICO[f.id], { rows } = gridDe(f), NN = dos(f.n);
+  const cs = fis.forma ? [{ n: 1, col: 0, fila: 0, x: 0, y: 0, w: f.ancho / fis.caras, h: f.alto }] : celdas(f), N = cs.length;
   return cs.map(c => {
     const orientacion = c.w >= c.h ? 'horizontal' : 'vertical';
     const base = { id: `f${NN}-${c.n}`, itil: null, nombre: N > 1 ? `${f.nombre} · ${c.n} de ${N}` : f.nombre, corto: N > 1 ? `${c.n}/${N}` : (CORTO[f.id] || f.nombre.slice(0, 5)),
@@ -154,7 +158,7 @@ export function pantallasDeFormato(formato) {
       medidas = { pulgadas: round(Math.hypot(dimensiones.ancho, dimensiones.alto) / INCH, 1), dimensiones, pasoPixelMm: fis.pasoPixelMm };
     } else {
       const aspecto = aspectoDe(c.w, c.h);
-      medidas = { pulgadas: fis.pulgadas, ...(aspecto ? { aspecto } : {}) };
+      medidas = { pulgadas: pulgadas || fis.pulgadas, ...(aspecto ? { aspecto } : {}) };
     }
     const g = panelSize({ orientacion, ...medidas });
     const grupo = N > 1 ? { grupo: `formato-${NN}`, grupoNombre: f.nombre, ...(rows > 1 ? { subgrupo: `F${c.fila + 1}` } : {}) } : {};
@@ -169,8 +173,10 @@ export const TIPOS_ESPACIO = Object.freeze({
   xtanco: Object.freeze({ es: 'Xtanco', en: 'Xtanco', tipoArquitecto: 'estanco', prefijo: 'Xtanco', semilla: 1 }),
   cafe: Object.freeze({ es: 'Cafetería Starbucks', en: 'Starbucks café', tipoArquitecto: 'cafeteria', prefijo: 'Starbucks', semilla: 2 })
 });
-export const idEspacio = (formato, tipo) => `altadis-${tipo}-${dos(exigir(formato).n)}`;
-export const nombreEspacio = (formato, tipo) => { const f = exigir(formato); return `${TIPOS_ESPACIO[tipo].prefijo} · ${f.nombre} (${f.ancho}×${f.alto})`; };
+// Un tipo que no sea propio de TIPOS_ESPACIO («constructor», «__proto__», «toString»…) es el Xtanco.
+export const tipoEspacio = tipo => typeof tipo === 'string' && Object.hasOwn(TIPOS_ESPACIO, tipo) ? tipo : 'xtanco';
+export const idEspacio = (formato, tipo) => `altadis-${tipoEspacio(tipo)}-${dos(exigir(formato).n)}`;
+export const nombreEspacio = (formato, tipo) => { const f = exigir(formato); return `${TIPOS_ESPACIO[tipoEspacio(tipo)].prefijo} · ${f.nombre} (${f.ancho}×${f.alto})`; };
 export const ESPACIO_RE = /^altadis-(xtanco|cafe)-(0[1-9]|1[0-8])$/;
 
 // Cómo va montada cada pantalla (código en el JSON; texto para la ficha).
@@ -182,20 +188,30 @@ export const MONTAJES = Object.freeze({
   'pared-fondo': Object.freeze({ es: 'mural en la pared del fondo', en: 'wall display on the back wall' }),
   'cabecera-lineal': Object.freeze({ es: 'de pie en la cabecera del lineal', en: 'standing at the head of the shelving' }),
   'banda-alta': Object.freeze({ es: 'banda alta sobre el mostrador', en: 'high band over the counter' }),
-  peana: Object.freeze({ es: 'cubo LED sobre peana (las 4 caras, desplegadas en el alzado)', en: 'LED cube on a plinth (the 4 sides, unfolded in the elevation)' })
+  peana: Object.freeze({ es: 'cubo LED de 4 caras sobre peana', en: '4-sided LED cube on a plinth' })
 });
 
 // Avisos de cada formato: incoherencias del PDF o supuestos que hay que confirmar antes de emitir.
 export const AVISOS = Object.freeze({
   'cliente-01': Object.freeze({ es: 'Studio lo pone en la zona mostrador, pero su uso es «tótem / escaparate»: aquí va de pie en el escaparate.', en: 'Studio puts it in the counter zone, but its use is “totem / shop window”: here it stands in the shop window.' }),
   'cliente-05': Object.freeze({ es: 'El nombre dice videowall pero no trae rejilla: Studio lo trata como 1×1 y aquí es una LCD estirada 32:9. Si en la tienda son dos pantallas (como el 2X1 H de 1920×540), hay que cambiarlo.', en: 'The name says video wall but has no grid: Studio treats it as 1×1 and here it is a 32:9 stretched LCD. If the store has two screens (like the 1920×540 2X1 H), change it.' }),
-  'cliente-08': Object.freeze({ es: 'Cubo de 4 caras de 400×600 px (supuesto). El plano no modela prismas: en el alzado se ve desplegado y el campo `cubo` da su centro y sus caras.', en: '4-sided cube of 400×600 px faces (assumed). The plan does not model prisms: the elevation shows it unfolded and the `cubo` field gives its centre and sides.' }),
-  'cliente-12': Object.freeze({ es: 'Dos LCD verticales apiladas de 43″: con 46″ la columna no cabe bajo un techo de 2,9 m con la base a 0,9 m.', en: 'Two stacked 43″ portrait LCDs: at 46″ the column does not fit under a 2.9 m ceiling with its bottom at 0.9 m.' }),
+  'cliente-08': Object.freeze({ es: 'Cubo LED de 4 caras de 400×600 px cada una (medidas supuestas). En el plano se ve la cara que da a la sala; las 4 caras, en el gemelo 3D.', en: '4-sided LED cube, 400×600 px per side (assumed sizes). The plan shows the side facing the room; all 4 sides, in the 3D twin.' }),
   'cliente-16': Object.freeze({ es: 'Celdas de 480×852: casi 9:16 (852 en vez de 853,3).', en: '480×852 cells: almost 9:16 (852 instead of 853.3).' }),
   'cliente-17': Object.freeze({ es: 'Nombre y proporción no cuadran: «8X1 H» con 2880×640 da celdas de 360×640, verticales. Se modelan 8 verticales; hay que confirmarlo con Altadis.', en: 'Name and aspect do not match: “8X1 H” at 2880×640 gives 360×640 portrait cells. Modelled as 8 portrait screens; confirm with Altadis.' }),
   'cliente-18': Object.freeze({ es: 'Su uso es «sede / stretch»: en un Xtanco o un Starbucks es un supuesto.', en: 'Its use is “head office / stretch”: in a Xtanco or a Starbucks it is an assumption.' })
 });
-export const SINCRO = Object.freeze({ 'cliente-04': 'cliente-05', 'cliente-05': 'cliente-04' });
+// Regla del PDF: SINCRO VW y SINCRO LOGO, con la misma duración. El logo va con el videowall sincronizado que haya.
+export const SINCRO = Object.freeze({ 'cliente-04': Object.freeze(['cliente-05', 'cliente-06']), 'cliente-05': Object.freeze(['cliente-04']), 'cliente-06': Object.freeze(['cliente-04']) });
+// Avisos de un espacio: los del formato y, si la diagonal preferida no cabía en esa sala, el de la de reserva.
+export function avisosEspacio(plan) {
+  const f = exigir(plan.formato.id), fis = FISICO[f.id], p0 = plan.pantallas[0], out = AVISOS[f.id] ? [AVISOS[f.id]] : [];
+  if (fis.siNoCabe && p0 && p0.pulgadas !== fis.pulgadas) {
+    const H = String(plan.planta.alto).replace('.', ','), He = String(plan.planta.alto), b = String(criteria(plan).alturaMinima);
+    out.push({ es: `Dos LCD verticales apiladas de ${fis.siNoCabe}″: con ${fis.pulgadas}″ la columna no cabe bajo el techo de ${H} m con la base a ${b.replace('.', ',')} m.`,
+      en: `Two stacked ${fis.siNoCabe}″ portrait LCDs: at ${fis.pulgadas}″ the column does not fit under the ${He} m ceiling with its bottom at ${b} m.` });
+  }
+  return out;
+}
 
 // ── Mobiliario: recortes para dejar sitio a las pantallas ───────────────────
 const sEn = (W, F, pared, x, y) => ({ F: x, D: y, P: W - x, I: F - y })[pared];
@@ -286,29 +302,36 @@ function colocar(plan, f, tipo, miembros) {
     return { pared, centro: sEn(W, Fo, pared, 0, y), zs: [criteria(plan).alturaMinima], recortable: true, extra: { montaje: 'cabecera-lineal', separacion: 0.05 } };
   }
   // Cubo: peana junto al lateral libre, a media sala; en el alzado, sus 4 caras desplegadas.
-  const cara = f.ancho / fis.caras, lado = round(cara * fis.pasoPixelMm / 1000, 3);
+  const cara = f.ancho / fis.caras, lado = round(cara * fis.pasoPixelMm / 1000, 3), inward = libre === 'D' ? [-1, 0] : [1, 0];
   const yc = round(xt ? Fo * 0.55 : Fo * 0.5, 2), dist = 0.35, xc = libre === 'D' ? round(W - dist - lado / 2, 3) : round(dist + lado / 2, 3);
   anadirMueble(plan, { id: 'm-peana', nombre: 'Peana · cubo LED', x: round(xc - lado / 2, 3), y: round(yc - lado / 2, 3), w: lado, d: lado, alto: fis.peana }, { despejar: 0.4 });
   const nCara = [[0, 1], [1, 0], [0, -1], [-1, 0]];
   const cubo = { centro: [xc, yc], lado, alto: round(miembros[0]._h, 3), peana: fis.peana, caras: nCara.map((n, i) => ({ cara: i + 1, n, recorte: { x: i * cara, y: 0, w: cara, h: f.alto } })) };
-  return { pared: libre, centro: sEn(W, Fo, libre, xc, yc), zs: [fis.peana], extra: { forma: fis.forma, cubo, montaje: 'peana', separacion: round(dist + lado / 2, 3) } };
+  // En el plano 2D, la cara que da a la sala (su normal es la de la pared hacia dentro), a lado + 0,35 m de la pared.
+  const frente = cubo.caras.find(c => c.n[0] === inward[0] && c.n[1] === inward[1]);
+  return { pared: libre, centro: sEn(W, Fo, libre, xc, yc), zs: [fis.peana], extra: { recorte: { ...frente.recorte }, resolucion: [frente.recorte.w, frente.recorte.h], forma: fis.forma, cubo, montaje: 'peana', separacion: round(dist + lado, 3) } };
 }
 
 // ── El espacio de un formato ────────────────────────────────────────────────
 // espacioDeFormato('cliente-15', 'xtanco') → plano admira.xpacio-plano/1 del Xtanco con el VIDEOWALL 4X1 H. Siempre el
 // mismo (semilla fija), con validate() vacío.
-export function espacioDeFormato(formatoId, tipo = 'xtanco') {
-  const f = exigir(formatoId), t = TIPOS_ESPACIO[tipo];
-  if (!t) throw new TypeError('tipo de espacio desconocido: ' + tipo);
-  const id = idEspacio(f, tipo), nombre = nombreEspacio(f, tipo), zona = zonaDe(f), { cols, rows } = gridDe(f);
-  const base = generarXpacio({ tipo: t.tipoArquitecto, semilla: t.semilla, id, nombre });
-  base.pantallas = [];
-  const miembros = pantallasDeFormato(f);
-  const d = colocar(base, f, tipo, miembros);
-  const { pantallas, mobiliario } = situar(base, miembros, d);
+export function espacioDeFormato(formatoId, tipoPedido = 'xtanco') {
+  const f = exigir(formatoId), tipo = tipoEspacio(tipoPedido), t = TIPOS_ESPACIO[tipo];
+  const id = idEspacio(f, tipo), nombre = nombreEspacio(f, tipo), zona = zonaDe(f), { cols, rows } = gridDe(f), fis = FISICO[f.id];
+  // La diagonal preferida y, si no cabe en esta sala, la de reserva (siNoCabe).
+  let colocado = null, base;
+  for (const pulgadas of [fis.pulgadas, fis.siNoCabe].filter((v, i) => i === 0 || v)) {
+    base = generarXpacio({ tipo: t.tipoArquitecto, semilla: t.semilla, id, nombre });
+    base.pantallas = [];
+    const miembros = pantallasDeFormato(f, { pulgadas });
+    try { colocado = situar(base, miembros, colocar(base, f, tipo, miembros)); break; } catch (e) { if (!fis.siNoCabe || pulgadas === fis.siNoCabe) throw e; }
+  }
+  const { pantallas, mobiliario } = colocado;
   pantallas.forEach(s => { s.fuente = 'Espacio tipo Altadis · pantalla física supuesta, por confirmar'; });
-  const W = base.planta.ancho, Fo = base.planta.fondo, H = base.planta.alto, area = round(W * Fo, 1), fis = FISICO[f.id];
-  const fisica = fis.tecnologia === 'led' ? `LED de ${metros(pantallas[0].dimensiones.ancho, 3)} × ${metros(pantallas[0].dimensiones.alto, 3)} m (paso ${String(fis.pasoPixelMm).replace('.', ',')} mm)` : `LCD de ${fis.pulgadas.toString().replace('.', ',')}″ ${pantallas[0].orientacion}`;
+  const W = base.planta.ancho, Fo = base.planta.fondo, H = base.planta.alto, area = round(W * Fo, 1), p0 = pantallas[0], paso = String(fis.pasoPixelMm).replace('.', ',');
+  const fisica = fis.forma ? `cubo LED de ${fis.caras} caras de ${p0.recorte.w}×${p0.recorte.h} px (${metros(p0.dimensiones.ancho, 3)} × ${metros(p0.dimensiones.alto, 3)} m cada una, paso ${paso} mm) sobre peana de ${metros(fis.peana)} m`
+    : fis.tecnologia === 'led' ? `LED de ${metros(p0.dimensiones.ancho, 3)} × ${metros(p0.dimensiones.alto, 3)} m (paso ${paso} mm)` : `LCD de ${String(p0.pulgadas).replace('.', ',')}″ ${p0.orientacion}`;
+  const sincro = (SINCRO[f.id] || []).map(id => `${id} (${exigir(id).nombre})`);
   const plan = {
     schema: base.schema, id, version: SELLO, nombre, publico: true,
     espacio: { serie: SERIE, tipo, n: f.n },
@@ -319,29 +342,30 @@ export function espacioDeFormato(formatoId, tipo = 'xtanco') {
       pantallas: `${pantallas.length} × ${fisica} del formato ${f.id} (${f.nombre}, ${f.ancho}×${f.alto}), en la zona ${zona}: tamaños físicos supuestos, por confirmar con Altadis`,
       formato: `${FUENTE.perfil} · ${f.id} · «${FUENTE.pdf}» (sha256 ${FUENTE.sha256})`,
       requisitos: REQUISITOS.es,
-      ...(SINCRO[f.id] ? { sincro: `Se emite con ${SINCRO[f.id]} (${exigir(SINCRO[f.id]).nombre}) con la misma duración` } : {}),
-      ...(AVISOS[f.id] ? { avisos: [AVISOS[f.id].es] } : {}),
+      ...(sincro.length ? { sincro: `Se emite sincronizado con ${sincro.join(' o ')}, con la misma duración (SINCRO VW y SINCRO LOGO, regla del PDF)` } : {}),
       itil: 'Sin inventario: pantallas en estado «propuesta» e itil null; el maestro del ITIL es Yokup'
     },
     planta: base.planta, paredes: base.paredes, huecos: base.huecos, mobiliario, pantallas,
     generador: base.generador
   };
+  const avisos = avisosEspacio(plan);
+  if (avisos.length) { const { itil, ...resto } = plan.fuente; plan.fuente = { ...resto, avisos: avisos.map(a => a.es), itil }; }
   return plan;
 }
 
 // ── Resumen para la ficha ───────────────────────────────────────────────────
+// Medidas sin redondear (la página redondea una sola vez al pintarlas): el conjunto son las pantallas pegadas.
 export function resumenEspacio(plan) {
   const f = exigir(plan.formato.id), ps = plan.pantallas, fs = ps.map(footprint), p0 = ps[0];
-  const g = panelSize(p0);
+  const g = panelSize(p0), { cols, rows } = p0.forma ? { cols: 1, rows: 1 } : plan.formato.grid;
   return {
     id: plan.id, tipo: plan.espacio.tipo, formato: f.id, n: f.n, nombre: f.nombre, ancho: f.ancho, alto: f.alto, grid: plan.formato.grid, fps: f.fps,
     uso: f.uso, zona: plan.formato.zona, pantallas: ps.length, tecnologia: p0.tecnologia, orientacion: p0.orientacion, pulgadas: p0.pulgadas,
-    pasoPixelMm: p0.pasoPixelMm || null, forma: p0.forma || null, celda: [p0.recorte.w, p0.recorte.h], panel: { w: round(g.w, 3), h: round(g.h, 3) },
-    conjunto: { w: round(Math.max(...fs.map(x => x.x1)) - Math.min(...fs.map(x => x.x0)), 2), h: round(Math.max(...fs.map(x => x.z1)) - Math.min(...fs.map(x => x.z0)), 2) },
-    cara: p0.cubo ? { w: p0.cubo.lado, h: p0.cubo.alto } : null,
-    pared: p0.pared, base: round(Math.min(...fs.map(x => x.z0)), 2), montaje: p0.montaje,
+    pasoPixelMm: p0.pasoPixelMm || null, forma: p0.forma || null, caras: p0.cubo ? p0.cubo.caras.length : null, peana: p0.cubo ? p0.cubo.peana : null,
+    celda: [p0.recorte.w, p0.recorte.h], panel: { w: g.w, h: g.h }, conjunto: { w: cols * g.w, h: rows * g.h },
+    pared: p0.pared, base: Math.min(...fs.map(x => x.z0)), montaje: p0.montaje,
     sala: { ancho: plan.planta.ancho, fondo: plan.planta.fondo, alto: plan.planta.alto },
-    sincro: SINCRO[f.id] || null, aviso: AVISOS[f.id] || null
+    sincro: SINCRO[f.id] ? [...SINCRO[f.id]] : [], avisos: avisosEspacio(plan)
   };
 }
 
@@ -372,7 +396,7 @@ export function ficherosAltadis() {
 // ── Enlaces y parámetros ────────────────────────────────────────────────────
 export const urlGemelo = id => `${URL_GEMELO}?espacio=${encodeURIComponent(id)}`;
 export const urlStudio = formato => `${URL_STUDIO}?formato=${encodeURIComponent(exigir(formato).id)}`;
-export const urlArquitecto = (formato, tipo) => `arquitecto.html?formato=${encodeURIComponent(exigir(formato).id)}&tipo=${TIPOS_ESPACIO[tipo] ? tipo : 'xtanco'}`;
+export const urlArquitecto = (formato, tipo) => `arquitecto.html?formato=${encodeURIComponent(exigir(formato).id)}&tipo=${tipoEspacio(tipo)}`;
 
 const norm = t => String(t ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
 export function tipoEspacioDe(texto) {
@@ -381,20 +405,24 @@ export function tipoEspacioDe(texto) {
   if (/\b(starbucks|cafe|cafeteria|coffee ?shop|coffee)\b/.test(t)) return 'cafe';
   return '';
 }
-// «formatos 15 starbucks», «cliente-08 xtanco», «videowall 4x1 h en un starbucks», «cubo» → {formato, tipo}.
+// «formatos 15 starbucks», «cliente-08 xtanco», «videowall 4x1 h en un starbucks», «cubo» → {formato, tipo}. Si se
+// nombra un formato que no es de los 18 («99», «pantalla gigante»), `desconocido: true`.
+const RELLENO = /\b(xtanco|estanco|tobacconist|tabaco|starbucks|cafe|cafeteria|coffee ?shop|coffee|formatos?|formats?|altadis|en|un|una|el|la|los|las|de|del|in|a|an|the|for|para)\b/g;
 export function leerEspacio(texto) {
   const t = norm(texto).replace(/[–—]/g, '-');
   const tipo = tipoEspacioDe(t);
-  let formato = '';
-  const id = /\bcliente[\s-]*(\d{1,2})\b/.exec(t) || /(?:^|\s)(\d{1,2})(?=\s|$)/.exec(t);
+  let formato = '', desconocido = false;
+  const id = /\bcliente[\s-]*(\d{1,3})\b/.exec(t) || /(?:^|\s)(\d{1,3})(?=\s|$)/.exec(t);
   if (id && +id[1] >= 1 && +id[1] <= 18) formato = `cliente-${dos(+id[1])}`;
-  if (!formato) {
+  else if (id) desconocido = true;
+  if (!formato && !desconocido) {
     // Por nombre: el más largo que aparezca entero («sincro vw 4x1 h» antes que «sincro vw»).
     const porNombre = FORMATOS_ALTADIS.filter(f => t.includes(norm(f.nombre))).sort((a, b) => b.nombre.length - a.nombre.length)[0];
-    const palabra = [[/\bcubo|cube\b/, 'cliente-08'], [/\bgondola\b/, 'cliente-10'], [/\btablet\b/, 'cliente-07'], [/\bgranada\b/, 'cliente-09'], [/\b(stretch|shuttle)\b/, 'cliente-18'], [/\blogo\b/, 'cliente-04'], [/\btotem\b/, 'cliente-01']].find(([re]) => re.test(t));
+    const palabra = [[/\b(cubo|cube)\b/, 'cliente-08'], [/\bgondola\b/, 'cliente-10'], [/\btablet\b/, 'cliente-07'], [/\bgranada\b/, 'cliente-09'], [/\b(stretch|shuttle)\b/, 'cliente-18'], [/\blogo\b/, 'cliente-04'], [/\btotem\b/, 'cliente-01']].find(([re]) => re.test(t));
     formato = porNombre ? porNombre.id : palabra ? palabra[1] : '';
+    desconocido = !formato && !!t.replace(RELLENO, ' ').replace(/[^a-z0-9]+/g, '');
   }
-  return { formato, tipo };
+  return { formato, tipo, ...(desconocido ? { desconocido } : {}) };
 }
 // ?formato=cliente-NN&tipo=xtanco|cafe · ?espacio=altadis-cafe-NN · ?arg=formatos-15-cafe (cargador común) → {formato, tipo} o null.
 export function parametrosEspacio(search = '') {
@@ -402,11 +430,12 @@ export function parametrosEspacio(search = '') {
   const e = ESPACIO_RE.exec(q.get('espacio') || '');
   if (e) return { formato: `cliente-${e[2]}`, tipo: e[1] };
   const formato = FORMATO_RE.test(q.get('formato') || '') ? q.get('formato') : '';
-  const tipo = TIPOS_ESPACIO[q.get('tipo')] ? q.get('tipo') : tipoEspacioDe(q.get('tipo') || '');
+  const tipo = Object.hasOwn(TIPOS_ESPACIO, q.get('tipo') || '') ? q.get('tipo') : tipoEspacioDe(q.get('tipo') || '');
   if (formato) return { formato, tipo: tipo || 'xtanco' };
   const arg = /^[a-z0-9-]{1,60}$/.test(q.get('arg') || '') ? q.get('arg').replace(/-/g, ' ') : '';
   const m = /^(formatos?|formats?|altadis)\b\s*(.*)$/.exec(arg);
   if (!m) return null;
+  // Un formato que no es de los 18 abre el primero, pero lo dice (`desconocido`).
   const r = leerEspacio(m[2]);
-  return { formato: r.formato || FORMATOS_ALTADIS[0].id, tipo: r.tipo || 'xtanco' };
+  return { formato: r.formato || FORMATOS_ALTADIS[0].id, tipo: r.tipo || 'xtanco', ...(r.desconocido ? { desconocido: true } : {}) };
 }

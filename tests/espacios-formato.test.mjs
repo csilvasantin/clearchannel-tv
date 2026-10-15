@@ -7,8 +7,9 @@ import { createHash } from 'node:crypto';
 import {
   FORMATOS_ALTADIS, FUENTE, PERFIL, SELLO, INDICE_SCHEMA, ZONAS, FISICO, TIPOS_ESPACIO, REJILLA_RE, gridDe, celdas, zonaDe, formatoDe,
   pantallasDeFormato, espacioDeFormato, resumenEspacio, indiceAltadis, ficherosAltadis, idEspacio, urlGemelo, urlStudio, urlArquitecto,
-  parametrosEspacio, leerEspacio, aspectoDe
+  parametrosEspacio, leerEspacio, aspectoDe, tipoEspacio, avisosEspacio, SINCRO
 } from '../espacios-formato.mjs';
+import { FORMAT_REFERENCE_MAP } from './fixtures/format-reference-map.mjs';
 import { SCHEMA, validate, screenGeometry, footprint, panelSize, wallLength, furnitureAgainstWall } from '../plano-core.mjs';
 import { leerPlanoJson } from '../plano-subida.mjs';
 import { parseOrden, parametros } from '../arquitecto-core.mjs';
@@ -75,7 +76,11 @@ test('rejilla: la regla de twinGeometry de Studio, en 3 casos y en los 18', () =
   assert.throws(() => gridDe({ nombre: 'VIDEOWALL 9X9 H' }), /rejilla/);
 });
 
-test('zonas: las de FORMAT_REFERENCE_MAP de Studio', () => {
+test('zonas: las de FORMAT_REFERENCE_MAP de Studio (copia literal en tests/fixtures/format-reference-map.mjs)', () => {
+  const fixture = read('tests/fixtures/format-reference-map.mjs');
+  assert.match(fixture, /commit 0e93f881034fc80cf9b844131455476066f086f2/, 'la copia cita su commit de admira-studio');
+  for (const f of FORMATOS_ALTADIS) assert.equal(zonaDe(f), FORMAT_REFERENCE_MAP[f.id], f.id);
+  for (const [zona, z] of Object.entries(ZONAS)) assert.deepEqual([...z.formatos], FORMATOS_ALTADIS.map(f => f.id).filter(id => FORMAT_REFERENCE_MAP[id] === zona), zona);
   const esperado = { mostrador: ['01', '02', '04', '07'], mural: ['03', '05', '06', '14', '15', '16', '17'], columna: ['10', '11', '12', '13'], superstretch: ['09', '18'], cubo: ['08'] };
   for (const [zona, ns] of Object.entries(esperado)) {
     assert.deepEqual([...ZONAS[zona].formatos], ns.map(n => `cliente-${n}`), zona);
@@ -95,14 +100,22 @@ test('recortes: cubren el lienzo exacto, sin huecos ni solapes, y cada pantalla 
   }
   for (const plan of TODOS) {
     const f = formatoDe(plan.formato.id);
-    assert.deepEqual(plan.pantallas.map(s => s.recorte), celdas(f).map(({ x, y, w, h }) => ({ x, y, w, h })), plan.id);
+    const s0 = plan.pantallas[0];
+    if (s0.forma) {
+      // El cubo: sus 4 caras cubren el lienzo y la pantalla del plano es la cara que da a la sala.
+      const caras = s0.cubo.caras.map(c => c.recorte);
+      assert.equal(caras.reduce((a, c) => a + c.w * c.h, 0), f.ancho * f.alto, plan.id);
+      for (let i = 0; i < caras.length; i++) for (let j = i + 1; j < caras.length; j++) assert.ok(!overlap(caras[i], caras[j]), plan.id);
+      const w = plan.paredes.find(x => x.id === s0.pared), n = [-(w.b[1] - w.a[1]) / wallLength(w), (w.b[0] - w.a[0]) / wallLength(w)];
+      assert.deepEqual(s0.recorte, s0.cubo.caras.find(c => c.n[0] === n[0] && c.n[1] === n[1]).recorte, `${plan.id}: la cara que mira a la sala`);
+    } else assert.deepEqual(plan.pantallas.map(s => s.recorte), celdas(f).map(({ x, y, w, h }) => ({ x, y, w, h })), plan.id);
     for (const s of plan.pantallas) {
       assert.deepEqual(s.lienzo, [f.ancho, f.alto]);
       assert.deepEqual(s.resolucion, [s.recorte.w, s.recorte.h], 'resolucion = [recorte.w, recorte.h]');
       // La orientación cuadra con el recorte: plano-core lo pinta con su lienzo (screenGeometry) sin girarlo.
       assert.deepEqual(screenGeometry(s).lienzo, s.resolucion, `${s.id}: orientación`);
       const g = panelSize(s), r = s.recorte.w / s.recorte.h;
-      if (!s.forma) assert.ok(Math.abs(g.w / g.h - r) / r < 0.01, `${plan.id} ${s.id}: proporción física ${g.w / g.h} frente a la del recorte ${r}`);
+      assert.ok(Math.abs(g.w / g.h - r) / r < 0.01, `${plan.id} ${s.id}: proporción física ${g.w / g.h} frente a la del recorte ${r}`);
     }
   }
 });
@@ -160,7 +173,16 @@ test('cada zona va donde toca y con tamaños físicos plausibles', () => {
     if (zona === 'cubo') {
       assert.equal(s0.forma, 'cubo-4-caras'); assert.equal(s0.cubo.caras.length, 4);
       assert.deepEqual(s0.cubo.caras.map(c => c.recorte.x), [0, 400, 800, 1200]);
-      assert.ok(plan.mobiliario.some(m => m.id === 'm-peana'), label + ': peana');
+      const peana = plan.mobiliario.find(m => m.id === 'm-peana');
+      assert.ok(peana, label + ': peana');
+      // En el plano, UNA cara (0,75 × 1,125 m, 400×600 px), donde está la cara que da a la sala: no un LED plano de 3 m.
+      assert.deepEqual(s0.dimensiones, { ancho: 0.75, alto: 1.125 }); assert.deepEqual(s0.resolucion, [400, 600]);
+      assert.equal(s0.orientacion, 'vertical'); assert.equal(s0.pulgadas, 53.2);
+      assert.deepEqual(screenGeometry(s0).lienzo, [400, 600]);
+      assert.equal(s0.separacion, Math.round((furnitureAgainstWall(peana, plan.paredes.find(x => x.id === s0.pared)).dist + s0.cubo.lado) * 1000) / 1000);
+      assert.equal(s0.z, s0.cubo.peana);
+      assert.match(plan.fuente.pantallas, /^1 × cubo LED de 4 caras de 400×600 px \(0,75 × 1,125 m cada una, paso 1,875 mm\) sobre peana de 0,9 m/);
+      assert.doesNotMatch(plan.fuente.avisos.join(' '), /`|campo|desplegad/, 'aviso sin jerga');
     }
     for (const s of plan.pantallas) {
       if (s.tecnologia === 'lcd') { assert.ok(s.pulgadas >= 9.7 && s.pulgadas <= 88, `${label}: ${s.pulgadas}″`); assert.equal(s.dimensiones, undefined); }
@@ -176,7 +198,20 @@ test('cada zona va donde toca y con tamaños físicos plausibles', () => {
   assert.deepEqual(aspectoDe(1920, 540), [32, 9]); assert.equal(aspectoDe(960, 540), null); assert.equal(aspectoDe(480, 852), null);
   const vw = TODOS.find(x => x.id === 'altadis-xtanco-15');
   assert.ok(vw.pantallas.every(s => s.pulgadas === 49 && s.orientacion === 'horizontal'));
-  assert.deepEqual(resumenEspacio(vw).conjunto, { w: 4.34, h: 0.61 });
+  // Sin redondeos intermedios: el conjunto son las pantallas pegadas, exactas (la página redondea una vez).
+  const r = resumenEspacio(vw);
+  assert.equal(r.conjunto.w, 4 * r.panel.w); assert.equal(r.conjunto.h, r.panel.h);
+  assert.equal(r.conjunto.h, panelSize({ pulgadas: 49 }).h);
+  // La columna 1X2 V: 46″ donde cabe (Starbucks, 3 m) y 43″ donde no (Xtanco, 2,9 m), y el aviso sólo donde va de 43″.
+  const c12 = tipo => TODOS.find(x => x.id === `altadis-${tipo}-12`);
+  assert.ok(c12('cafe').pantallas.every(s => s.pulgadas === 46)); assert.deepEqual(avisosEspacio(c12('cafe')), []); assert.equal(c12('cafe').fuente.avisos, undefined);
+  assert.ok(c12('xtanco').pantallas.every(s => s.pulgadas === 43));
+  assert.match(c12('xtanco').fuente.avisos[0], /43″: con 46″ la columna no cabe bajo el techo de 2,9 m/);
+  assert.match(c12('xtanco').fuente.pantallas, /LCD de 43″ vertical/); assert.match(c12('cafe').fuente.pantallas, /LCD de 46″ vertical/);
+  // Sincronía: SINCRO LOGO con los dos SINCRO VW (cliente-05 y cliente-06), con la misma duración.
+  assert.deepEqual([...SINCRO['cliente-04']], ['cliente-05', 'cliente-06']); assert.deepEqual([...SINCRO['cliente-06']], ['cliente-04']);
+  for (const id of ['cliente-04', 'cliente-05', 'cliente-06']) for (const plan of TODOS.filter(x => x.formato.id === id)) assert.match(plan.fuente.sincro, /misma duración/, plan.id);
+  assert.match(TODOS.find(x => x.id === 'altadis-cafe-06').fuente.sincro, /cliente-04 \(SINCRO LOGO\)/);
 });
 
 test('regenerar da ficheros idénticos a los publicados, y el índice cumple el contrato admira.espacios-formato/1', () => {
@@ -223,21 +258,37 @@ test('enlaces, parámetros y /arquitecto formatos', () => {
   assert.deepEqual(parametrosEspacio('?espacio=altadis-cafe-12'), { formato: 'cliente-12', tipo: 'cafe' });
   assert.deepEqual(parametrosEspacio('?arg=formatos-cliente-08-cafe'), { formato: 'cliente-08', tipo: 'cafe' });
   assert.deepEqual(parametrosEspacio('?arg=formatos'), { formato: 'cliente-01', tipo: 'xtanco' });
+  assert.deepEqual(parametrosEspacio('?arg=formatos-99-cafe'), { formato: 'cliente-01', tipo: 'cafe', desconocido: true }, 'un formato que no existe se dice');
+  assert.deepEqual(leerEspacio('pantalla gigante'), { formato: '', tipo: '', desconocido: true });
+  assert.deepEqual(leerEspacio('cubos de basura'), { formato: '', tipo: '', desconocido: true }, '\\b(cubo|cube)\\b');
+  // Claves del prototipo: nunca son un tipo de espacio; con un tipo no válido, el Xtanco.
+  for (const raro of ['constructor', '__proto__', 'toString', 'hasOwnProperty', '', undefined, null]) {
+    assert.equal(tipoEspacio(raro), 'xtanco', String(raro));
+    assert.equal(espacioDeFormato('cliente-03', raro).id, 'altadis-xtanco-03', String(raro));
+    assert.equal(urlArquitecto('cliente-03', raro), 'arquitecto.html?formato=cliente-03&tipo=xtanco', String(raro));
+  }
+  for (const raro of ['constructor', '__proto__', 'toString']) assert.deepEqual(parametrosEspacio(`?formato=cliente-03&tipo=${raro}`), { formato: 'cliente-03', tipo: 'xtanco' }, raro);
   for (const q of ['', '?formato=cliente-19', '?formato=../x', '?arg=crear-cafeteria', '?espacio=altadis-bar-01', '?tipo=cafe']) assert.equal(parametrosEspacio(q), null, q);
   assert.deepEqual(leerEspacio('15 starbucks'), { formato: 'cliente-15', tipo: 'cafe' });
   assert.deepEqual(leerEspacio('el sincro vw 4x1 h en un estanco'), { formato: 'cliente-06', tipo: 'xtanco' });
   assert.deepEqual(leerEspacio('cubo'), { formato: 'cliente-08', tipo: '' });
   assert.deepEqual(parseOrden('/arquitecto formatos 15 starbucks'), { orden: 'crear', tipo: '', resto: '15 starbucks', formatos: true });
+  assert.deepEqual(parseOrden('formatos 15'), { orden: 'crear', tipo: '', resto: '15', formatos: true });
+  // «formato» / «format» sueltos por voz: sólo desde Crear (la página mira `contextual`); con /arquitecto, siempre.
+  assert.equal(parseOrden('formato vertical de la pantalla 3').contextual, true);
+  assert.equal(parseOrden('format 12').contextual, true);
+  assert.equal(parseOrden('/arquitecto formato 12').contextual, undefined);
+  assert.equal(parseOrden('arquitecto format 12').contextual, undefined);
   assert.deepEqual(parametros('?arg=formatos-15-cafe'), { orden: 'crear', tipo: '', locationId: '' }, 'no lanza una creación por tipo');
 });
 
-test('dibujo: el cubo en su sitio de la sala y sus 4 caras en el alzado; miniaturas de la galería', () => {
+test('dibujo: el cubo en su sitio de la sala y su cara a la sala en el alzado; miniaturas de la galería', () => {
   const cubo = TODOS.find(p => p.id === 'altadis-cafe-08'), s = cubo.pantallas[0];
   const planta = svgPlanta(cubo, cubo.pantallas, { wallId: s.pared, nuevos: new Set([s.id]) });
   assert.match(planta.cuerpo, /class="scr scr-cubo new"/);
   const alzado = svgAlzado(cubo, cubo.pantallas, s.pared, { nuevos: new Set([s.id]) });
-  assert.equal((alzado.cuerpo.match(/class="scr-body"/g) || []).length, 4);
-  for (const c of ['C1', 'C2', 'C3', 'C4']) assert.match(alzado.cuerpo, new RegExp(`>${c}<`));
+  assert.equal((alzado.cuerpo.match(/class="scr-body"/g) || []).length, 1, 'una cara, no un LED desplegado');
+  assert.match(alzado.cuerpo, new RegExp(`width="${Math.round(s.dimensiones.ancho * 100 * 10) / 10}"`));
   const mini = svgMiniatura({ ancho: 3840, alto: 540, celdas: celdas('cliente-15') });
   assert.equal((mini.match(/class="mini-celda"/g) || []).length, 3);
   assert.match(svgMiniatura({ ancho: 1920, alto: 2160, celdas: celdas('cliente-11') }), /<line class="mini-celda" x1="[\d.]+" y1="17"/);
@@ -255,4 +306,9 @@ test('la página: «Espacio por formato · Altadis 18» en crear, con galería, 
   assert.match(read('espacios-formato.mjs'), /from '\.\/plano-generador\.mjs\?v=20261014-foto-1'/);
   assert.match(js, /parametrosEspacio\(location\.search\)/);
   assert.match(js, /if \(p\.formatos\) return abrirFormatos\(p\.resto\);/, '/arquitecto formatos desde el ⌘ Experto');
+  assert.match(js, /if \(parsed\.formatos && parsed\.contextual && st\.orden !== 'crear'\) parsed = \{ orden: '', tipo: '', resto: texto \};/, 'por voz, «formato» no saca de Reformar');
+  assert.match(js, /catch \{ status\(tr\('espacioFallo'/, 'si falla el espacio, un mensaje del formato y no el de las medidas');
+  assert.match(js, /los18Hint: 'una celda por pantalla física'/);
+  assert.match(html, /data-t="los18Hint">una celda por pantalla física</, 'el texto fijo es el mismo que el traducido');
+  assert.doesNotMatch(js + read('espacios-formato.mjs'), /TIPOS_ESPACIO\[(q\.get|u\.searchParams|tipoPedido)|!TIPOS_ESPACIO\[|TIPOS_ESPACIO\[[^\]]+\] \?/, 'sin buscar tipos por claves sin validar');
 });

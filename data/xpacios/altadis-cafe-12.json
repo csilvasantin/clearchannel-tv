@@ -28,12 +28,9 @@
   "fuente": {
     "titulo": "Espacio tipo Altadis 18 · plano tipo inventado, no es un levantamiento · Cafetería Starbucks · VIDEOWALL 1X2 V",
     "medidas": "Cafetería Starbucks de 7,9 × 12,65 m (99,9 m²) y 3 m de alto: las medidas medias del tipo cafeteria del generador de Xpacios (semilla 2)",
-    "pantallas": "2 × LCD de 43″ vertical del formato cliente-12 (VIDEOWALL 1X2 V, 540×1920), en la zona columna: tamaños físicos supuestos, por confirmar con Altadis",
+    "pantallas": "2 × LCD de 46″ vertical del formato cliente-12 (VIDEOWALL 1X2 V, 540×1920), en la zona columna: tamaños físicos supuestos, por confirmar con Altadis",
     "formato": "admira.studio/adaptaciones/perfil-cliente-18.json · cliente-12 · «ALTADIS Resoluciones y formatos, p. 3» (sha256 16a17b2f81c5713d5d0fc676a02d2192fb95ad07ecb13e29dbec1b09da5239f7)",
     "requisitos": "MP4 / H264 / 25 fps; SINCRO VW y SINCRO LOGO con la misma duración",
-    "avisos": [
-      "Dos LCD verticales apiladas de 43″: con 46″ la columna no cabe bajo un techo de 2,9 m con la base a 0,9 m."
-    ],
     "itil": "Sin inventario: pantallas en estado «propuesta» e itil null; el maestro del ITIL es Yokup"
   },
   "planta": {
@@ -291,7 +288,7 @@
       "x": 7.45,
       "y": 0.8,
       "w": 0.45,
-      "d": 1.76,
+      "d": 1.72,
       "alto": 1.8
     }
   ],
@@ -321,12 +318,12 @@
       ],
       "tecnologia": "lcd",
       "orientacion": "vertical",
-      "pulgadas": 43,
+      "pulgadas": 46,
       "grupo": "formato-12",
       "grupoNombre": "VIDEOWALL 1X2 V",
       "subgrupo": "F1",
-      "s": 2.882,
-      "z": 1.852,
+      "s": 2.864,
+      "z": 1.918,
       "montaje": "cabecera-lineal",
       "separacion": 0.05,
       "pared": "D",
@@ -357,11 +354,11 @@
       ],
       "tecnologia": "lcd",
       "orientacion": "vertical",
-      "pulgadas": 43,
+      "pulgadas": 46,
       "grupo": "formato-12",
       "grupoNombre": "VIDEOWALL 1X2 V",
       "subgrupo": "F2",
-      "s": 2.882,
+      "s": 2.864,
       "z": 0.9,
       "montaje": "cabecera-lineal",
       "separacion": 0.05,

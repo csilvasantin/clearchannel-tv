@@ -28,11 +28,11 @@
   "fuente": {
     "titulo": "Espacio tipo Altadis 18 · plano tipo inventado, no es un levantamiento · Cafetería Starbucks · LED CUBO MADRID-062",
     "medidas": "Cafetería Starbucks de 7,9 × 12,65 m (99,9 m²) y 3 m de alto: las medidas medias del tipo cafeteria del generador de Xpacios (semilla 2)",
-    "pantallas": "1 × LED de 3 × 1,125 m (paso 1,875 mm) del formato cliente-08 (LED CUBO MADRID-062, 1600×600), en la zona cubo: tamaños físicos supuestos, por confirmar con Altadis",
+    "pantallas": "1 × cubo LED de 4 caras de 400×600 px (0,75 × 1,125 m cada una, paso 1,875 mm) sobre peana de 0,9 m del formato cliente-08 (LED CUBO MADRID-062, 1600×600), en la zona cubo: tamaños físicos supuestos, por confirmar con Altadis",
     "formato": "admira.studio/adaptaciones/perfil-cliente-18.json · cliente-08 · «ALTADIS Resoluciones y formatos, p. 3» (sha256 16a17b2f81c5713d5d0fc676a02d2192fb95ad07ecb13e29dbec1b09da5239f7)",
     "requisitos": "MP4 / H264 / 25 fps; SINCRO VW y SINCRO LOGO con la misma duración",
     "avisos": [
-      "Cubo de 4 caras de 400×600 px (supuesto). El plano no modela prismas: en el alzado se ve desplegado y el campo `cubo` da su centro y sus caras."
+      "Cubo LED de 4 caras de 400×600 px cada una (medidas supuestas). En el plano se ve la cara que da a la sala; las 4 caras, en el gemelo 3D."
     ],
     "itil": "Sin inventario: pantallas en estado «propuesta» e itil null; el maestro del ITIL es Yokup"
   },
@@ -310,20 +310,20 @@
         600
       ],
       "recorte": {
-        "x": 0,
+        "x": 1200,
         "y": 0,
-        "w": 1600,
+        "w": 400,
         "h": 600
       },
       "resolucion": [
-        1600,
+        400,
         600
       ],
       "tecnologia": "led",
-      "orientacion": "horizontal",
-      "pulgadas": 126.1,
+      "orientacion": "vertical",
+      "pulgadas": 53.2,
       "dimensiones": {
-        "ancho": 3,
+        "ancho": 0.75,
         "alto": 1.125
       },
       "pasoPixelMm": 1.875,
@@ -394,7 +394,7 @@
         ]
       },
       "montaje": "peana",
-      "separacion": 0.725,
+      "separacion": 1.1,
       "pared": "D",
       "fuente": "Espacio tipo Altadis · pantalla física supuesta, por confirmar"
     }

@@ -31,7 +31,7 @@
     "pantallas": "1 × LCD de 88″ horizontal del formato cliente-05 (SINCRO VW, 1920×540), en la zona mural: tamaños físicos supuestos, por confirmar con Altadis",
     "formato": "admira.studio/adaptaciones/perfil-cliente-18.json · cliente-05 · «ALTADIS Resoluciones y formatos, p. 3» (sha256 16a17b2f81c5713d5d0fc676a02d2192fb95ad07ecb13e29dbec1b09da5239f7)",
     "requisitos": "MP4 / H264 / 25 fps; SINCRO VW y SINCRO LOGO con la misma duración",
-    "sincro": "Se emite con cliente-04 (SINCRO LOGO) con la misma duración",
+    "sincro": "Se emite sincronizado con cliente-04 (SINCRO LOGO), con la misma duración (SINCRO VW y SINCRO LOGO, regla del PDF)",
     "avisos": [
       "El nombre dice videowall pero no trae rejilla: Studio lo trata como 1×1 y aquí es una LCD estirada 32:9. Si en la tienda son dos pantallas (como el 2X1 H de 1920×540), hay que cambiarlo."
     ],

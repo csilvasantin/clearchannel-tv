@@ -31,7 +31,7 @@
     "pantallas": "1 × LCD de 55″ horizontal del formato cliente-04 (SINCRO LOGO, 1920×1080), en la zona mostrador: tamaños físicos supuestos, por confirmar con Altadis",
     "formato": "admira.studio/adaptaciones/perfil-cliente-18.json · cliente-04 · «ALTADIS Resoluciones y formatos, p. 3» (sha256 16a17b2f81c5713d5d0fc676a02d2192fb95ad07ecb13e29dbec1b09da5239f7)",
     "requisitos": "MP4 / H264 / 25 fps; SINCRO VW y SINCRO LOGO con la misma duración",
-    "sincro": "Se emite con cliente-05 (SINCRO VW) con la misma duración",
+    "sincro": "Se emite sincronizado con cliente-05 (SINCRO VW) o cliente-06 (SINCRO VW 4X1 H), con la misma duración (SINCRO VW y SINCRO LOGO, regla del PDF)",
     "itil": "Sin inventario: pantallas en estado «propuesta» e itil null; el maestro del ITIL es Yokup"
   },
   "planta": {
