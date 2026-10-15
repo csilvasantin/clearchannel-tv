@@ -63,7 +63,8 @@ export async function handleBugitoXpacios(req,env,fetcher=fetch) {
   // One active canonical incident per exact destination, fault and severity.
   const identity=JSON.stringify([project.id,loc.id,screen.id,fault,severity]);
   const digest=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(identity)))].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,32);
-  const resource=loc.id+':'+equipmentKey(screen)+':bugito:'+digest;
+  const equipment=equipmentKey(screen);if(!equipment)throw fail('equipment_reference_invalid',409);
+  const resource=loc.id+':'+equipment+':bugito:'+digest;
   if(resource.length>160)throw fail('equipment_reference_too_long',409);
   const payload={resource,subject:('PRUEBA BUGITO · '+screen.name+' · '+fault).slice(0,200),kind:'screen',severity,source:'bugito-xpacios',by:'Bugito · '+actor,loc:loc.id,loc_name:loc.name,
    detail:('Incidencia de prueba solicitada por '+actor+'. Proyecto: '+project.label+' ('+project.id+'). Establecimiento: '+loc.name+' ('+loc.id+'). Pantalla: '+screen.name+' ('+screen.id+'). Tipo: '+fault+'. Gravedad: '+severity+'. Registro lógico solicitado; no acredita un fallo físico. Queda abierta hasta su gestión y cierre desde la ficha.').slice(0,1800)};

@@ -50,4 +50,4 @@ test('Google signature verification and owner role are required server-side',asy
  }
 });
 
-test('inventory references retain verified codes, catalogue numbers and surface keys',()=>{assert.equal(equipmentKey({id:'PDG103-PAN-01',name:'Screen'}),'PDG103-PAN-01');assert.equal(equipmentKey({id:'idIoT',name:'Pared 1',number:'1'}),'pantalla-1');assert.equal(equipmentKey({id:'idIoT',name:'Menu board digital'}),'menu-board-digital')});
+test('inventory references retain verified codes, catalogue numbers and surface keys',()=>{assert.equal(equipmentKey({id:'PDG103-PAN-01',name:'Screen'}),'PDG103-PAN-01');assert.equal(equipmentKey({id:'idIoT',name:'Pared 1',number:'1'}),'pantalla-1');assert.equal(equipmentKey({id:'idIoT',name:'Starbucks TPV POS',category:'tpv',equipment_number:'1'}),'tpv-1');assert.equal(equipmentKey({id:'idIoT',name:'Menu board digital'}),'menu-board-digital')});
