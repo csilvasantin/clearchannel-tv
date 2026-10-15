@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Bugito genera incidencias persistentes por proyecto, establecimiento y pantalla o TPV, con órdenes en español e inglés.",
-    "El mapa muestra verde sin incidencias, amarillo con incidencias abiertas y rojo para graves o totales, también en agrupaciones.",
-    "Los destinos se comprueban en el servidor y las incidencias quedan abiertas hasta su gestión en admira.app."
+    "Login con Google sin salir de la página: el botón de la cabecera abre el popup de cuentas de Google en vez de saltar al backoffice.",
+    "La sesión se verifica con la misma regla que el backoffice y se guarda donde él la lee: al entrar en el backoffice ya estás dentro.",
+    "Con sesión, la cabecera muestra «Backoffice». Sin Google disponible, el enlace de siempre sigue funcionando."
   ],
   "nativeClearChannel": {
     "enabled": true,

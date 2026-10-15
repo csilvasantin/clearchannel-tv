@@ -223,6 +223,8 @@
   // Marca blanca (FLT-101331): el mismo fichero que carga la portada. Sin marca activa no
   // inserta nada ni habla con admiranext.com; con marca, viste la barra y los paneles.
   load('marca-blanca.js').catch(error => console.warn(error));
+  // Login con el popup de Google sin salir de la página (FLT-102490); en el backoffice no actúa.
+  load('login-google.js').catch(error => console.warn(error));
   // ⌘ EXPERTO · CLI con el look de digitalavatar.ai (Carlos, 4-oct-2026): piel compartida de
   // la suite servida desde admiranext.com/suite. Reviste el panel; los verbos siguen siendo estos.
   (() => {
