@@ -19,3 +19,10 @@ test('una marca recordada «alsea» también es Starbucks; las demás no cambian
   assert.equal(api.decide('?marca=altadis', pestaña(null)).id, 'altadis');
   assert.equal(api.decide('?marca=admira', pestaña(null)).id, null);
 });
+
+test('admira.biz publica este cargador (no el de la base preservada) y la portada lo pide con sello nuevo', async () => {
+  const {BIZ_ASSET_FILES} = await import('../server/biz-assets.mjs');
+  assert.ok(BIZ_ASSET_FILES.includes('marca-blanca.js'));
+  const {readFileSync} = await import('node:fs');
+  assert.match(readFileSync(new URL('../index.html', import.meta.url), 'utf8'), /marca-blanca\.js\?v=20261015-alsea-1/);
+});

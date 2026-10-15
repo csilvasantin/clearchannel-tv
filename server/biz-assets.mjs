@@ -9,6 +9,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'global-tour.js', 'global-tour.css', 'circuit-overview.js',
   // Login con el popup de Google en la cabecera (FLT-102490).
   'login-google.js',
+  // Marca blanca con el alias «alsea» → Starbucks (Carlos, 15-oct-2026). Sólo cambia eso respecto a la base.
+  'marca-blanca.js',
   'index.html', 'app.js', 'planner-core.js', 'inventory-evidence.js', 'expert-commands.js', 'intro.js', 'detail.html',
   'walk.html', 'walk.mjs', 'walk-launch.mjs', 'walk-core.mjs', 'walk.css', 'help/index.html',
   // /redistribucion (FLT-102063): plano y obras del Xpacio; ▤ Subir plano (DCL-58288891486617b36ed8777d);
