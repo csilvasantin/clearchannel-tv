@@ -1620,6 +1620,7 @@ function stopCircuitDemo(done = false) {
   if (previoState.open && previoState.fromTour) closePrevio({stopTour:false});
   if (circuitDemo.running) { tourCamera.cancel(); document.getElementById('status')?.classList.remove('show'); }
   if (circuitDemo.timer) clearTimeout(circuitDemo.timer);
+  endGlobalTour();
   const total = circuitDemo.items.length;
   circuitDemo = { running:false, items:[], index:0, timer:null };
   updateCircuitDemoUi();
@@ -1683,7 +1684,168 @@ function startCircuitDemo() {
   circuitDemo = { running:true, items, index:0, timer:null };
   updateMapTourStop();
   renderCircuitSelector();
+  if (beginGlobalTour(items)) { showGlobalTourPoint(circuitDemo); return; }
   showCircuitDemoPoint();
+}
+
+// ─── Tour DooH global (global-tour.js · FLT-102469, Alsea México) ──
+// Circuitos con vista de conjunto: antes de cada parada, el país entero con la ruta y la
+// parada encendida; después, bajada a pie de puerta y giro lento alrededor de la tienda.
+// Comparte circuitDemo y la cámara que espera a las teselas con el Tour DooH de siempre.
+const GLOBAL_INTRO_MS = 3200, GLOBAL_LEG_MS = 1400, GLOBAL_DOOR_MS = 6000, GLOBAL_FINALE_MS = 12000;
+let globalTour = null;
+
+function globalTourConfig() {
+  return (window.GlobalTour && !previoTourMode) ? GlobalTour.config(selectedCircuitId) : null;
+}
+function globalTourFont() { return currentLayer === 'relieve' ? ['Noto Sans Bold'] : ['Open Sans Bold']; }
+function globalTourOverview(items) {
+  const b = GlobalTour.bounds(items);
+  const narrow = innerWidth < 760;
+  let cam = null;
+  try {
+    cam = map.cameraForBounds(b, {padding: narrow ? {top:190, bottom:150, left:28, right:28} : {top:210, bottom:180, left:110, right:350}});
+  } catch (_) {}
+  const center = cam && cam.center ? [cam.center.lng, cam.center.lat] : [(b[0][0] + b[1][0]) / 2, (b[0][1] + b[1][1]) / 2];
+  return {center, zoom: cam && Number.isFinite(cam.zoom) ? cam.zoom : 4.3, pitch: 0, bearing: 0};
+}
+function globalTourPaint(current, progress) {
+  const gt = globalTour;
+  if (!gt) return;
+  GlobalTour.setData(map, GlobalTour.routeData(gt.items, progress), GlobalTour.stopsData(gt.cfg, gt.items, current, LANG));
+}
+function globalTourLayers() {
+  const gt = globalTour;
+  // isStyleLoaded() es false mientras llegan teselas: basta con que existan las capas base.
+  if (!gt || !map.getSource('locs')) return;
+  GlobalTour.addLayers(map, gt.cfg, globalTourFont());
+  GlobalTour.setBaseLayers(map, false);
+  globalTourPaint(gt.current, gt.progress);
+}
+function beginGlobalTour(items) {
+  endGlobalTour();
+  const cfg = globalTourConfig();
+  if (!cfg || items.length < 2) return false;
+  splash.classList.add('hidden');
+  panel.classList.remove('open');
+  rotating = false;
+  if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
+  // Pantalla limpia: el panel del circuito se repliega (su lista sigue marcando la parada).
+  const panelEl = document.getElementById('circuit-panel');
+  const toggle = document.getElementById('circuit-toggle');
+  if (panelEl) panelEl.classList.add('collapsed');
+  if (toggle) toggle.textContent = '+';
+  globalTour = {cfg, items, current:0, progress:0, frame:0, hud:GlobalTour.createHud(document, cfg, items, LANG)};
+  document.body.classList.add('gt-on');
+  globalTourLayers();
+  return true;
+}
+function endGlobalTour() {
+  const gt = globalTour;
+  if (!gt) return;
+  globalTour = null;
+  document.body.classList.remove('gt-on');
+  if (gt.frame) cancelAnimationFrame(gt.frame);
+  gt.hud.destroy();
+  GlobalTour.removeLayers(map);
+  GlobalTour.setBaseLayers(map, true);
+  const panelEl = document.getElementById('circuit-panel');
+  const toggle = document.getElementById('circuit-toggle');
+  if (panelEl) panelEl.classList.remove('collapsed');
+  if (toggle) toggle.textContent = '−';
+}
+function globalTourAlive(run) { return !!globalTour && circuitDemo === run && run.running; }
+// La ruta del tramo recién volado se dibuja sola mientras se ve el país entero.
+function globalTourDrawLeg(run, from, to) {
+  return new Promise(resolve => {
+    const gt = globalTour, start = performance.now();
+    const step = now => {
+      if (!globalTourAlive(run) || globalTour !== gt) { resolve(); return; }
+      const k = Math.min(1, (now - start) / GLOBAL_LEG_MS), eased = 1 - Math.pow(1 - k, 3);
+      gt.progress = from + (to - from) * eased;
+      globalTourPaint(gt.current, gt.progress);
+      if (k < 1) gt.frame = requestAnimationFrame(step);
+      else { gt.frame = 0; resolve(); }
+    };
+    gt.frame = requestAnimationFrame(step);
+  });
+}
+// De la puerta al país: un solo vuelo (las teselas del país ya están desde la entrada) y una
+// espera corta a que se pinten; la cámara de destinos se reserva para bajar a la calle.
+function globalTourFly(run, camera) {
+  return new Promise(resolve => {
+    let done = false, timer = 0;
+    const finish = () => { if (done) return; done = true; clearTimeout(timer); map.off('moveend', onEnd); resolve(); };
+    const onEnd = () => {
+      let waited = 0;
+      const settle = () => {
+        if (!globalTourAlive(run) || (map.isStyleLoaded() && map.areTilesLoaded()) || waited >= 2500) { finish(); return; }
+        waited += 150; timer = setTimeout(settle, 150);
+      };
+      settle();
+    };
+    // Parar antes el giro de la puerta: su moveend no debe contar como llegada.
+    tourCamera.cancel();
+    map.stop();
+    map.on('moveend', onEnd);
+    map.flyTo({...camera, duration:4200, curve:1.6, essential:false});
+    timer = setTimeout(finish, 9000);
+  });
+}
+function globalTourPause(run, ms) {
+  return new Promise(resolve => { run.timer = setTimeout(resolve, ms); });
+}
+async function showGlobalTourPoint(run) {
+  if (!globalTourAlive(run)) return;
+  const gt = globalTour;
+  if (run.index >= run.items.length) { finishGlobalTour(run); return; }
+  const loc = run.items[run.index];
+  gt.current = run.index;
+  updateCircuitDemoUi();
+  // 1) Vista global: el país entero, la ruta hecha y la parada siguiente encendida.
+  gt.hud.setStop(run.index, 'overview');
+  globalTourPaint(gt.current, gt.progress);
+  setStatus(tf('demo_progress', {current:run.index + 1, total:run.items.length, name:loc.name}), true);
+  const door = GlobalTour.doorCamera(gt.cfg, loc, run.index, currentView === '3d');
+  if (run.index === 0) {
+    const overview = await tourCamera.navigate(globalTourOverview(run.items));
+    if (!globalTourAlive(run) || overview === 'cancelled') return;
+  } else {
+    await globalTourFly(run, globalTourOverview(run.items));
+    if (!globalTourAlive(run)) return;
+  }
+  tourCamera.prepare(door);
+  if (run.index === 0) await globalTourPause(run, GLOBAL_INTRO_MS);
+  else await globalTourDrawLeg(run, run.index - 1, run.index);
+  if (!globalTourAlive(run)) return;
+  // 2) A pie de puerta: calle, inclinación 3D y un giro lento alrededor de la tienda.
+  const arrived = await tourCamera.navigate(door, phase => {
+    const key = phase === 'preparing' ? 'map_preparing' : phase === 'loading' ? 'map_loading' : 'status_landing';
+    setStatus(t(key) + loc.name, true);
+  });
+  if (!globalTourAlive(run) || arrived === 'cancelled') return;
+  // Una tesela que tarda no para la demo: se sigue con lo que ya está pintado.
+  pushRecent(loc.id);
+  gt.hud.door(run.index);
+  setStatus(tf('demo_progress', {current:run.index + 1, total:run.items.length, name:loc.name}));
+  try { map.easeTo({bearing:door.bearing + 32, duration:GLOBAL_DOOR_MS, easing:k => k, essential:false}); } catch (_) {}
+  await globalTourPause(run, GLOBAL_DOOR_MS);
+  if (!globalTourAlive(run)) return;
+  run.index++;
+  showGlobalTourPoint(run);
+}
+async function finishGlobalTour(run) {
+  const gt = globalTour;
+  gt.current = run.items.length;  // todas las paradas, hechas
+  gt.progress = run.items.length - 1;
+  gt.hud.setStop(run.items.length, 'overview');
+  globalTourPaint(gt.current, gt.progress);
+  await globalTourFly(run, globalTourOverview(run.items));
+  if (!globalTourAlive(run)) return;
+  gt.hud.finish();
+  setStatus(tf('demo_done', {points:run.items.length}), true);
+  await globalTourPause(run, GLOBAL_FINALE_MS);
+  if (globalTourAlive(run)) stopCircuitDemo(true);
 }
 
 function toggleCircuitDemo() {
@@ -2528,6 +2690,7 @@ map.on('style.load', () => {
   try { map.setProjection({type: currentView === '3d' ? 'globe' : 'mercator'}); } catch(e) {}
   applySky();
   addLocationsLayer();
+  globalTourLayers();
 });
 map.on('load', applySky);
 
@@ -4072,11 +4235,11 @@ function locationCamera(loc, bearing = -20, zoom) {
 }
 
 function syncCircuitOverview(){
- const meta={kioskos:{name:'CanalKiosk',theme:'kiosk'},admiraxperience:{name:'AdmiraXperience',theme:'admira'},estancos:{name:'Xtanco',theme:'xtanco'}}[selectedCircuitId];
+ const meta={kioskos:{name:'CanalKiosk',theme:'kiosk'},admiraxperience:{name:'AdmiraXperience',theme:'admira'},estancos:{name:'Xtanco',theme:'xtanco'},alsea_mexico:{name:'Alsea México',theme:'admira',color:'#00704a'}}[selectedCircuitId];
  const active=!!(tourRun||circuitDemo.running);
  if(!active||!meta){circuitOverview?.destroy();circuitOverview=null;return;}
  if(circuitOverview?.key===selectedCircuitId)return;
- circuitOverview?.destroy();const data={type:'FeatureCollection',features:currentCircuitItems().map(l=>({type:'Feature',geometry:{type:'Point',coordinates:l.coords},properties:{name:l.name,color:meta.theme==='xtanco'?'#ff4da6':meta.theme==='kiosk'?'#50c8ff':'#376c42'}}))};
+ circuitOverview?.destroy();const data={type:'FeatureCollection',features:currentCircuitItems().map(l=>({type:'Feature',geometry:{type:'Point',coordinates:l.coords},properties:{name:l.name,color:meta.color||(meta.theme==='xtanco'?'#ff4da6':meta.theme==='kiosk'?'#50c8ff':'#376c42')}}))};
  circuitOverview=CircuitOverview.create({map,getData:()=>data,style:STYLE_TIERRA,key:selectedCircuitId,...meta});
 }
 function updateMapTourStop() {
@@ -4143,6 +4306,8 @@ async function tourStep(btn) {
 }
 function tourToggle(btn) {
   if (tourRun) { tourStop(btn); return; }
+  // Circuito con tour global (Alsea México): el mismo botón lanza la vista de conjunto.
+  if (circuitMapFilterActive && globalTourConfig()) { toggleCircuitDemo(); return; }
   stopMapNavigation();
   const items = tourItems();
   if (!items.length) { setStatus(t('demo_empty')); return; }
@@ -4193,6 +4358,17 @@ function watchCircuitDeepLink() {
   const tick = () => { if (applyCircuitDeepLink() || ++tries > 24) return; setTimeout(tick, 500); };
   setTimeout(tick, 400);
 }
+// ?circuit=alsea_mexico&tour=1: el catálogo del KV llega unos segundos después del arranque;
+// se espera a que el circuito tenga sus puntos y el globo esté pintado antes de despegar.
+function watchGlobalTourDeepLink(c) {
+  let tries = 0;
+  const tick = () => {
+    const ready = selectedCircuitId === c && circuitDemoItems().length > 1 && map.isStyleLoaded();
+    if (ready) { setTimeout(() => { if (!circuitDemo.running) startCircuitDemo(); }, 1500); return; }
+    if (++tries < 40) setTimeout(tick, 500);
+  };
+  setTimeout(tick, 800);
+}
 function wireTour() {
   const b = document.getElementById('p-tour');
   if (b) b.onclick = (e) => { e.preventDefault(); tourToggle(b); };
@@ -4208,7 +4384,8 @@ function wireTour() {
       }
     }
     watchCircuitDeepLink();
-    if (q.get('tour') === '1' && b) setTimeout(() => { if (!tourRun) tourToggle(b); }, 1200);
+    if (q.get('tour') === '1' && c && window.GlobalTour && GlobalTour.config(c)) watchGlobalTourDeepLink(c);
+    else if (q.get('tour') === '1' && b) setTimeout(() => { if (!tourRun) tourToggle(b); }, 1200);
     // Previo DooH: ?circuit=alcampo&previo=1 → tour con previo; ?previo=<id>[&vista=detalle|interior-1] → previo de una tienda.
     const pv = q.get('previo');
     if (pv === '1' && c) {

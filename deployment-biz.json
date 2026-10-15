@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "El Arquitecto crea «Espacio por formato · Altadis 18»: los 18 formatos de pantalla de Altadis, cada uno en un Xtanco o en un Starbucks, con su ficha y la galería «Los 18».",
-    "36 planos compartidos y su índice (data/xpacios/altadis-18.json) para el gemelo de admira.store y las adaptaciones de admira.studio, con la rejilla y las zonas de Studio.",
-    "/arquitecto formatos [NN] [xtanco|starbucks] y el enlace directo arquitecto.html?formato=cliente-NN&tipo=xtanco|cafe."
+    "Tour DooH global de Alsea México: admira.biz/?circuit=alsea_mexico&tour=1 recorre 10 Starbucks en 10 estados, de Tijuana a Cancún.",
+    "Entre parada y parada, México entero con la ruta en arcos y la parada encendida; en cada tienda, bajada a pie de puerta en 3D con su ficha (estado, calle, nº de tienda, pantallas e impactos/día).",
+    "Raíl de los 10 estados, minimapa del país durante la visita y resumen final del circuito: 30 pantallas DooH · 15,5 K impactos/día. ES/EN y móvil."
   ],
   "nativeClearChannel": {
     "enabled": true,

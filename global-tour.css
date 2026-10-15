@@ -1,0 +1,40 @@
+/* Tour DooH global (global-tour.js): marca y raíl de estados arriba, ficha de la puerta abajo. */
+.gt-hud{position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:11;display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px 18px;border-radius:16px;background:linear-gradient(180deg,rgba(0,34,24,.93),rgba(3,18,13,.9));border:1px solid color-mix(in srgb,var(--gt-accent) 55%,transparent);box-shadow:0 18px 48px rgba(0,0,0,.45);color:#fff;font:13px/1.35 system-ui,-apple-system,'Segoe UI',sans-serif;pointer-events:none;max-width:calc(100vw - 32px);box-sizing:border-box;animation:gt-hud-in .5s ease both}
+.gt-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.gt-dot{width:30px;height:30px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 35%,#fff 0 18%,var(--gt-accent) 19% 100%);box-shadow:0 0 0 3px rgba(255,255,255,.12),0 0 18px var(--gt-accent)}
+.gt-brand strong{display:block;font-size:17px;letter-spacing:.01em}
+.gt-sub{display:block;font-size:12px;color:var(--gt-light);opacity:.92}
+.gt-rail{display:flex;gap:6px;margin:0;padding:0;list-style:none}
+.gt-rail li{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:38px;padding:4px 4px 3px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);transition:background .35s,border-color .35s,transform .35s,box-shadow .35s}
+.gt-rail b{font-size:12px}
+.gt-rail span{font-size:9.5px;letter-spacing:.06em;opacity:.85}
+.gt-rail li.done{background:var(--gt-deep);border-color:var(--gt-accent)}
+.gt-rail li.current{background:#fff;color:var(--gt-deep);border-color:#fff;transform:translateY(-2px);box-shadow:0 0 16px var(--gt-accent)}
+.gt-card{position:fixed;left:24px;bottom:72px;z-index:11;display:flex;gap:14px;align-items:center;width:min(430px,calc(100vw - 48px));box-sizing:border-box;padding:14px 18px 14px 16px;border-radius:16px;background:rgba(3,18,13,.93);border:1px solid color-mix(in srgb,var(--gt-accent) 55%,transparent);border-left:5px solid var(--gt-accent);box-shadow:0 18px 48px rgba(0,0,0,.5);color:#fff;font:13px/1.4 system-ui,-apple-system,'Segoe UI',sans-serif;pointer-events:none;animation:gt-card-in .45s ease both}
+.gt-card[hidden]{display:none}
+.gt-card-num{display:flex;align-items:baseline;font:700 40px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--gt-accent)}
+.gt-card-num small{font-size:14px;opacity:.7;margin-left:2px}
+.gt-card-body{display:flex;flex-direction:column;gap:3px;min-width:0}
+.gt-card-kicker{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gt-accent)}
+.gt-card-body strong{font-size:17px}
+.gt-card-street{color:#dfeee8}
+.gt-card-stats{font-size:12px;color:#a9cbbf}
+/* Durante el tour, la ficha y el raíl ya dicen dónde estamos: fuera la píldora «Buscando…». */
+body.gt-on .status-pill{display:none!important}
+@keyframes gt-hud-in{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes gt-card-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (max-width:760px){
+  .gt-hud{top:60px;padding:8px 10px;gap:7px;width:calc(100vw - 24px)}
+  .gt-dot{width:22px;height:22px}
+  .gt-brand strong{font-size:14px}
+  .gt-sub{font-size:10.5px}
+  .gt-rail{gap:3px}
+  .gt-rail li{min-width:0;width:30px;padding:3px 0}
+  .gt-rail span{font-size:7.5px}
+  .gt-card{left:12px;right:12px;bottom:124px;width:auto;padding:10px 12px}
+  .gt-card-num{font-size:28px}
+  .gt-card-body strong{font-size:15px}
+  /* En el móvil el raíl de estados ya da la vista global: fuera panel de circuito y minimapa. */
+  body.gt-on .circuit-panel,body.gt-on .cenital-floating{display:none!important}
+}
+@media (prefers-reduced-motion:reduce){.gt-hud,.gt-card{animation:none}.gt-rail li{transition:none}}
