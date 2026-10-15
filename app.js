@@ -1727,6 +1727,7 @@ function globalTourLayers() {
 }
 function beginGlobalTour(items) {
   endGlobalTour();
+  stopVisionGeneral();
   const cfg = globalTourConfig();
   if (!cfg || items.length < 2) return false;
   splash.classList.add('hidden');
@@ -1837,6 +1838,78 @@ async function showGlobalTourPoint(run) {
   run.index++;
   showGlobalTourPoint(run);
 }
+// ─── Visión general (vision-general.js · FLT-102501, «/vision general alsea») ──
+// El circuito entero desde arriba, con un semáforo por Xpacio. Persiste mientras se mira el mapa;
+// la cierran /parar, su × o empezar un tour.
+let visionGeneral = null;
+function visionConnection(loc, surf) {
+  try { return inventorySurfaceState(loc, surf).connection; } catch (_) { return 'unknown'; }
+}
+function visionGeneralLayers() {
+  const vg = visionGeneral;
+  if (!vg || !window.VisionGeneral || !map.getSource('locs')) return;
+  VisionGeneral.addLayers(map, globalTourFont());
+  GlobalTour.setBaseLayers(map, false);
+  VisionGeneral.setData(map, VisionGeneral.pointsData(vg.items, vg.health));
+  if (!visionGeneralLayers.clickBound) {
+    visionGeneralLayers.clickBound = true;
+    map.on('click', 'vg-dot', e => {
+      const id = e.features && e.features[0] && e.features[0].properties.id;
+      const loc = id && LOC_BY_ID.get(id);
+      if (loc) flyToLocation(loc);
+    });
+  }
+}
+function startVisionGeneral(circuitId) {
+  if (!window.VisionGeneral || !window.GlobalTour) return {ok:false, reason:'not_ready'};
+  stopVisionGeneral();
+  if (circuitDemo.running) stopCircuitDemo(false);
+  const def = circuitDefinitions()[circuitId];
+  const items = def && Array.isArray(def.items) ? def.items.filter(l => Array.isArray(l.coords) && l.coords.every(Number.isFinite)) : [];
+  if (!items.length) return {ok:false, reason:'empty'};
+  const health = VisionGeneral.circuitHealth(items, visionConnection, null);
+  splash.classList.add('hidden');
+  panel.classList.remove('open');
+  rotating = false;
+  if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
+  const panelEl = document.getElementById('circuit-panel');
+  const toggle = document.getElementById('circuit-toggle');
+  const collapsed = !!(panelEl && panelEl.classList.contains('collapsed'));
+  if (panelEl) panelEl.classList.add('collapsed');
+  if (toggle) toggle.textContent = '+';
+  visionGeneral = {circuitId, items, health, collapsed, timer:0,
+    card:VisionGeneral.createCard(document, def.label, items, health, LANG, stopVisionGeneral)};
+  document.body.classList.add('vg-on');
+  visionGeneralLayers();
+  // Con telemetría real, el semáforo se refresca solo cada 15 s (los estados de demo no cambian).
+  if (!health.demo) visionGeneral.timer = setInterval(refreshVisionGeneral, 15000);
+  tourCamera.navigate(globalTourOverview(items));
+  return {ok:true, count:items.length, totals:health.totals, demo:health.demo};
+}
+function refreshVisionGeneral() {
+  const vg = visionGeneral;
+  if (!vg) return;
+  vg.health = VisionGeneral.circuitHealth(vg.items, visionConnection, null);
+  VisionGeneral.setData(map, VisionGeneral.pointsData(vg.items, vg.health));
+  const label = (circuitDefinitions()[vg.circuitId] || {}).label || '';
+  const card = VisionGeneral.createCard(document, label, vg.items, vg.health, LANG, stopVisionGeneral);
+  vg.card.replaceWith(card); vg.card = card;
+}
+function stopVisionGeneral() {
+  const vg = visionGeneral;
+  if (!vg) return;
+  visionGeneral = null;
+  clearInterval(vg.timer);
+  vg.card.remove();
+  VisionGeneral.removeLayers(map);
+  if (!globalTour) GlobalTour.setBaseLayers(map, true);
+  document.body.classList.remove('vg-on');
+  const panelEl = document.getElementById('circuit-panel');
+  const toggle = document.getElementById('circuit-toggle');
+  if (panelEl && !vg.collapsed) panelEl.classList.remove('collapsed');
+  if (toggle && !vg.collapsed) toggle.textContent = '−';
+}
+
 async function finishGlobalTour(run) {
   const gt = globalTour;
   gt.current = run.items.length;  // todas las paradas, hechas
@@ -2694,6 +2767,7 @@ map.on('style.load', () => {
   applySky();
   addLocationsLayer();
   globalTourLayers();
+  visionGeneralLayers();
 });
 map.on('load', applySky);
 

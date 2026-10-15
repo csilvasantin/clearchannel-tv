@@ -104,7 +104,7 @@ test('default routines combine each featured client with demo and circuito', () 
   assert.ok(routines.some(r => r.label === 'Demo CanalKiosk'));
   assert.ok(routines.some(r => r.label === 'Circuito Alcampo'));
   // /demo dooh se atiende antes del parser, como /demo global (FLT-102469).
-  for (const r of routines) assert.equal(C.parse(r.command).ok || /^\/demo dooh /.test(r.command), true, r.command);
+  for (const r of routines) assert.equal(C.parse(r.command).ok || /^\/(?:demo dooh|vision general) /.test(r.command), true, r.command);
 });
 
 test('own routines are validated, deduplicated, persisted and deletable', () => {

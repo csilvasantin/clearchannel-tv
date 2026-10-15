@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Login con Google sin salir de la página: el botón de la cabecera abre el popup de cuentas de Google en vez de saltar al backoffice.",
-    "La sesión se verifica con la misma regla que el backoffice y se guarda donde él la lee: al entrar en el backoffice ya estás dentro.",
-    "Con sesión, la cabecera muestra «Backoffice». Sin Google disponible, el enlace de siempre sigue funcionando."
+    "Modo experto: /vision general alsea muestra Alsea México desde arriba con un semáforo por Starbucks: verde OK, amarillo con incidencia, rojo apagado.",
+    "Usa la telemetría real de las pantallas; mientras estas tiendas no tengan pantallas conectadas, enseña estados de demo marcados «DEMO · estados simulados».",
+    "La pastilla de idioma ENG/ESP está en la cabecera de todas las páginas: ya no desaparece al pasar al backoffice tras iniciar sesión."
   ],
   "nativeClearChannel": {
     "enabled": true,

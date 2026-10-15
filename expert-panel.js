@@ -190,6 +190,12 @@
       document.getElementById('circuit-zoom')?.click();
       return {ok: true, count: total};
     },
+    // /vision general (FLT-102501): circuito seleccionado y su semáforo desde arriba.
+    vision(circuitId) {
+      const r = ctx.circuit(circuitId);
+      if (r.ok === false) return r;
+      try { return startVisionGeneral(circuitId); } catch (_) { return {ok: false, reason: 'not_ready'}; }
+    },
     // /demo dooh (FLT-102469): circuito seleccionado y su Tour DooH; global si lo tiene (Alsea México).
     dooh(circuitId) {
       const r = ctx.circuit(circuitId);
@@ -209,6 +215,7 @@
     stop() {
       try { root.AdmiraDemo && root.AdmiraDemo.stop(); } catch (_) {}
       try { stopMapNavigation(); } catch (_) {}
+      try { stopVisionGeneral(); } catch (_) {}
     },
     clear() { log.replaceChildren(); },
     routines: () => allRoutines(),
@@ -252,7 +259,12 @@
     }else engine.registerAdapter({id:'biz-action-'+def.id,verbs:[action]});
   }
   document.addEventListener('admira:verb-registered',event=>{if(root.AdmiraExperto)suiteAction(root.AdmiraExperto,event.detail);});
-  function connectSuiteCommands(engine){engine.registerAdapter({id:'biz'});C.VERBS.forEach(def=>suiteAction(engine,def));}
+  // /vision general <cliente> como verbo propio de Biz en el motor común (sin atributos: recibe las palabras).
+  function visionVerb(engine){
+    const run=parts=>{const result=C.visionGeneral((Array.isArray(parts)?parts:[]).join(' '),ctx,lang());return record(result.command,Object.assign({parsed:{ok:result.ok,verb:{id:'vision',local:true},args:{},raw:result.command}},result),false);};
+    engine.registerAdapter({id:'biz-vision',verbs:[{name:'vision',alias:['visión','visiongeneral','vision-general'],desc:['visión general del circuito con semáforo por Xpacio: /vision general alsea','circuit overview with a status light per Xpace: /vision general alsea'],run}]});
+  }
+  function connectSuiteCommands(engine){engine.registerAdapter({id:'biz'});C.VERBS.forEach(def=>suiteAction(engine,def));visionVerb(engine);}
   (root.AdmiraCommandAdapters=root.AdmiraCommandAdapters||[]).push(connectSuiteCommands);
   if(root.AdmiraExperto)connectSuiteCommands(root.AdmiraExperto);
   function run(command,{echo=true}={}){
@@ -395,7 +407,7 @@
     const tick = () => {
       let ready = false;
       try {
-        const client = C.resolveDoohClient(linked.split(' ').slice(2).join(' '));
+        const client = C.resolveDoohClient(linked.split(' ').slice(2).join(' '));  // «/demo dooh X» y «/vision general X»
         ready = !!(root.AdmiraExperto && client && (circuitDefinitions()[client.circuit] || {items: []}).items.length && map.getSource('locs'));
       } catch (_) {}
       if (!ready) { if (++tries < 120) setTimeout(tick, 500); return; }
