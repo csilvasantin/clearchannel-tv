@@ -18,7 +18,7 @@ export function uniqueMatch(items,value,keys) {
 }
 export function screensOf(location) {
  const rows=[];
- for(const s of location.iot||[])if(/pantalla|screen|display|tpv|pos|ipad/i.test(s.type||''))rows.push({id:s.code||s.idIoT,name:s.name||s.idIoT,number:/pantalla|screen|display/i.test(s.type)?String(s.n||''):'',player:s.player||'',aliases:[s.code,s.idIoT,s.instance].filter(Boolean)});
+ for(const s of location.iot||[])if(/pantalla|screen|display|tpv|pos|ipad/i.test(s.type||''))rows.push({id:s.code||s.idIoT,name:s.name||s.idIoT,category:/tpv|pos/i.test(s.type)?'tpv':'pantalla',equipment_number:String(s.n||''),number:/pantalla|screen|display/i.test(s.type)?String(s.n||''):'',player:s.player||'',aliases:[s.code,s.idIoT,s.instance].filter(Boolean)});
  for(const s of location.surfaces||[])if(/pantalla|escaparate|totem|tótem|mupi|screen|display/i.test(s.surface||'')){
   const id=s.itil||s.idIoT||s.id||'surface:'+s.name;
   if(!rows.some(x=>x.id===id))rows.push({id,name:s.name||id,player:s.screen||'',aliases:[s.itil,s.idIoT,s.screen].filter(Boolean)});
@@ -27,3 +27,11 @@ export function screensOf(location) {
 }
 export const incidentLevel = row => row ? Number(row.severe)>0?2:Number(row.active)>0?1:0 : 0;
 export const INCIDENT_COLORS=Object.freeze({0:'#39d98a',1:'#ffd23f',2:'#ff4d4d',unknown:'#80909c'});
+
+// Existing inventory resolver understands <establishment>:<equipment>[:...].
+export function equipmentKey(screen) {
+ if(/^[A-Z0-9]{2,12}(?:-[A-Z0-9]{2,12}){1,3}$/.test(screen.id||''))return screen.id;
+ if(screen.category==='tpv'&&/^\d+$/.test(screen.equipment_number||''))return 'tpv-'+screen.equipment_number;
+ if(/^\d+$/.test(screen.number||''))return 'pantalla-'+screen.number;
+ return normalize(screen.name).replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60);
+}
