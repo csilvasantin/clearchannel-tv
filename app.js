@@ -614,13 +614,14 @@ function applyI18n(){
   if (trafficButton?.classList.contains('on')) trafficButton.textContent = t('stop_traffic');
   const h1 = document.getElementById('hero-h1');
   if (h1) h1.innerHTML = t('hero_h1a') + '<br><span class="grad">' + t('hero_h1b') + '</span>';
-  const langToggle = document.getElementById('lang-toggle');
-  if (langToggle) {
+  // El conmutador del menú (#lang-toggle) y la pastilla de la portada (#header-lang-toggle) dicen lo mismo.
+  document.querySelectorAll('#lang-toggle, #header-lang-toggle').forEach(langToggle => {
     const next = LANG === 'en' ? 'es' : 'en';
     langToggle.dataset.langTarget = next;
     langToggle.textContent = t('lang_toggle');
     langToggle.setAttribute('aria-label', t('lang_toggle_aria'));
-  }
+    if (langToggle.id === 'header-lang-toggle') langToggle.title = t('lang_toggle_aria');
+  });
   document.documentElement.lang = LANG;
   const siteName = window.ADMIRA_SITE_BRAND?.name || 'Clear Channel';
   const pageTitle = `${LANG === 'en' ? 'Commercial spaces map' : 'Mapa de espacios comerciales'} | ${siteName}`;
@@ -5013,9 +5014,9 @@ if (logoHome) {
 }
 
 // ─── Selector de idioma EN/ES ─────────────────────────────────────
-document.getElementById('lang-toggle')?.addEventListener('click', e => {
+document.querySelectorAll('#lang-toggle, #header-lang-toggle').forEach(boton => boton.addEventListener('click', e => {
   setLang(e.currentTarget.dataset.langTarget || (LANG === 'en' ? 'es' : 'en'));
-});
+}));
 setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
 
 // ── Selector de TARGET (criterios de contenido) — pastilla gemela del circuito ──
