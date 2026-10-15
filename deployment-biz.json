@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Enlace de demo: admira.biz/?ax_cmd=demo-dooh-alsea abre el modo experto y lanza /demo dooh alsea al cargar, listo para proyectar.",
-    "Solo admite /demo dooh [cliente] (lista blanca): un enlace no puede ejecutar otras órdenes del modo experto.",
-    "Espera a que el motor, el catálogo del circuito y el mapa estén listos y envía la orden por el mismo formulario que al teclearla."
+    "Tour DooH de Alsea México: con el modo experto abierto, la ficha de la puerta y el resumen final suben por encima del sello de versión en vez de pisarlo.",
+    "En el móvil la ficha conserva su sitio sobre el botón «Parar Tour DooH».",
+    "Enlace de demo: admira.biz/?ax_cmd=demo-dooh-alsea&lang=es abre el modo experto y lanza el tour al cargar."
   ],
   "nativeClearChannel": {
     "enabled": true,
