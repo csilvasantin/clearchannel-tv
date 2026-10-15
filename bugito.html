@@ -40,6 +40,7 @@
     <form id="bugito-xpacios" class="bx-form">
       <h2 data-bx-es="Bugito en Xpacios" data-bx-en="Bugito in Xpaces">Bugito en Xpacios</h2>
       <p data-bx-es="Genera una incidencia de prueba en un destino del catálogo. Queda abierta para su gestión en admira.app." data-bx-en="Create a test incident for a catalogue destination. It stays open for handling in admira.app.">Genera una incidencia de prueba en un destino del catálogo. Queda abierta para su gestión en admira.app.</p>
+      <div id="bx-signin"></div>
       <div class="bx-fields">
         <label><span data-bx-es="Proyecto" data-bx-en="Project">Proyecto</span><select name="project" aria-label="Proyecto"></select></label>
         <label><span data-bx-es="Establecimiento" data-bx-en="Establishment">Establecimiento</span><select name="location" aria-label="Establecimiento" disabled></select></label>
@@ -48,7 +49,7 @@
         <label><span data-bx-es="Tipo" data-bx-en="Type">Tipo</span><select name="fault"><option value="incident" data-bx-es="Incidencia" data-bx-en="Incident">Incidencia</option><option value="rotate" data-bx-es="Giro de pantalla" data-bx-en="Screen rotation">Giro de pantalla</option><option value="popup">Popup</option><option value="black" data-bx-es="Pantalla negra" data-bx-en="Black screen">Pantalla negra</option><option value="canvas" data-bx-es="Resolución" data-bx-en="Resolution">Resolución</option><option value="half" data-bx-es="Contenido parcial" data-bx-en="Partial content">Contenido parcial</option></select></label>
       </div>
       <label class="bx-order"><span data-bx-es="O escribe la orden completa" data-bx-en="Or write the complete order">O escribe la orden completa</span><input name="order" maxlength="1200" placeholder="genera una incidencia en el proyecto Starbucks en el establecimiento alsea-sbux-021 y en la pantalla 1"></label>
-      <p data-bx-es="Entra con tu cuenta de owner en Dispositivo real. Esta incidencia registra la prueba; la inyección de fallos físicos conserva sus controles propios." data-bx-en="Sign in as owner under Real device. This incident records the test; physical fault injection retains its own controls.">Entra con tu cuenta de owner en Dispositivo real. Esta incidencia registra la prueba; la inyección de fallos físicos conserva sus controles propios.</p>
+      <p data-bx-es="Entra con tu cuenta de owner. Esta incidencia registra la prueba; la inyección de fallos físicos conserva sus controles propios." data-bx-en="Sign in as owner. This incident records the test; physical fault injection retains its own controls.">Entra con tu cuenta de owner. Esta incidencia registra la prueba; la inyección de fallos físicos conserva sus controles propios.</p>
       <button type="submit" data-bx-es="Generar incidencia abierta" data-bx-en="Create open incident">Generar incidencia abierta</button>
       <p role="status" aria-live="polite"></p>
     </form>

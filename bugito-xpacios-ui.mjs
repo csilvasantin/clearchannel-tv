@@ -38,9 +38,14 @@ async function load(q={}){const r=await fetch(endpoint+'targets?'+new URLSearchP
 const form=document.querySelector('#bugito-xpacios');
 function translate(){
  for(const e of document.querySelectorAll('[data-bx-es]'))e.textContent=T(e.dataset.bxEs,e.dataset.bxEn);
+ const orderInput=document.querySelector('#bugito-xpacios [name=order]');if(orderInput)orderInput.placeholder=T('genera una incidencia en el proyecto Starbucks en el establecimiento alsea-sbux-021 y en la pantalla 1','create an incident in project Starbucks in store alsea-sbux-021 and on screen 1');
+ for(const select of document.querySelectorAll('#bugito-xpacios label select'))select.setAttribute('aria-label',select.closest('label').querySelector('span').textContent);
  const legend=document.querySelector('#incident-legend');if(legend)legend.title=T('Estado de las incidencias registradas; la ausencia de señal se consulta en el Supervisor.','Registered incident status; check missing device signals in Supervisor.');
 }
 if(form){
+ const loginHost=form.querySelector('#bx-signin');let loginTries=0;
+ const loginTimer=setInterval(()=>{loginTries++;if(window.BugitoSuper?.signedIn()){loginHost.textContent=T('Sesión de owner activa','Owner signed in');clearInterval(loginTimer);}else if(window.BugitoSuper?.init(loginHost,en()?'en':'es')||loginTries>=40)clearInterval(loginTimer);},500);
+ window.BugitoSuper?.onChange(()=>{if(window.BugitoSuper.signedIn())loginHost.textContent=T('Sesión de owner activa','Owner signed in');else window.BugitoSuper.renderButton(loginHost,en()?'en':'es');});
  const project=form.querySelector('[name=project]'),site=form.querySelector('[name=location]'),screen=form.querySelector('[name=screen]'),status=form.querySelector('[role=status]'),order=form.querySelector('[name=order]'),submit=form.querySelector('button[type=submit]');let revision=0;
  const options=(select,rows)=>{select.replaceChildren(new Option(T('Selecciona…','Select…'),''),...rows.map(r=>new Option(r.name||r.label,r.id)));select.disabled=!rows.length;};
  async function populate(){try{options(project,(await load()).projects);}catch(e){status.textContent=e.message;}}
