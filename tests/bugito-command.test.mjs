@@ -36,6 +36,10 @@ test('unauthorized, unbound and stale targets never receive a physical command',
 test('unknown delivery is persisted and a retry never sends a second command',async t=>{
  const s=setup(t,{lostReply:true});assert.equal((await handleBugitoCommand(s.request(),s.env,s.fetcher)).status,502);assert.equal((await handleBugitoCommand(s.request(),s.env,s.fetcher)).status,409);assert.equal(s.calls.filter(c=>c.url.endsWith('/locations/cmd')).length,1);
 });
+test('owner can restore the bound player after standby telemetry ages, while new faults remain blocked',async t=>{
+ const s=setup(t,{fresh:false});const r=await handleBugitoCommand(s.request('/bugito restaurar starbucks gran de gracia 51'),s.env,s.fetcher);assert.equal(r.status,202);assert.deepEqual(s.calls.filter(c=>c.url.endsWith('/locations/cmd')).map(c=>c.body.cmd),['resume','fault-clear']);
+ const denied=setup(t,{fresh:false,owner:false});assert.equal((await handleBugitoCommand(denied.request('/bugito restaurar starbucks gran de gracia 51'),denied.env,denied.fetcher)).status,403);assert.equal(denied.calls.some(c=>c.url.endsWith('/locations/cmd')),false);
+});
 test('status requires measured recent data as well as ACK; previous measurements are not evidence',async t=>{
  const s=setup(t);await handleBugitoCommand(s.request(),s.env,s.fetcher);await new Promise(r=>setTimeout(r,3));const r=await handleBugitoCommand(new Request('https://www.admira.biz/api/bugito/status?id='+ID),s.env,s.fetcher);const d=await r.json();assert.equal(d.executed,true);assert.equal(d.detected,true);
  assert.equal(observedFault('rotate',{lastSeen:10,device:{display:{paintedRotation:90}}},20,30),false);
