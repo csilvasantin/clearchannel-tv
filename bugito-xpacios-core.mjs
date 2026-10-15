@@ -27,3 +27,10 @@ export function screensOf(location) {
 }
 export const incidentLevel = row => row ? Number(row.severe)>0?2:Number(row.active)>0?1:0 : 0;
 export const INCIDENT_COLORS=Object.freeze({0:'#39d98a',1:'#ffd23f',2:'#ff4d4d',unknown:'#80909c'});
+
+// Existing inventory resolver understands <establishment>:<equipment>[:...].
+export function equipmentKey(screen) {
+ if(/^[A-Z0-9]{2,12}(?:-[A-Z0-9]{2,12}){1,3}$/.test(screen.id||''))return screen.id;
+ if(/^\d+$/.test(screen.number||''))return 'pantalla-'+screen.number;
+ return normalize(screen.name).replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60);
+}

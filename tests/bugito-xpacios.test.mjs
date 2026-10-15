@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {parseIncidentOrder,uniqueMatch,screensOf,incidentLevel} from '../bugito-xpacios-core.mjs';
+import {parseIncidentOrder,uniqueMatch,screensOf,incidentLevel,equipmentKey} from '../bugito-xpacios-core.mjs';
 import {handleBugitoXpacios} from '../server/bugito-xpacios.mjs';
 const project={id:'starbucks',label:'Starbucks',circuit:'alsea_starbucks'};
 const loc={id:'alsea-sbux-021',name:'Starbucks Paseo de Gracia',circuit:project.circuit,iot:[{idIoT:'Starbucks_PaseodeGracia_103_Pantalla_1',type:'Pantalla',n:1,name:'Pared · 1'},{idIoT:'Starbucks_PaseodeGracia_103_TPV_1',type:'TPV',n:1,name:'TPV'}],surfaces:[]};
@@ -26,7 +26,7 @@ test('ambiguous names never select first destination; TPV number does not shadow
 test('server-authorized command creates exact persistent canonical incident without sending hardware commands',async()=>{
  const {f,sent}=upstream();const r=await handleBugitoXpacios(request({order:'genera una incidencia en el proyecto Starbucks en el establecimiento alsea-sbux-021 y en la pantalla 1'}),env,f);
  assert.equal(r.status,201);const d=await r.json();assert.equal(d.id,'INC-ABC123');assert.equal(d.persistent,true);assert.equal(d.physical_fault,false);assert.equal(d.level,1);
- assert.equal(sent.length,1);assert.equal(sent[0].loc,loc.id);assert.equal(sent[0].severity,'normal');assert.match(sent[0].resource,/^bugito:xpacios:[a-f0-9]{32}$/);assert.match(sent[0].detail,/Starbucks_PaseodeGracia_103_Pantalla_1/);assert.ok(!('resolve'in sent[0]));assert.ok(!('close'in sent[0]));
+ assert.equal(sent.length,1);assert.equal(sent[0].loc,loc.id);assert.equal(sent[0].severity,'normal');assert.match(sent[0].resource,/^alsea-sbux-021:pantalla-1:bugito:[a-f0-9]{32}$/);assert.match(sent[0].detail,/Starbucks_PaseodeGracia_103_Pantalla_1/);assert.ok(!('resolve'in sent[0]));assert.ok(!('close'in sent[0]));
 });
 test('unauthenticated, wrong project, wrong screen, scope change and uncertain write fail closed',async()=>{
  const body={project:'starbucks',location:loc.id,screen:'1'};
@@ -49,3 +49,5 @@ test('Google signature verification and owner role are required server-side',asy
   assert.equal(r.status,status);assert.equal(verified,true);assert.equal(u.sent.length,status===201?1:0);
  }
 });
+
+test('inventory references retain verified codes, catalogue numbers and surface keys',()=>{assert.equal(equipmentKey({id:'PDG103-PAN-01',name:'Screen'}),'PDG103-PAN-01');assert.equal(equipmentKey({id:'idIoT',name:'Pared 1',number:'1'}),'pantalla-1');assert.equal(equipmentKey({id:'idIoT',name:'Menu board digital'}),'menu-board-digital')});
