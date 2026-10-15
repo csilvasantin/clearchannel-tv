@@ -13,17 +13,20 @@ const DEMO_EMAILS = new Set(['csilva@admira.com', 'csilvasantin@gmail.com']);
 export const DEMOS = [
   { id: 'jti', title: 'JTI · Xtanco', locationId: 'xtanco-valencia', circuit: 'jti_xtanco', twinUrl: 'https://www.xpaceos.com/admira-xp/?play=1&loc=xtanco-valencia' },
   { id: 'alsea', title: 'Alsea · Starbucks', locationId: 'alsea-sbux-021', circuit: 'alsea_starbucks', twinUrl: 'https://www.xpaceos.com/admira-xp/?autostart=xtanco&visual=matrix&loc=alsea-sbux-021' },
-  // Tour DooH global (FLT-102469): 10 Starbucks en 10 estados; «Tour DooH» abre ?circuit=alsea_mexico&tour=1.
-  { id: 'alsea-mexico', title: 'Alsea México · Starbucks · 10 estados', locationId: 'alsea-mx-sbux-06-cdmx', circuit: 'alsea_mexico', twinUrl: 'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021' },
+  // Tour DooH global (FLT-102469): 10 Starbucks en 10 estados; «Tour DooH» abre el modo experto con /demo dooh alsea.
+  { id: 'alsea-mexico', title: 'Alsea México · Starbucks · 10 estados', locationId: 'alsea-mx-sbux-06-cdmx', circuit: 'alsea_mexico', command: '/demo dooh alsea', twinUrl: 'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021' },
   { id: 'cafebreria', title: 'Cafebrería · Proyecto independiente', locationId: 'cafebreria-barcelona', circuit: 'cafebreria', twinUrl: 'https://www.pixeria.com/stock.html?type=xpaces&highlight=1790375438696-1ladz7' },
 ];
+// Demos abiertas a cualquier usuario registrado (Carlos, 15-oct-2026 · FLT-102469): el Tour DooH de
+// Alsea México. Las demás siguen siendo solo de las dos identidades de Carlos.
+const OPEN_DEMOS = new Set(['alsea-mexico']);
 export function sessionFromClaims(claims, now = Date.now()) {
   if (!claims || !GOOGLE_CLIENT_IDS.has(claims.aud) || !['accounts.google.com', 'https://accounts.google.com'].includes(claims.iss) || !claims.sub || !Number.isFinite(Number(claims.exp)) || Number(claims.exp) * 1000 <= now || ![true, 'true'].includes(claims.email_verified)) return null;
   const email = String(claims.email || '').toLowerCase();
   // Carlos explicitly authorized this verified identity for catalogue editing.
   const canManageCatalog = email.endsWith('@admira.com') || email === 'csilvasantin@gmail.com';
   if (!canManageCatalog && !DEMO_EMAILS.has(email)) return null;
-  return { email, expiresAt: Number(claims.exp) * 1000, canManageCatalog, demos: DEMO_EMAILS.has(email) ? DEMOS : [] };
+  return { email, expiresAt: Number(claims.exp) * 1000, canManageCatalog, demos: DEMO_EMAILS.has(email) ? DEMOS : DEMOS.filter(d => OPEN_DEMOS.has(d.id)) };
 }
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Vary': 'Authorization' } });
 export async function handleDemoSession(request, fetcher = fetch) {

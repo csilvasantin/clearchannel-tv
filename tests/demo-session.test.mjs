@@ -16,8 +16,12 @@ test('both Carlos identities receive separate JTI, Alsea and Cafebrería demos; 
     assert.match(session.demos[3].twinUrl, /highlight=1790375438696-1ladz7/);
   }
 });
-test('other staff retain management; unrelated and lookalike accounts get no access', () => {
-  assert.deepEqual(sessionFromClaims({ ...claims, email: 'staff@admira.com' }).demos, []);
+test('other staff retain management and get only the open Alsea México tour; unrelated and lookalike accounts get no access', () => {
+  // Carlos, 15-oct-2026 (FLT-102469): el Tour DooH de Alsea México, para cualquier usuario registrado.
+  const staff = sessionFromClaims({ ...claims, email: 'staff@admira.com' });
+  assert.equal(staff.canManageCatalog, true);
+  assert.deepEqual(staff.demos.map(d => d.id), ['alsea-mexico']);
+  assert.equal(staff.demos[0].command, '/demo dooh alsea');
   for (const email of ['someone@gmail.com', 'csilva@admira.com.attacker.test', 'csilvasantin+demo@gmail.com']) assert.equal(sessionFromClaims({ ...claims, email }), null);
 });
 test('reject wrong client, issuer, expired and unverified Google claims', () => {
@@ -59,4 +63,11 @@ test('the backoffice picks the suite client only on admira.biz (the site client 
   for (const h of ['admira.biz', 'www.admira.biz', 'WWW.ADMIRA.BIZ']) assert.equal(re.test(h), true, h);
   for (const h of ['www.clearchannel.tv', 'clearchannel.tv', 'www.admira.app', 'admira.biz.evil.test', 'fakeadmira.biz.example']) assert.equal(re.test(h), false, h);
   assert.ok(html.includes(GOOGLE_SUITE_CLIENT_ID) && html.includes(GOOGLE_CLIENT_ID));
+});
+test('la tarjeta de Alsea México lanza el Tour DooH por el modo experto (?ax_cmd)', async () => {
+  const { readFileSync } = await import('node:fs');
+  const html = readFileSync(new URL('../backoffice.html', import.meta.url), 'utf8');
+  assert.match(html, /d\.command \? '&ax_cmd=' \+ encodeURIComponent\(d\.command\)/);
+  const C = (await import('../expert-commands.js')).default || globalThis.AdmiraExpertCommands;
+  assert.equal(C.linkedCommand('?lang=es&ax_cmd=' + encodeURIComponent('/demo dooh alsea')), '/demo dooh alsea');
 });

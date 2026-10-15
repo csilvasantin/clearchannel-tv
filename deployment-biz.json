@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Tour DooH de Alsea México: con el modo experto abierto, la ficha de la puerta y el resumen final suben por encima del sello de versión en vez de pisarlo.",
-    "En el móvil la ficha conserva su sitio sobre el botón «Parar Tour DooH».",
-    "Enlace de demo: admira.biz/?ax_cmd=demo-dooh-alsea&lang=es abre el modo experto y lanza el tour al cargar."
+    "Mis demos: cualquier usuario registrado (Login con Google) ve la demo de Alsea México; su botón Tour DooH abre el modo experto con /demo dooh alsea.",
+    "Las demos de JTI, Alsea España y Cafebrería siguen reservadas a las identidades de Carlos; el titular pasa a «Demos de clientes».",
+    "Tour DooH de Alsea México: con el modo experto abierto, la ficha de la puerta sube por encima del sello de versión."
   ],
   "nativeClearChannel": {
     "enabled": true,
