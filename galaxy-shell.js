@@ -77,6 +77,7 @@
       ${login}
       <button type="button" id="header-advanced-toggle" class="mode-toggle" aria-expanded="false" aria-controls="advanced-tools" data-mode="advanced" data-shell-es="Modo avanzado" data-shell-en="Advanced mode" title="${T('Modo avanzado', 'Advanced mode')}">▤</button>
       <button type="button" id="header-expert-toggle" class="mode-toggle" aria-expanded="false" aria-controls="expert-panel" data-mode="expert" data-shell-es="Modo experto" data-shell-en="Expert mode" title="${T('Modo experto', 'Expert mode')}">⌘</button>
+      <button type="button" id="header-lang-toggle" class="mode-toggle header-lang" data-lang-target="${lang === 'en' ? 'es' : 'en'}" data-admira-compact-control aria-label="${T('Cambiar a inglés', 'Switch to Spanish')}" title="${T('Cambiar a inglés', 'Switch to Spanish')}">${lang === 'en' ? 'ESP' : 'ENG'}</button>
     </div>
   </div>
 </header>`;
@@ -166,14 +167,21 @@
   document.body.classList.add('galaxy-shell-page');
   html.dataset.shell = 'galaxy';
 
-  // Idioma: mismo botón ENG/ESP que la portada.
+  // Idioma: mismo botón ENG/ESP que la portada, en la cabecera y en ☰ Opciones. Antes solo
+  // estaba en Opciones y, al pasar de la portada al backoffice, la pastilla ENG «desaparecía»
+  // y su sitio lo ocupaban ▤ y ⌘ (Carlos, 15-oct-2026 · FLT-102501).
   const toggle = document.getElementById('lang-toggle');
+  const headerToggle = document.getElementById('header-lang-toggle');
   const logoHome = document.getElementById('logo-home');
   function paintLanguage() {
     const en = lang() === 'en';
-    toggle.dataset.langTarget = en ? 'es' : 'en';
-    toggle.textContent = en ? 'ESP' : 'ENG';
-    toggle.setAttribute('aria-label', en ? 'Switch to Spanish' : 'Cambiar a inglés');
+    for (const b of [toggle, headerToggle]) {
+      if (!b) continue;
+      b.dataset.langTarget = en ? 'es' : 'en';
+      b.textContent = en ? 'ESP' : 'ENG';
+      b.setAttribute('aria-label', en ? 'Switch to Spanish' : 'Cambiar a inglés');
+      if (b === headerToggle) b.title = b.getAttribute('aria-label');
+    }
     logoHome.title = en ? 'Back to home' : 'Volver al inicio';
     optionsPanel.setAttribute('aria-label', en ? 'Options' : 'Opciones');
   }
@@ -185,6 +193,7 @@
     document.dispatchEvent(new CustomEvent('admira:lang', {detail: {lang: next}}));
   }
   toggle.addEventListener('click', () => setLanguage(toggle.dataset.langTarget));
+  if (headerToggle) headerToggle.addEventListener('click', () => setLanguage(headerToggle.dataset.langTarget));
   new MutationObserver(paintLanguage).observe(html, {attributes: true, attributeFilter: ['lang']});
   paintLanguage();
 

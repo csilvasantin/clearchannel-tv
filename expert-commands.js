@@ -158,7 +158,33 @@
     let raw = '';
     try { raw = new URLSearchParams(String(search || '')).get('ax_cmd') || ''; } catch (_) { return null; }
     const text = raw.replace(/[-+_]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^\//, '').toLowerCase();
-    return /^demo dooh(?: [a-z0-9]{1,24}){0,3}$/.test(text) ? '/' + text : null;
+    if (/^demo dooh(?: [a-z0-9]{1,24}){0,3}$/.test(text)) return '/' + text;
+    // /vision general [cliente] (FLT-102501) también se puede enlazar: ?ax_cmd=vision-general-alsea.
+    const vision = text.match(/^vision(?: general)?((?: [a-z0-9]{1,24}){0,3})$/);
+    return vision ? '/vision general' + vision[1] : null;
+  }
+  // /vision general [cliente] (Carlos, 15-oct-2026 · FLT-102501): el circuito desde arriba con un
+  // semáforo por Xpacio (vision-general.js). «alsea» va a Alsea México como /demo dooh.
+  function visionGeneral(value, ctx, lang = 'es') {
+    const typed = String(value == null ? '' : value).trim().replace(/^general\b\s*/i, '');
+    const client = resolveDoohClient(typed);
+    const command = '/vision general' + (client ? ' ' + client.id : typed ? ' ' + typed : '');
+    if (!client) return {ok: false, command, lines: [typed
+      ? L(lang, `Cliente no reconocido: «${typed}». Clientes: ${CLIENTS.map(c => c.id).join(', ')}.`, `Unknown client: “${typed}”. Clients: ${CLIENTS.map(c => c.id).join(', ')}.`)
+      : L(lang, 'Uso: /vision general <cliente> · por ejemplo /vision general alsea.', 'Usage: /vision general <client> · e.g. /vision general alsea.')]};
+    if (ctx && typeof ctx.handoff === 'function') {
+      const r = (ctx.open && ctx.open('/?ax_cmd=' + encodeURIComponent('vision general ' + client.id) + '&lang=' + (lang === 'en' ? 'en' : 'es'))) || {};
+      if (r.ok === false) return {ok: false, command, lines: [L(lang, 'No se pudo abrir el mapa de la portada.', 'The home map could not be opened.')]};
+      return {ok: true, command, handoff: true, lines: [L(lang, `Abriendo el mapa de la portada con la visión general de ${clientName(client, lang)}…`, `Opening the home map with the ${clientName(client, lang)} overview…`)]};
+    }
+    const r = (ctx && typeof ctx.vision === 'function' ? ctx.vision(client.circuit) : {ok: false}) || {};
+    if (r.ok === false) return {ok: false, command, lines: [r.reason === 'empty'
+      ? L(lang, `El circuito ${clientName(client, lang)} aún no tiene puntos en el catálogo cargado. Vuelve a intentarlo en unos segundos.`, `The ${clientName(client, lang)} circuit has no points in the loaded catalogue yet. Try again in a few seconds.`)
+      : L(lang, 'El mapa aún no está listo. Vuelve a intentarlo.', 'The map is not ready yet. Try again.')]};
+    const k = r.totals || {}, n = x => Number(x) || 0;
+    return {ok: true, command, lines: [L(lang,
+      `Visión general de ${clientName(client, lang)} · ${n(r.count)} Xpacios: ${n(k.ok)} OK · ${n(k.incidencia)} con incidencia · ${n(k.apagado)} apagados${n(k.sin_datos) ? ` · ${n(k.sin_datos)} sin datos` : ''}${r.demo ? ' (DEMO: estados simulados, aún sin pantallas conectadas)' : ''}. /parar la cierra.`,
+      `${clientName(client, lang)} overview · ${n(r.count)} Xpaces: ${n(k.ok)} OK · ${n(k.incidencia)} with issues · ${n(k.apagado)} off${n(k.sin_datos) ? ` · ${n(k.sin_datos)} no data` : ''}${r.demo ? ' (DEMO: simulated states, no connected screens yet)' : ''}. /stop closes it.`)]};
   }
   function demoDooh(value, ctx, lang = 'es') {
     const typed = String(value == null ? '' : value).trim(), client = resolveDoohClient(typed);
@@ -471,6 +497,8 @@
     }
     const dooh = String(input || '').trim().match(/^\/?demo\s+dooh(?:\s+([\s\S]*))?$/i);
     if (dooh) return Object.assign({parsed: {verb: {id: 'demo', local: true}, raw: String(input).trim()}}, demoDooh(dooh[1], ctx, lang));
+    const vision = String(input || '').trim().match(/^\/?visi[oó]n(?:[\s-]+general)?(?:\s+([\s\S]*))?$/i);
+    if (vision) return Object.assign({parsed: {verb: {id: 'vision', local: true}, raw: String(input).trim()}}, visionGeneral(vision[1], ctx, lang));
     if (isAvatarCommand(input)) {
       const en = lang === 'en';
       const later = loadAvatar()
@@ -550,6 +578,7 @@
     const featured = CLIENTS.filter(c => c.featured);
     return [
       {id: 'dooh:alsea', label: L(lang, 'Tour DooH Alsea México', 'DooH Tour Alsea Mexico'), command: '/demo dooh alsea', builtin: true},
+      {id: 'vision:alsea', label: L(lang, 'Visión general Alsea México', 'Overview Alsea Mexico'), command: '/vision general alsea', builtin: true},
       ...featured.map(c => ({id: 'demo:' + c.id, label: 'Demo ' + c.label, command: '/demo ' + c.id, builtin: true})),
       ...featured.map(c => ({id: 'circuito:' + c.id, label: L(lang, 'Circuito ', 'Circuit ') + c.label, command: '/circuito ' + c.id, builtin: true})),
     ];
@@ -594,6 +623,7 @@
       `${L(lang, 'marca', 'brand')}: off (Admira), ${brandList(lang)} · ${L(lang, 'o una web para analizarla (starbucks.es)', 'or a website to analyse (starbucks.es)')}`,
       L(lang, 'Forma: /demo starbucks · /demo cliente=alcampo · mayúsculas y acentos dan igual.', 'Form: /demo starbucks · /demo client=alcampo · case and accents do not matter.'),
       L(lang, 'Tour DooH: /demo dooh alsea va de México entero a la puerta de cada Starbucks de Alsea México · /demo dooh <cliente> recorre cualquier circuito.', 'DooH Tour: /demo dooh alsea goes from the whole of Mexico to the door of each Alsea Mexico Starbucks · /demo dooh <client> tours any circuit.'),
+      L(lang, 'Visión general: /vision general alsea muestra Alsea México desde arriba · verde OK, amarillo con incidencia, rojo apagado.', 'Overview: /vision general alsea shows Alsea Mexico from above · green OK, yellow with issues, red off.'),
       L(lang, 'RUTINAS', 'ROUTINES'),
       ...routines.map(r => `${r.label} → ${r.command}${r.builtin ? '' : L(lang, ' (tuya)', ' (yours)')}`),
       L(lang, 'Avatar digital: /avatar good abre el calvo (cara 3D, 52 blendshapes) · /avatar better abre la chica (Ready Player Me, gafas) · /avatar best abre a Neo (MetaHuman; si el host de render está apagado, cae a la chica). /avatar sin nivel dice el estado. /avatarON lo muestra y /avatarOFF lo oculta. /avatar reset vuelve al interruptor del proyecto. También /avatarDigital (alias /digitalAvatar, /cli ayudante, /cli helper). /cli seguido de un cliente sigue siendo /demo.',
@@ -634,7 +664,7 @@
   }
 
   const api = Object.freeze({
-    CLIENTS, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, planoId, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, resolveDoohClient, demoDooh, linkedCommand, parse, execute, isAvatarCommand, errorLines, usage,
+    CLIENTS, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, planoId, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, resolveDoohClient, demoDooh, linkedCommand, visionGeneral, parse, execute, isAvatarCommand, errorLines, usage,
     complete, defaultRoutines, sanitizeRoutines, loadRoutines, saveRoutines, addRoutine, removeRoutine, helpLines,
     pickDemoXpacio, demoScreens, registeredSurfaces, liveSurfaces, demoSurfaces,
   });
