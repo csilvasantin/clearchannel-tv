@@ -140,6 +140,40 @@
   const done = (...lines) => ({ok: true, lines});
   const clientName = (c, lang) => (c ? L(lang, c.es, c.en) : '');
 
+  // /demo dooh [cliente] (Carlos, 15-oct-2026 · FLT-102469): el Tour DooH del circuito en el mapa.
+  // Si el circuito tiene tour global (global-tour.js: Alsea México) va del país entero a la puerta
+  // de cada Xpacio, y «alsea» o «starbucks» lo prefieren al circuito sin él (Starbucks España).
+  const hasGlobalTour = c => !!(c && root.GlobalTour && root.GlobalTour.config(c.circuit));
+  function resolveDoohClient(value) {
+    const k = key(value), globals = CLIENTS.filter(hasGlobalTour);
+    if (!k) return globals[0] || null;
+    const exact = resolveClient(value);
+    if (exact && hasGlobalTour(exact)) return exact;
+    const preferred = globals.filter(c => [c.id, c.circuit, c.label, ...c.aliases].some(a => key(a).startsWith(k)));
+    return preferred.length === 1 ? preferred[0] : exact;
+  }
+  function demoDooh(value, ctx, lang = 'es') {
+    const typed = String(value == null ? '' : value).trim(), client = resolveDoohClient(typed);
+    const command = '/demo dooh' + (client ? ' ' + client.id : typed ? ' ' + typed : '');
+    if (!client) return {ok: false, command, lines: [typed
+      ? L(lang, `Cliente no reconocido: «${typed}». Clientes: ${CLIENTS.map(c => c.id).join(', ')}.`, `Unknown client: “${typed}”. Clients: ${CLIENTS.map(c => c.id).join(', ')}.`)
+      : L(lang, 'Uso: /demo dooh <cliente> · por ejemplo /demo dooh alsea.', 'Usage: /demo dooh <client> · e.g. /demo dooh alsea.')]};
+    // Fuera de la portada: el enlace directo del circuito arranca el tour al cargar el mapa.
+    if (ctx && typeof ctx.handoff === 'function') {
+      const r = (ctx.open && ctx.open('/?circuit=' + encodeURIComponent(client.circuit) + '&tour=1&lang=' + (lang === 'en' ? 'en' : 'es'))) || {};
+      if (r.ok === false) return {ok: false, command, lines: [L(lang, 'No se pudo abrir el mapa de la portada.', 'The home map could not be opened.')]};
+      return {ok: true, command, handoff: true, lines: [L(lang, `Abriendo el mapa de la portada con el Tour DooH de ${clientName(client, lang)}…`, `Opening the home map with the ${clientName(client, lang)} DooH Tour…`)]};
+    }
+    const r = (ctx && typeof ctx.dooh === 'function' ? ctx.dooh(client.circuit) : {ok: false}) || {};
+    if (r.ok === false) return {ok: false, command, lines: [r.reason === 'empty'
+      ? L(lang, `El circuito ${clientName(client, lang)} aún no tiene puntos en el catálogo cargado. Vuelve a intentarlo en unos segundos.`, `The ${clientName(client, lang)} circuit has no points in the loaded catalogue yet. Try again in a few seconds.`)
+      : L(lang, 'El mapa aún no está listo. Vuelve a intentarlo.', 'The map is not ready yet. Try again.')]};
+    const count = r.count ? ` · ${r.count} Xpacios` : '';
+    return {ok: true, command, lines: [r.global
+      ? L(lang, `Tour DooH de ${clientName(client, lang)}${count}: del país entero a la puerta de cada uno. /parar lo detiene.`, `${clientName(client, lang)} DooH Tour${count.replace('Xpacios', 'Xpaces')}: from the whole country to each store's door. /stop ends it.`)
+      : L(lang, `Tour DooH de ${clientName(client, lang)}${count}. /parar lo detiene.`, `${clientName(client, lang)} DooH Tour${count.replace('Xpacios', 'Xpaces')}. /stop ends it.`)]};
+  }
+
   // run(args, ctx, lang) → {ok, lines}. ctx devuelve {ok:false, reason} si no puede.
   const VERBS = [
     {
@@ -427,6 +461,8 @@
       if(typeof window!=='undefined')window.location.assign(url);
       return {ok:true,lines:[L(lang,'Abriendo demo global · Sneakers Store','Opening global demo · Sneakers Store')],command:'/demo global',parsed:{verb:{id:'demo',local:true}}};
     }
+    const dooh = String(input || '').trim().match(/^\/?demo\s+dooh(?:\s+([\s\S]*))?$/i);
+    if (dooh) return Object.assign({parsed: {verb: {id: 'demo', local: true}, raw: String(input).trim()}}, demoDooh(dooh[1], ctx, lang));
     if (isAvatarCommand(input)) {
       const en = lang === 'en';
       const later = loadAvatar()
@@ -505,6 +541,7 @@
   function defaultRoutines(lang = 'es') {
     const featured = CLIENTS.filter(c => c.featured);
     return [
+      {id: 'dooh:alsea', label: L(lang, 'Tour DooH Alsea México', 'DooH Tour Alsea Mexico'), command: '/demo dooh alsea', builtin: true},
       ...featured.map(c => ({id: 'demo:' + c.id, label: 'Demo ' + c.label, command: '/demo ' + c.id, builtin: true})),
       ...featured.map(c => ({id: 'circuito:' + c.id, label: L(lang, 'Circuito ', 'Circuit ') + c.label, command: '/circuito ' + c.id, builtin: true})),
     ];
@@ -548,6 +585,7 @@
       `${L(lang, 'texto', 'text')}: ${L(lang, 'texto libre para /buscar', 'free text for /search')}`,
       `${L(lang, 'marca', 'brand')}: off (Admira), ${brandList(lang)} · ${L(lang, 'o una web para analizarla (starbucks.es)', 'or a website to analyse (starbucks.es)')}`,
       L(lang, 'Forma: /demo starbucks · /demo cliente=alcampo · mayúsculas y acentos dan igual.', 'Form: /demo starbucks · /demo client=alcampo · case and accents do not matter.'),
+      L(lang, 'Tour DooH: /demo dooh alsea va de México entero a la puerta de cada Starbucks de Alsea México · /demo dooh <cliente> recorre cualquier circuito.', 'DooH Tour: /demo dooh alsea goes from the whole of Mexico to the door of each Alsea Mexico Starbucks · /demo dooh <client> tours any circuit.'),
       L(lang, 'RUTINAS', 'ROUTINES'),
       ...routines.map(r => `${r.label} → ${r.command}${r.builtin ? '' : L(lang, ' (tuya)', ' (yours)')}`),
       L(lang, 'Avatar digital: /avatar good abre el calvo (cara 3D, 52 blendshapes) · /avatar better abre la chica (Ready Player Me, gafas) · /avatar best abre a Neo (MetaHuman; si el host de render está apagado, cae a la chica). /avatar sin nivel dice el estado. /avatarON lo muestra y /avatarOFF lo oculta. /avatar reset vuelve al interruptor del proyecto. También /avatarDigital (alias /digitalAvatar, /cli ayudante, /cli helper). /cli seguido de un cliente sigue siendo /demo.',
@@ -588,7 +626,7 @@
   }
 
   const api = Object.freeze({
-    CLIENTS, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, planoId, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, parse, execute, isAvatarCommand, errorLines, usage,
+    CLIENTS, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, planoId, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, resolveDoohClient, demoDooh, parse, execute, isAvatarCommand, errorLines, usage,
     complete, defaultRoutines, sanitizeRoutines, loadRoutines, saveRoutines, addRoutine, removeRoutine, helpLines,
     pickDemoXpacio, demoScreens, registeredSurfaces, liveSurfaces, demoSurfaces,
   });

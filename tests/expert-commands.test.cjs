@@ -103,7 +103,8 @@ test('default routines combine each featured client with demo and circuito', () 
   }
   assert.ok(routines.some(r => r.label === 'Demo CanalKiosk'));
   assert.ok(routines.some(r => r.label === 'Circuito Alcampo'));
-  for (const r of routines) assert.equal(C.parse(r.command).ok, true, r.command);
+  // /demo dooh se atiende antes del parser, como /demo global (FLT-102469).
+  for (const r of routines) assert.equal(C.parse(r.command).ok || /^\/demo dooh /.test(r.command), true, r.command);
 });
 
 test('own routines are validated, deduplicated, persisted and deletable', () => {
@@ -249,4 +250,51 @@ test('every floor plan in the registry has its data file', () => {
     const plan = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'xpacios', p.id + '.json'), 'utf8'));
     assert.equal(plan.id, p.id);
   }
+});
+
+// /demo dooh (Carlos, 15-oct-2026 · FLT-102469): Tour DooH del circuito; Alsea México con tour global.
+test('/demo dooh alsea lanza el tour global de Alsea México, no el circuito de España', () => {
+  require('../global-tour.js');
+  assert.equal(C.resolveDoohClient('alsea').id, 'starbucks-mexico');
+  assert.equal(C.resolveDoohClient('Starbucks').id, 'starbucks-mexico');
+  assert.equal(C.resolveDoohClient('').id, 'starbucks-mexico');
+  assert.equal(C.resolveDoohClient('alcampo').id, 'alcampo');
+  assert.equal(C.resolveDoohClient('starbucks espana').id, 'starbucks');
+  assert.equal(C.resolveDoohClient('nadie'), null);
+  const calls = [];
+  const ctx = {dooh: id => { calls.push(id); return {ok: true, count: 10, global: true}; }};
+  const r = C.execute('/demo dooh alsea', ctx, 'es');
+  assert.equal(r.ok, true);
+  assert.deepEqual(calls, ['alsea_mexico']);
+  assert.equal(r.command, '/demo dooh starbucks-mexico');
+  assert.match(r.lines[0], /Tour DooH de Starbucks México \(Alsea\) · 10 Xpacios: del país entero a la puerta/);
+  assert.match(C.execute('demo DOOH Alsea', ctx, 'en').lines[0], /DooH Tour · 10 Xpaces: from the whole country/);
+});
+
+test('/demo dooh: otros circuitos, catálogo sin cargar, cliente desconocido y fuera de la portada', () => {
+  const plain = C.execute('/demo dooh alcampo', {dooh: () => ({ok: true, count: 102, global: false})}, 'es');
+  assert.equal(plain.ok, true);
+  assert.match(plain.lines[0], /^Tour DooH de Alcampo · supermercados · 102 Xpacios\. \/parar lo detiene\.$/);
+  const empty = C.execute('/demo dooh alsea', {dooh: () => ({ok: false, reason: 'empty'})}, 'es');
+  assert.equal(empty.ok, false);
+  assert.match(empty.lines[0], /aún no tiene puntos en el catálogo cargado/);
+  const unknown = C.execute('/demo dooh zzz', {dooh: () => assert.fail('no debe arrancar')}, 'es');
+  assert.equal(unknown.ok, false);
+  assert.match(unknown.lines[0], /Cliente no reconocido: «zzz»/);
+  const opened = [];
+  const away = C.execute('/demo dooh alsea', {handoff: () => assert.fail('sin savePending'), open: url => { opened.push(url); return {ok: true}; }}, 'es');
+  assert.equal(away.ok, true);
+  assert.deepEqual(opened, ['/?circuit=alsea_mexico&tour=1&lang=es']);
+});
+
+test('la rutina de un clic «Tour DooH Alsea México» va la primera', () => {
+  const [first] = C.defaultRoutines('es');
+  assert.deepEqual([first.label, first.command], ['Tour DooH Alsea México', '/demo dooh alsea']);
+  assert.equal(C.defaultRoutines('en')[0].label, 'DooH Tour Alsea Mexico');
+});
+
+test('el panel registra /demo dooh en el motor común y sabe arrancar el tour sobre el mapa', () => {
+  const panel = fs.readFileSync(path.join(__dirname, '..', 'expert-panel.js'), 'utf8');
+  assert.match(panel, /\{name:'dooh',run:dooh\}/);
+  assert.match(panel, /dooh\(circuitId\) \{\s*const r = ctx\.circuit\(circuitId\);[\s\S]*?startCircuitDemo\(\);/);
 });

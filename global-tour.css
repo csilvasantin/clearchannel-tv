@@ -19,8 +19,9 @@
 .gt-card-body strong{font-size:17px}
 .gt-card-street{color:#dfeee8}
 .gt-card-stats{font-size:12px;color:#a9cbbf}
-/* Durante el tour, la ficha y el raíl ya dicen dónde estamos: fuera la píldora «Buscando…». */
-body.gt-on .status-pill{display:none!important}
+/* Durante el tour, la ficha y el raíl ya dicen dónde estamos: fuera la píldora «Buscando…» y el
+   ticker de actividad (Xpaces, pantallas), que además quedaba debajo de la ficha de la puerta. */
+body.gt-on .status-pill,body.gt-on .live-ticker{display:none!important}
 @keyframes gt-hud-in{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
 @keyframes gt-card-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media (max-width:760px){
