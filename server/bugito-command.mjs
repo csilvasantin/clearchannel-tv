@@ -54,7 +54,9 @@ export async function handleBugitoCommand(req,env,fetcher=fetch){
   const {target,fault}=r;
   const db=await database(env);
   const signal=await get(fetcher,'https://api.admira.store/signage/now?screen='+target.screen);
-  if(signal.screen!==target.screen||!signal.device?.display||!signal.producer||!Number(signal.lastSeen)||Date.now()-signal.lastSeen>30000||signal.lastSeen>Date.now()+10000)throw fail('device_without_recent_signal',409);
+  if(signal.screen!==target.screen||!signal.device?.display||!signal.producer||!Number(signal.lastSeen)||signal.lastSeen>Date.now()+10000||fault!=='clear'&&Date.now()-signal.lastSeen>30000)throw fail('device_without_recent_signal',409);
+  // Standby reports less often than active playback. An owner must still be able
+  // to resume this explicitly bound device when its last report has aged out.
   // The control authority verifies the owner's Google token (or its existing
   // server credential) and issues a nonce scoped to this exact physical screen.
   // No master credential is configured in Pages or returned to a browser.
