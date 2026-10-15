@@ -3074,7 +3074,9 @@ function addLocationsLayer() {
   // Click en punto → flyToLocation. Si el punto define twinOnClick, además abre
   // su gemelo (p.ej. tour Matterport) en una pestaña nueva.
   map.on('click', 'unclustered-point', (e) => {
-    const id = e.features[0].properties.id;
+    const feature = window.IncidentMapTooltip.choose(e.features);
+    if (!feature) return;
+    const id = feature.properties.id;
     const loc = LOC_BY_ID.get(id);
     if (!loc) return;
     // An explicit association (including removal) also controls automatic opening.
@@ -3083,6 +3085,7 @@ function addLocationsLayer() {
       ? window.XpaceLinks?.associationUrl(loc) : (loc.fly || loc.twin);
     if (loc.twinOnClick && twinTarget) { window.open(twinTarget, '_blank', 'noopener'); }
     flyToLocation(loc);
+    if (+feature.properties.incidentLevel > 0) showXpacioTip(e);
   });
   // Cursor
   for (const lyr of ['clusters','unclustered-point']) {
@@ -3091,23 +3094,35 @@ function addLocationsLayer() {
   }
   // Tooltip al pasar el ratón: identifica el Xpacio (nombre + circuito) o la zona (cluster)
   const xpPopup = new maplibregl.Popup({closeButton:false, closeOnClick:false, offset:14, className:'xp-tooltip'});
+  const tipHover = window.IncidentMapTooltip.hover(() => xpPopup.remove());
+  let tipKey = '';
   function showXpacioTip(e){
-    const f = e.features && e.features[0]; if (!f) return;
+    const f = window.IncidentMapTooltip.choose(e.features); if (!f) return;
+    tipHover.hold();
     const p = f.properties || {};
     const live = +p.live || 0, total = +p.total || 0;
     const loc = LOC_BY_ID.get(p.id);
     const estado = loc ? inventoryBadgeHTML(loc) : '<span class="xp-idle">' + escHtml(t('evidence_unknown')) + '</span>';
+    const key = p.id+'|'+(window.BugitoIncidentMap?.version||0)+'|'+LANG;
+    if (key===tipKey && xpPopup.isOpen()) return;
+    tipKey = key;
     const html = '<div class="xp-name">' + escHtml(p.name || 'Xpacio') + '</div>'
       + '<div class="xp-circuit">' + escHtml(p.circuit || 'Retail') + '</div>'
       + (p.addr ? '<div class="xp-addr">' + escHtml(p.addr) + '</div>' : '')
-      + '<div class="xp-meta">' + estado + ' · ' + total + ' ' + (total === 1 ? 'superficie' : 'superficies') + '</div>';
+      + '<div class="xp-meta">' + estado + ' · ' + total + ' ' + (total === 1 ? 'superficie' : 'superficies') + '</div>'
+      + window.IncidentMapTooltip.html(window.BugitoIncidentMap?.states.get(String(p.id)), LANG);
     xpPopup.setLngLat(f.geometry.coordinates).setHTML(html).addTo(map);
+    // Keep the interactive tooltip above the independent inventory side panel.
+    document.body.appendChild(xpPopup.getElement());
+    tipHover.bind(xpPopup.getElement());
   }
   map.on('mouseenter', 'unclustered-point', showXpacioTip);
   map.on('mousemove', 'unclustered-point', showXpacioTip);
-  map.on('mouseleave', 'unclustered-point', () => xpPopup.remove());
+  map.on('mouseleave', 'unclustered-point', () => tipHover.hide());
+  map.on('dragstart', () => tipHover.reset());
   // Tooltip de cluster: cuántos Xpacios agrupa esa zona
   function showClusterTip(e){
+    tipHover.hold(); tipKey='';
     const f = e.features && e.features[0]; if (!f) return;
     const n = f.properties.point_count || 0;
     xpPopup.setLngLat(f.geometry.coordinates)
@@ -3116,7 +3131,7 @@ function addLocationsLayer() {
   }
   map.on('mouseenter', 'clusters', showClusterTip);
   map.on('mousemove', 'clusters', showClusterTip);
-  map.on('mouseleave', 'clusters', () => xpPopup.remove());
+  map.on('mouseleave', 'clusters', () => tipHover.hide());
 }
 
 function setLayer(name) {
