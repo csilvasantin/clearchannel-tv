@@ -21,9 +21,9 @@
     ]
   },
   "novedades": [
-    "Mis demos: cualquier usuario registrado (Login con Google) ve la demo de Alsea México; su botón Tour DooH abre el modo experto con /demo dooh alsea.",
-    "Las demos de JTI, Alsea España y Cafebrería siguen reservadas a las identidades de Carlos; el titular pasa a «Demos de clientes».",
-    "Tour DooH de Alsea México: con el modo experto abierto, la ficha de la puerta sube por encima del sello de versión."
+    "Bugito genera incidencias persistentes por proyecto, establecimiento y pantalla o TPV, con órdenes en español e inglés.",
+    "El mapa muestra verde sin incidencias, amarillo con incidencias abiertas y rojo para graves o totales, también en agrupaciones.",
+    "Los destinos se comprueban en el servidor y las incidencias quedan abiertas hasta su gestión en admira.app."
   ],
   "nativeClearChannel": {
     "enabled": true,

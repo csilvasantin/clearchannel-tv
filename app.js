@@ -860,6 +860,8 @@ function updateLocationsSource() {
   if (src) src.setData(locationsGeoJSON());
 }
 
+if (typeof window !== 'undefined') window.addEventListener('bugito:map-status', () => updateLocationsSource());
+
 function locationsSignature(list, updatedAt = '') {
   const items = Array.isArray(list) ? list : [];
   // El KV puede cambiar por dentro (p.ej. `previo` en una tienda) sin variar
@@ -2842,6 +2844,7 @@ function locationsGeoJSON() {
           total: surfaces.length,
           screen: emitScreenOf(l),
           emit: emitStatusOf(l),
+          incidentLevel: window.BugitoIncidentMap?.level(l.id) ?? -1,
         },
       };
     }),
@@ -2868,16 +2871,12 @@ function circuitColorIdx(label) {
 function circuitColorHex(label) { return CIRCUIT_PALETTE[circuitColorIdx(label)]; }
 
 function mapScopeColorExpression() {
-  // Punto individual: su propio color de circuito (precalculado en el feature).
-  return ['coalesce', ['get', 'color'], '#78f3ff'];
+  // Estado canónico del establecimiento: verde, amarillo o rojo.
+  return ['match', ['get', 'incidentLevel'], 0, '#39d98a', 1, '#ffd23f', 2, '#ff4d4d', '#80909c'];
 }
 
 function mapClusterColorExpression() {
-  // Cluster: color del circuito representativo (índice mínimo presente en el grupo).
-  const m = ['match', ['get', 'circIdx']];
-  CIRCUIT_PALETTE.forEach((c, i) => { m.push(i, c); });
-  m.push('#78f3ff');   // default
-  return m;
+  return ['match', ['get', 'incidentMax'], 0, '#39d98a', 1, '#ffd23f', 2, '#ff4d4d', '#80909c'];
 }
 
 /*
@@ -2909,6 +2908,7 @@ function addLocationsLayer() {
       global_count: ['+', ['case', ['==', ['get', 'scope'], 'global'], 1, 0]],
       national_count: ['+', ['case', ['==', ['get', 'scope'], 'national'], 1, 0]],
       local_count: ['+', ['case', ['==', ['get', 'scope'], 'local'], 1, 0]],
+      incidentMax: ['max', ['get', 'incidentLevel']],
       circIdx: ['min', ['get', 'circuitIdx']],   // circuito representativo del cluster (color)
     },
   });
@@ -2955,13 +2955,10 @@ function addLocationsLayer() {
     paint:{
       'circle-color':'rgba(136,255,170,0)',
       'circle-radius':12,
-      // Punto de emisión: verde=conectado, rojo=sin conexión. Resto: color de circuito.
-      'circle-stroke-color': ['case',
-        ['==',['get','emit'],1], '#88ffaa',
-        ['==',['get','emit'],-1], '#ff4d4d',
-        mapScopeColorExpression()],
-      'circle-stroke-width': ['case', ['!=',['get','emit'],0], 3, 2],
-      'circle-stroke-opacity': ['case', ['!=',['get','emit'],0], 0.95, 0.6],
+      // El anillo usa el mismo semáforo de incidencias que el punto.
+      'circle-stroke-color': mapScopeColorExpression(),
+      'circle-stroke-width':2,
+      'circle-stroke-opacity':0.6,
       'circle-blur':0.25,
     },
   });
