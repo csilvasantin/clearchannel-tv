@@ -22,6 +22,7 @@ test('other staff retain management and get only the open Alsea México tour; un
   assert.equal(staff.canManageCatalog, true);
   assert.deepEqual(staff.demos.map(d => d.id), ['alsea-mexico']);
   assert.equal(staff.demos[0].command, '/demo dooh alsea');
+  assert.equal(staff.demos[0].overview, '/vision general alsea');
   for (const email of ['someone@gmail.com', 'csilva@admira.com.attacker.test', 'csilvasantin+demo@gmail.com']) assert.equal(sessionFromClaims({ ...claims, email }), null);
 });
 test('reject wrong client, issuer, expired and unverified Google claims', () => {
@@ -68,6 +69,11 @@ test('la tarjeta de Alsea México lanza el Tour DooH por el modo experto (?ax_cm
   const { readFileSync } = await import('node:fs');
   const html = readFileSync(new URL('../backoffice.html', import.meta.url), 'utf8');
   assert.match(html, /d\.command \? '&ax_cmd=' \+ encodeURIComponent\(d\.command\)/);
+  // Botón «Visión general» (FLT-102505) → ?ax_cmd=/vision general alsea, en ES y EN.
+  assert.match(html, /const overviewUrl = d\.overview \? 'index\.html\?lang=' \+ LANG \+ '&ax_cmd=' \+ encodeURIComponent\(d\.overview\)/);
+  assert.match(html, /demo_overview:'Visión general'/);
+  assert.match(html, /demo_overview:'Overview'/);
   const C = (await import('../expert-commands.js')).default || globalThis.AdmiraExpertCommands;
   assert.equal(C.linkedCommand('?lang=es&ax_cmd=' + encodeURIComponent('/demo dooh alsea')), '/demo dooh alsea');
+  assert.equal(C.linkedCommand('?lang=es&ax_cmd=' + encodeURIComponent('/vision general alsea')), '/vision general alsea');
 });
