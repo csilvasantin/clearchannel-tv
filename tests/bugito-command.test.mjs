@@ -14,7 +14,7 @@ function setup(t,{owner=true,fresh=true,lostReply=false}={}){
   if(url.includes('/cmd/ack?'))return Response.json({seen:true,ack:{status:'executed'}});
   throw Error('unexpected');
  };
- const env={ORDERS_DB:db,ASSETS:{fetch:async()=>new Response('<html><head></head><body>Bugito</body></html>')}};
+ const env={ORDERS_DB:db,ASSETS:{fetch:async()=>new Response('<html><head><script src="bugito-super.js"></script><link rel="stylesheet" href="bugito.css"></head><body>Bugito</body></html>')}};
  const request=(order=ORDER,id=ID)=>new Request('https://www.admira.biz/api/bugito/commands',{method:'POST',headers:{Authorization:'Bearer approved-owner','Content-Type':'application/json'},body:JSON.stringify({order,request_id:id})});
  return {env,fetcher,calls,request};
 }
@@ -44,7 +44,7 @@ test('status requires measured recent data as well as ACK; previous measurements
 test('suite POST launch preserves the order; GET, unknown origins and arbitrary fields cannot autoexecute',async t=>{
  const s=setup(t);const body=new URLSearchParams({order:ORDER,request_id:ID});
  for(const host of ['admira.tv','admira.app','admira.biz','admira.store','admira.studio','admiranext.com','pixeria.com','xpaceos.com']){
-  const r=await handleBugitoCommand(new Request('https://www.admira.biz/api/bugito/launch',{method:'POST',headers:{Origin:'https://www.'+host,'Content-Type':'application/x-www-form-urlencoded'},body}),s.env,s.fetcher);assert.equal(r.status,200,host);assert.match(await r.text(),/id="bugito-command-intent"/);
+  const r=await handleBugitoCommand(new Request('https://www.admira.biz/api/bugito/launch',{method:'POST',headers:{Origin:'https://www.'+host,'Content-Type':'application/x-www-form-urlencoded'},body}),s.env,s.fetcher);assert.equal(r.status,200,host);const html=await r.text();assert.match(html,/id="bugito-command-intent"/);assert.ok(html.indexOf('<base href="/bugito">')<html.indexOf('src="bugito-super.js"'),'base precedes relative resources');assert.equal(new URL('bugito-super.js',new URL('/bugito',r.url||'https://www.admira.biz/api/bugito/launch')).pathname,'/bugito-super.js');
  }
  assert.equal((await handleBugitoCommand(new Request('https://www.admira.biz/api/bugito/launch?order='+encodeURIComponent(ORDER)),s.env,s.fetcher)).status,405);
  assert.equal((await handleBugitoCommand(new Request('https://www.admira.biz/api/bugito/launch',{method:'POST',headers:{Origin:'https://evil.example','Content-Type':'application/x-www-form-urlencoded'},body}),s.env,s.fetcher)).status,403);
