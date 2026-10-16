@@ -597,11 +597,11 @@
   function defaultRoutines(lang = 'es') {
     const featured = CLIENTS.filter(c => c.featured);
     return [
-      {id: 'dooh:starbucks-espana', label: L(lang, 'Tour DooH Starbucks España · 3 destinos', 'DooH Tour Starbucks Spain · 3 destinations'), command: '/demo dooh starbucks espana', builtin: true},
       {id: 'dooh:starbucks', label: L(lang, 'Tour DooH Starbucks México', 'DooH Tour Starbucks Mexico'), command: '/demo dooh starbucks', builtin: true},
       {id: 'vision:starbucks', label: L(lang, 'Visión general Starbucks México', 'Overview Starbucks Mexico'), command: '/vision general starbucks', builtin: true},
       {id: 'dooh:altadis', label: L(lang, 'Tour DooH Altadis España', 'DooH Tour Altadis Spain'), command: '/demo dooh altadis', builtin: true},
       {id: 'vision:altadis', label: L(lang, 'Visión general Altadis España', 'Overview Altadis Spain'), command: '/vision general altadis', builtin: true},
+      {id: 'dooh:starbucks-espana', label: L(lang, 'Tour DooH Starbucks España · 3 destinos', 'DooH Tour Starbucks Spain · 3 destinations'), command: '/demo dooh starbucks espana', builtin: true},
       ...featured.map(c => ({id: 'demo:' + c.id, label: 'Demo ' + c.label, command: '/demo ' + c.id, builtin: true})),
       ...featured.map(c => ({id: 'circuito:' + c.id, label: L(lang, 'Circuito ', 'Circuit ') + c.label, command: '/circuito ' + c.id, builtin: true})),
     ];
