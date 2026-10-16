@@ -47,3 +47,11 @@ test('Diagonal confirmado sin instalación no es una avería ni se consulta como
  const place={monitoringKind:'location-only',surfaces:[{screen:'catalogue-placeholder'}]};
  a.deepEqual(H.screens(place),[]);a.equal(H.health(place,{}).state,'location');
 });
+test('la pantalla central reservada no se presenta como avería ni como reproducción falsa',()=>{
+ const space={surfaces:[{screen:'a'},{screen:'b',emissionReserved:true}]};
+ const h=H.health(space,{a:'online',b:'offline'});
+ a.equal(h.state,'online');a.equal(h.online,1);a.equal(h.reserved,1);a.equal(h.offline,0);
+ a.equal(H.screenState(space,'b',{b:'offline'}),'reserved');
+ a.equal(H.screenState(space,'b',{b:'online'}),'online');
+ a.equal(H.health(space,{a:'offline',b:'offline'}).state,'partial');
+});

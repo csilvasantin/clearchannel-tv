@@ -35,3 +35,9 @@ El panel muestra «Emitiendo», «Revisar», «Sin señal reciente» o «Sin dat
 - La cámara aporta una lectura separada de MBP16 desde el Supervisor existente, con caducidad de 60 s. El tour no mueve la cámara ni inicia otra vigilancia.
 
 The laboratory mapping uses the exact ITIL identity from its plan. The Paseo iPad uses the explicit managed IoT player link, with an unverified physical-location warning. No player is inferred for Diagonal. A valid empty playback report means no recent signal, not proven power-off. Fresh camera evidence is displayed separately from player telemetry.
+
+### Recuperación con pantalla central reservada · 16-oct-2026
+
+Carlos trabaja en la pantalla central del Mac mini: `macmini-starbucks-horizontal` queda detenido y marcado como reservado, sin contarlo como avería ni como emitiendo. Se recuperan los dos laterales del Mac mini y los tres del Mac Studio. Las cinco apps usan su grupo existente con `focusOwner=0`, sin activar la aplicación; el central del Mac Studio pasa de 1 a 0 para respetar el foco. No se relanza el central del Mac mini. La opción de reserva solo neutraliza una señal ausente: si ese player publica reproducción o fallo real, manda esa evidencia.
+
+Carlos works on the Mac mini centre display. Its player remains stopped and explicitly reserved, while both side players and the three Mac Studio players run without owning keyboard focus. The reserved display is never counted as playing. Fresh playback or fault evidence takes precedence over the reservation label.

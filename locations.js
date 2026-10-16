@@ -1434,6 +1434,10 @@ window.mergeOmnipLocations = function(base, extra) {
     if (loc.id === 'alsea-sbux-014') loc.monitoringKind = 'location-only';
     if (loc.id === 'lab-gran-de-gracia-51') (loc.surfaces || []).forEach(surface => {
       if (surface.itil === 'GDG51-PAN-07') surface.screen = 'macbookpro16';
+      if (surface.screen === 'macmini-starbucks-horizontal') {
+        surface.emissionReserved = true;
+        surface.reservationReason = 'Pantalla central · trabajo de Carlos';
+      }
     });
     if (loc.id === 'alsea-sbux-021') {
       const ipad = (loc.iot || []).find(d => d.type === 'iPad' && d.player === 'ipad-admin-mupi');

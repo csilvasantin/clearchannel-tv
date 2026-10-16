@@ -17,20 +17,25 @@
     if((Number.isFinite(d?.visible) && d.visible<90) || (Number.isFinite(d?.overlay) && d.overlay>=10)) return 'fault';
     return now-item.ts<FRESH_MS?'online':'offline';
   }
+  function screenState(loc,id,signals){
+    const reserved=(loc.surfaces||[]).some(s=>s.emissionReserved===true && (s.screen===id || s.pixerScreens?.includes(id)));
+    return reserved && !['online','fault'].includes(signals[id]) ? 'reserved' : (signals[id]||'unknown');
+  }
   function health(loc, signals){
     if(loc.monitoringKind==='location-only')return {state:'location',total:0,online:0,offline:0,fault:0,unknown:0};
-    const ids=screens(loc), counts={online:0,offline:0,fault:0,unknown:0};
-    ids.forEach(id=>counts[['online','offline','fault'].includes(signals[id])?signals[id]:'unknown']++);
+    const ids=screens(loc), counts={online:0,offline:0,fault:0,unknown:0,reserved:0};
+    ids.forEach(id=>{const state=screenState(loc,id,signals);counts[['online','offline','fault','reserved'].includes(state)?state:'unknown']++;});
     // Surfaces with no player mapping remain unverified even if another screen is live.
     counts.unknown+=(loc.surfaces||[]).filter(s=>!screens({surfaces:[s]}).length).length;
-    const total=counts.online+counts.offline+counts.fault+counts.unknown;
+    const total=counts.online+counts.offline+counts.fault+counts.unknown+counts.reserved;
     let state='unknown';
-    if(total&&counts.online===total) state='online';
+    if(total&&counts.reserved===total) state='reserved';
+    else if(counts.online>0&&counts.online+counts.reserved===total) state='online';
     else if(total&&counts.offline===total) state='offline';
     else if(counts.online||counts.offline||counts.fault) state='partial';
     return {state,total,...counts};
   }
-  const WORDS={es:{location:'Solo ubicación · sin reproductor',locationNote:'Punto de Google Maps, sin emisión instalada',title:'Control de emisión',online:'Emitiendo',offline:'Sin señal reciente',partial:'Revisar',unknown:'Sin datos',loading:'Comprobando señal…',note:'Prueba de reproducción · actualización cada 15 s',fault:'Fallo comunicado',none:'Falta vincular reproductores',screens:'pantallas',close:'Cerrar control'},en:{location:'Location only · no player',locationNote:'Google Maps location, no playback installed',title:'Playback control',online:'Playing',offline:'No recent signal',partial:'Check',unknown:'No data',loading:'Checking signal…',note:'Proof of play · updated every 15 s',fault:'Reported fault',none:'Players need linking',screens:'screens',close:'Close control'}};
+  const WORDS={es:{reserved:'Reservada · trabajo de Carlos',location:'Solo ubicación · sin reproductor',locationNote:'Punto de Google Maps, sin emisión instalada',title:'Control de emisión',online:'Emitiendo',offline:'Sin señal reciente',partial:'Revisar',unknown:'Sin datos',loading:'Comprobando señal…',note:'Prueba de reproducción · actualización cada 15 s',fault:'Fallo comunicado',none:'Falta vincular reproductores',screens:'pantallas',close:'Cerrar control'},en:{reserved:'Reserved · Carlos working',location:'Location only · no player',locationNote:'Google Maps location, no playback installed',title:'Playback control',online:'Playing',offline:'No recent signal',partial:'Check',unknown:'No data',loading:'Checking signal…',note:'Proof of play · updated every 15 s',fault:'Reported fault',none:'Players need linking',screens:'screens',close:'Close control'}};
   function create(doc,items,lang,fetcher=root.fetch.bind(root)){
     const L=WORDS[lang==='en'?'en':'es'];
     const host=doc.createElement('aside');host.className='gt-health';host.setAttribute('aria-label',L.title);
@@ -71,9 +76,9 @@
         players.replaceChildren();
         const ids=screens(loc);players.hidden=!ids.length;
         if(ids.length){const summary=doc.createElement('summary');summary.textContent=lang==='en'?'View players':'Ver reproductores';players.append(summary);}
-        screens(loc).forEach(id=>{const p=doc.createElement('small');const state=signals[id]||'unknown';p.dataset.state=state;p.textContent=id+' · '+L[state];players.append(p);});
+        screens(loc).forEach(id=>{const p=doc.createElement('small');const state=screenState(loc,id,signals);p.dataset.state=state;p.textContent=id+' · '+L[state];players.append(p);});
         
-        detail.textContent=loc.monitoringKind==='location-only'?L.locationNote:screens(loc).length?`${h.online}/${h.total} ${L.screens}`+(h.offline?` · ${h.offline} ${L.offline.toLowerCase()}`:'')+(h.fault?` · ${h.fault} ${L.fault.toLowerCase()}`:'')+(h.unknown?` · ${h.unknown} ${L.unknown.toLowerCase()}`:''):L.none;
+        detail.textContent=loc.monitoringKind==='location-only'?L.locationNote:screens(loc).length?`${h.online}/${h.total-(h.reserved||0)} ${L.screens}`+(h.reserved?` · ${h.reserved} ${L.reserved.toLowerCase()}`:'')+(h.offline?` · ${h.offline} ${L.offline.toLowerCase()}`:'')+(h.fault?` · ${h.fault} ${L.fault.toLowerCase()}`:'')+(h.unknown?` · ${h.unknown} ${L.unknown.toLowerCase()}`:''):L.none;
         if(loc.id==='alsea-sbux-021' && ids.includes('ipad-admin-mupi'))detail.textContent += lang==='en'?' · iPad location unverified':' · ubicación física del iPad sin verificar';
       });
       note.textContent=L.note+' · '+new Date().toLocaleTimeString(lang==='en'?'en-GB':'es-ES');
@@ -81,6 +86,6 @@
     refresh();const timer=setInterval(refresh,15000);
     return {destroy(){stopped=true;clearInterval(timer);controller?.abort();host.remove();},element:host};
   }
-  const api={screens,signal,health,create,FRESH_MS};root.TourHealth=api;
+  const api={screens,signal,screenState,health,create,FRESH_MS};root.TourHealth=api;
   if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

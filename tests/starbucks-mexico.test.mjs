@@ -293,7 +293,7 @@ test('las páginas piden la versión nueva de lo que cambia', () => {
   for (const f of ['app.js', 'vision-general.js']) {
     assert.match(html, new RegExp(f.replace('.', '\\.') + '\\?v=20261016-starbucks-es-1'), f);
   }
-  for (const file of ['locations.js','global-tour.js']) assert.ok(html.includes(file+'?v=20261016-player-links-1'));
+  for (const file of ['locations.js','global-tour.js']) assert.ok(html.includes(file+'?v=20261016-player-recovery-1'));
   for (const f of ['marca-blanca.js']) assert.match(html, new RegExp(f.replace('.', '\\.') + '\\?v=20261016-starbucks-mx-2'), f);
   assert.match(html, /expert-commands\.js\?v=20261016-starbucks-es-1/);
   for (const page of ['detail.html', 'walk.html', 'backoffice.html']) assert.match(read(page), /locations\.js\?v=20261016-starbucks-mx-1/, page);
