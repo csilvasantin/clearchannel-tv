@@ -96,7 +96,8 @@ test('puerta del backoffice: botón de Google sin recuadro blanco y texto de dem
 test('la tarjeta de Altadis España lleva marca=altadis en la ficha, el Tour DooH y la visión general', async () => {
   const { readFileSync } = await import('node:fs');
   const html = readFileSync(new URL('../backoffice.html', import.meta.url), 'utf8');
-  assert.match(html, /const brand = d\.marca \? '&marca=' \+ encodeURIComponent\(d\.marca\) : '';/);
+  // Las demos sin marca propia llevan marca=off: limpian la marca guardada de una demo anterior (Altadis → Alsea).
+  assert.match(html, /const brand = '&marca=' \+ encodeURIComponent\(d\.marca \|\| 'off'\);/);
   assert.match(html, /const mapUrl = [^\n]*\+ brand;/);
   assert.match(html, /const tourUrl = [^\n]*\+ brand;/);
   assert.match(html, /const overviewUrl = [^\n]*\+ brand : '';/);

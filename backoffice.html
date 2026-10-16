@@ -562,7 +562,9 @@ function renderDemoAccess() {
   document.getElementById('demo-account').textContent = demos.length ? verifiedSession.email : '';
   document.getElementById('demo-cards').innerHTML = demos.map(d => {
     // Una demo con marca blanca propia (Altadis España: marca=altadis) la lleva en todos sus enlaces.
-    const brand = d.marca ? '&marca=' + encodeURIComponent(d.marca) : '';
+    // Las demás llevan marca=off: si antes se abrió Altadis en esta pestaña, su marca guardada filtraría
+    // el globo y el Tour DooH de Alsea se quedaría sin puntos.
+    const brand = '&marca=' + encodeURIComponent(d.marca || 'off');
     const mapUrl = 'index.html?lang=' + LANG + '&locationId=' + encodeURIComponent(d.locationId) + brand;
     // Con orden propia (Alsea México: /demo dooh alsea) el Tour DooH entra por el modo experto (?ax_cmd).
     const tourUrl = 'index.html?lang=' + LANG + (d.command ? '&ax_cmd=' + encodeURIComponent(d.command) : '&circuit=' + encodeURIComponent(d.circuit) + '&tour=1') + brand;
