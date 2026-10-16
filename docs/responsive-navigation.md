@@ -64,3 +64,7 @@ Tutorial ES: ☰ Opciones → sello inferior → pasar el ratón → plegar Opci
 `/tour alsea mexico` lanza el Tour DooH Starbucks México desde el modo experto o el chat de Admirito. Reutiliza el circuito México y su marca Starbucks; `/parar` lo detiene. También admite `/tour starbucks mexico`. Enlace directo: `?ax_cmd=tour-alsea-mexico&marca=starbucks`.
 
 `/tour alsea mexico` starts the Starbucks Mexico DooH Tour from Expert mode or Admirito chat. It uses the Mexico circuit and Starbucks brand; `/stop` ends it. `/tour starbucks mexico` is also supported.
+
+Todos los circuitos con al menos una ubicación con coordenadas válidas generan automáticamente su Tour DooH panorámico y su rutina `/tour <circuito>` desde el catálogo visible. Los circuitos nuevos admiten su nombre o identificador, sin añadir entradas a mano. México, España y Altadis conservan su presentación específica. Un circuito vacío no inicia un tour; una sola ubicación hace una visita y cierre. Las superficies e impactos del catálogo no confirman reproducción física.
+
+Every circuit with at least one valid mapped location automatically gets a panoramic DooH Tour and a `/tour <circuit>` routine from the visible catalogue. New circuits accept their name or ID without manual registration. Existing tailored tours keep their presentation. Empty circuits cannot start; a single location supports a visit and finale. Catalogue surfaces and estimated impressions do not confirm physical playback.

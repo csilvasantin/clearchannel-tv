@@ -51,6 +51,26 @@
   const guarded = (c, k) => (c.guardPrefixes || []).some(g => k.startsWith(key(g)));
   const PREFIX_KEYS = CLIENTS.flatMap(c => prefixKeys(c).map(alias => [alias, c]));
 
+  let tourCircuits = {}, circuitSignature = null;
+  function setCircuits(definitions) {
+    const entries=Object.entries(definitions||{}).filter(([id,d])=>id!=='all'&&/^[a-z0-9][a-z0-9_-]{0,79}$/.test(id)&&!['__proto__','constructor','prototype'].includes(id)&&d&&Array.isArray(d.items)&&d.items.some(l=>Array.isArray(l.coords)&&l.coords.length===2&&l.coords.every(Number.isFinite)));
+    tourCircuits=Object.fromEntries(entries);
+    const signature=JSON.stringify(entries.map(([id,d])=>[id,d.label,d.items.length,d.items[0]?.client]));
+    if(signature===circuitSignature)return entries.length;
+    circuitSignature=signature;
+    for(let i=CLIENTS.length-1;i>=0;i--)if(CLIENTS[i].dynamic)CLIENTS.splice(i,1);
+    for(const [id,d] of entries){
+      if(CLIENTS.some(c=>c.circuit===id))continue;
+      const label=typeof d.label==='string'?d.label:id;
+      const brand=(d.items[0]||{}).client;
+      CLIENTS.push({id,circuit:id,label,es:label,en:label,dynamic:true,aliases:[id.replace(/^demo_/,'').replace(/_/g,' ')],
+        ...(/^[a-z0-9][a-z0-9-]{0,40}$/.test(brand||'')?{marca:brand}:{})});
+    }
+    CLIENT_KEYS.clear();PREFIX_KEYS.length=0;
+    for(const c of CLIENTS){for(const alias of [c.id,c.circuit,c.label,...c.aliases,...(c.exactAliases||[])])if(!CLIENT_KEYS.has(key(alias)))CLIENT_KEYS.set(key(alias),c);PREFIX_KEYS.push(...prefixKeys(c).map(alias=>[alias,c]));}
+    if(root.document && typeof root.CustomEvent==='function') root.document.dispatchEvent(new root.CustomEvent('admira:circuits-ready'));
+    return entries.length;
+  }
   // Exacto por id/alias/circuito; si no, prefijo único de al menos 3 letras.
   function resolveClient(value) {
     const k = key(value);
@@ -156,7 +176,7 @@
   // /demo dooh [cliente] (Carlos, 15-oct-2026 · FLT-102469): el Tour DooH del circuito en el mapa.
   // Si el circuito tiene tour global (global-tour.js: Alsea México) va del país entero a la puerta
   // de cada Xpacio, y «alsea» o «starbucks» lo prefieren al circuito sin él (Starbucks España).
-  const hasGlobalTour = c => !!(c && root.GlobalTour && root.GlobalTour.config(c.circuit));
+  const hasGlobalTour = c => !!(c && root.GlobalTour && root.GlobalTour.config(c.circuit, tourCircuits[c.circuit]));
   function resolveDoohClient(value) {
     const k = key(value), globals = CLIENTS.filter(hasGlobalTour);
     // Preserve the established Mexico shortcuts; Spain is explicit.
@@ -609,6 +629,7 @@
       {id: 'dooh:altadis', label: L(lang, 'Tour DooH Altadis España', 'DooH Tour Altadis Spain'), command: '/demo dooh altadis', builtin: true},
       {id: 'vision:altadis', label: L(lang, 'Visión general Altadis España', 'Overview Altadis Spain'), command: '/vision general altadis', builtin: true},
       {id: 'dooh:starbucks-espana', label: L(lang, 'Tour DooH Starbucks España · 3 destinos', 'DooH Tour Starbucks Spain · 3 destinations'), command: '/demo dooh starbucks espana', builtin: true},
+      ...Object.entries(tourCircuits).filter(([id])=>!['alsea_mexico','alsea_starbucks','altadis_espana'].includes(id)).map(([id,d])=>({id:'tour:'+id,label:L(lang,'Tour DooH ','DooH Tour ')+d.label,command:'/tour '+id,builtin:true})),
       ...featured.map(c => ({id: 'demo:' + c.id, label: 'Demo ' + c.label, command: '/demo ' + c.id, builtin: true})),
       ...featured.map(c => ({id: 'circuito:' + c.id, label: L(lang, 'Circuito ', 'Circuit ') + c.label, command: '/circuito ' + c.id, builtin: true})),
     ];
@@ -695,7 +716,7 @@
   }
 
   const api = Object.freeze({
-    CLIENTS, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, planoId, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, resolveDoohClient, demoDooh, linkedCommand, visionGeneral, parse, execute, isAvatarCommand, errorLines, usage,
+    CLIENTS, setCircuits, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, planoId, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, resolveDoohClient, demoDooh, linkedCommand, visionGeneral, parse, execute, isAvatarCommand, errorLines, usage,
     complete, defaultRoutines, sanitizeRoutines, loadRoutines, saveRoutines, addRoutine, removeRoutine, helpLines,
     pickDemoXpacio, demoScreens, registeredSurfaces, liveSurfaces, demoSurfaces,
   });

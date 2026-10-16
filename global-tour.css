@@ -97,3 +97,5 @@ body.gt-on:has(.gt-health) .cenital-floating{display:none!important}
  .gt-mexico .gt-card-body .gt-city{font-size:23px}
  .gt-mexico .gt-next{margin-top:3px;padding-top:5px}
 }
+
+.gt-rail li[hidden]{display:none}

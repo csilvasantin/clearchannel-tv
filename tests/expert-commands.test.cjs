@@ -333,3 +333,19 @@ test('/tour alsea mexico launches Mexico in Spanish and English and survives han
   assert.equal(pending,'/tour alsea mexico');
   assert.equal(C.linkedCommand('?ax_cmd=tour-alsea-mexico'),'/tour alsea mexico');
 });
+
+test('new circuits register commands and tour routines automatically, then disappear with their catalogue',()=>{
+ const definitions={demo_new_coffee:{label:'New coffee',items:[{id:'x',city:'Barcelona',coords:[2.16,41.4],client:'new-coffee'}]}};
+ C.setCircuits(definitions);
+ assert.equal(C.resolveDoohClient('new coffee').circuit,'demo_new_coffee');
+ const calls=[];
+ const ctx={dooh:id=>{calls.push(id);return {ok:true,count:1,global:true};}};
+ for(const lang of ['es','en'])assert.equal(C.execute('/tour new coffee',ctx,lang).ok,true);
+ assert.deepEqual(calls,['demo_new_coffee','demo_new_coffee']);
+ assert.ok(C.defaultRoutines().some(r=>r.command==='/tour demo_new_coffee'));
+ C.setCircuits(definitions);
+ assert.equal(C.CLIENTS.filter(c=>c.circuit==='demo_new_coffee').length,1);
+ C.setCircuits({});
+ assert.equal(C.resolveDoohClient('new coffee'),null);
+ assert.equal(C.defaultRoutines().some(r=>r.command==='/tour demo_new_coffee'),false);
+});

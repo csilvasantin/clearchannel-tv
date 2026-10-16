@@ -90,8 +90,16 @@
     return Object.assign({}, TEXT[lang2(lang)], own || {});
   }
 
-  function config(circuitId) {
-    return Object.prototype.hasOwnProperty.call(TOURS, circuitId) ? TOURS[circuitId] : null;
+  function config(circuitId, definition) {
+    if (Object.prototype.hasOwnProperty.call(TOURS, circuitId)) return TOURS[circuitId];
+    if (!/^[a-z0-9][a-z0-9_-]{0,79}$/.test(String(circuitId||'')) || ['__proto__','constructor','prototype'].includes(circuitId)
+      || !definition || !Array.isArray(definition.items) || !definition.items.some(l=>Array.isArray(l.coords)&&l.coords.length===2&&l.coords.every(Number.isFinite))) return null;
+    const label=definition.label||circuitId;
+    return {accent:'#00a862',deep:'#155d45',light:'#d4e9e2',ink:'#10251f',halo:'rgba(10,28,23,.9)',
+      title:label,region:label,presentation:'circuit',overviewMaxZoom:12.7,doorZoom:18.2,doorPitch:60,
+      timing:{intro:2200,leg:1000,flight:3000,door:8500,finale:6500},stops:{},
+      labels:{es:{stores:'Xpacios',states:'zonas',screens:'superficies de catálogo',screen:'superficie de catálogo',reach:'impactos estimados/día',perDay:'impactos estimados/día'},
+        en:{stores:'Xpaces',states:'areas',screens:'catalogue surfaces',screen:'catalogue surface',reach:'estimated impressions/day',perDay:'estimated impressions/day'}}};
   }
 
   function surfacesOf(loc) { return Array.isArray(loc && loc.surfaces) ? loc.surfaces : []; }
@@ -111,7 +119,7 @@
       short: extra.short || String(loc.province || '').slice(0, 4).toUpperCase(),
       street: extra.street || addrHead,
       storeId: (loc.external && loc.external.storeId) ? String(loc.external.storeId) : '',
-      format: extra.format || '',
+      format: extra.format || String(loc.format || surfacesOf(loc).map(s=>s.format||s.name).filter(Boolean).join(' · ')),
       screens: surfacesOf(loc).length,
       impressions: impressionsOf(loc),
       lang: lang2(lang),
@@ -279,7 +287,7 @@
     const infos = items.map(l => stopInfo(cfg, l, lang));
     const hud = doc.createElement('div');
     hud.className = 'gt-hud';
-    const editorial = cfg.presentation === 'mexico';
+    const editorial = ['mexico','circuit'].includes(cfg.presentation);
     if (editorial) hud.classList.add('gt-mexico');
     hud.style.setProperty('--gt-accent', cfg.accent);
     hud.style.setProperty('--gt-deep', cfg.deep);
@@ -290,7 +298,7 @@
       <strong>${esc(pick(cfg.title, lang))}</strong>
       <span class="gt-sub">${sum.stores} ${esc(L.stores)} · ${sum.states} ${esc(L.states)} · ${sum.screens} ${esc(L.screens)}${cfg.liveHealth ? '' : ` · ${esc(formatCount(sum.impressions, lang))} ${esc(L.reach)}`}</span>
       </div></div>
-      <ol class="gt-rail">${infos.map((s, i) => `<li data-i="${i}" title="${esc(s.city + ' · ' + s.state)}"><b>${i + 1}</b><span>${esc(editorial ? s.city : s.short)}</span></li>`).join('')}</ol>`;
+      <ol class="gt-rail">${infos.map((s, i) => `<li data-i="${i}" title="${esc(s.city + ' · ' + s.state)}"><b>${i + 1}</b><span>${esc(editorial ? (s.city || s.place) : s.short)}</span></li>`).join('')}</ol>`;
     const card = doc.createElement('aside');
     card.className = 'gt-card';
     if (editorial) card.classList.add('gt-mexico');
@@ -307,17 +315,19 @@
       hud.append(journey);
     }
     const nextLabel = index => index + 1 < infos.length
-      ? `${L.next} · ${infos[index + 1].city}`
-      : (lang === 'en' ? 'Final stop · Cancún' : 'Última parada · Cancún');
+      ? `${L.next} · ${infos[index + 1].city || infos[index + 1].place}`
+      : (lang === 'en' ? 'Final stop' : 'Última parada');
 
     function setStop(index, phase) {
+      const railStart=Math.max(0, Math.min(index-4, items.length-10));
       rail.forEach((li, i) => {
+        li.hidden=editorial && items.length>10 && (i<railStart || i>=railStart+10);
         li.classList.toggle('done', i < index || (i === index && phase === 'door'));
         li.classList.toggle('current', i === index);
       });
       if (phase !== 'door') card.hidden = true;
       if (journey && infos[index]) {
-        journey.innerHTML = `<span>${esc(phase === 'door' ? L.door : (lang === 'en' ? 'Flying to' : 'Rumbo a'))} <b>${esc(infos[index].city)}</b></span><span>${String(index + 1).padStart(2,'0')} / ${items.length} · ${esc(nextLabel(index))}</span>`;
+        journey.innerHTML = `<span>${esc(phase === 'door' ? L.door : (lang === 'en' ? 'Flying to' : 'Rumbo a'))} <b>${esc(infos[index].city || infos[index].place)}</b></span><span>${String(index + 1).padStart(2,'0')} / ${items.length} · ${esc(nextLabel(index))}</span>`;
       }
     }
     function door(index) {
@@ -329,7 +339,7 @@
         <span class="gt-card-stats">${s.screens} ${esc(s.screens === 1 ? L.screen : L.screens)}${cfg.liveHealth ? '' : ` · ${esc(formatCount(s.impressions, lang))} ${esc(L.perDay)}`}</span></div>`;
       if (editorial) {
         card.innerHTML = `<div class="gt-card-body"><span class="gt-card-kicker">${esc(s.state)} · ${String(index + 1).padStart(2,'0')} / ${items.length}</span>
-          <strong class="gt-city">${esc(s.city)}</strong><span class="gt-store-name">${esc(s.name)}</span>
+          <strong class="gt-city">${esc(s.city || s.place)}</strong><span class="gt-store-name">${esc(s.name)}</span>
           <span class="gt-card-street">${esc(s.street)}</span>
           <span class="gt-format">${esc(s.format)}</span>
           <span class="gt-card-stats">${s.screens} ${esc(s.screens === 1 ? L.screen : L.screens)} · ${esc(formatCount(s.impressions, lang))} ${esc(L.perDay)}</span>
@@ -343,7 +353,7 @@
       setStop(index, 'door');
     }
     function finish() {
-      if (journey) journey.textContent = lang === 'en' ? 'Tijuana → Cancún · Tour completed' : 'Tijuana → Cancún · Tour completado';
+      if (journey) journey.textContent = lang === 'en' ? `${infos[0].city||infos[0].name} → ${infos.at(-1).city||infos.at(-1).name} · Tour completed` : `${infos[0].city||infos[0].name} → ${infos.at(-1).city||infos.at(-1).name} · Tour completado`;
       rail.forEach(li => { li.classList.add('done'); li.classList.remove('current'); });
       card.innerHTML = `<div class="gt-card-num">✓</div><div class="gt-card-body"><span class="gt-card-kicker">${esc(L.done)} · ${esc(pick(cfg.region, lang))}</span>
         <strong>${sum.stores} ${esc(L.stores)} · ${sum.states} ${esc(L.states)}</strong>

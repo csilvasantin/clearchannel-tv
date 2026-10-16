@@ -34,6 +34,7 @@ const CIRCUIT_IDS_BY_SCOPE = {
   city: ['cafebreria', 'metro_bcn', 'kioskos', 'altadis_bcn', 'admiraxperience'],
   local: ['all', 'cafebreria', 'admiraxperience'],
 };
+const BUILTIN_CIRCUITS = new Set(CIRCUIT_IDS_BY_SCOPE.all);
 const CIRCUIT_TARGET_OPTIONS = {
   placements: [
     {value:'exterior', labelKey:'target_exterior'},
@@ -933,12 +934,12 @@ function isCorreosLocation(loc) {
 // Circuitos de DEMO generados por «créame demo de <cliente>» (tools/crear-demo): cualquier punto
 // con circuit "demo_<cliente>" forma su propio circuito sin tocar este fichero. Etiqueta en
 // loc.circuitLabel (texto o {es,en}). Ámbito: global y todos. Ver tools/crear-demo/SKILL.md.
-function isDemoCircuitLocation(loc) { if(loc?.circuit==='sneakerstore')return true; return /^demo_[a-z0-9_]{2,60}$/.test(String((loc && loc.circuit) || '')); }
+function isDemoCircuitLocation(loc) { if(loc?.circuit==='sneakerstore')return true; const id=String(loc?.circuit||''); return /^demo_[a-z0-9_]{2,60}$/.test(id)||(/^[a-z0-9][a-z0-9_-]{0,79}$/.test(id)&&!BUILTIN_CIRCUITS.has(id)&&!['constructor','prototype','__proto__'].includes(id)); }
 function demoCircuitLabel(loc, id) {
   const raw = loc && loc.circuitLabel;
   const lang = (typeof LANG === 'string' && LANG) || 'es';
   if (raw && typeof raw === 'object') return String(raw[String(lang).slice(0, 2)] || raw.es || raw.en || id);
-  return String(raw || ('Circuito demo · ' + id.slice(5).replace(/_/g, ' ')));
+  return String(raw || ('Circuito demo · ' + id.replace(/^demo_/,'').replace(/_/g, ' ')));
 }
 function demoCircuitDefinitions() {
   const out = {};
@@ -1080,7 +1081,7 @@ function circuitDefinitions() {
   const multiopticasItems = LOCATIONS.filter(isMultiopticasLocation);
   const retailItems = LOCATIONS.filter(l => !isCafebreriaLocation(l) && !isJtiXtancoLocation(l) && !isAltadisBcnLocation(l) && !isAltadisEspanaLocation(l) && !isAlseaStarbucksLocation(l) && !isAlseaMexicoLocation(l) && !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l)).filter(l => !isDemoCircuitLocation(l));
   const demoDefs = demoCircuitDefinitions();
-  return {
+  const defs = {
     ...demoDefs,
     admiraxperience: {label:'AdmiraXperience',items:LOCATIONS.filter(isAdmiraXperienceLocation),segmentation:circuitSegmentationForItems(LOCATIONS.filter(isAdmiraXperienceLocation))},
     metro_bcn: {
@@ -1199,6 +1200,8 @@ function circuitDefinitions() {
       segmentation: circuitSegmentationForItems(retailItems),
     },
   };
+  window.AdmiraExpertCommands?.setCircuits(defs);
+  return defs;
 }
 
 function currentCircuit() {
@@ -1701,7 +1704,7 @@ const GLOBAL_INTRO_MS = 3200, GLOBAL_LEG_MS = 1400, GLOBAL_DOOR_MS = 6000, GLOBA
 let globalTour = null;
 
 function globalTourConfig() {
-  return (window.GlobalTour && !previoTourMode) ? GlobalTour.config(selectedCircuitId) : null;
+  return (window.GlobalTour && !previoTourMode) ? GlobalTour.config(selectedCircuitId, circuitDefinitions()[selectedCircuitId]) : null;
 }
 function globalTourFont() { return currentLayer === 'relieve' ? ['Noto Sans Bold'] : ['Open Sans Bold']; }
 function globalTourOverview(items) {
@@ -1731,7 +1734,7 @@ function beginGlobalTour(items) {
   endGlobalTour();
   stopVisionGeneral();
   const cfg = globalTourConfig();
-  if (!cfg || items.length < 2) return false;
+  if (!cfg || !items.length) return false;
   splash.classList.add('hidden');
   panel.classList.remove('open');
   rotating = false;
@@ -4500,8 +4503,8 @@ function watchCircuitDeepLink() {
 function watchGlobalTourDeepLink(c) {
   let tries = 0;
   const tick = () => {
-    const ready = selectedCircuitId === c && circuitDemoItems().length > 1 && map.isStyleLoaded();
-    if (ready) { setTimeout(() => { if (!circuitDemo.running) startCircuitDemo(); }, 1500); return; }
+    const ready = selectedCircuitId === c && circuitDemoItems().length > 0 && map.isStyleLoaded();
+    if (ready) { setTimeout(() => { if (!circuitDemo.running && selectedCircuitId === c) startCircuitDemo(); }, 1500); return; }
     if (++tries < 40) setTimeout(tick, 500);
   };
   setTimeout(tick, 800);
@@ -4521,7 +4524,7 @@ function wireTour() {
       }
     }
     watchCircuitDeepLink();
-    if (q.get('tour') === '1' && c && window.GlobalTour && GlobalTour.config(c)) watchGlobalTourDeepLink(c);
+    if (q.get('tour') === '1' && c && window.GlobalTour) watchGlobalTourDeepLink(c);
     else if (q.get('tour') === '1' && b) setTimeout(() => { if (!tourRun) tourToggle(b); }, 1200);
     // Previo DooH: ?circuit=alcampo&previo=1 → tour con previo; ?previo=<id>[&vista=detalle|interior-1] → previo de una tienda.
     const pv = q.get('previo');

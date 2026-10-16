@@ -122,3 +122,17 @@ test('«Mis demos» de Biz lleva la demo de Alsea México: la release copia la s
   const session = fs.readFileSync(path.join(root, 'server/demo-session.mjs'), 'utf8');
   assert.match(session, /circuit: 'alsea_mexico'/);
 });
+
+test('new circuits automatically get a panorama, including a single valid stop',()=>{
+ const one={id:'new-place',name:'New place',coords:[2.16,41.4],surfaces:[]};
+ const def={label:'New circuit',items:[one]};
+ const automatic=GT.config('demo_new_client',def);
+ assert.equal(automatic.title,'New circuit');
+ assert.equal(automatic.presentation,'circuit');
+ assert.equal(automatic.labels.en.stores,'Xpaces');
+ assert.deepEqual(GT.routeData([one],0).features,[]);
+ assert.equal(GT.config('demo_empty',{items:[]}),null);
+ assert.equal(GT.config('demo_bad',{items:[{coords:[NaN,0]}]}),null);
+ assert.equal(GT.config('__proto__',def),null);
+ assert.equal(GT.config('alsea_mexico',def),cfg);
+});

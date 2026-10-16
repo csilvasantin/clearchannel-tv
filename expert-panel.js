@@ -251,6 +251,7 @@
   function suiteAction(engine,def){
     const attrs=(def.attributes||[]).map(id=>Object.assign({},C.ATTRIBUTES[id],{key:id,required:(def.requires||[]).includes(id),normalize:value=>{if(C.ATTRIBUTES[id].values){const client=C.resolveClient(value);if(!client)throw Error('Cliente no reconocido: '+value);return client.id;}if(C.ATTRIBUTES[id].brands){const brand=C.parseBrand(value);if(!brand)throw Error('Marca no válida');return brand;}return value;}}));
     const action={name:def.id,alias:def.aliases||[],desc:[def.es||def.id,def.en||def.es||def.id],attributes:attrs,run:(args,output,command)=>{
+      if(!away){try{C.setCircuits(circuitDefinitions());}catch(_){}}
       const parsed={ok:true,verb:def,args,raw:command.raw,command:command.raw};
       let result;if(def.map&&away){ctx.handoff(command.raw);result={ok:true,lines:['Abriendo mapa…']};}else result=def.run(args,ctx,lang())||{ok:true,lines:[]};
       return record(command.raw,Object.assign({},result,{parsed,command:command.raw}),false);
@@ -270,6 +271,7 @@
   (root.AdmiraCommandAdapters=root.AdmiraCommandAdapters||[]).push(connectSuiteCommands);
   if(root.AdmiraExperto)connectSuiteCommands(root.AdmiraExperto);
   function run(command,{echo=true}={}){
+    if(!away){try{C.setCircuits(circuitDefinitions());}catch(_){}}
     if(root.AdmiraExperto)return root.AdmiraExperto.exec(command,log,{echo});
     print('', ['Motor de comandos cargando. Inténtalo de nuevo.'],false);
   }
@@ -289,6 +291,7 @@
     const result=Promise.resolve().then(()=>run(d.texto,{echo:false})).then(r=>r||{ok:false,lines:['Command engine unavailable.']}).catch(()=>({ok:false,lines:['Tour command failed.']}));
     cache.set(d.requestId,{text:d.texto,result});result.then(reply);
   });
+  document.addEventListener('admira:circuits-ready',()=>{renderVerbs();renderRoutines();});
   function runPending(){let command;try{command=C.takePending(root.sessionStorage);}catch(_){}if(command){if(root.AdmiraExperto)run(command);else root.addEventListener('admira:commands-ready',()=>run(command),{once:true});}}
   if (!away) {
     if (document.readyState === 'complete') setTimeout(runPending, 0);

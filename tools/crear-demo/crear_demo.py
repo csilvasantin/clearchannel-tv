@@ -433,6 +433,7 @@ def paso_resumen(cfg, st):
     i = cfg['id']
     st['urls'] = {
         'marca': f'{NEXT}/marcablanca/?marca={i}', 'marca_api': f'{NEXT}/marcablanca/api/marcas/{i}',
+        'tour_comando': f"/tour {cfg['circuit']}",
         'biz_circuito': f"{BIZ}?marca={i}&circuit={cfg['circuit']}", 'biz_tour': f"{BIZ}?marca={i}&circuit={cfg['circuit']}&tour=1",
         'studio_hilo': f"https://www.admira.studio/hilomusical.html?marca={i}&store={cfg['store']}",
         'studio_megafonia': f"https://www.admira.studio/megafonia.html?marca={i}&store={cfg['store']}",
