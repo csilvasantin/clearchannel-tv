@@ -16,7 +16,10 @@
   const CLIENTS = [
     {id: 'cafebreria', circuit: 'cafebreria', label: 'Cafebrería', es: 'Cafebrería · Proyecto independiente', en: 'Cafebrería · Independent project', aliases: ['cafebreria barcelona'], featured: true},
     {id: 'starbucks', circuit: 'alsea_starbucks', label: 'Starbucks', es: 'Starbucks España (Alsea)', en: 'Starbucks Spain (Alsea)', aliases: ['sbux', 'alsea', 'alsea starbucks', 'starbucks espana', 'starbucks spain'], featured: true},
-    {id: 'starbucks-mexico', circuit: 'alsea_mexico', label: 'Starbucks México', es: 'Starbucks México (Alsea)', en: 'Starbucks Mexico (Alsea)', aliases: ['starbucks mx', 'sbux mx', 'alsea mexico', 'alsea mx'], featured: true},
+    // Starbucks México (DCL-97f84ae3e5b2cb2311c55101): va siempre con la marca blanca de Starbucks (marca=starbucks), como
+    // Altadis con la suya. Para /demo dooh y /vision general, «starbucks», «sbux» y «alsea» la prefieren a Starbucks España
+    // porque es la que tiene tour global (resolveDoohClient).
+    {id: 'starbucks-mexico', circuit: 'alsea_mexico', label: 'Starbucks México', es: 'Starbucks México (Alsea)', en: 'Starbucks Mexico (Alsea)', aliases: ['starbucks mx', 'sbux mx', 'sbux mexico', 'alsea mexico', 'alsea mx'], marca: 'starbucks', featured: true},
     // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de): va siempre con su marca blanca (marca=altadis) y
     // nunca se confunde con JTI, su competidor (encargo #4969): «xtanco» sigue siendo JTI aunque Altadis tenga tour global.
     {id: 'altadis', circuit: 'altadis_espana', label: 'Altadis España', es: 'Altadis España · Xtancos', en: 'Altadis Spain · Xtancos', aliases: ['altadis espana', 'altadis spain', 'xtancos altadis', 'altadis xtancos', 'estancos altadis'], marca: 'altadis', excludes: ['jti'], featured: true},
@@ -155,7 +158,7 @@
     const preferred = globals.filter(c => !(exact && (c.excludes || []).includes(exact.id)) && [c.id, c.circuit, c.label, ...c.aliases].some(a => key(a).startsWith(k)));
     return preferred.length === 1 ? preferred[0] : exact;
   }
-  // Un cliente con marca blanca propia (Altadis) se enseña siempre con ella: los enlaces la llevan y, si el mapa
+  // Un cliente con marca blanca propia (Altadis, Starbucks México) se enseña siempre con ella: los enlaces la llevan y, si el mapa
   // está con otra (o con ninguna), la orden se relanza en la portada con ?marca=<marca>.
   const withBrand = (client, url) => url + (client && client.marca ? '&marca=' + encodeURIComponent(client.marca) : '');
   const brandMismatch = (client, ctx) => !!(client && client.marca && ctx && typeof ctx.segmento === 'function'
@@ -585,8 +588,8 @@
   function defaultRoutines(lang = 'es') {
     const featured = CLIENTS.filter(c => c.featured);
     return [
-      {id: 'dooh:alsea', label: L(lang, 'Tour DooH Alsea México', 'DooH Tour Alsea Mexico'), command: '/demo dooh alsea', builtin: true},
-      {id: 'vision:alsea', label: L(lang, 'Visión general Alsea México', 'Overview Alsea Mexico'), command: '/vision general alsea', builtin: true},
+      {id: 'dooh:starbucks', label: L(lang, 'Tour DooH Starbucks México', 'DooH Tour Starbucks Mexico'), command: '/demo dooh starbucks', builtin: true},
+      {id: 'vision:starbucks', label: L(lang, 'Visión general Starbucks México', 'Overview Starbucks Mexico'), command: '/vision general starbucks', builtin: true},
       {id: 'dooh:altadis', label: L(lang, 'Tour DooH Altadis España', 'DooH Tour Altadis Spain'), command: '/demo dooh altadis', builtin: true},
       {id: 'vision:altadis', label: L(lang, 'Visión general Altadis España', 'Overview Altadis Spain'), command: '/vision general altadis', builtin: true},
       ...featured.map(c => ({id: 'demo:' + c.id, label: 'Demo ' + c.label, command: '/demo ' + c.id, builtin: true})),
@@ -632,8 +635,8 @@
       `${L(lang, 'texto', 'text')}: ${L(lang, 'texto libre para /buscar', 'free text for /search')}`,
       `${L(lang, 'marca', 'brand')}: off (Admira), ${brandList(lang)} · ${L(lang, 'o una web para analizarla (starbucks.es)', 'or a website to analyse (starbucks.es)')}`,
       L(lang, 'Forma: /demo starbucks · /demo cliente=alcampo · mayúsculas y acentos dan igual.', 'Form: /demo starbucks · /demo client=alcampo · case and accents do not matter.'),
-      L(lang, 'Tour DooH: /demo dooh alsea va de México entero a la puerta de cada Starbucks de Alsea México · /demo dooh <cliente> recorre cualquier circuito.', 'DooH Tour: /demo dooh alsea goes from the whole of Mexico to the door of each Alsea Mexico Starbucks · /demo dooh <client> tours any circuit.'),
-      L(lang, 'Visión general: /vision general alsea muestra Alsea México desde arriba · verde OK, amarillo con incidencia, rojo apagado.', 'Overview: /vision general alsea shows Alsea Mexico from above · green OK, yellow with issues, red off.'),
+      L(lang, 'Tour DooH: /demo dooh starbucks (o alsea, sbux, starbucks mexico) va de México entero a la puerta de cada uno de los 10 Starbucks de Alsea México, con su formato y siempre con la marca Starbucks (?ax_cmd=demo-dooh-starbucks&marca=starbucks) · /demo dooh <cliente> recorre cualquier circuito.', 'DooH Tour: /demo dooh starbucks (or alsea, sbux, starbucks mexico) goes from the whole of Mexico to the door of each of the 10 Alsea Mexico Starbucks, with its format and always with the Starbucks brand (?ax_cmd=demo-dooh-starbucks&marca=starbucks) · /demo dooh <client> tours any circuit.'),
+      L(lang, 'Visión general: /vision general starbucks muestra Starbucks México desde arriba · verde OK, amarillo con incidencia, rojo apagado.', 'Overview: /vision general starbucks shows Starbucks Mexico from above · green OK, yellow with issues, red off.'),
       L(lang, 'Altadis España: /demo dooh altadis va de España entera a la puerta de cada uno de sus 10 Xtancos y /vision general altadis los muestra con su semáforo, siempre con la marca Altadis (?ax_cmd=demo-dooh-altadis&marca=altadis).', 'Altadis Spain: /demo dooh altadis goes from the whole of Spain to the door of each of its 10 Xtancos and /vision general altadis shows them with their status lights, always with the Altadis brand (?ax_cmd=demo-dooh-altadis&marca=altadis).'),
       L(lang, 'RUTINAS', 'ROUTINES'),
       ...routines.map(r => `${r.label} → ${r.command}${r.builtin ? '' : L(lang, ' (tuya)', ' (yours)')}`),

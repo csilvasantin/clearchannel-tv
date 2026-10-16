@@ -13,9 +13,11 @@ const DEMO_EMAILS = new Set(['csilva@admira.com', 'csilvasantin@gmail.com']);
 export const DEMOS = [
   { id: 'jti', title: 'JTI · Xtanco', locationId: 'xtanco-valencia', circuit: 'jti_xtanco', twinUrl: 'https://www.xpaceos.com/admira-xp/?play=1&loc=xtanco-valencia' },
   { id: 'alsea', title: 'Alsea · Starbucks', locationId: 'alsea-sbux-021', circuit: 'alsea_starbucks', twinUrl: 'https://www.xpaceos.com/admira-xp/?autostart=xtanco&visual=matrix&loc=alsea-sbux-021' },
-  // Tour DooH global (FLT-102469): 10 Starbucks en 10 estados; «Tour DooH» abre el modo experto con /demo dooh alsea
-  // y «Visión general» con /vision general alsea (FLT-102505).
-  { id: 'alsea-mexico', title: 'Alsea México · Starbucks · 10 estados', locationId: 'alsea-mx-sbux-06-cdmx', circuit: 'alsea_mexico', command: '/demo dooh alsea', overview: '/vision general alsea', twinUrl: 'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021' },
+  // Tour DooH global (FLT-102469): 10 Starbucks en 10 estados; «Tour DooH» abre el modo experto con /demo dooh starbucks
+  // y «Visión general» con /vision general starbucks (FLT-102505). Desde DCL-97f84ae3e5b2cb2311c55101, al nivel de
+  // Altadis España: cada tienda con su formato y su gemelo, y la tarjeta con la marca blanca de Starbucks (?marca=starbucks).
+  // Ficha y gemelo de la tienda de CDMX (Madero 42, GÓNDOLA LED: altadis-cafe-10).
+  { id: 'alsea-mexico', title: 'Starbucks México · Alsea · 10 estados', locationId: 'alsea-mx-sbux-06-cdmx', circuit: 'alsea_mexico', marca: 'starbucks', command: '/demo dooh starbucks', overview: '/vision general starbucks', twinUrl: 'https://www.admira.store/xpacios/altadis-18/?espacio=altadis-cafe-10&loc=alsea-mx-sbux-06-cdmx&marca=starbucks' },
   { id: 'cafebreria', title: 'Cafebrería · Proyecto independiente', locationId: 'cafebreria-barcelona', circuit: 'cafebreria', twinUrl: 'https://www.pixeria.com/stock.html?type=xpaces&highlight=1790375438696-1ladz7' },
   // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de): la misma demo que Alsea México con la marca blanca de
   // Altadis (`marca`: los enlaces de la tarjeta llevan ?marca=altadis). Ficha del estanco de Madrid (Fuencarral 2).

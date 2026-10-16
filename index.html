@@ -58,7 +58,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="https://www.carlossilva.info/admira-design/contact-panel.js"></script>
 <!-- Descarga temprano (no bloqueante); se ejecutan al final del body, justo antes del script de init -->
 <link rel="preload" as="script" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js">
-<link rel="preload" as="script" href="locations.js?v=20261016-altadis-es-1">
+<link rel="preload" as="script" href="locations.js?v=20261016-starbucks-mx-1">
 <style>
   :root{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--warn:#ff8866;--card:#0a1620;--card2:#0d1c28;--line:rgba(120,243,255,.18)}
   *{box-sizing:border-box}
@@ -749,6 +749,10 @@ addEventListener('resize',ccFitIntro);
   aside.panel .actions.previo-row a{border-color:var(--accent);color:var(--accent)}
   aside.panel .actions.previo-row a:hover{background:var(--accent);color:#1a0e00}
   aside.panel .actions.previo-row[hidden]{display:none}
+  /* Gemelo secundario (twinAlt: Starbucks México → gemelo Matrix de Paseo de Gràcia 103), en su propia fila y más discreto. */
+  aside.panel .actions.twin-alt-row{margin-top:-8px;padding-top:0;border-top:0;margin-bottom:18px}
+  aside.panel .actions.twin-alt-row[hidden]{display:none}
+  aside.panel .actions.twin-alt-row a{border-style:dashed;opacity:.85;font-size:10.5px}
   .circuit-previo-toggle{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mut);cursor:pointer;user-select:none;padding:2px 0}
   .circuit-previo-toggle input{accent-color:var(--accent);margin:0}
   .circuit-demo.previo{border-color:rgba(120,243,255,.5);color:var(--brand);background:rgba(120,243,255,.06)}
@@ -760,7 +764,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="cliente-segmento.js?v=20261016-altadis-es-1"></script>
 <script defer src="marca-blanca.js?v=20261015-alsea-1"></script>
 <script defer src="responsive-shell.js?v=20261006-experto-tecla-1"></script>
-<script defer src="expert-commands.js?v=20261016-altadis-es-1"></script>
+<script defer src="expert-commands.js?v=20261016-starbucks-mx-1"></script>
 <script defer src="/suite/biz-native-context.js?v=20261012-1"></script>
 <script defer src="expert-panel.js?v=20261016-altadis-es-1"></script>
 <!-- ⌘ EXPERTO · CLI con el look de digitalavatar.ai: piel compartida de la suite (admiranext.com/suite). -->
@@ -1354,6 +1358,7 @@ addEventListener('resize',ccFitIntro);
       <a id="p-twin-hd" href="#" target="_blank" rel="noopener" style="display:none" data-i18n="twin_hd">🎥 Gemelo Hiperrealista ↗</a>
       <a id="p-plano" hidden target="_blank" rel="noopener" data-i18n="view_plano">▤ Plano del Xpacio ↗</a>
     </div>
+    <div class="actions twin-alt-row" id="p-twin-alt-row" hidden><a id="p-twin-alt" hidden target="_blank" rel="noopener"></a></div>
     <h3 data-i18n="surfaces_available">Dispositivos disponibles</h3>
     <div id="surfaces"></div>
     <div class="bidfeed-wrap">
@@ -1418,13 +1423,13 @@ addEventListener('resize',ccFitIntro);
 
 <!-- Cargados aquí (no en <head>) para que el chrome de la UI pinte antes; preload los anticipa -->
 <script defer src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script defer src="locations.js?v=20261016-altadis-es-1"></script>
+<script defer src="locations.js?v=20261016-starbucks-mx-1"></script>
 <script defer src="planner-core.js?v=20261012-5804"></script>
 <script defer src="tour-map.js?v=20260906-1"></script>
-<script defer src="global-tour.js?v=20261016-altadis-es-1"></script>
+<script defer src="global-tour.js?v=20261016-starbucks-mx-1"></script>
 <script defer src="login-google.js?v=20261015-login-1"></script>
-<script defer src="vision-general.js?v=20261016-altadis-es-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=20261015-alsea-1"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20261007-calle-1"></script><script defer src="inventory-evidence.js?v=20261010-evidence-1"></script><script defer src="incident-map-tooltip.js?v=20261016-1"></script><script defer src="app.js?v=20261016-altadis-es-1"></script><script defer src="intro.js?v=20261016-altadis-es-1"></script>
+<script defer src="vision-general.js?v=20261016-starbucks-mx-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=20261015-alsea-1"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20261007-calle-1"></script><script defer src="inventory-evidence.js?v=20261010-evidence-1"></script><script defer src="incident-map-tooltip.js?v=20261016-1"></script><script defer src="app.js?v=20261016-starbucks-mx-1"></script><script defer src="intro.js?v=20261016-altadis-es-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {

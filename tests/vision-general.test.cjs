@@ -63,10 +63,10 @@ test('/vision general: enlace ?ax_cmd, fuera de la portada y rutina de un clic',
   const opened = [];
   const away = C.execute('/vision general alsea', {handoff: () => {}, open: url => { opened.push(url); return {ok: true}; }}, 'es');
   assert.equal(away.ok, true);
-  assert.deepEqual(opened, ['/?ax_cmd=vision%20general%20starbucks-mexico&lang=es']);
+  assert.deepEqual(opened, ['/?ax_cmd=vision%20general%20starbucks-mexico&lang=es&marca=starbucks']);
   assert.equal(C.linkedCommand('?ax_cmd=' + encodeURIComponent('vision general starbucks-mexico')), '/vision general starbucks mexico');
   assert.equal(C.resolveDoohClient('starbucks mexico').id, 'starbucks-mexico');
-  assert.ok(C.defaultRoutines('es').some(r => r.label === 'Visión general Alsea México' && r.command === '/vision general alsea'));
+  assert.ok(C.defaultRoutines('es').some(r => r.label === 'Visión general Starbucks México' && r.command === '/vision general starbucks'));
 });
 
 test('el panel registra /vision en el motor común y la página carga el módulo', () => {

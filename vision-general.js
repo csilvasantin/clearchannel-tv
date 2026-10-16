@@ -60,6 +60,13 @@
       {es: 'Contenido de campaña caducado en pantalla', en: 'Expired campaign content on screen'},
       {es: 'Reproductor del estanco reiniciándose en bucle', en: 'Shop player stuck in a reboot loop'},
     ],
+    // Starbucks México (DCL-97f84ae3e5b2cb2311c55101): ya no tiene menu board ni pantalla de recogida, sino un formato
+    // de Altadis por tienda (tableta, videowall, LED, stretch): incidencias que valen para cualquiera.
+    alsea_mexico: [
+      {es: 'Una pantalla sin señal desde hace 25 min', en: 'One screen without signal for 25 min'},
+      {es: 'Contenido de campaña caducado en pantalla', en: 'Expired campaign content on screen'},
+      {es: 'Reproductor de la cafetería reiniciándose en bucle', en: 'Café player stuck in a reboot loop'},
+    ],
   };
   const issuesFor = circuitId => (Object.prototype.hasOwnProperty.call(DEMO_ISSUES_BY_CIRCUIT, circuitId) ? DEMO_ISSUES_BY_CIRCUIT[circuitId] : DEMO_ISSUES);
   function demoHealth(items, circuitId) {

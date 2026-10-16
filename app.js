@@ -789,17 +789,9 @@ function normText(s) {
   return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
-// Gemelo compartido de los 10 Starbucks Alsea México (FLT-101244).
-// Apunta al de Paseo de Gracia 103 (alsea-sbux-021). El vertical `cafeteria`
-// aún no existe en admira-xp y cae a Xtanco: no se construye aquí, solo se enlaza.
-const ALSEA_MEXICO_TWIN = 'https://www.admira.store/admira-xp/?quality=matrix&loc=alsea-sbux-021&project=starbucks&circuit=alsea_starbucks';
-function stampAlseaMexicoTwin(loc) {
-  if (!loc || !isAlseaMexicoLocation(loc)) return loc;
-  loc.twin = ALSEA_MEXICO_TWIN;
-  loc.xpaceUrl = ALSEA_MEXICO_TWIN;
-  loc.twinOnClick = true;
-  return loc;
-}
+// Los 10 Starbucks de Alsea México ya no comparten el gemelo de Paseo de Gràcia 103 (FLT-101244): desde
+// DCL-97f84ae3e5b2cb2311c55101 cada uno abre el gemelo de su formato (twin/xpaceUrl de su ficha en locations.js,
+// bundleWins) y el de Paseo de Gràcia 103 queda en la ficha como enlace secundario (twinAlt).
 
 // Circuito Altadis BCN (FLT-101352): cada estanco tiene su gemelo en XpaceOS
 // (escena cafetería). Lo fijamos en `xpaceUrl` para que la ficha muestre
@@ -841,7 +833,6 @@ function setLocations(nextLocations) {
   LOCATIONS_ALL = Array.isArray(nextLocations) ? nextLocations : [];
   LOCATIONS = segmentLocations(LOCATIONS_ALL);
   try { document.documentElement.dataset.segmentoPuntos = String(LOCATIONS.length); } catch (_) {}
-  LOCATIONS.forEach(stampAlseaMexicoTwin);
   LOCATIONS.forEach(stampAltadisTwin);
   LOCATIONS.forEach(stampDemoTwin);
   LOC_BY_ID = new Map(LOCATIONS.map(l => [l.id, l]));
@@ -3992,6 +3983,23 @@ function renderPanel(loc) {
     pPlano.hidden = !planoHref || !!(navigation && /\/plano\.html\b/.test(navigation.href));
     if (pPlano.hidden) pPlano.removeAttribute('href'); else pPlano.href = planoHref;
   }
+  // Gemelo secundario (DCL-97f84ae3e5b2cb2311c55101): los Starbucks de Alsea México abren el gemelo de su formato y
+  // conservan aquí el gemelo Matrix de Paseo de Gràcia 103 que compartían (twinAlt: {url, es, en}).
+  const pTwinAlt = document.getElementById('p-twin-alt');
+  if (pTwinAlt) {
+    const alt = twinAltLink(loc);
+    pTwinAlt.hidden = !alt;
+    const row = document.getElementById('p-twin-alt-row');
+    if (row) row.hidden = !alt;
+    if (alt) { pTwinAlt.href = alt.href; pTwinAlt.textContent = alt.label; } else pTwinAlt.removeAttribute('href');
+  }
+}
+function twinAltLink(loc) {
+  const alt = loc && loc.twinAlt;
+  const url = String((alt && alt.url) || '');
+  if (!/^https:\/\/(?:www\.)?(?:admira\.store|xpaceos\.com)\/[^\s"'<>]*$/.test(url)) return null;
+  const label = String((alt[LANG === 'en' ? 'en' : 'es']) || alt.es || '').trim();
+  return label ? {href: url, label} : null;
 }
 function planoPageUrl(loc) {
   const m = String((loc && loc.plano) || '').match(/^https:\/\/(?:www\.)?admira\.biz\/data\/xpacios\/([a-z0-9][a-z0-9-]{0,79})\.json$/);
@@ -4348,7 +4356,7 @@ function locationCamera(loc, bearing = -20, zoom) {
 }
 
 function syncCircuitOverview(){
- const meta={kioskos:{name:'CanalKiosk',theme:'kiosk'},admiraxperience:{name:'AdmiraXperience',theme:'admira'},estancos:{name:'Xtanco',theme:'xtanco'},alsea_mexico:{name:'Alsea México',theme:'admira',color:'#00704a'},altadis_espana:{name:'Altadis España',theme:'admira',color:'#F47920'}}[selectedCircuitId];
+ const meta={kioskos:{name:'CanalKiosk',theme:'kiosk'},admiraxperience:{name:'AdmiraXperience',theme:'admira'},estancos:{name:'Xtanco',theme:'xtanco'},alsea_mexico:{name:'Starbucks México',theme:'admira',color:'#00704a'},altadis_espana:{name:'Altadis España',theme:'admira',color:'#F47920'}}[selectedCircuitId];
  const active=!!(tourRun||circuitDemo.running);
  if(!active||!meta){circuitOverview?.destroy();circuitOverview=null;return;}
  if(circuitOverview?.key===selectedCircuitId)return;
@@ -4794,6 +4802,8 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
       slim.locations.forEach(m => {
         if (!m || !m.id) return;
         const cur = byId.get(m.id);
+        // Una ficha curada del bundle (bundleWins: Starbucks México) no la pisa el catálogo slim del KV.
+        if (cur && cur.bundleWins) return;
         if (cur) {
           if (Array.isArray(m.coords) && m.coords.length === 2 && (!Array.isArray(cur.coords) || cur.coords[0] !== m.coords[0] || cur.coords[1] !== m.coords[1])) { cur.coords = m.coords.slice(0, 2); changed = true; }
           if (m.name && cur.name !== m.name) { cur.name = m.name; changed = true; }

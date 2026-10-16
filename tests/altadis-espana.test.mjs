@@ -199,9 +199,10 @@ test('Tour DooH global de Altadis: España entera y la puerta de cada estanco, c
   assert.deepEqual(seed.map(l => cfg.stops[l.id].short), ['LCG', 'BIO', 'BCN', 'ZAZ', 'MAD', 'VLC', 'PMI', 'SVQ', 'AGP', 'GRX']);
   assert.deepEqual(GT.totals(seed), { stores: 10, states: 10, screens: 22, impressions: 7000 });
   assert.deepEqual([GT.text(cfg, 'es').stores, GT.text(cfg, 'es').states, GT.text(cfg, 'en').states], ['Xtancos', 'ciudades', 'cities']);
-  // Alsea México sigue con sus textos y su verde de serie.
+  // Alsea México sigue con sus textos de serie; desde DCL-97f84ae3e5b2cb2311c55101 lleva el verde de la casa de Starbucks.
   const alsea = GT.config('alsea_mexico');
-  assert.deepEqual([GT.text(alsea, 'es').stores, GT.text(alsea, 'es').states, alsea.bg, alsea.ink], ['Starbucks', 'estados', undefined, undefined]);
+  assert.deepEqual([GT.text(alsea, 'es').stores, GT.text(alsea, 'es').states], ['Starbucks', 'estados']);
+  assert.notEqual(alsea.bg.top, cfg.bg.top);
   const info = GT.stopInfo(cfg, seed[1], 'es');
   assert.deepEqual([info.state, info.short, info.format, info.screens, info.impressions], ['País Vasco', 'BIO', 'VIDEOWALL 8X1 H', 8, 700]);
   const [[w, s], [e, n]] = GT.bounds(seed);
@@ -219,11 +220,13 @@ test('visión general de Altadis: semáforo por estanco con incidencias de estan
   const issues = [...h.byId.values()].filter(x => x.issue).map(x => x.issue.es);
   assert.equal(issues.length, 2);
   for (const t of issues) assert.doesNotMatch(t, /menu board|recogida/i);
-  // Sin circuito (o con Alsea México) las incidencias de demo siguen siendo las de serie.
+  // Sin circuito las incidencias de demo siguen siendo las de serie; Starbucks México (DCL-97f84ae3e5b2cb2311c55101)
+  // reparte los mismos estados con incidencias que no hablan de menu board ni de recogida.
   const alsea = json('data/circuitos/circuito-alsea-mexico-10.seed.json');
   const before = V.circuitHealth(alsea, () => 'unknown', null);
   const now = V.circuitHealth(alsea, () => 'unknown', null, 'alsea_mexico');
-  assert.deepEqual([...now.byId.entries()], [...before.byId.entries()]);
+  assert.deepEqual([...now.byId.entries()].map(([id, x]) => [id, x.state]), [...before.byId.entries()].map(([id, x]) => [id, x.state]));
+  assert.ok([...before.byId.values()].some(x => x.issue && /recogida|menu board/i.test(x.issue.es)));
   assert.equal(V.pointsData(seed, h).features.length, 10);
 });
 
@@ -265,20 +268,23 @@ test('/demo dooh altadis y /vision general altadis van siempre con marca=altadis
     '/?ax_cmd=vision%20general%20altadis&lang=en&marca=altadis',
     '/?circuit=altadis_espana&tour=1&lang=es&marca=altadis',
   ]);
-  // Alsea México no cambia: sin marca en el enlace y sin recarga aunque el mapa esté con otra marca.
+  // Alsea México va ahora con la marca de Starbucks (DCL-97f84ae3e5b2cb2311c55101): nunca con la de Altadis.
   const alseaOpened = [];
   C.execute('/demo dooh alsea', { handoff: () => {}, open: url => { alseaOpened.push(url); return { ok: true }; } }, 'es');
-  assert.deepEqual(alseaOpened, ['/?circuit=alsea_mexico&tour=1&lang=es']);
+  assert.deepEqual(alseaOpened, ['/?circuit=alsea_mexico&tour=1&lang=es&marca=starbucks']);
   const local = [];
-  C.execute('/demo dooh alsea', { segmento: () => 'altadis', open: () => assert.fail('Alsea no recarga'), dooh: id => { local.push(id); return { ok: true, count: 10, global: true }; } }, 'es');
+  C.execute('/demo dooh alsea', { segmento: () => 'starbucks', open: () => assert.fail('con su marca no recarga'), dooh: id => { local.push(id); return { ok: true, count: 10, global: true }; } }, 'es');
   assert.deepEqual(local, ['alsea_mexico']);
+  const fromAltadis = [];
+  C.execute('/demo dooh alsea', { segmento: () => 'altadis', open: url => { fromAltadis.push(url); return { ok: true }; }, dooh: () => assert.fail('con Altadis puesta se recarga') }, 'es');
+  assert.deepEqual(fromAltadis, ['/?circuit=alsea_mexico&tour=1&lang=es&marca=starbucks']);
 });
 
 test('enlaces ?ax_cmd, rutinas de un clic y ayuda de Altadis', () => {
   assert.equal(C.linkedCommand('?ax_cmd=demo-dooh-altadis&marca=altadis'), '/demo dooh altadis');
   assert.equal(C.linkedCommand('?ax_cmd=vision-general-altadis&marca=altadis'), '/vision general altadis');
   const routines = C.defaultRoutines('es');
-  assert.deepEqual(routines.slice(0, 4).map(r => r.command), ['/demo dooh alsea', '/vision general alsea', '/demo dooh altadis', '/vision general altadis']);
+  assert.deepEqual(routines.slice(0, 4).map(r => r.command), ['/demo dooh starbucks', '/vision general starbucks', '/demo dooh altadis', '/vision general altadis']);
   assert.ok(routines.some(r => r.label === 'Tour DooH Altadis España'));
   assert.ok(C.defaultRoutines('en').some(r => r.label === 'Overview Altadis Spain'));
   assert.ok(C.helpLines('es').some(l => /\/demo dooh altadis/.test(l) && /marca=altadis/.test(l)));

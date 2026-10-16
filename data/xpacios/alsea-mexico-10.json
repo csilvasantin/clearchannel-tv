@@ -1,0 +1,148 @@
+{
+ "schema": "admira.circuito-demo/1",
+ "circuito": "alsea_mexico",
+ "cliente": "Starbucks (Alsea)",
+ "marca": "starbucks",
+ "locales": [
+  {
+   "id": "alsea-mx-sbux-01-tijuana",
+   "nombre": "Starbucks Tijuana · Plaza Río",
+   "direccion": "Av. Paseo de los Héroes 95, local E-5 · Zona Urbana Río · 22010 Tijuana",
+   "ciudad": "Tijuana",
+   "coords": [
+    -117.018754,
+    32.527349
+   ],
+   "tourOrder": 1,
+   "formato": "cliente-07",
+   "espacio": "altadis-cafe-07",
+   "mapa": "https://www.admira.biz/?circuit=alsea_mexico&loc=alsea-mx-sbux-01-tijuana&marca=starbucks"
+  },
+  {
+   "id": "alsea-mx-sbux-02-monterrey",
+   "nombre": "Starbucks Monterrey · Pabellón M",
+   "direccion": "Av. Juárez 1102, nivel 1, local PB-C17 · Centro · 64000 Monterrey",
+   "ciudad": "Monterrey",
+   "coords": [
+    -100.319595336914,
+    25.666903660561
+   ],
+   "tourOrder": 2,
+   "formato": "cliente-17",
+   "espacio": "altadis-cafe-17",
+   "mapa": "https://www.admira.biz/?circuit=alsea_mexico&loc=alsea-mx-sbux-02-monterrey&marca=starbucks"
+  },
+  {
+   "id": "alsea-mx-sbux-03-leon",
+   "nombre": "Starbucks León · Poliforum (Blvd. Francisco Villa)",
+   "direccion": "Blvd. Francisco Villa 1820, locales 1-172 y 1-173 · Oriental · 37510 León",
+   "ciudad": "León",
+   "coords": [
+    -101.656140089035,
+    21.1155645766608
+   ],
+   "tourOrder": 3,
+   "formato": "cliente-01",
+   "espacio": "altadis-cafe-01",
+   "mapa": "https://www.admira.biz/?circuit=alsea_mexico&loc=alsea-mx-sbux-03-leon&marca=starbucks"
+  },
+  {
+   "id": "alsea-mx-sbux-04-guadalajara",
+   "nombre": "Starbucks Guadalajara · Centro Gdl",
+   "direccion": "Degollado 202 · Centro · 44100 Guadalajara",
+   "ciudad": "Guadalajara",
+   "coords": [
+    -103.3448156,
+    20.6741566
+   ],
+   "tourOrder": 4,
+   "formato": "cliente-16",
+   "espacio": "altadis-cafe-16",
+   "mapa": "https://www.admira.biz/?circuit=alsea_mexico&loc=alsea-mx-sbux-04-guadalajara&marca=starbucks"
+  },
+  {
+   "id": "alsea-mx-sbux-05-queretaro",
+   "nombre": "Starbucks Querétaro · Constituyentes",
+   "direccion": "Av. Constituyentes 57 · Cimatario · 76030 Querétaro",
+   "ciudad": "Querétaro",
+   "coords": [
+    -100.393291,
+    20.584085
+   ],
+   "tourOrder": 5,
+   "formato": "cliente-08",
+   "espacio": "altadis-cafe-08",
+   "mapa": "https://www.admira.biz/?circuit=alsea_mexico&loc=alsea-mx-sbux-05-queretaro&marca=starbucks"
+  },
+  {
+   "id": "alsea-mx-sbux-06-cdmx",
+   "nombre": "Starbucks CDMX · Madero",
+   "direccion": "Francisco I. Madero 42 · Centro Histórico, Cuauhtémoc · 06000 Ciudad de México",
+   "ciudad": "Ciudad de México",
+   "coords": [
+    -99.137403,
+    19.433649
+   ],
+   "tourOrder": 6,
+   "formato": "cliente-10",
+   "espacio": "altadis-cafe-10",
+   "mapa": "https://www.admira.biz/?circuit=alsea_mexico&loc=alsea-mx-sbux-06-cdmx&marca=starbucks"
+  },
+  {
+   "id": "alsea-mx-sbux-07-puebla",
+   "nombre": "Starbucks Puebla · Puebla Centro",
+   "direccion": "Av. 2 Oriente 203, local B · Centro · 72000 Puebla",
+   "ciudad": "Puebla",
+   "coords": [
+    -98.1967163077206,
+    19.0441844167093
+   ],
+   "tourOrder": 7,
+   "formato": "cliente-13",
+   "espacio": "altadis-cafe-13",
+   "mapa": "https://www.admira.biz/?circuit=alsea_mexico&loc=alsea-mx-sbux-07-puebla&marca=starbucks"
+  },
+  {
+   "id": "alsea-mx-sbux-08-oaxaca",
+   "nombre": "Starbucks Oaxaca · Plaza del Parque",
+   "direccion": "Calz. Porfirio Díaz 27, kiosko · Reforma · 68050 Oaxaca",
+   "ciudad": "Oaxaca",
+   "coords": [
+    -96.71906,
+    17.078757
+   ],
+   "tourOrder": 8,
+   "formato": "cliente-18",
+   "espacio": "altadis-cafe-18",
+   "mapa": "https://www.admira.biz/?circuit=alsea_mexico&loc=alsea-mx-sbux-08-oaxaca&marca=starbucks"
+  },
+  {
+   "id": "alsea-mx-sbux-09-merida",
+   "nombre": "Starbucks Mérida · Paseo de Montejo",
+   "direccion": "Calle 56 A 465 · Centro · 97000 Mérida",
+   "ciudad": "Mérida",
+   "coords": [
+    -89.6182096999999,
+    20.9850204
+   ],
+   "tourOrder": 9,
+   "formato": "cliente-12",
+   "espacio": "altadis-cafe-12",
+   "mapa": "https://www.admira.biz/?circuit=alsea_mexico&loc=alsea-mx-sbux-09-merida&marca=starbucks"
+  },
+  {
+   "id": "alsea-mx-sbux-10-cancun",
+   "nombre": "Starbucks Cancún · Puerto Cancún",
+   "direccion": "Av. Bonampak, local L-1-02 A-49C · Zona Hotelera · 77500 Cancún",
+   "ciudad": "Cancún",
+   "coords": [
+    -86.80794,
+    21.160301
+   ],
+   "tourOrder": 10,
+   "formato": "cliente-09",
+   "espacio": "altadis-cafe-09",
+   "mapa": "https://www.admira.biz/?circuit=alsea_mexico&loc=alsea-mx-sbux-10-cancun&marca=starbucks"
+  }
+ ]
+}

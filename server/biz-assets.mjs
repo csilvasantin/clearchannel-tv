@@ -39,6 +39,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de): índice público del circuito para el gemelo de
   // admira.store (CORS de lectura en _worker.js, como los planos) y la segmentación con los alias de Altadis España.
   'data/xpacios/altadis-espana-10.json', 'cliente-segmento.js',
+  // Starbucks México · Alsea (DCL-97f84ae3e5b2cb2311c55101): su índice público, con el mismo contrato y el mismo CORS.
+  'data/xpacios/alsea-mexico-10.json',
   'about.html', 'marketplace.html', 'players/index.html', 'page-language.css',
   'backoffice.html', 'central-project-backoffice.mjs', 'tutorial/index.html',
   'demo/index.html', 'demo/demo.mjs', 'version.json',

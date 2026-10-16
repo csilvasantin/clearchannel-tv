@@ -1,6 +1,6 @@
 /* Tour DooH global: el circuito entero a la vista y, de ahí, a la puerta de cada Xpacio.
- * Alsea México (Carlos, 15-oct-2026 · FLT-102469): 10 Starbucks en 10 estados. Antes de cada
- * parada la cámara vuelve a México entero con la ruta trazada; después baja a pie de puerta
+ * Alsea México (Carlos, 15-oct-2026 · FLT-102469; marca Starbucks desde DCL-97f84ae3e5b2cb2311c55101):
+ * 10 Starbucks en 10 estados. Antes de cada parada la cámara vuelve a México entero con la ruta trazada; después baja a pie de puerta
  * (zoom de calle, inclinada en 3D) y gira despacio alrededor de la tienda.
  * Las funciones de datos son puras (tests/global-tour.test.cjs); el HUD y las capas solo tocan
  * el DOM y el mapa que se les pasa. */
@@ -8,24 +8,29 @@
   'use strict';
 
   const TOURS = {
+    // Starbucks México (DCL-97f84ae3e5b2cb2311c55101, 16-oct-2026): al nivel del de Altadis España, con la marca
+    // de Starbucks (verde #00704A, verde de la casa #1E3932 y el dorado #CBA258 de su marca blanca) y el formato de
+    // cada tienda en la ficha de la puerta (uno de los 10 de Altadis en su versión cafetería: altadis-cafe-NN).
     alsea_mexico: {
       accent: '#00a862', deep: '#00704a', light: '#d4e9e2',
-      title: {es: 'Alsea · Starbucks México', en: 'Alsea · Starbucks Mexico'},
+      ink: '#10251f', halo: 'rgba(10,28,23,.9)',
+      bg: {top: 'rgba(30,57,50,.95)', bottom: 'rgba(16,36,30,.93)', card: 'rgba(22,44,38,.95)', street: '#e8f2ed', stats: '#d9bf8c'},
+      title: {es: 'Starbucks México · Alsea', en: 'Starbucks Mexico · Alsea'},
       region: {es: 'México', en: 'Mexico'},
       doorZoom: 18.2, doorPitch: 60,
       // Dirección corta y estado de cada tienda (las del localizador oficial vienen en
       // mayúsculas fiscales). Coordenadas: localizador starbucks.com.mx, 6-24 m de OSM.
       stops: {
-        'alsea-mx-sbux-01-tijuana': {state: 'Baja California', short: 'BC', street: 'Paseo de los Héroes 95 · Zona Río'},
-        'alsea-mx-sbux-02-monterrey': {state: 'Nuevo León', short: 'NL', street: 'Av. Juárez 1102 · Centro'},
-        'alsea-mx-sbux-03-leon': {state: 'Guanajuato', short: 'GTO', street: 'Blvd. Francisco Villa 1820 · Oriental'},
-        'alsea-mx-sbux-04-guadalajara': {state: 'Jalisco', short: 'JAL', street: 'Degollado 202 · Centro'},
-        'alsea-mx-sbux-05-queretaro': {state: 'Querétaro', short: 'QRO', street: 'Av. Constituyentes 57 · Cimatario'},
-        'alsea-mx-sbux-06-cdmx': {state: 'Ciudad de México', short: 'CDMX', street: 'Madero 42 · Centro Histórico'},
-        'alsea-mx-sbux-07-puebla': {state: 'Puebla', short: 'PUE', street: 'Av. 2 Oriente 203 · Centro Histórico'},
-        'alsea-mx-sbux-08-oaxaca': {state: 'Oaxaca', short: 'OAX', street: 'Calz. Porfirio Díaz 27 · Reforma'},
-        'alsea-mx-sbux-09-merida': {state: 'Yucatán', short: 'YUC', street: 'Calle 56A 465 · Paseo de Montejo'},
-        'alsea-mx-sbux-10-cancun': {state: 'Quintana Roo', short: 'QROO', street: 'Av. Bonampak · Puerto Cancún'},
+        'alsea-mx-sbux-01-tijuana': {state: 'Baja California', short: 'BC', street: 'Paseo de los Héroes 95 · Zona Río', format: 'TABLET'},
+        'alsea-mx-sbux-02-monterrey': {state: 'Nuevo León', short: 'NL', street: 'Av. Juárez 1102 · Centro', format: 'VIDEOWALL 8X1 H'},
+        'alsea-mx-sbux-03-leon': {state: 'Guanajuato', short: 'GTO', street: 'Blvd. Francisco Villa 1820 · Oriental', format: 'VERTICAL'},
+        'alsea-mx-sbux-04-guadalajara': {state: 'Jalisco', short: 'JAL', street: 'Degollado 202 · Centro', format: 'VIDEOWALL 4X1 V'},
+        'alsea-mx-sbux-05-queretaro': {state: 'Querétaro', short: 'QRO', street: 'Av. Constituyentes 57 · Cimatario', format: 'LED CUBO MADRID-062'},
+        'alsea-mx-sbux-06-cdmx': {state: 'Ciudad de México', short: 'CDMX', street: 'Madero 42 · Centro Histórico', format: 'GONDOLA LED LIMITS-006'},
+        'alsea-mx-sbux-07-puebla': {state: 'Puebla', short: 'PUE', street: 'Av. 2 Oriente 203 · Centro Histórico', format: 'VIDEOWALL 2X1 V'},
+        'alsea-mx-sbux-08-oaxaca': {state: 'Oaxaca', short: 'OAX', street: 'Calz. Porfirio Díaz 27 · Reforma', format: 'SHUTTLE STRETCH'},
+        'alsea-mx-sbux-09-merida': {state: 'Yucatán', short: 'YUC', street: 'Calle 56A 465 · Paseo de Montejo', format: 'VIDEOWALL 1X2 V'},
+        'alsea-mx-sbux-10-cancun': {state: 'Quintana Roo', short: 'QROO', street: 'Av. Bonampak · Puerto Cancún', format: 'LED GRANADA-021'},
       },
     },
     // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de, 16-oct-2026): la misma demo con la marca blanca
