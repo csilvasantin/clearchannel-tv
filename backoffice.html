@@ -9,7 +9,7 @@
 <meta name="description" content="Backoffice para dar de alta gemelos digitales (Xpaces + surfaces) en el mapa de Clear Channel.">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script src="locations.js?v=lab-gdg51-1"></script>
+<script src="locations.js?v=20261016-altadis-es-1"></script>
 <script src="https://accounts.google.com/gsi/client" async></script>
 <style>
   :root{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--warn:#ff8866;--danger:#ff4f5e;--card:#0a1620;--card2:#0d1c28;--line:rgba(120,243,255,.18)}
@@ -561,11 +561,13 @@ function renderDemoAccess() {
   document.getElementById('nav-demos').hidden = !demos.length;
   document.getElementById('demo-account').textContent = demos.length ? verifiedSession.email : '';
   document.getElementById('demo-cards').innerHTML = demos.map(d => {
-    const mapUrl = 'index.html?lang=' + LANG + '&locationId=' + encodeURIComponent(d.locationId);
+    // Una demo con marca blanca propia (Altadis España: marca=altadis) la lleva en todos sus enlaces.
+    const brand = d.marca ? '&marca=' + encodeURIComponent(d.marca) : '';
+    const mapUrl = 'index.html?lang=' + LANG + '&locationId=' + encodeURIComponent(d.locationId) + brand;
     // Con orden propia (Alsea México: /demo dooh alsea) el Tour DooH entra por el modo experto (?ax_cmd).
-    const tourUrl = 'index.html?lang=' + LANG + (d.command ? '&ax_cmd=' + encodeURIComponent(d.command) : '&circuit=' + encodeURIComponent(d.circuit) + '&tour=1');
+    const tourUrl = 'index.html?lang=' + LANG + (d.command ? '&ax_cmd=' + encodeURIComponent(d.command) : '&circuit=' + encodeURIComponent(d.circuit) + '&tour=1') + brand;
     // Visión general (FLT-102505): el circuito desde arriba con el semáforo, por el modo experto.
-    const overviewUrl = d.overview ? 'index.html?lang=' + LANG + '&ax_cmd=' + encodeURIComponent(d.overview) : '';
+    const overviewUrl = d.overview ? 'index.html?lang=' + LANG + '&ax_cmd=' + encodeURIComponent(d.overview) + brand : '';
     return `<article class="demo-card"><h3>${escHtml(d.id === 'cafebreria' ? t('demo_cafebreria') : d.title)}</h3><a href="${mapUrl}">${t('demo_map')}</a><a href="${tourUrl}">${t('demo_tour')}</a>${overviewUrl ? `<a href="${overviewUrl}">${t('demo_overview')}</a>` : ''}<a href="${escHtml(d.twinUrl)}" target="_blank" rel="noopener">${t('demo_twin')}</a></article>`;
   }).join('');
 }

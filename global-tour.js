@@ -28,18 +28,47 @@
         'alsea-mx-sbux-10-cancun': {state: 'Quintana Roo', short: 'QROO', street: 'Av. Bonampak · Puerto Cancún'},
       },
     },
+    // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de, 16-oct-2026): la misma demo con la marca blanca
+    // de Altadis (naranja #F47920 y marrón #3C3126). Un estanco real por ciudad, de A Coruña a Granada, cada uno
+    // con un formato Altadis. Raíl con el código IATA de cada ciudad.
+    altadis_espana: {
+      accent: '#F47920', deep: '#3C3126', light: '#fcd9bd',
+      ink: '#2a211a', halo: 'rgba(30,22,14,.9)',
+      bg: {top: 'rgba(60,49,38,.94)', bottom: 'rgba(32,25,19,.92)', card: 'rgba(36,28,21,.94)', street: '#f3e6da', stats: '#e2c3a6'},
+      title: {es: 'Altadis · Xtancos España', en: 'Altadis · Xtancos Spain'},
+      region: {es: 'España', en: 'Spain'},
+      labels: {es: {stores: 'Xtancos', states: 'ciudades', store: 'Estanco'}, en: {stores: 'Xtancos', states: 'cities', store: 'Tobacconist'}},
+      doorZoom: 18.2, doorPitch: 60,
+      stops: {
+        'altadis-es-01-a-coruna': {state: 'Galicia', short: 'LCG', street: 'Rúa Rego da Auga 40 · Pescadería', format: 'TABLET'},
+        'altadis-es-02-bilbao': {state: 'País Vasco', short: 'BIO', street: 'Bidebarrieta 2 · Casco Viejo', format: 'VIDEOWALL 8X1 H'},
+        'altadis-es-03-barcelona': {state: 'Cataluña', short: 'BCN', street: 'Gran de Gràcia 61 · Gràcia', format: 'VERTICAL'},
+        'altadis-es-04-zaragoza': {state: 'Aragón', short: 'ZAZ', street: 'San Ignacio de Loyola 7 · Centro', format: 'VIDEOWALL 4X1 V'},
+        'altadis-es-05-madrid': {state: 'Comunidad de Madrid', short: 'MAD', street: 'Fuencarral 2 · Gran Vía', format: 'LED CUBO MADRID-062'},
+        'altadis-es-06-valencia': {state: 'Comunitat Valenciana', short: 'VLC', street: 'Plaça de Sant Jaume 5 · Ciutat Vella', format: 'GONDOLA LED LIMITS-006'},
+        'altadis-es-07-palma': {state: 'Illes Balears', short: 'PMI', street: "Plaça de l'Olivar 5 · El Mercat", format: 'VIDEOWALL 2X1 V'},
+        'altadis-es-08-sevilla': {state: 'Andalucía', short: 'SVQ', street: "O'Donnell 5 · Casco Antiguo", format: 'SHUTTLE STRETCH'},
+        'altadis-es-09-malaga': {state: 'Andalucía', short: 'AGP', street: 'Marqués de Larios 10 · Centro Histórico', format: 'VIDEOWALL 1X2 V'},
+        'altadis-es-10-granada': {state: 'Andalucía', short: 'GRX', street: 'Reyes Católicos 47 · Centro', format: 'LED GRANADA-021'},
+      },
+    },
   };
 
   const TEXT = {
-    es: {stores: 'Starbucks', states: 'estados', screens: 'pantallas DooH', reach: 'impactos/día',
+    es: {stores: 'Starbucks', states: 'estados', screens: 'pantallas DooH', screen: 'pantalla DooH', reach: 'impactos/día',
       store: 'Tienda', door: 'A pie de puerta', overview: 'Vista global', next: 'Siguiente',
-      done: 'Tour completado', circuit: 'circuito DooH', perDay: 'impactos/día'},
-    en: {stores: 'Starbucks', states: 'states', screens: 'DooH screens', reach: 'impressions/day',
+      done: 'Tour completado', circuit: 'circuito DooH', perDay: 'impactos/día', format: 'Formato'},
+    en: {stores: 'Starbucks', states: 'states', screens: 'DooH screens', screen: 'DooH screen', reach: 'impressions/day',
       store: 'Store', door: 'At the door', overview: 'Global view', next: 'Next',
-      done: 'Tour completed', circuit: 'DooH circuit', perDay: 'impressions/day'},
+      done: 'Tour completed', circuit: 'DooH circuit', perDay: 'impressions/day', format: 'Format'},
   };
   const lang2 = lang => (String(lang || 'es').slice(0, 2) === 'en' ? 'en' : 'es');
   const pick = (value, lang) => (value && typeof value === 'object' ? (value[lang2(lang)] || value.es || '') : String(value || ''));
+  // Textos del HUD: los de serie (Starbucks, estados) con los propios del circuito encima (Xtancos, ciudades).
+  function text(cfg, lang) {
+    const own = cfg && cfg.labels && cfg.labels[lang2(lang)];
+    return Object.assign({}, TEXT[lang2(lang)], own || {});
+  }
 
   function config(circuitId) {
     return Object.prototype.hasOwnProperty.call(TOURS, circuitId) ? TOURS[circuitId] : null;
@@ -62,6 +91,7 @@
       short: extra.short || String(loc.province || '').slice(0, 4).toUpperCase(),
       street: extra.street || addrHead,
       storeId: (loc.external && loc.external.storeId) ? String(loc.external.storeId) : '',
+      format: extra.format || '',
       screens: surfacesOf(loc).length,
       impressions: impressionsOf(loc),
       lang: lang2(lang),
@@ -177,7 +207,7 @@
         'circle-opacity': ['match', ['get', 'status'], 'current', 0.75, 'done', 0.4, 0.22]}});
     add({id: 'gt-stop', type: 'circle', source: STOPS, maxzoom: 13,
       paint: {'circle-radius': ['match', ['get', 'status'], 'current', 14, 11],
-        'circle-color': ['match', ['get', 'status'], 'current', '#ffffff', 'done', cfg.deep, '#0d1f19'],
+        'circle-color': ['match', ['get', 'status'], 'current', '#ffffff', 'done', cfg.deep, cfg.ink || '#0d1f19'],
         'circle-stroke-color': ['match', ['get', 'status'], 'current', cfg.accent, '#ffffff'],
         'circle-stroke-width': ['match', ['get', 'status'], 'current', 3, 1.6]}});
     add({id: 'gt-stop-num', type: 'symbol', source: STOPS, maxzoom: 13,
@@ -188,7 +218,7 @@
       layout: {'text-field': ['get', 'label'], 'text-font': font, 'text-size': ['match', ['get', 'status'], 'current', 15, 12],
         'text-anchor': 'top', 'text-offset': [0, 1.35], 'text-line-height': 1.15, 'symbol-sort-key': ['get', 'rank'],
         'text-padding': 4},
-      paint: {'text-color': '#ffffff', 'text-halo-color': 'rgba(0,20,14,.9)', 'text-halo-width': 1.8,
+      paint: {'text-color': '#ffffff', 'text-halo-color': cfg.halo || 'rgba(0,20,14,.9)', 'text-halo-width': 1.8,
         'text-opacity': ['match', ['get', 'status'], 'next', 0.78, 1]}});
     // A pie de puerta solo un anillo alrededor de la tienda: nada tapa la fachada.
     add({id: 'gt-door-outer', type: 'circle', source: STOPS, minzoom: 13, filter: ['==', ['get', 'status'], 'current'],
@@ -211,8 +241,16 @@
   // ─── HUD: marca y raíl de estados arriba, ficha de la puerta abajo ──
   function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c])); }
 
+  // Fondo del HUD y de la ficha: el verde de serie (Alsea) salvo que el circuito traiga el suyo (Altadis, marrón).
+  function paintBg(el, cfg) {
+    const bg = cfg && cfg.bg;
+    if (!bg) return;
+    for (const [k, v] of Object.entries({'--gt-bg-top': bg.top, '--gt-bg-bottom': bg.bottom, '--gt-bg-card': bg.card,
+      '--gt-street': bg.street, '--gt-stats': bg.stats})) if (v) el.style.setProperty(k, v);
+  }
+
   function createHud(doc, cfg, items, lang) {
-    const L = TEXT[lang2(lang)];
+    const L = text(cfg, lang);
     const sum = totals(items);
     const infos = items.map(l => stopInfo(cfg, l, lang));
     const hud = doc.createElement('div');
@@ -220,6 +258,7 @@
     hud.style.setProperty('--gt-accent', cfg.accent);
     hud.style.setProperty('--gt-deep', cfg.deep);
     hud.style.setProperty('--gt-light', cfg.light);
+    paintBg(hud, cfg);
     hud.setAttribute('role', 'status');
     hud.innerHTML = `<div class="gt-brand"><span class="gt-dot" aria-hidden="true"></span><div>
       <strong>${esc(pick(cfg.title, lang))}</strong>
@@ -231,6 +270,7 @@
     card.hidden = true;
     card.style.setProperty('--gt-accent', cfg.accent);
     card.style.setProperty('--gt-deep', cfg.deep);
+    paintBg(card, cfg);
     doc.body.append(hud, card);
     const rail = [...hud.querySelectorAll('.gt-rail li')];
 
@@ -244,10 +284,10 @@
     function door(index) {
       const s = infos[index];
       card.innerHTML = `<div class="gt-card-num">${String(index + 1).padStart(2, '0')}<small>/${String(items.length).padStart(2, '0')}</small></div>
-        <div class="gt-card-body"><span class="gt-card-kicker">${esc(L.door)} · ${esc(s.state)}${s.storeId ? ` · ${esc(L.store)} #${esc(s.storeId)}` : ''}</span>
+        <div class="gt-card-body"><span class="gt-card-kicker">${esc(L.door)} · ${esc(s.state)}${s.storeId ? ` · ${esc(L.store)} #${esc(s.storeId)}` : ''}${s.format ? ` · ${esc(L.format)} ${esc(s.format)}` : ''}</span>
         <strong>${esc(s.name)}</strong>
         <span class="gt-card-street">${esc(s.street)} · ${esc(s.city)}</span>
-        <span class="gt-card-stats">${s.screens} ${esc(L.screens)} · ${esc(formatCount(s.impressions, lang))} ${esc(L.perDay)}</span></div>`;
+        <span class="gt-card-stats">${s.screens} ${esc(s.screens === 1 ? L.screen : L.screens)} · ${esc(formatCount(s.impressions, lang))} ${esc(L.perDay)}</span></div>`;
       card.hidden = false;
       setStop(index, 'door');
     }
@@ -263,5 +303,5 @@
   }
 
   root.GlobalTour = {config, stopInfo, totals, formatCount, bounds, arc, routeData, stopsData, doorCamera,
-    addLayers, setData, removeLayers, setBaseLayers, createHud, sameName, TOURS};
+    addLayers, setData, removeLayers, setBaseLayers, createHud, sameName, text, TOURS};
 })(typeof window === 'undefined' ? globalThis : window);

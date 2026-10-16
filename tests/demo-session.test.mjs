@@ -5,7 +5,7 @@ const claims = { aud: GOOGLE_CLIENT_ID, iss: 'https://accounts.google.com', sub:
 test('both Carlos identities receive separate JTI, Alsea and Cafebrería demos; both verified identities can edit the catalogue', () => {
   for (const email of ['csilva@admira.com', 'csilvasantin@gmail.com']) {
     const session = sessionFromClaims({ ...claims, email });
-    assert.deepEqual(session.demos.map(d => d.id), ['jti', 'alsea', 'alsea-mexico', 'cafebreria']);
+    assert.deepEqual(session.demos.map(d => d.id), ['jti', 'alsea', 'alsea-mexico', 'cafebreria', 'altadis-espana']);
     assert.equal(session.canManageCatalog, true);
     assert.equal(session.demos[1].locationId, 'alsea-sbux-021');
     assert.equal(session.demos[1].circuit, 'alsea_starbucks');
@@ -14,15 +14,23 @@ test('both Carlos identities receive separate JTI, Alsea and Cafebrería demos; 
     assert.equal(session.demos[3].locationId, 'cafebreria-barcelona');
     assert.equal(session.demos[3].circuit, 'cafebreria');
     assert.match(session.demos[3].twinUrl, /highlight=1790375438696-1ladz7/);
+    // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de): ficha de Madrid, con su marca blanca.
+    assert.equal(session.demos[4].locationId, 'altadis-es-05-madrid');
+    assert.equal(session.demos[4].circuit, 'altadis_espana');
+    assert.equal(session.demos[4].marca, 'altadis');
   }
 });
 test('other staff retain management and get only the open Alsea México tour; unrelated and lookalike accounts get no access', () => {
   // Carlos, 15-oct-2026 (FLT-102469): el Tour DooH de Alsea México, para cualquier usuario registrado.
   const staff = sessionFromClaims({ ...claims, email: 'staff@admira.com' });
   assert.equal(staff.canManageCatalog, true);
-  assert.deepEqual(staff.demos.map(d => d.id), ['alsea-mexico']);
+  assert.deepEqual(staff.demos.map(d => d.id), ['alsea-mexico', 'altadis-espana']);
   assert.equal(staff.demos[0].command, '/demo dooh alsea');
   assert.equal(staff.demos[0].overview, '/vision general alsea');
+  // Altadis España, abierta como la de Alsea México (DCL-a6cb621be0ce5932f50960de).
+  assert.equal(staff.demos[1].command, '/demo dooh altadis');
+  assert.equal(staff.demos[1].overview, '/vision general altadis');
+  assert.equal(staff.demos[1].title, 'Altadis España · 10 Xtancos');
   for (const email of ['someone@gmail.com', 'csilva@admira.com.attacker.test', 'csilvasantin+demo@gmail.com']) assert.equal(sessionFromClaims({ ...claims, email }), null);
 });
 test('reject wrong client, issuer, expired and unverified Google claims', () => {
@@ -40,7 +48,7 @@ test('route fails closed before and after Google validation and never caches ide
   assert.equal(ok.status, 200);
   assert.match(requested, /^https:\/\/oauth2\.googleapis\.com\/tokeninfo\?id_token=/);
   assert.equal(ok.headers.get('Cache-Control'), 'no-store');
-  assert.equal((await ok.json()).demos.length, 4);
+  assert.equal((await ok.json()).demos.length, 5);
 });
 test('the demo session does not depend on the host: it works the same on admira.app and admira.biz', async () => {
   for (const host of ['www.admira.app', 'www.admira.biz', 'admira.biz', 'www.clearchannel.tv']) {
@@ -84,4 +92,19 @@ test('puerta del backoffice: botón de Google sin recuadro blanco y texto de dem
   assert.doesNotMatch(html, /cuentas autorizadas de Carlos|Carlos’s authorized accounts/);
   assert.match(html, /Mis demos para los usuarios registrados/);
   assert.match(html, /My demos for registered users/);
+});
+test('la tarjeta de Altadis España lleva marca=altadis en la ficha, el Tour DooH y la visión general', async () => {
+  const { readFileSync } = await import('node:fs');
+  const html = readFileSync(new URL('../backoffice.html', import.meta.url), 'utf8');
+  assert.match(html, /const brand = d\.marca \? '&marca=' \+ encodeURIComponent\(d\.marca\) : '';/);
+  assert.match(html, /const mapUrl = [^\n]*\+ brand;/);
+  assert.match(html, /const tourUrl = [^\n]*\+ brand;/);
+  assert.match(html, /const overviewUrl = [^\n]*\+ brand : '';/);
+  const altadis = sessionFromClaims({ ...claims, email: 'staff@admira.com' }).demos.find(d => d.id === 'altadis-espana');
+  assert.equal(altadis.twinUrl, 'https://www.admira.store/xpacios/altadis-18/?espacio=altadis-xtanco-08&loc=altadis-es-05-madrid&marca=altadis');
+  // Las demás tarjetas no cambian: sin marca propia.
+  for (const d of sessionFromClaims(claims).demos.filter(d => d.id !== 'altadis-espana')) assert.equal(d.marca, undefined, d.id);
+  const C = (await import('../expert-commands.js')).default || globalThis.AdmiraExpertCommands;
+  assert.equal(C.linkedCommand('?lang=es&ax_cmd=' + encodeURIComponent(altadis.command) + '&marca=altadis'), '/demo dooh altadis');
+  assert.equal(C.linkedCommand('?lang=es&ax_cmd=' + encodeURIComponent(altadis.overview) + '&marca=altadis'), '/vision general altadis');
 });

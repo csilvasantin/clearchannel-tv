@@ -226,6 +226,8 @@
     open(url) { try { root.location.assign(url); return {ok: true}; } catch (_) { return {ok: false}; } },
     // Marca blanca (marca-blanca.js): se lee al ejecutar porque puede cargar después que este panel.
     get marca() { return root.AdmiraMarca || null; },
+    // Cliente activo del globo (cliente-segmento.js): Altadis España se enseña siempre con marca=altadis.
+    segmento() { try { return root.AdmiraSegmento ? root.AdmiraSegmento.actual() : null; } catch (_) { return null; } },
   };
   if (away) {
     ctx.handoff = command => shell.handoff(command);

@@ -35,7 +35,9 @@
     if (globeShown) return;
     globeShown = true;
     try {
-      if (!demo.running && typeof map !== 'undefined' && map.getZoom() < 3) map.jumpTo({center: [videoLng(), 16]});
+      // Si la cámara ya vuela (Tour DooH o enlace profundo a un Xpacio), no se la recoloca: el salto cancelaba
+      // ese vuelo y el tour se quedaba parado en la primera parada (DCL-a6cb621be0ce5932f50960de).
+      if (!demo.running && typeof map !== 'undefined' && map.getZoom() < 3 && !map.isMoving()) map.jumpTo({center: [videoLng(), 16]});
     } catch (_) {}
     intro.classList.add('globe-ready');
     setTimeout(() => { if (video) { video.pause(); video.removeAttribute('src'); video.querySelectorAll('source').forEach(s => s.remove()); video.load(); } }, 900);

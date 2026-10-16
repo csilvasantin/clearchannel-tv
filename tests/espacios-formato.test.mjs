@@ -235,7 +235,8 @@ test('regenerar da ficheros idénticos a los publicados, y el índice cumple el 
 
 test('se publican en admira.biz con CORS de lectura (y no en clearchannel.tv)', async () => {
   for (const f of ['espacios-formato.mjs', 'data/xpacios/altadis-18.json', 'data/xpacios/altadis-xtanco-01.json', 'data/xpacios/altadis-cafe-18.json']) assert.ok(BIZ_ASSET_FILES.includes(f), f);
-  assert.equal(BIZ_ASSET_FILES.filter(f => /^data\/xpacios\/altadis-/.test(f)).length, 37);
+  // Los 36 planos y su índice; altadis-espana-10.json es el índice del circuito Altadis España (otra cosa).
+  assert.equal(BIZ_ASSET_FILES.filter(f => /^data\/xpacios\/altadis-(?:18|xtanco-|cafe-)/.test(f)).length, 37);
   assert.equal(bizAssetPath(new URL('https://www.admira.biz/data/xpacios/altadis-cafe-08.json')), '/__admira_biz/data/xpacios/altadis-cafe-08.json');
   assert.equal(bizAssetPath(new URL('https://www.clearchannel.tv/data/xpacios/altadis-cafe-08.json')), '');
   const env = { ASSETS: { fetch(request) {

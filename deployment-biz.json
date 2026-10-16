@@ -21,10 +21,10 @@
     ]
   },
   "novedades": [
-    "Bugito: /ayuda bugito y /help bugito explican giro, popup, negro y restauración desde las cinco patas.",
-    "Guía ES/EN y tema MCP help bugito con ejemplos completos, destino MBP16 y permisos owner.",
-    "Backoffice: el botón «Iniciar sesión con Google» de la puerta ya no sale dentro de un recuadro blanco.",
-    "El texto de la puerta dice ahora «gestión para @admira.com y Mis demos para los usuarios registrados» (en inglés, «My demos for registered users»). Mis demos: la tarjeta de Alsea México trae Ver ficha, Tour DooH, Visión general y Ver Gemelo Digital."
+    "Altadis España · 10 Xtancos: un estanco real por ciudad (A Coruña → Granada), cada uno con un formato Altadis y su plano compartido; admira.biz/?circuit=altadis_espana&tour=1&marca=altadis.",
+    "Tour DooH y visión general de Altadis con su marca blanca (naranja y marrón): /demo dooh altadis, /vision general altadis y ?ax_cmd=demo-dooh-altadis&marca=altadis.",
+    "Mis demos suma la tarjeta «Altadis España · 10 Xtancos» para los usuarios registrados, como la de Alsea México.",
+    "Enlace profundo a un estanco: ?circuit=altadis_espana&loc=<id>&marca=altadis centra el punto y abre su ficha, con su gemelo y «▤ Plano del Xpacio»; índice público en /data/xpacios/altadis-espana-10.json."
   ],
   "nativeClearChannel": {
     "enabled": true,
