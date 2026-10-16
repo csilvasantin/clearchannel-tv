@@ -28,3 +28,22 @@ test('España tiene exactamente los tres destinos confirmados y los comandos con
  a.equal(C.resolveDoohClient('starbucks spain').circuit,'alsea_starbucks');
  a.equal(C.resolveDoohClient('starbucks').circuit,'alsea_mexico');
 });
+test('ausencia explícita de señal en un player vinculado es roja; error HTTP o identidad distinta no lo son',()=>{
+ a.equal(H.signal({ok:true,screen:'a',item:null},1000,'a'),'offline');
+ a.equal(H.signal({ok:false,screen:'a'},1000,'a'),'unknown');
+ a.equal(H.signal({ok:true,screen:'b',item:{ts:900}},1000,'a'),'unknown');
+ a.equal(H.signal({ok:true,screen:'a',item:{ts:900},device:{display:{visible:20}}},1000,'a'),'fault');
+ a.equal(H.health(loc,{a:'fault',b:'online'}).state,'partial');
+});
+test('las vinculaciones del laboratorio y del iPad provienen de sus identidades exactas',()=>{
+ const vm=require('node:vm'),fs=require('node:fs');const window={};vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../locations.js'),'utf8'),{window,console,URL,localStorage:{getItem:()=>null}});
+ const merged=window.mergeOmnipLocations([{id:'alsea-sbux-021',surfaces:[],iot:[{type:'iPad',player:'ipad-admin-mupi'}]}]);
+ const lab=merged.find(l=>l.id==='lab-gran-de-gracia-51');
+ a.equal(lab.surfaces.find(s=>s.itil==='GDG51-PAN-07').screen,'macbookpro16');
+ a.equal(merged.find(l=>l.id==='alsea-sbux-021').surfaces[0].screen,'ipad-admin-mupi');
+ a.equal(merged.find(l=>l.id==='alsea-sbux-014').surfaces.some(s=>s.screen),false);
+});
+test('Diagonal confirmado sin instalación no es una avería ni se consulta como player',()=>{
+ const place={monitoringKind:'location-only',surfaces:[{screen:'catalogue-placeholder'}]};
+ a.deepEqual(H.screens(place),[]);a.equal(H.health(place,{}).state,'location');
+});

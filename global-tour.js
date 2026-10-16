@@ -13,7 +13,7 @@
       bg: {top:'rgba(30,57,50,.95)', bottom:'rgba(16,36,30,.93)', card:'rgba(22,44,38,.95)', street:'#e8f2ed', stats:'#d9bf8c'},
       title: {es:'Starbucks España · Alsea', en:'Starbucks Spain · Alsea'},
       region: {es:'Barcelona', en:'Barcelona'},
-      labels: {es:{stores:'destinos', states:'ciudad'}, en:{stores:'destinations', states:'city'}},
+      labels: {es:{stores:'destinos', states:'ciudad', screens:'superficies de catálogo'}, en:{stores:'destinations', states:'city', screens:'catalogue surfaces'}},
       liveHealth: true, overviewMaxZoom:12.7, doorZoom:18.2, doorPitch:60,
       stops: {
         'lab-gran-de-gracia-51': {state:'Laboratorio · Barcelona', short:'GDG', street:'Gran de Gràcia 51 · Laboratorio'},
@@ -270,7 +270,10 @@
   function createHud(doc, cfg, items, lang) {
     const L = text(cfg, lang);
     const sum = totals(items);
-    if (cfg.liveHealth) sum.states = new Set(items.map(l => l.city || 'Barcelona')).size;
+    if (cfg.liveHealth) {
+      sum.states = new Set(items.map(l => l.city || 'Barcelona')).size;
+      sum.screens = items.filter(l=>l.monitoringKind!=='location-only').reduce((n,l)=>n+surfacesOf(l).length,0);
+    }
     const infos = items.map(l => stopInfo(cfg, l, lang));
     const hud = doc.createElement('div');
     hud.className = 'gt-hud';

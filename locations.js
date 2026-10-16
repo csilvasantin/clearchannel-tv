@@ -1426,6 +1426,23 @@ window.mergeOmnipLocations = function(base, extra) {
     ['project_id', 'referenceLocationId', 'circuit', 'network', 'kind'].forEach(k => { l[k] = cafeIdentity[k]; });
   });
   out.forEach(l=>{if(l.id==='sneakers-store-santa-rosa-19'){l.project_id='sneakers-store';l.project='sneakers-store';l.circuit='sneakerstore';l.circuitLabel='Sneakers Store';l.network='Sneakers Store';}});
+  // Verified physical mapping from the laboratory plan (GDG51-PAN-07).
+  // The iPad link is the explicit player in Paseo's managed IoT record; it
+  // does not establish the physical installation of that planned virtual iPad.
+  out.forEach(loc => {
+    // Carlos confirmed Diagonal is a Maps location with no player installed.
+    if (loc.id === 'alsea-sbux-014') loc.monitoringKind = 'location-only';
+    if (loc.id === 'lab-gran-de-gracia-51') (loc.surfaces || []).forEach(surface => {
+      if (surface.itil === 'GDG51-PAN-07') surface.screen = 'macbookpro16';
+    });
+    if (loc.id === 'alsea-sbux-021') {
+      const ipad = (loc.iot || []).find(d => d.type === 'iPad' && d.player === 'ipad-admin-mupi');
+      if (ipad && !(loc.surfaces || []).some(s => s.screen === ipad.player)) {
+        loc.surfaces = [...(loc.surfaces || []), {name:'iPad · vínculo de catálogo', screen:ipad.player,
+          surface:'pantalla', bindingSource:'IoT del catálogo · ubicación física sin verificar'}];
+      }
+    }
+  });
   return out;
 };
 

@@ -26,3 +26,12 @@ Confirmed route: Gran de Gràcia 51 laboratory → Starbucks Paseo de Gracia 103
 `/demo dooh starbucks espana` / `/demo dooh starbucks spain` launches the shared cinematic tour. Existing Mexico shortcuts remain unchanged. The playback panel stays visible during every flight and checks `/signage/now` every 15 seconds. Green requires a numeric proof-of-play timestamp within 170 seconds for every explicitly mapped player. Missing mappings, failed requests and future timestamps remain unverified. A heartbeat alone does not prove playback. This checks player reports, not physical screen brightness or power.
 
 El panel muestra «Emitiendo», «Revisar», «Sin señal reciente» o «Sin datos». No simula estados. Las superficies sin reproductor vinculado siguen sin datos aunque otra pantalla esté emitiendo. La visión general de España tampoco usa el semáforo simulado de las demos de México/Altadis. Para comprobar encendido físico hace falta evidencia adicional de cámara o del dispositivo.
+
+### Vinculación comprobada de reproductores · 16-oct-2026
+
+- Gran de Gràcia: `GDG51-PAN-07` se vincula a `macbookpro16`, conforme al plano y al objetivo activo del Supervisor. Los otros seis reproductores mantienen las identidades exactas del plano. Una respuesta válida sin señal de reproducción se muestra en rojo como «Sin señal reciente»; no demuestra apagado físico.
+- Paseo de Gracia: el registro IoT asocia explícitamente su iPad con `ipad-admin-mupi`. El player publica reproducción, pero la referencia ITIL del iPad está en ciclo `virtual_planned`: el panel avisa que su ubicación física no está verificada. Las otras superficies siguen sin reproductor confirmado.
+- Diagonal: Carlos confirma que es solo una ubicación derivada de Google Maps, sin player instalado. Se muestra «Solo ubicación · sin reproductor» y no se incluye como avería ni como pantalla en los totales de emisión.
+- La cámara aporta una lectura separada de MBP16 desde el Supervisor existente, con caducidad de 60 s. El tour no mueve la cámara ni inicia otra vigilancia.
+
+The laboratory mapping uses the exact ITIL identity from its plan. The Paseo iPad uses the explicit managed IoT player link, with an unverified physical-location warning. No player is inferred for Diagonal. A valid empty playback report means no recent signal, not proven power-off. Fresh camera evidence is displayed separately from player telemetry.

@@ -53,3 +53,9 @@ body.gt-on .status-pill,body.gt-on .live-ticker{display:none!important}
 @media(max-width:760px){.gt-health{top:174px;right:12px;width:230px;padding:10px}.gt-health-row{margin-top:6px;padding:7px}.gt-health>strong{font-size:14px}.gt-health>small{margin-top:7px}}
 
 body.gt-on:has(.gt-health) .cenital-floating{display:none!important}
+.gt-health{width:330px;max-height:calc(100vh - 280px);overflow:auto}
+.gt-health-players{display:grid;gap:3px;margin-top:5px}.gt-health-players small{overflow-wrap:anywhere}
+.gt-health-players [data-state=online]{color:#86efac}.gt-health-players [data-state=offline],.gt-health-players [data-state=fault]{color:#fca5a5}
+@media(max-width:760px){.gt-health{width:260px;max-height:calc(100vh - 300px)}}
+.gt-health-physical{display:grid;gap:5px;font-size:11px;margin-top:6px}.gt-health-physical a{color:#fde047;text-decoration:underline}
+.gt-health-players summary{cursor:pointer;color:#d4e9e2;font-size:11px}.gt-health-players:not([open]){display:block}.gt-health-players[hidden]{display:none}.gt-health-players small{display:block;margin-top:3px}
