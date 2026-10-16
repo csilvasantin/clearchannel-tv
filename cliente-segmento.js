@@ -83,6 +83,8 @@
   /** ¿Se ve el punto con el cliente `cliente` activo? null/admira = todo. */
   function visible(loc, cliente) {
     if (!cliente || cliente === 'admira') return true;
+    // Carlos includes the Gran de Gràcia laboratory in the three-stop Spain tour.
+    if (cliente === 'starbucks' && loc && loc.id === 'lab-gran-de-gracia-51') return true;
     var c = clienteDe(loc);
     return (INCLUYE[cliente] || [cliente]).indexOf(c) >= 0;
   }

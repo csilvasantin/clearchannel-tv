@@ -36,7 +36,8 @@
     let state = 'sin_datos';
     if (total && counts.offline === total) state = 'apagado';
     else if (incidents > 0 || counts.offline > 0) state = 'incidencia';
-    else if (counts.online > 0) state = 'ok';
+    else if (total && counts.online === total) state = 'ok';
+    else if (counts.online > 0) state = 'incidencia';
     return {state, ...counts, total, incidents, real: known > 0 || incidents > 0};
   }
 
@@ -90,10 +91,11 @@
   function circuitHealth(items, connectionOf, incidentsOf, circuitId) {
     const real = new Map(items.map(l => [l.id, storeHealth(l, connectionOf, incidentsOf ? incidentsOf(l) : 0)]));
     const anyReal = [...real.values()].some(h => h.real);
-    const byId = anyReal ? real : demoHealth(items, circuitId);
+    const useDemo = !anyReal && circuitId !== 'alsea_starbucks';
+    const byId = useDemo ? demoHealth(items, circuitId) : real;
     const totals = {ok: 0, incidencia: 0, apagado: 0, sin_datos: 0};
     for (const h of byId.values()) totals[h.state]++;
-    return {byId, totals, demo: !anyReal, count: items.length};
+    return {byId, totals, demo: useDemo, count: items.length};
   }
 
   function pointsData(items, health) {

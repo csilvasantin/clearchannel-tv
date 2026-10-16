@@ -108,7 +108,7 @@ test('la tarjeta de Altadis España lleva marca=altadis en la ficha, el Tour Doo
   assert.equal(altadis.twinUrl, 'https://www.admira.store/xpacios/altadis-18/?espacio=altadis-xtanco-08&loc=altadis-es-05-madrid&marca=altadis');
   // Starbucks México lleva la suya (DCL-97f84ae3e5b2cb2311c55101); las demás tarjetas no cambian: sin marca propia.
   const marcas = Object.fromEntries(sessionFromClaims(claims).demos.map(d => [d.id, d.marca]));
-  assert.deepEqual(marcas, { jti: undefined, alsea: undefined, 'alsea-mexico': 'starbucks', cafebreria: undefined, 'altadis-espana': 'altadis' });
+  assert.deepEqual(marcas, { jti: undefined, alsea: 'starbucks', 'alsea-mexico': 'starbucks', cafebreria: undefined, 'altadis-espana': 'altadis' });
   const C = (await import('../expert-commands.js')).default || globalThis.AdmiraExpertCommands;
   assert.equal(C.linkedCommand('?lang=es&ax_cmd=' + encodeURIComponent(altadis.command) + '&marca=altadis'), '/demo dooh altadis');
   assert.equal(C.linkedCommand('?lang=es&ax_cmd=' + encodeURIComponent(altadis.overview) + '&marca=altadis'), '/vision general altadis');

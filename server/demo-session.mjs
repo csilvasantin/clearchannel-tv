@@ -12,7 +12,7 @@ export const GOOGLE_CLIENT_IDS = new Set([GOOGLE_CLIENT_ID, GOOGLE_SUITE_CLIENT_
 const DEMO_EMAILS = new Set(['csilva@admira.com', 'csilvasantin@gmail.com']);
 export const DEMOS = [
   { id: 'jti', title: 'JTI · Xtanco', locationId: 'xtanco-valencia', circuit: 'jti_xtanco', twinUrl: 'https://www.xpaceos.com/admira-xp/?play=1&loc=xtanco-valencia' },
-  { id: 'alsea', title: 'Alsea · Starbucks', locationId: 'alsea-sbux-021', circuit: 'alsea_starbucks', twinUrl: 'https://www.xpaceos.com/admira-xp/?autostart=xtanco&visual=matrix&loc=alsea-sbux-021' },
+  { id: 'alsea', title: 'Starbucks España · 3 destinos', command: '/demo dooh starbucks espana', overview: '/vision general starbucks espana', marca: 'starbucks', locationId: 'alsea-sbux-021', circuit: 'alsea_starbucks', twinUrl: 'https://www.xpaceos.com/admira-xp/?autostart=xtanco&visual=matrix&loc=alsea-sbux-021' },
   // Tour DooH global (FLT-102469): 10 Starbucks en 10 estados; «Tour DooH» abre el modo experto con /demo dooh starbucks
   // y «Visión general» con /vision general starbucks (FLT-102505). Desde DCL-97f84ae3e5b2cb2311c55101, al nivel de
   // Altadis España: cada tienda con su formato y su gemelo, y la tarjeta con la marca blanca de Starbucks (?marca=starbucks).

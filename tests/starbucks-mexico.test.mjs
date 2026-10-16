@@ -291,9 +291,10 @@ test('Biz publica el índice de Starbucks México (CORS de lectura); clearchanne
 test('las páginas piden la versión nueva de lo que cambia', () => {
   const html = read('index.html');
   for (const f of ['locations.js', 'app.js', 'global-tour.js', 'vision-general.js']) {
-    assert.match(html, new RegExp(f.replace('.', '\\.') + '\\?v=20261016-starbucks-mx-1'), f);
+    assert.match(html, new RegExp(f.replace('.', '\\.') + '\\?v=20261016-starbucks-es-1'), f);
   }
-  for (const f of ['expert-commands.js', 'marca-blanca.js']) assert.match(html, new RegExp(f.replace('.', '\\.') + '\\?v=20261016-starbucks-mx-2'), f);
+  for (const f of ['marca-blanca.js']) assert.match(html, new RegExp(f.replace('.', '\\.') + '\\?v=20261016-starbucks-mx-2'), f);
+  assert.match(html, /expert-commands\.js\?v=20261016-starbucks-es-1/);
   for (const page of ['detail.html', 'walk.html', 'backoffice.html']) assert.match(read(page), /locations\.js\?v=20261016-starbucks-mx-1/, page);
 });
 

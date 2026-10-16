@@ -15,7 +15,7 @@
   // Clientes = circuitos de app.js. `featured` genera rutinas de un clic.
   const CLIENTS = [
     {id: 'cafebreria', circuit: 'cafebreria', label: 'Cafebrería', es: 'Cafebrería · Proyecto independiente', en: 'Cafebrería · Independent project', aliases: ['cafebreria barcelona'], featured: true},
-    {id: 'starbucks', circuit: 'alsea_starbucks', label: 'Starbucks', es: 'Starbucks España (Alsea)', en: 'Starbucks Spain (Alsea)', aliases: ['sbux', 'alsea', 'alsea starbucks', 'starbucks espana', 'starbucks spain'], featured: true},
+    {id: 'starbucks', circuit: 'alsea_starbucks', label: 'Starbucks', es: 'Starbucks España (Alsea)', en: 'Starbucks Spain (Alsea)', aliases: ['sbux', 'alsea', 'alsea starbucks', 'starbucks espana', 'starbucks spain'], marca: 'starbucks', featured: true},
     // Starbucks México (DCL-97f84ae3e5b2cb2311c55101): va siempre con la marca blanca de Starbucks (marca=starbucks), como
     // Altadis con la suya. Para /demo dooh y /vision general, «starbucks», «sbux» y «alsea» la prefieren a Starbucks España
     // porque es la que tiene tour global (resolveDoohClient).
@@ -159,7 +159,9 @@
   const hasGlobalTour = c => !!(c && root.GlobalTour && root.GlobalTour.config(c.circuit));
   function resolveDoohClient(value) {
     const k = key(value), globals = CLIENTS.filter(hasGlobalTour);
-    if (!k) return globals[0] || null;
+    // Preserve the established Mexico shortcuts; Spain is explicit.
+    if (['starbucks', 'alsea', 'sbux'].includes(k)) return CLIENTS.find(c => c.id === 'starbucks-mexico');
+    if (!k) return globals.find(c => c.id === 'starbucks-mexico') || globals[0] || null;
     const exact = resolveClient(value);
     if (exact && hasGlobalTour(exact)) return exact;
     const preferred = globals.filter(c => !(exact && (c.excludes || []).includes(exact.id)) && !guarded(c, k) && prefixKeys(c).some(a => a.startsWith(k)));
@@ -595,6 +597,7 @@
   function defaultRoutines(lang = 'es') {
     const featured = CLIENTS.filter(c => c.featured);
     return [
+      {id: 'dooh:starbucks-espana', label: L(lang, 'Tour DooH Starbucks España · 3 destinos', 'DooH Tour Starbucks Spain · 3 destinations'), command: '/demo dooh starbucks espana', builtin: true},
       {id: 'dooh:starbucks', label: L(lang, 'Tour DooH Starbucks México', 'DooH Tour Starbucks Mexico'), command: '/demo dooh starbucks', builtin: true},
       {id: 'vision:starbucks', label: L(lang, 'Visión general Starbucks México', 'Overview Starbucks Mexico'), command: '/vision general starbucks', builtin: true},
       {id: 'dooh:altadis', label: L(lang, 'Tour DooH Altadis España', 'DooH Tour Altadis Spain'), command: '/demo dooh altadis', builtin: true},

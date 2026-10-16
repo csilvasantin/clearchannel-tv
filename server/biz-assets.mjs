@@ -6,7 +6,7 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'suite/experto.js', 'suite/experto.css', 'suite/demo-ios.mjs', 'suite/demo-android.mjs', 'suite/biz-native-context.js',
   'galaxy-shell.js', 'expert-panel.js', 'responsive-shell.js',
   // Tour DooH global (FLT-102469): Alsea México, del país entero a la puerta de cada Starbucks.
-  'global-tour.js', 'global-tour.css', 'circuit-overview.js',
+  'tour-health.js', 'global-tour.js', 'global-tour.css', 'circuit-overview.js',
   // Login con el popup de Google en la cabecera (FLT-102490).
   'login-google.js',
   // Visión general con semáforo por Xpacio: /vision general alsea (FLT-102501).

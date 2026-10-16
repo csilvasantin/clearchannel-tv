@@ -20,7 +20,7 @@ test('Alsea México: 10 Starbucks del seed, uno por estado, todos con parada en 
 });
 
 test('solo los circuitos declarados tienen tour global', () => {
-  assert.equal(GT.config('alsea_starbucks'), null);
+  assert.equal(GT.config('alsea_starbucks').liveHealth, true);
   assert.equal(GT.config('__proto__'), null);
   assert.equal(GT.config('toString'), null);
 });

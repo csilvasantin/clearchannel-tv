@@ -42,3 +42,14 @@ body.gt-on .status-pill,body.gt-on .live-ticker{display:none!important}
   body.gt-on .circuit-panel,body.gt-on .cenital-floating{display:none!important}
 }
 @media (prefers-reduced-motion:reduce){.gt-hud,.gt-card{animation:none}.gt-rail li{transition:none}}
+/* The three Spanish destinations stay visible throughout every camera flight. */
+.gt-health{position:fixed;right:24px;top:220px;z-index:12;width:290px;box-sizing:border-box;padding:18px;border:1px solid #39866a;border-radius:16px;background:linear-gradient(145deg,#1e3932f5,#10251ff5);box-shadow:0 16px 48px #0007;color:#d4e9e2;font:13px/1.4 system-ui}
+.gt-health>strong{font-size:17px;color:white}.gt-health>small{display:block;margin-top:14px;font-size:10px;color:#bad1c8}
+.gt-health-row{display:grid;gap:4px;margin-top:12px;padding:12px;background:#ffffff08;border-radius:10px;border-left:3px solid #94a3b8}
+.gt-health-row b{color:white}.gt-health-row span{color:#cbd5e1}.gt-health-row small{font-size:10px}
+.gt-health-row[data-state=online]{border-color:#22c55e}.gt-health-row[data-state=online] span{color:#86efac}
+.gt-health-row[data-state=offline]{border-color:#ef4444}.gt-health-row[data-state=offline] span{color:#fca5a5}
+.gt-health-row[data-state=partial]{border-color:#facc15}.gt-health-row[data-state=partial] span{color:#fde047}
+@media(max-width:760px){.gt-health{top:174px;right:12px;width:230px;padding:10px}.gt-health-row{margin-top:6px;padding:7px}.gt-health>strong{font-size:14px}.gt-health>small{margin-top:7px}}
+
+body.gt-on:has(.gt-health) .cenital-floating{display:none!important}

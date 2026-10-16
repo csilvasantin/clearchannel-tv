@@ -8,6 +8,19 @@
   'use strict';
 
   const TOURS = {
+    alsea_starbucks: {
+      accent: '#00a862', deep: '#00704a', light: '#d4e9e2', ink: '#10251f', halo: 'rgba(10,28,23,.9)',
+      bg: {top:'rgba(30,57,50,.95)', bottom:'rgba(16,36,30,.93)', card:'rgba(22,44,38,.95)', street:'#e8f2ed', stats:'#d9bf8c'},
+      title: {es:'Starbucks España · Alsea', en:'Starbucks Spain · Alsea'},
+      region: {es:'Barcelona', en:'Barcelona'},
+      labels: {es:{stores:'destinos', states:'ciudad'}, en:{stores:'destinations', states:'city'}},
+      liveHealth: true, overviewMaxZoom:12.7, doorZoom:18.2, doorPitch:60,
+      stops: {
+        'lab-gran-de-gracia-51': {state:'Laboratorio · Barcelona', short:'GDG', street:'Gran de Gràcia 51 · Laboratorio'},
+        'alsea-sbux-021': {state:'Barcelona', short:'PG103', street:'Paseo de Gracia 103'},
+        'alsea-sbux-014': {state:'Barcelona', short:'DIAG', street:'Diagonal 557 · L’Illa'},
+      },
+    },
     // Starbucks México (DCL-97f84ae3e5b2cb2311c55101, 16-oct-2026): al nivel del de Altadis España, con la marca
     // de Starbucks (verde #00704A, verde de la casa #1E3932 y el dorado #CBA258 de su marca blanca) y el formato de
     // cada tienda en la ficha de la puerta (uno de los 10 de Altadis en su versión cafetería: altadis-cafe-NN).
@@ -174,7 +187,7 @@
       return {type: 'Feature', geometry: {type: 'Point', coordinates: loc.coords}, properties: {
         id: loc.id, order: i + 1, status, rank: status === 'current' ? 0 : status === 'done' ? 1 : 2,
         // «Oaxaca · Oaxaca» se lee una sola vez.
-        label: sameName(info.city, info.state) || !info.state ? info.city : info.city + '\n' + info.state,
+        label: cfg.liveHealth ? info.street : (sameName(info.city, info.state) || !info.state ? info.city : info.city + '\n' + info.state),
       }};
     })};
   }
@@ -257,6 +270,7 @@
   function createHud(doc, cfg, items, lang) {
     const L = text(cfg, lang);
     const sum = totals(items);
+    if (cfg.liveHealth) sum.states = new Set(items.map(l => l.city || 'Barcelona')).size;
     const infos = items.map(l => stopInfo(cfg, l, lang));
     const hud = doc.createElement('div');
     hud.className = 'gt-hud';
@@ -267,7 +281,7 @@
     hud.setAttribute('role', 'status');
     hud.innerHTML = `<div class="gt-brand"><span class="gt-dot" aria-hidden="true"></span><div>
       <strong>${esc(pick(cfg.title, lang))}</strong>
-      <span class="gt-sub">${sum.stores} ${esc(L.stores)} · ${sum.states} ${esc(L.states)} · ${sum.screens} ${esc(L.screens)} · ${esc(formatCount(sum.impressions, lang))} ${esc(L.reach)}</span>
+      <span class="gt-sub">${sum.stores} ${esc(L.stores)} · ${sum.states} ${esc(L.states)} · ${sum.screens} ${esc(L.screens)}${cfg.liveHealth ? '' : ` · ${esc(formatCount(sum.impressions, lang))} ${esc(L.reach)}`}</span>
       </div></div>
       <ol class="gt-rail">${infos.map((s, i) => `<li data-i="${i}" title="${esc(s.city + ' · ' + s.state)}"><b>${i + 1}</b><span>${esc(s.short)}</span></li>`).join('')}</ol>`;
     const card = doc.createElement('aside');
@@ -292,7 +306,7 @@
         <div class="gt-card-body"><span class="gt-card-kicker">${esc(L.door)} · ${esc(s.state)}${s.storeId ? ` · ${esc(L.store)} #${esc(s.storeId)}` : ''}${s.format ? ` · ${esc(L.format)} ${esc(s.format)}` : ''}</span>
         <strong>${esc(s.name)}</strong>
         <span class="gt-card-street">${esc(s.street)} · ${esc(s.city)}</span>
-        <span class="gt-card-stats">${s.screens} ${esc(s.screens === 1 ? L.screen : L.screens)} · ${esc(formatCount(s.impressions, lang))} ${esc(L.perDay)}</span></div>`;
+        <span class="gt-card-stats">${s.screens} ${esc(s.screens === 1 ? L.screen : L.screens)}${cfg.liveHealth ? '' : ` · ${esc(formatCount(s.impressions, lang))} ${esc(L.perDay)}`}</span></div>`;
       card.hidden = false;
       setStop(index, 'door');
     }
@@ -300,7 +314,7 @@
       rail.forEach(li => { li.classList.add('done'); li.classList.remove('current'); });
       card.innerHTML = `<div class="gt-card-num">✓</div><div class="gt-card-body"><span class="gt-card-kicker">${esc(L.done)} · ${esc(pick(cfg.region, lang))}</span>
         <strong>${sum.stores} ${esc(L.stores)} · ${sum.states} ${esc(L.states)}</strong>
-        <span class="gt-card-stats">${sum.screens} ${esc(L.screens)} · ${esc(formatCount(sum.impressions, lang))} ${esc(L.perDay)} · 1 ${esc(L.circuit)}</span></div>`;
+        <span class="gt-card-stats">${sum.screens} ${esc(L.screens)}${cfg.liveHealth ? '' : ` · ${esc(formatCount(sum.impressions, lang))} ${esc(L.perDay)}`} · 1 ${esc(L.circuit)}</span></div>`;
       card.hidden = false;
     }
     function destroy() { hud.remove(); card.remove(); }
