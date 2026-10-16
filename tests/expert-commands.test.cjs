@@ -317,3 +317,19 @@ test('el panel ejecuta la orden del enlace por su formulario cuando el circuito 
   assert.match(panel, /circuitDefinitions\(\)\[client\.circuit\][\s\S]*?map\.getSource\('locs'\)/);
   assert.match(panel, /input\.value = linked; if \(form\.requestSubmit\) form\.requestSubmit\(\)/);
 });
+
+test('/tour alsea mexico launches Mexico in Spanish and English and survives handoff', () => {
+  for (const lang of ['es','en']) {
+    const calls=[];
+    const ctx={dooh:id=>{calls.push(id);return {ok:true,count:10,global:true};}};
+    assert.equal(C.parse('/tour alsea mexico').ok,true);
+    assert.equal(C.execute('/tour alsea mexico',ctx,lang).ok,true);
+    assert.deepEqual(calls,['alsea_mexico']);
+    assert.equal(C.execute('/tour desconocido',ctx,lang).ok,false);
+    assert.deepEqual(calls,['alsea_mexico']);
+  }
+  let pending;
+  assert.equal(C.execute('/tour alsea mexico',{handoff:cmd=>{pending=cmd;return {ok:true};}}).ok,true);
+  assert.equal(pending,'/tour alsea mexico');
+  assert.equal(C.linkedCommand('?ax_cmd=tour-alsea-mexico'),'/tour alsea mexico');
+});

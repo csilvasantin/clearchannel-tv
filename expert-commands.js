@@ -178,6 +178,7 @@
     let raw = '';
     try { raw = new URLSearchParams(String(search || '')).get('ax_cmd') || ''; } catch (_) { return null; }
     const text = raw.replace(/[-+_]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^\//, '').toLowerCase();
+    if (/^tour(?: [a-z0-9]{1,24}){1,3}$/.test(text)) return '/' + text;
     if (/^demo dooh(?: [a-z0-9]{1,24}){0,3}$/.test(text)) return '/' + text;
     // /vision general [cliente] (FLT-102501) también se puede enlazar: ?ax_cmd=vision-general-alsea.
     const vision = text.match(/^vision(?: general)?((?: [a-z0-9]{1,24}){0,3})$/);
@@ -230,6 +231,12 @@
 
   // run(args, ctx, lang) → {ok, lines}. ctx devuelve {ok:false, reason} si no puede.
   const VERBS = [
+    {
+      id:'tour', command:'/tour', aliases:[], attributes:['texto'], requires:['texto'], map:true,
+      es:'Lanza el Tour DooH: /tour alsea mexico.',
+      en:'Starts the DooH Tour: /tour alsea mexico.',
+      run(args,ctx,lang){return demoDooh(args.texto,ctx,lang);},
+    },
     {
       id: 'demo', command: '/demo', aliases: ['cli'], attributes: ['cliente'], requires: [], map: true,
       es: 'Demo guiada con compra simulada. Sin cliente: Xtanco Valencia; con cliente: un Xpacio real de su circuito.',

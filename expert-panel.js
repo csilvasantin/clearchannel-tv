@@ -273,6 +273,22 @@
     if(root.AdmiraExperto)return root.AdmiraExperto.exec(command,log,{echo});
     print('', ['Motor de comandos cargando. Inténtalo de nuevo.'],false);
   }
+  // Admirito only controls this host through its owned, trusted iframe.
+  const tourRequests = new WeakMap();
+  root.addEventListener('message', event => {
+    const d=event.data, frame=document.getElementById('da-suite-frame');
+    if(event.origin!=='https://digitalavatar.ai'||!frame||event.source!==frame.contentWindow||!d||d.type!=='da-command')return;
+    if(typeof d.texto!=='string'||!/^\/tour(?:\s|$)/i.test(d.texto)||d.texto.length>200||/[\r\n]/.test(d.texto))return;
+    if(typeof d.requestId!=='string'||! /^[a-zA-Z0-9_.:-]{1,128}$/.test(d.requestId)||d.requestId.length>128)return;
+    const reply=result=>event.source.postMessage({type:'da-command-result',requestId:d.requestId,ok:!!result.ok,message:(result.lines||[]).join('\n')},event.origin);
+    let cache=tourRequests.get(event.source);
+    if(!cache){cache=new Map();tourRequests.set(event.source,cache);}
+    const previous=cache.get(d.requestId);
+    if(previous){if(previous.text!==d.texto){reply({ok:false,lines:['Request identifier already used.']});return;}previous.result.then(reply);return;}
+    if(cache.size>=128){reply({ok:false,lines:['Command limit reached.']});return;}
+    const result=Promise.resolve().then(()=>run(d.texto,{echo:false})).then(r=>r||{ok:false,lines:['Command engine unavailable.']}).catch(()=>({ok:false,lines:['Tour command failed.']}));
+    cache.set(d.requestId,{text:d.texto,result});result.then(reply);
+  });
   function runPending(){let command;try{command=C.takePending(root.sessionStorage);}catch(_){}if(command){if(root.AdmiraExperto)run(command);else root.addEventListener('admira:commands-ready',()=>run(command),{once:true});}}
   if (!away) {
     if (document.readyState === 'complete') setTimeout(runPending, 0);
@@ -409,7 +425,7 @@
     const tick = () => {
       let ready = false;
       try {
-        const client = C.resolveDoohClient(linked.split(' ').slice(2).join(' '));  // «/demo dooh X» y «/vision general X»
+        const client = C.resolveDoohClient(linked.split(' ').slice(linked.startsWith('/tour ') ? 1 : 2).join(' '));  // «/demo dooh X» y «/vision general X»
         ready = !!(root.AdmiraExperto && client && (circuitDefinitions()[client.circuit] || {items: []}).items.length && map.getSource('locs'));
       } catch (_) {}
       if (!ready) { if (++tries < 120) setTimeout(tick, 500); return; }

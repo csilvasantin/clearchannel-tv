@@ -60,3 +60,7 @@ Tutorial ES: ☰ Opciones → sello inferior → pasar el ratón → plegar Opci
 
 
 `/idioma` alterna ESP/ENG; `/idioma ESP` y `/idioma ENG` eligen el idioma. El modo nativo comparte `/demo ios` y `/demo android [Fold8|watch]` y requiere proyecto activo, puente Mac y simuladores/emuladores. Ver `/help/#native-players`.
+
+`/tour alsea mexico` lanza el Tour DooH Starbucks México desde el modo experto o el chat de Admirito. Reutiliza el circuito México y su marca Starbucks; `/parar` lo detiene. También admite `/tour starbucks mexico`. Enlace directo: `?ax_cmd=tour-alsea-mexico&marca=starbucks`.
+
+`/tour alsea mexico` starts the Starbucks Mexico DooH Tour from Expert mode or Admirito chat. It uses the Mexico circuit and Starbucks brand; `/stop` ends it. `/tour starbucks mexico` is also supported.
