@@ -24,5 +24,6 @@ test('admira.biz publica este cargador (no el de la base preservada) y la portad
   const {BIZ_ASSET_FILES} = await import('../server/biz-assets.mjs');
   assert.ok(BIZ_ASSET_FILES.includes('marca-blanca.js'));
   const {readFileSync} = await import('node:fs');
-  assert.match(readFileSync(new URL('../index.html', import.meta.url), 'utf8'), /marca-blanca\.js\?v=20261015-alsea-1/);
+  // Sello nuevo con el reintento de la marca al arrancar (DCL-97f84ae3e5b2cb2311c55101).
+  assert.match(readFileSync(new URL('../index.html', import.meta.url), 'utf8'), /marca-blanca\.js\?v=20261016-starbucks-mx-2/);
 });

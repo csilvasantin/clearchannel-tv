@@ -339,3 +339,38 @@ test('ficha de la puerta: «1 pantalla DooH» en singular', () => {
   assert.deepEqual([GT.text(null, 'es').screen, GT.text(null, 'en').screen], ['pantalla DooH', 'DooH screen']);
   assert.match(read('global-tour.js'), /s\.screens === 1 \? L\.screen : L\.screens/);
 });
+
+test('encargo #4969: xtanco, xtancos, estanco, estancos y cualquier prefijo xtanc… o estanc… nunca llevan a Altadis', () => {
+  // DCL-97f84ae3e5b2cb2311c55101: tras el PR #92, «/demo dooh xtancos» casaba por prefijo con el alias «xtancos altadis».
+  const esperado = { xtanco: 'jti', xtancos: 'jti', Xtancos: 'jti', estanco: 'estancos', estancos: 'estancos', ESTANCOS: 'estancos', estanc: 'estancos', 'xtanco nacional': 'estancos' };
+  for (const [typed, id] of Object.entries(esperado)) {
+    assert.equal(C.resolveClient(typed)?.id, id, `cliente ${typed}`);
+    assert.equal(C.resolveDoohClient(typed)?.id, id, `dooh ${typed}`);
+  }
+  // Los prefijos ambiguos entre JTI y Xtanco Nacional siguen sin resolverse, como antes de #92; y ninguno da Altadis.
+  for (const typed of ['xtanc', 'xtan', 'xtancos a', 'xtancos alt', 'xtancosaltadi', 'estancos al', 'estancos altadi', 'xtanco_', 'estanc-']) {
+    assert.notEqual(C.resolveClient(typed)?.id, 'altadis', typed);
+    assert.notEqual(C.resolveDoohClient(typed)?.id, 'altadis', typed);
+    assert.ok(!C.clientCandidates(typed).includes('altadis'), `Tab ${typed}`);
+  }
+  for (const pre of ['xta', 'xtan', 'xtanc', 'xtanco', 'xtancos', 'est', 'esta', 'estan', 'estanc', 'estanco', 'estancos']) {
+    assert.notEqual(C.resolveDoohClient(pre)?.id, 'altadis', pre);
+  }
+  // /demo dooh y /vision general: JTI o Xtanco Nacional, nunca el circuito de Altadis.
+  const calls = [];
+  const ctx = { segmento: () => null, open: url => { calls.push(['open', url]); return { ok: true }; },
+    dooh: id => { calls.push(['dooh', id]); return { ok: true, count: 10, global: false }; },
+    vision: id => { calls.push(['vision', id]); return { ok: true, count: 10, totals: { ok: 10, incidencia: 0, apagado: 0, sin_datos: 0 }, demo: true }; } };
+  for (const typed of ['xtanco', 'xtancos', 'estanco', 'estancos', 'estanc', 'xtanc']) {
+    C.execute('/demo dooh ' + typed, ctx, 'es');
+    C.execute('/vision general ' + typed, ctx, 'es');
+  }
+  assert.ok(calls.length >= 10);
+  for (const [, target] of calls) assert.doesNotMatch(String(target), /altadis/, JSON.stringify(calls));
+  assert.deepEqual([...new Set(calls.map(c => c[1]))].sort(), ['estancos', 'jti_xtanco']);
+  assert.match(C.execute('/demo dooh xtanc', ctx, 'es').lines[0], /Cliente no reconocido: «xtanc»/);
+  // Altadis se sigue pidiendo por su nombre (y por sus alias enteros, que dicen «altadis»).
+  for (const typed of ['altadis', 'Altadis España', 'altadis xtancos', 'xtancos altadis', 'estancos altadis', 'alt']) {
+    assert.equal(C.resolveDoohClient(typed)?.id, 'altadis', typed);
+  }
+});

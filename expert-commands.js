@@ -22,10 +22,12 @@
     {id: 'starbucks-mexico', circuit: 'alsea_mexico', label: 'Starbucks México', es: 'Starbucks México (Alsea)', en: 'Starbucks Mexico (Alsea)', aliases: ['starbucks mx', 'sbux mx', 'sbux mexico', 'alsea mexico', 'alsea mx'], marca: 'starbucks', featured: true},
     // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de): va siempre con su marca blanca (marca=altadis) y
     // nunca se confunde con JTI, su competidor (encargo #4969): «xtanco» sigue siendo JTI aunque Altadis tenga tour global.
-    {id: 'altadis', circuit: 'altadis_espana', label: 'Altadis España', es: 'Altadis España · Xtancos', en: 'Altadis Spain · Xtancos', aliases: ['altadis espana', 'altadis spain', 'xtancos altadis', 'altadis xtancos', 'estancos altadis'], marca: 'altadis', excludes: ['jti'], featured: true},
+    // «xtancos altadis» y «estancos altadis» solo valen enteros (exactAliases): un prefijo xtanc… o estanc… nunca llega a
+    // Altadis (guardPrefixes), sigue siendo JTI Xtanco o Xtanco Nacional, como antes del PR #92 (DCL-97f84ae3e5b2cb2311c55101).
+    {id: 'altadis', circuit: 'altadis_espana', label: 'Altadis España', es: 'Altadis España · Xtancos', en: 'Altadis Spain · Xtancos', aliases: ['altadis espana', 'altadis spain', 'altadis xtancos'], exactAliases: ['xtancos altadis', 'estancos altadis'], guardPrefixes: ['xtanc', 'estanc'], marca: 'altadis', excludes: ['jti'], featured: true},
     {id: 'alcampo', circuit: 'alcampo', label: 'Alcampo', es: 'Alcampo · supermercados', en: 'Alcampo · supermarkets', aliases: ['auchan'], featured: true},
     {id: 'canalkiosk', circuit: 'kioskos', label: 'CanalKiosk', es: 'CanalKiosk · kioskos de prensa', en: 'CanalKiosk · press kiosks', aliases: ['canal kiosk', 'kioskos', 'kiosko', 'kioscos', 'kiosco', 'kiosk', 'kiosks'], featured: true},
-    {id: 'jti', circuit: 'jti_xtanco', label: 'JTI Xtanco', es: 'JTI Xtanco España', en: 'JTI Xtanco Spain', aliases: ['jti xtanco', 'xtanco'], featured: true},
+    {id: 'jti', circuit: 'jti_xtanco', label: 'JTI Xtanco', es: 'JTI Xtanco España', en: 'JTI Xtanco Spain', aliases: ['jti xtanco', 'xtanco', 'xtancos'], featured: true},
     {id: 'estancos', circuit: 'estancos', label: 'Estancos', es: 'Xtanco Nacional · estancos', en: 'National Xtanco · tobacconists', aliases: ['estanco', 'xtanco nacional', 'tobacconists']},
     {id: 'decathlon', circuit: 'decathlon', label: 'Decathlon', es: 'Decathlon España', en: 'Decathlon Spain', aliases: []},
     {id: 'bbva', circuit: 'bbva', label: 'BBVA', es: 'BBVA España', en: 'BBVA Spain', aliases: []},
@@ -42,19 +44,24 @@
     {id: 'metro', circuit: 'metro_bcn', label: 'Metro BCN', es: 'Metro de Barcelona', en: 'Barcelona Metro', aliases: ['metro bcn', 'metro barcelona']},
   ];
   const CLIENT_KEYS = new Map();
-  for (const c of CLIENTS) for (const alias of [c.id, c.circuit, c.label, ...c.aliases]) if (!CLIENT_KEYS.has(key(alias))) CLIENT_KEYS.set(key(alias), c);
+  for (const c of CLIENTS) for (const alias of [c.id, c.circuit, c.label, ...c.aliases, ...(c.exactAliases || [])]) if (!CLIENT_KEYS.has(key(alias))) CLIENT_KEYS.set(key(alias), c);
+  // Para los prefijos solo cuentan id, circuito, nombre y alias: los exactAliases valen enteros. Y un cliente con
+  // guardPrefixes (Altadis: xtanc…, estanc…) nunca sale de un prefijo así: esas palabras son de JTI y de Xtanco Nacional.
+  const prefixKeys = c => [c.id, c.circuit, c.label, ...c.aliases].map(key);
+  const guarded = (c, k) => (c.guardPrefixes || []).some(g => k.startsWith(key(g)));
+  const PREFIX_KEYS = CLIENTS.flatMap(c => prefixKeys(c).map(alias => [alias, c]));
 
   // Exacto por id/alias/circuito; si no, prefijo único de al menos 3 letras.
   function resolveClient(value) {
     const k = key(value);
     if (!k) return null;
     if (CLIENT_KEYS.has(k)) return CLIENT_KEYS.get(k);
-    const found = k.length >= 3 ? new Set([...CLIENT_KEYS].filter(([alias]) => alias.startsWith(k)).map(([, c]) => c)) : new Set();
+    const found = k.length >= 3 ? new Set(PREFIX_KEYS.filter(([alias, c]) => alias.startsWith(k) && !guarded(c, k)).map(([, c]) => c)) : new Set();
     return found.size === 1 ? [...found][0] : null;
   }
   function clientCandidates(prefix) {
     const k = key(prefix);
-    return CLIENTS.filter(c => !k || [c.id, c.circuit, c.label, ...c.aliases].some(a => key(a).startsWith(k))).map(c => c.id);
+    return CLIENTS.filter(c => !k || (!guarded(c, k) && prefixKeys(c).some(a => a.startsWith(k)))).map(c => c.id);
   }
 
   // Marcas blancas (FLT-101331): ids del catálogo único de admiranext.com/marcablanca.
@@ -155,7 +162,7 @@
     if (!k) return globals[0] || null;
     const exact = resolveClient(value);
     if (exact && hasGlobalTour(exact)) return exact;
-    const preferred = globals.filter(c => !(exact && (c.excludes || []).includes(exact.id)) && [c.id, c.circuit, c.label, ...c.aliases].some(a => key(a).startsWith(k)));
+    const preferred = globals.filter(c => !(exact && (c.excludes || []).includes(exact.id)) && !guarded(c, k) && prefixKeys(c).some(a => a.startsWith(k)));
     return preferred.length === 1 ? preferred[0] : exact;
   }
   // Un cliente con marca blanca propia (Altadis, Starbucks México) se enseña siempre con ella: los enlaces la llevan y, si el mapa

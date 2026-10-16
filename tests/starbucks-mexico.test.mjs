@@ -290,8 +290,69 @@ test('Biz publica el índice de Starbucks México (CORS de lectura); clearchanne
 
 test('las páginas piden la versión nueva de lo que cambia', () => {
   const html = read('index.html');
-  for (const f of ['locations.js', 'app.js', 'global-tour.js', 'vision-general.js', 'expert-commands.js']) {
+  for (const f of ['locations.js', 'app.js', 'global-tour.js', 'vision-general.js']) {
     assert.match(html, new RegExp(f.replace('.', '\\.') + '\\?v=20261016-starbucks-mx-1'), f);
   }
+  for (const f of ['expert-commands.js', 'marca-blanca.js']) assert.match(html, new RegExp(f.replace('.', '\\.') + '\\?v=20261016-starbucks-mx-2'), f);
   for (const page of ['detail.html', 'walk.html', 'backoffice.html']) assert.match(read(page), /locations\.js\?v=20261016-starbucks-mx-1/, page);
+});
+
+test('los enlaces de la suite común del Experto abren México con la marca Starbucks', () => {
+  for (const [q, cmd] of [['?ax_cmd=demo-dooh-starbucks-mexico&marca=starbucks', '/demo dooh starbucks mexico'], ['?ax_cmd=vision-general-starbucks-mexico&marca=starbucks', '/vision general starbucks mexico']]) {
+    assert.equal(C.linkedCommand(q), cmd, q);
+    // expert-panel.js espera a que el circuito del cliente tenga puntos antes de enviar la orden.
+    const client = C.resolveDoohClient(cmd.split(' ').slice(2).join(' '));
+    assert.deepEqual([client.id, client.circuit, client.marca], ['starbucks-mexico', 'alsea_mexico', 'starbucks'], q);
+    assert.equal(S.decidir(q, null), 'starbucks', q);
+    // Con la marca del enlace puesta, la orden se ejecuta allí mismo (sin recargar) y sobre alsea_mexico.
+    const calls = [];
+    const r = C.execute(cmd, { segmento: () => 'starbucks', open: () => assert.fail('no recarga'),
+      dooh: id => { calls.push(id); return { ok: true, count: 10, global: true }; },
+      vision: id => { calls.push(id); return { ok: true, count: 10, totals: { ok: 7, incidencia: 2, apagado: 1, sin_datos: 0 }, demo: true }; } }, 'es');
+    assert.equal(r.ok, true, q);
+    assert.deepEqual(calls, ['alsea_mexico'], q);
+  }
+  assert.match(read('expert-panel.js'), /C\.resolveDoohClient\(linked\.split\(' '\)\.slice\(2\)\.join\(' '\)\)/);
+});
+
+// marca-blanca.js en un navegador mínimo: el cargador de admiranext.com falla `fallos` veces y luego carga.
+function arrancaMarca({ fallos, desconocida = false }) {
+  const timers = [];
+  let scripts = 0;
+  const nodo = tag => ({ tagName: tag.toUpperCase(), attrs: {}, style: {}, setAttribute(k, v) { this.attrs[k] = v; }, toggleAttribute() {}, remove() {}, append() {} });
+  const MB = { version: 't', cargar: () => (desconocida ? Promise.reject(new Error('404')) : Promise.resolve({ nombre: 'Starbucks' })),
+    aplicar: id => Promise.resolve({ id, modo: 'claro', variables: {}, marca: { nombre: 'Starbucks' } }) };
+  const session = new Map();
+  const window = { warned: [], location: { search: '?ax_cmd=vision-general-starbucks-mexico&marca=starbucks', href: 'https://www.admira.biz/' },
+    sessionStorage: { getItem: k => session.get(k) ?? null, setItem: (k, v) => session.set(k, v), removeItem: k => session.delete(k) },
+    setTimeout: (fn, ms) => { if (ms < 5000) { timers.push(ms); setImmediate(fn); } return 0; }, clearTimeout() {},
+    fetch: () => new Promise(() => {}), history: { replaceState() {} }, console: { warn: m => window.warned.push(m), info() {}, log() {} } };
+  window.document = {
+    currentScript: { src: 'https://www.admira.biz/marca-blanca.js?v=t' }, title: 'Mapa',
+    documentElement: { lang: 'es', style: { length: 0, setProperty() {}, removeProperty() {} }, getAttribute: () => null, setAttribute() {}, removeAttribute() {} },
+    head: { append: n => setImmediate(() => {
+      if (n.tagName !== 'SCRIPT') return n.onload && n.onload();
+      scripts++;
+      if (scripts <= fallos) n.onerror(); else { window.MarcaBlanca = MB; n.onload(); }
+    }) },
+    createElement: nodo, querySelector: () => null, querySelectorAll: () => [], getElementById: () => null, dispatchEvent() {}, addEventListener() {},
+  };
+  window.window = window;
+  const ctx = vm.createContext(Object.assign(window, { URL, URLSearchParams, CustomEvent: class {}, MutationObserver: class { observe() {} disconnect() {} }, Promise }));
+  vm.runInContext(read('marca-blanca.js'), ctx);
+  return new Promise(r => setTimeout(() => r({ actual: ctx.AdmiraMarca.actual(), scripts, reintentos: timers.filter(ms => ms >= 1000), warned: window.warned }), 300));
+}
+
+test('marca blanca: un fallo de red al arrancar se reintenta y la página acaba con la marca del enlace', async () => {
+  const bien = await arrancaMarca({ fallos: 0 });
+  assert.deepEqual([bien.actual.id, bien.scripts, bien.reintentos], ['starbucks', 1, []]);
+  // Con la portada ocupada fallaba una vez y la visión general se quedaba con la cabecera de Admira.
+  const dos = await arrancaMarca({ fallos: 2 });
+  assert.deepEqual([dos.actual.id, dos.scripts, dos.reintentos, dos.warned], ['starbucks', 3, [1500, 4000], []]);
+  const caido = await arrancaMarca({ fallos: 3 });
+  assert.deepEqual([caido.actual, caido.scripts, caido.reintentos], [null, 3, [1500, 4000]]);
+  assert.match(caido.warned[0], /no se aplicó «starbucks» \(network\)/);
+  // Una marca que no existe no se reintenta.
+  const nada = await arrancaMarca({ fallos: 0, desconocida: true });
+  assert.deepEqual([nada.actual, nada.reintentos], [null, []]);
 });
