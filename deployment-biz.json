@@ -21,10 +21,10 @@
     ]
   },
   "novedades": [
-    "Altadis España · 10 Xtancos: un estanco real por ciudad (A Coruña → Granada), cada uno con un formato Altadis y su plano compartido; admira.biz/?circuit=altadis_espana&tour=1&marca=altadis.",
-    "Tour DooH y visión general de Altadis con su marca blanca (naranja y marrón): /demo dooh altadis, /vision general altadis y ?ax_cmd=demo-dooh-altadis&marca=altadis.",
-    "Mis demos suma la tarjeta «Altadis España · 10 Xtancos» para los usuarios registrados, como la de Alsea México.",
-    "Enlace profundo a un estanco: ?circuit=altadis_espana&loc=<id>&marca=altadis centra el punto y abre su ficha, con su gemelo y «▤ Plano del Xpacio»; índice público en /data/xpacios/altadis-espana-10.json."
+    "Starbucks México · Alsea al nivel de Altadis España: los 10 Starbucks reales (Tijuana → Cancún), cada uno con un formato de Altadis en versión cafetería, sus pantallas, impactos/día y su plano compartido.",
+    "Tour DooH y visión general con la marca blanca de Starbucks: /demo dooh starbucks (también alsea y sbux), /vision general starbucks y ?ax_cmd=demo-dooh-starbucks&marca=starbucks; la ficha de la puerta dice formato, pantallas e impactos.",
+    "Cada tienda abre el gemelo de su formato en admira.store y «▤ Plano del Xpacio»; el gemelo Matrix de Paseo de Gràcia 103 queda como enlace secundario. Mis demos: tarjeta «Starbucks México · Alsea» con ?marca=starbucks.",
+    "Enlace profundo a una tienda: ?circuit=alsea_mexico&loc=<id>&marca=starbucks centra el punto y abre su ficha; índice público en /data/xpacios/alsea-mexico-10.json."
   ],
   "nativeClearChannel": {
     "enabled": true,

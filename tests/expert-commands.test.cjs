@@ -284,13 +284,15 @@ test('/demo dooh: otros circuitos, catálogo sin cargar, cliente desconocido y f
   const opened = [];
   const away = C.execute('/demo dooh alsea', {handoff: () => assert.fail('sin savePending'), open: url => { opened.push(url); return {ok: true}; }}, 'es');
   assert.equal(away.ok, true);
-  assert.deepEqual(opened, ['/?circuit=alsea_mexico&tour=1&lang=es']);
+  // Con la marca de Starbucks (DCL-97f84ae3e5b2cb2311c55101).
+  assert.deepEqual(opened, ['/?circuit=alsea_mexico&tour=1&lang=es&marca=starbucks']);
 });
 
-test('la rutina de un clic «Tour DooH Alsea México» va la primera', () => {
+test('la rutina de un clic «Tour DooH Starbucks México» va la primera', () => {
+  // Antes «Tour DooH Alsea México» (/demo dooh alsea, que sigue valiendo): DCL-97f84ae3e5b2cb2311c55101.
   const [first] = C.defaultRoutines('es');
-  assert.deepEqual([first.label, first.command], ['Tour DooH Alsea México', '/demo dooh alsea']);
-  assert.equal(C.defaultRoutines('en')[0].label, 'DooH Tour Alsea Mexico');
+  assert.deepEqual([first.label, first.command], ['Tour DooH Starbucks México', '/demo dooh starbucks']);
+  assert.equal(C.defaultRoutines('en')[0].label, 'DooH Tour Starbucks Mexico');
 });
 
 test('el panel registra /demo dooh en el motor común y sabe arrancar el tour sobre el mapa', () => {

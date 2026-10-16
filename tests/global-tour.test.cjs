@@ -31,7 +31,9 @@ test('la ficha de la puerta: lugar, estado, calle corta, tienda y alcance', () =
   assert.equal(info.state, 'Ciudad de México');
   assert.equal(info.street, 'Madero 42 · Centro Histórico');
   assert.equal(info.storeId, '38487');
-  assert.equal(info.screens, 3);
+  // Desde DCL-97f84ae3e5b2cb2311c55101 cada tienda lleva un formato de Altadis (CDMX: GÓNDOLA LED, 1 pantalla).
+  assert.equal(info.format, 'GONDOLA LED LIMITS-006');
+  assert.equal(info.screens, 1);
   assert.equal(info.impressions, 1550);
   // Sin entrada en la config se cae a los datos del catálogo.
   const bare = GT.stopInfo(null, {id:'x', name:'Solo', addr:'Calle 1 · Ciudad', province:'JAL', surfaces:[]}, 'en');
@@ -39,7 +41,7 @@ test('la ficha de la puerta: lugar, estado, calle corta, tienda y alcance', () =
 });
 
 test('totales del circuito y formato de cifras por idioma', () => {
-  assert.deepEqual(GT.totals(seed), {stores:10, states:10, screens:30, impressions:15500});
+  assert.deepEqual(GT.totals(seed), {stores:10, states:10, screens:22, impressions:15500});
   assert.equal(GT.formatCount(15500, 'es'), '15,5 K');
   assert.equal(GT.formatCount(15500, 'en'), '15.5 K');
   assert.equal(GT.formatCount(700, 'es'), '700');

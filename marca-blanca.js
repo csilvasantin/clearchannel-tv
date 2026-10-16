@@ -492,7 +492,19 @@
   if (decision.forget) { store.del(SESSION_KEY); store.del(MODE_KEY); }
   if (decision.id) {
     hideIntro(true);   // antes de hablar con admiranext.com: el vídeo no llega a verse con los colores de serie
-    activar(decision.id).then(r => {
+    // Con la portada ocupada (el mapa 3D, un Tour DooH o la visión general que pide ?ax_cmd) los plazos de 8 s
+    // vencían antes de que se atendieran respuestas que ya habían llegado, y la página se quedaba sin la marca que
+    // pedía el enlace (DCL-97f84ae3e5b2cb2311c55101: ?ax_cmd=vision-general-starbucks-mexico&marca=starbucks salía
+    // con la cabecera de Admira). Un fallo de red al arrancar se reintenta dos veces mientras la pestaña siga
+    // pidiendo esa marca y no se haya puesto otra; una marca que no existe no se reintenta.
+    const RETRY_MS = [1500, 4000];
+    const intentar = n => activar(decision.id).then(r => {
+      const sigue = !current && decide(location.search, session).id === decision.id;
+      if (r.ok || r.reason !== 'network' || n >= RETRY_MS.length || !sigue) return r;
+      hideIntro(true);
+      return new Promise(resolve => setTimeout(resolve, RETRY_MS[n])).then(() => (current ? {ok: true, id: current.id} : intentar(n + 1)));
+    });
+    intentar(0).then(r => {
       if (!r.ok && root.console) console.warn('marca blanca: no se aplicó «' + decision.id + '» (' + r.reason + ')');
       if (r.ok) listar().catch(() => {});
     });

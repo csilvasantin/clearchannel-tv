@@ -25,8 +25,11 @@ test('other staff retain management and get only the open Alsea México tour; un
   const staff = sessionFromClaims({ ...claims, email: 'staff@admira.com' });
   assert.equal(staff.canManageCatalog, true);
   assert.deepEqual(staff.demos.map(d => d.id), ['alsea-mexico', 'altadis-espana']);
-  assert.equal(staff.demos[0].command, '/demo dooh alsea');
-  assert.equal(staff.demos[0].overview, '/vision general alsea');
+  // Starbucks México (DCL-97f84ae3e5b2cb2311c55101): /demo dooh starbucks y /vision general starbucks, con su marca.
+  assert.equal(staff.demos[0].command, '/demo dooh starbucks');
+  assert.equal(staff.demos[0].overview, '/vision general starbucks');
+  assert.equal(staff.demos[0].marca, 'starbucks');
+  assert.equal(staff.demos[0].title, 'Starbucks México · Alsea · 10 estados');
   // Altadis España, abierta como la de Alsea México (DCL-a6cb621be0ce5932f50960de).
   assert.equal(staff.demos[1].command, '/demo dooh altadis');
   assert.equal(staff.demos[1].overview, '/vision general altadis');
@@ -103,8 +106,9 @@ test('la tarjeta de Altadis España lleva marca=altadis en la ficha, el Tour Doo
   assert.match(html, /const overviewUrl = [^\n]*\+ brand : '';/);
   const altadis = sessionFromClaims({ ...claims, email: 'staff@admira.com' }).demos.find(d => d.id === 'altadis-espana');
   assert.equal(altadis.twinUrl, 'https://www.admira.store/xpacios/altadis-18/?espacio=altadis-xtanco-08&loc=altadis-es-05-madrid&marca=altadis');
-  // Las demás tarjetas no cambian: sin marca propia.
-  for (const d of sessionFromClaims(claims).demos.filter(d => d.id !== 'altadis-espana')) assert.equal(d.marca, undefined, d.id);
+  // Starbucks México lleva la suya (DCL-97f84ae3e5b2cb2311c55101); las demás tarjetas no cambian: sin marca propia.
+  const marcas = Object.fromEntries(sessionFromClaims(claims).demos.map(d => [d.id, d.marca]));
+  assert.deepEqual(marcas, { jti: undefined, alsea: undefined, 'alsea-mexico': 'starbucks', cafebreria: undefined, 'altadis-espana': 'altadis' });
   const C = (await import('../expert-commands.js')).default || globalThis.AdmiraExpertCommands;
   assert.equal(C.linkedCommand('?lang=es&ax_cmd=' + encodeURIComponent(altadis.command) + '&marca=altadis'), '/demo dooh altadis');
   assert.equal(C.linkedCommand('?lang=es&ax_cmd=' + encodeURIComponent(altadis.overview) + '&marca=altadis'), '/vision general altadis');
