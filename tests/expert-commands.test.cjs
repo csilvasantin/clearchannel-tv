@@ -349,3 +349,13 @@ test('new circuits register commands and tour routines automatically, then disap
  assert.equal(C.resolveDoohClient('new coffee'),null);
  assert.equal(C.defaultRoutines().some(r=>r.command==='/tour demo_new_coffee'),false);
 });
+
+test('/tour DooH total dispatches the total circuit and removes a visual brand filter',()=>{
+ const calls=[];
+ for(const lang of ['es','en'])assert.equal(C.execute('/tour DooH total',{dooh:id=>{calls.push(id);return{ok:true,count:20,global:true};}},lang).ok,true);
+ assert.deepEqual(calls,['dooh_total','dooh_total']);
+ const opened=[];
+ assert.equal(C.execute('/tour DooH total',{segmento:()=> 'starbucks',open:url=>{opened.push(url);return{ok:true};}}).ok,true);
+ assert.match(opened[0],/circuit=dooh_total&tour=1&marca=off/);
+ assert.ok(C.defaultRoutines().some(r=>r.command==='/tour DooH total'));
+});

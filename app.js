@@ -28,7 +28,7 @@ const CIRCUIT_SCOPE_OPTIONS = [
   {value:'local', labelKey:'scope_local'},
 ];
 const CIRCUIT_IDS_BY_SCOPE = {
-  all: ['all', 'cafebreria', 'admiraxperience', 'metro_bcn', 'kioskos', 'estancos', 'altadis_bcn', 'jti_xtanco', 'alsea_starbucks', 'alsea_mexico', 'altadis_espana', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
+  all: ['all', 'dooh_total', 'cafebreria', 'admiraxperience', 'metro_bcn', 'kioskos', 'estancos', 'altadis_bcn', 'jti_xtanco', 'alsea_starbucks', 'alsea_mexico', 'altadis_espana', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
   global: ['desigual', 'mango'],
   national: ['estancos', 'jti_xtanco', 'alsea_starbucks', 'alsea_mexico', 'altadis_espana', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx'],
   city: ['cafebreria', 'metro_bcn', 'kioskos', 'altadis_bcn', 'admiraxperience'],
@@ -1200,6 +1200,7 @@ function circuitDefinitions() {
       segmentation: circuitSegmentationForItems(retailItems),
     },
   };
+  if(window.GlobalTour)defs.dooh_total=GlobalTour.totalCircuit(defs,LANG);
   window.AdmiraExpertCommands?.setCircuits(defs);
   return defs;
 }
@@ -1670,6 +1671,12 @@ function toggleCircuitPrevio() {
 }
 
 function startCircuitDemo() {
+  if(selectedCircuitId==='dooh_total'&&!plannerCatalogReady){
+    if(circuitDemo.timer)clearTimeout(circuitDemo.timer);
+    setStatus(t('map_loading'),true);
+    circuitDemo.timer=setTimeout(()=>{if(selectedCircuitId==='dooh_total')startCircuitDemo();},500);
+    return;
+  }
   stopMapNavigation();
   const items = circuitDemoItems();
   if (!items.length) {
@@ -1768,6 +1775,11 @@ function endGlobalTour() {
 function globalTourAlive(run) { return !!globalTour && circuitDemo === run && run.running; }
 // La ruta del tramo recién volado se dibuja sola mientras se ve el país entero.
 function globalTourDrawLeg(run, from, to) {
+  if(globalTour.items.length>200){
+    globalTour.progress=to;
+    globalTourPaint(globalTour.current,to);
+    return globalTourPause(run,globalTour.cfg.timing?.leg || GLOBAL_LEG_MS);
+  }
   return new Promise(resolve => {
     const gt = globalTour, start = performance.now();
     const step = now => {
@@ -4503,7 +4515,7 @@ function watchCircuitDeepLink() {
 function watchGlobalTourDeepLink(c) {
   let tries = 0;
   const tick = () => {
-    const ready = selectedCircuitId === c && circuitDemoItems().length > 0 && map.isStyleLoaded();
+    const ready = selectedCircuitId === c && (c!=='dooh_total'||plannerCatalogReady) && circuitDemoItems().length > 0 && map.isStyleLoaded();
     if (ready) { setTimeout(() => { if (!circuitDemo.running && selectedCircuitId === c) startCircuitDemo(); }, 1500); return; }
     if (++tries < 40) setTimeout(tick, 500);
   };

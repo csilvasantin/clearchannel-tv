@@ -136,3 +136,22 @@ test('new circuits automatically get a panorama, including a single valid stop',
  assert.equal(GT.config('__proto__',def),null);
  assert.equal(GT.config('alsea_mexico',def),cfg);
 });
+
+test('total tour visits every available circuit, deduplicates locations and excludes aggregates',()=>{
+ const a={id:'a',coords:[2,41]},b={id:'b',coords:[-3,40]};
+ const defs={one:{label:'First',items:[a]},two:{label:'Second',items:[a,b]},empty:{items:[]},invalid:{items:[{id:'bad',coords:[NaN,0]}]},all:{items:[{id:'excluded',coords:[0,0]}]},dooh_total:{items:[a]}};
+ const total=GT.totalCircuit(defs);
+ assert.equal(total.circuits,2);
+ assert.deepEqual(total.items.map(x=>x.id),['a','b']);
+ assert.equal(total.items[1].tourCircuitLabel,'Second');
+ assert.equal(a.tourCircuitLabel,undefined);
+ assert.equal(GT.totalCircuit({},'en').label,'Total DooH Tour');
+});
+
+test('large total routes keep every stop with bounded route geometry',()=>{
+ const points=Array.from({length:1000},(_,i)=>({id:String(i),coords:[-3+i/1000,40]}));
+ const pending=GT.routeData(points,0).features[0].geometry.coordinates;
+ assert.equal(pending.length,1000);
+ assert.deepEqual(pending[0],points[0].coords);
+ assert.deepEqual(pending.at(-1),points.at(-1).coords);
+});

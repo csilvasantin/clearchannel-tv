@@ -102,6 +102,18 @@
         en:{stores:'Xpaces',states:'areas',screens:'catalogue surfaces',screen:'catalogue surface',reach:'estimated impressions/day',perDay:'estimated impressions/day'}}};
   }
 
+  function totalCircuit(definitions, lang='es') {
+    const unique=new Map();let circuits=0;
+    for(const [id,def] of Object.entries(definitions||{})){
+      if(['all','dooh_total'].includes(id)||!def||!Array.isArray(def.items))continue;
+      const points=def.items.filter(l=>l&&l.id&&Array.isArray(l.coords)&&l.coords.length===2&&l.coords.every(Number.isFinite));
+      if(!points.length)continue;
+      circuits++;
+      for(const loc of points)if(!unique.has(loc.id))unique.set(loc.id,{...loc,tourCircuitLabel:pick(def.label,lang)||id});
+    }
+    return {label:lang==='en'?'Total DooH Tour':'Tour DooH total',items:[...unique.values()],circuits};
+  }
+
   function surfacesOf(loc) { return Array.isArray(loc && loc.surfaces) ? loc.surfaces : []; }
   function impressionsOf(loc) { return surfacesOf(loc).reduce((sum, s) => sum + (Number(s && s.impr) || 0), 0); }
 
@@ -111,6 +123,7 @@
     const name = String(loc.name || '');
     return {
       id: loc.id,
+      circuitLabel: String(loc.tourCircuitLabel||''),
       name,
       // «Starbucks Tijuana · Plaza Río» → «Plaza Río»; sin « · » queda el nombre entero.
       place: name.includes(' · ') ? name.split(' · ').slice(1).join(' · ') : name,
@@ -171,7 +184,7 @@
   function routeData(items, progress) {
     const coords = items.map(l => l.coords);
     const legs = [];
-    for (let i = 1; i < coords.length; i++) legs.push(arc(coords[i - 1], coords[i]));
+    for (let i = 1; i < coords.length; i++) legs.push(arc(coords[i - 1], coords[i], coords.length > 200 ? 1 : 24));
     const full = legs.reduce((line, leg, i) => line.concat(i ? leg.slice(1) : leg), []);
     const reached = Math.max(0, Math.min(legs.length, Number(progress) || 0));
     const whole = Math.floor(reached), part = reached - whole;
@@ -338,7 +351,7 @@
         <span class="gt-card-street">${esc(s.street)} · ${esc(s.city)}</span>
         <span class="gt-card-stats">${s.screens} ${esc(s.screens === 1 ? L.screen : L.screens)}${cfg.liveHealth ? '' : ` · ${esc(formatCount(s.impressions, lang))} ${esc(L.perDay)}`}</span></div>`;
       if (editorial) {
-        card.innerHTML = `<div class="gt-card-body"><span class="gt-card-kicker">${esc(s.state)} · ${String(index + 1).padStart(2,'0')} / ${items.length}</span>
+        card.innerHTML = `<div class="gt-card-body"><span class="gt-card-kicker">${esc(s.circuitLabel || s.state)} · ${String(index + 1).padStart(2,'0')} / ${items.length}</span>
           <strong class="gt-city">${esc(s.city || s.place)}</strong><span class="gt-store-name">${esc(s.name)}</span>
           <span class="gt-card-street">${esc(s.street)}</span>
           <span class="gt-format">${esc(s.format)}</span>
@@ -364,6 +377,6 @@
     return {setStop, door, finish, destroy, element: hud};
   }
 
-  root.GlobalTour = {config, stopInfo, totals, formatCount, bounds, arc, routeData, stopsData, doorCamera,
+  root.GlobalTour = {config, totalCircuit, stopInfo, totals, formatCount, bounds, arc, routeData, stopsData, doorCamera,
     addLayers, setData, removeLayers, setBaseLayers, createHud, sameName, text, TOURS};
 })(typeof window === 'undefined' ? globalThis : window);

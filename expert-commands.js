@@ -14,6 +14,7 @@
 
   // Clientes = circuitos de app.js. `featured` genera rutinas de un clic.
   const CLIENTS = [
+    {id:'total',circuit:'dooh_total',label:'Tour DooH total',es:'Tour DooH total',en:'Total DooH Tour',aliases:['dooh total','total dooh']},
     {id: 'cafebreria', circuit: 'cafebreria', label: 'Cafebrería', es: 'Cafebrería · Proyecto independiente', en: 'Cafebrería · Independent project', aliases: ['cafebreria barcelona'], featured: true},
     {id: 'starbucks', circuit: 'alsea_starbucks', label: 'Starbucks', es: 'Starbucks España (Alsea)', en: 'Starbucks Spain (Alsea)', aliases: ['sbux', 'alsea', 'alsea starbucks', 'starbucks espana', 'starbucks spain'], marca: 'starbucks', featured: true},
     // Starbucks México (DCL-97f84ae3e5b2cb2311c55101): va siempre con la marca blanca de Starbucks (marca=starbucks), como
@@ -233,6 +234,12 @@
     if (!client) return {ok: false, command, lines: [typed
       ? L(lang, `Cliente no reconocido: «${typed}». Clientes: ${CLIENTS.map(c => c.id).join(', ')}.`, `Unknown client: “${typed}”. Clients: ${CLIENTS.map(c => c.id).join(', ')}.`)
       : L(lang, 'Uso: /demo dooh <cliente> · por ejemplo /demo dooh alsea.', 'Usage: /demo dooh <client> · e.g. /demo dooh alsea.')]};
+    if(client.circuit==='dooh_total'&&ctx&&typeof ctx.segmento==='function'&&ctx.segmento()&&typeof ctx.open==='function'){
+      const scope=new URLSearchParams(root.location?.search||'').get('proyecto');
+      const target='/?circuit=dooh_total&tour=1&marca=off&lang='+(lang==='en'?'en':'es')+(scope?'&proyecto='+encodeURIComponent(scope):'');
+      const result=ctx.open(target)||{};
+      return {ok:result.ok!==false,command,handoff:true,lines:[L(lang,'Abriendo el Tour DooH total con todas las marcas disponibles.','Opening the Total DooH Tour with all available brands.')]};
+    }
     // Fuera de la portada: el enlace directo del circuito arranca el tour al cargar el mapa.
     if (ctx && (typeof ctx.handoff === 'function' || brandMismatch(client, ctx))) {
       const r = (ctx.open && ctx.open(withBrand(client, '/?circuit=' + encodeURIComponent(client.circuit) + '&tour=1&lang=' + (lang === 'en' ? 'en' : 'es')))) || {};
@@ -244,6 +251,7 @@
       ? L(lang, `El circuito ${clientName(client, lang)} aún no tiene puntos en el catálogo cargado. Vuelve a intentarlo en unos segundos.`, `The ${clientName(client, lang)} circuit has no points in the loaded catalogue yet. Try again in a few seconds.`)
       : L(lang, 'El mapa aún no está listo. Vuelve a intentarlo.', 'The map is not ready yet. Try again.')]};
     const count = r.count ? ` · ${r.count} Xpacios` : '';
+    if(client.circuit==='dooh_total')return {ok:true,command,lines:[L(lang,`Tour DooH total iniciado${count}: todos los circuitos disponibles, sin repetir ubicaciones. /parar lo detiene.`,`Total DooH Tour started${count.replace('Xpacios','Xpaces')}: all available circuits, with no duplicate locations. /stop ends it.`)]};
     return {ok: true, command, lines: [r.global
       ? L(lang, `Tour DooH de ${clientName(client, lang)}${count}: del país entero a la puerta de cada uno. /parar lo detiene.`, `${clientName(client, lang)} DooH Tour${count.replace('Xpacios', 'Xpaces')}: from the whole country to each store's door. /stop ends it.`)
       : L(lang, `Tour DooH de ${clientName(client, lang)}${count}. /parar lo detiene.`, `${clientName(client, lang)} DooH Tour${count.replace('Xpacios', 'Xpaces')}. /stop ends it.`)]};
@@ -625,11 +633,12 @@
     const featured = CLIENTS.filter(c => c.featured);
     return [
       {id: 'dooh:starbucks', label: L(lang, 'Tour DooH Starbucks México', 'DooH Tour Starbucks Mexico'), command: '/demo dooh starbucks', builtin: true},
+      {id:'tour:total',label:L(lang,'Tour DooH total','Total DooH Tour'),command:'/tour DooH total',builtin:true},
       {id: 'vision:starbucks', label: L(lang, 'Visión general Starbucks México', 'Overview Starbucks Mexico'), command: '/vision general starbucks', builtin: true},
       {id: 'dooh:altadis', label: L(lang, 'Tour DooH Altadis España', 'DooH Tour Altadis Spain'), command: '/demo dooh altadis', builtin: true},
       {id: 'vision:altadis', label: L(lang, 'Visión general Altadis España', 'Overview Altadis Spain'), command: '/vision general altadis', builtin: true},
       {id: 'dooh:starbucks-espana', label: L(lang, 'Tour DooH Starbucks España · 3 destinos', 'DooH Tour Starbucks Spain · 3 destinations'), command: '/demo dooh starbucks espana', builtin: true},
-      ...Object.entries(tourCircuits).filter(([id])=>!['alsea_mexico','alsea_starbucks','altadis_espana'].includes(id)).map(([id,d])=>({id:'tour:'+id,label:L(lang,'Tour DooH ','DooH Tour ')+d.label,command:'/tour '+id,builtin:true})),
+      ...Object.entries(tourCircuits).filter(([id])=>!['alsea_mexico','alsea_starbucks','altadis_espana','dooh_total'].includes(id)).map(([id,d])=>({id:'tour:'+id,label:L(lang,'Tour DooH ','DooH Tour ')+d.label,command:'/tour '+id,builtin:true})),
       ...featured.map(c => ({id: 'demo:' + c.id, label: 'Demo ' + c.label, command: '/demo ' + c.id, builtin: true})),
       ...featured.map(c => ({id: 'circuito:' + c.id, label: L(lang, 'Circuito ', 'Circuit ') + c.label, command: '/circuito ' + c.id, builtin: true})),
     ];
