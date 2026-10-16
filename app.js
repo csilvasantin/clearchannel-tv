@@ -1769,7 +1769,7 @@ function globalTourDrawLeg(run, from, to) {
     const gt = globalTour, start = performance.now();
     const step = now => {
       if (!globalTourAlive(run) || globalTour !== gt) { resolve(); return; }
-      const k = Math.min(1, (now - start) / GLOBAL_LEG_MS), eased = 1 - Math.pow(1 - k, 3);
+      const k = Math.min(1, (now - start) / (gt.cfg.timing?.leg || GLOBAL_LEG_MS)), eased = 1 - Math.pow(1 - k, 3);
       gt.progress = from + (to - from) * eased;
       globalTourPaint(gt.current, gt.progress);
       if (k < 1) gt.frame = requestAnimationFrame(step);
@@ -1796,7 +1796,7 @@ function globalTourFly(run, camera) {
     tourCamera.cancel();
     map.stop();
     map.on('moveend', onEnd);
-    map.flyTo({...camera, duration:4200, curve:1.6, essential:false});
+    map.flyTo({...camera, duration:globalTour?.cfg.timing?.flight || 4200, curve:1.6, essential:false});
     timer = setTimeout(finish, 9000);
   });
 }
@@ -1823,7 +1823,7 @@ async function showGlobalTourPoint(run) {
     if (!globalTourAlive(run)) return;
   }
   tourCamera.prepare(door);
-  if (run.index === 0) await globalTourPause(run, GLOBAL_INTRO_MS);
+  if (run.index === 0) await globalTourPause(run, gt.cfg.timing?.intro || GLOBAL_INTRO_MS);
   else await globalTourDrawLeg(run, run.index - 1, run.index);
   if (!globalTourAlive(run)) return;
   // 2) A pie de puerta: calle, inclinación 3D y un giro lento alrededor de la tienda.
@@ -1836,8 +1836,8 @@ async function showGlobalTourPoint(run) {
   pushRecent(loc.id);
   gt.hud.door(run.index);
   setStatus(tf('demo_progress', {current:run.index + 1, total:run.items.length, name:loc.name}));
-  try { map.easeTo({bearing:door.bearing + 32, duration:GLOBAL_DOOR_MS, easing:k => k, essential:false}); } catch (_) {}
-  await globalTourPause(run, GLOBAL_DOOR_MS);
+  try { map.easeTo({bearing:door.bearing + 32, duration:gt.cfg.timing?.door || GLOBAL_DOOR_MS, easing:k => k, essential:false}); } catch (_) {}
+  await globalTourPause(run, gt.cfg.timing?.door || GLOBAL_DOOR_MS);
   if (!globalTourAlive(run)) return;
   run.index++;
   showGlobalTourPoint(run);
@@ -1924,7 +1924,7 @@ async function finishGlobalTour(run) {
   if (!globalTourAlive(run)) return;
   gt.hud.finish();
   setStatus(tf('demo_done', {points:run.items.length}), true);
-  await globalTourPause(run, GLOBAL_FINALE_MS);
+  await globalTourPause(run, gt.cfg.timing?.finale || GLOBAL_FINALE_MS);
   if (globalTourAlive(run)) stopCircuitDemo(true);
 }
 

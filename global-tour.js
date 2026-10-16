@@ -30,6 +30,8 @@
       bg: {top: 'rgba(30,57,50,.95)', bottom: 'rgba(16,36,30,.93)', card: 'rgba(22,44,38,.95)', street: '#e8f2ed', stats: '#d9bf8c'},
       title: {es: 'Starbucks México · Alsea', en: 'Starbucks Mexico · Alsea'},
       region: {es: 'México', en: 'Mexico'},
+      presentation: 'mexico',
+      timing: {intro:2200, leg:1000, flight:3000, door:8500, finale:6500},
       doorZoom: 18.2, doorPitch: 60,
       // Dirección corta y estado de cada tienda (las del localizador oficial vienen en
       // mayúsculas fiscales). Coordenadas: localizador starbucks.com.mx, 6-24 m de OSM.
@@ -277,6 +279,8 @@
     const infos = items.map(l => stopInfo(cfg, l, lang));
     const hud = doc.createElement('div');
     hud.className = 'gt-hud';
+    const editorial = cfg.presentation === 'mexico';
+    if (editorial) hud.classList.add('gt-mexico');
     hud.style.setProperty('--gt-accent', cfg.accent);
     hud.style.setProperty('--gt-deep', cfg.deep);
     hud.style.setProperty('--gt-light', cfg.light);
@@ -286,15 +290,25 @@
       <strong>${esc(pick(cfg.title, lang))}</strong>
       <span class="gt-sub">${sum.stores} ${esc(L.stores)} · ${sum.states} ${esc(L.states)} · ${sum.screens} ${esc(L.screens)}${cfg.liveHealth ? '' : ` · ${esc(formatCount(sum.impressions, lang))} ${esc(L.reach)}`}</span>
       </div></div>
-      <ol class="gt-rail">${infos.map((s, i) => `<li data-i="${i}" title="${esc(s.city + ' · ' + s.state)}"><b>${i + 1}</b><span>${esc(s.short)}</span></li>`).join('')}</ol>`;
+      <ol class="gt-rail">${infos.map((s, i) => `<li data-i="${i}" title="${esc(s.city + ' · ' + s.state)}"><b>${i + 1}</b><span>${esc(editorial ? s.city : s.short)}</span></li>`).join('')}</ol>`;
     const card = doc.createElement('aside');
     card.className = 'gt-card';
+    if (editorial) card.classList.add('gt-mexico');
     card.hidden = true;
     card.style.setProperty('--gt-accent', cfg.accent);
     card.style.setProperty('--gt-deep', cfg.deep);
     paintBg(card, cfg);
     doc.body.append(hud, card);
     const rail = [...hud.querySelectorAll('.gt-rail li')];
+    let journey;
+    if (editorial) {
+      journey = doc.createElement('div');
+      journey.className = 'gt-journey';
+      hud.append(journey);
+    }
+    const nextLabel = index => index + 1 < infos.length
+      ? `${L.next} · ${infos[index + 1].city}`
+      : (lang === 'en' ? 'Final stop · Cancún' : 'Última parada · Cancún');
 
     function setStop(index, phase) {
       rail.forEach((li, i) => {
@@ -302,6 +316,9 @@
         li.classList.toggle('current', i === index);
       });
       if (phase !== 'door') card.hidden = true;
+      if (journey && infos[index]) {
+        journey.innerHTML = `<span>${esc(phase === 'door' ? L.door : (lang === 'en' ? 'Flying to' : 'Rumbo a'))} <b>${esc(infos[index].city)}</b></span><span>${String(index + 1).padStart(2,'0')} / ${items.length} · ${esc(nextLabel(index))}</span>`;
+      }
     }
     function door(index) {
       const s = infos[index];
@@ -310,10 +327,23 @@
         <strong>${esc(s.name)}</strong>
         <span class="gt-card-street">${esc(s.street)} · ${esc(s.city)}</span>
         <span class="gt-card-stats">${s.screens} ${esc(s.screens === 1 ? L.screen : L.screens)}${cfg.liveHealth ? '' : ` · ${esc(formatCount(s.impressions, lang))} ${esc(L.perDay)}`}</span></div>`;
+      if (editorial) {
+        card.innerHTML = `<div class="gt-card-body"><span class="gt-card-kicker">${esc(s.state)} · ${String(index + 1).padStart(2,'0')} / ${items.length}</span>
+          <strong class="gt-city">${esc(s.city)}</strong><span class="gt-store-name">${esc(s.name)}</span>
+          <span class="gt-card-street">${esc(s.street)}</span>
+          <span class="gt-format">${esc(s.format)}</span>
+          <span class="gt-card-stats">${s.screens} ${esc(s.screens === 1 ? L.screen : L.screens)} · ${esc(formatCount(s.impressions, lang))} ${esc(L.perDay)}</span>
+          <span class="gt-next">${esc(nextLabel(index))}</span></div>`;
+        const progress = doc.createElement('div');
+        progress.className = 'gt-reading-progress';
+        progress.style.setProperty('--gt-dwell', `${cfg.timing.door}ms`);
+        card.append(progress);
+      }
       card.hidden = false;
       setStop(index, 'door');
     }
     function finish() {
+      if (journey) journey.textContent = lang === 'en' ? 'Tijuana → Cancún · Tour completed' : 'Tijuana → Cancún · Tour completado';
       rail.forEach(li => { li.classList.add('done'); li.classList.remove('current'); });
       card.innerHTML = `<div class="gt-card-num">✓</div><div class="gt-card-body"><span class="gt-card-kicker">${esc(L.done)} · ${esc(pick(cfg.region, lang))}</span>
         <strong>${sum.stores} ${esc(L.stores)} · ${sum.states} ${esc(L.states)}</strong>
