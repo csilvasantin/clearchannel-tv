@@ -17,10 +17,14 @@ export const DEMOS = [
   // y «Visión general» con /vision general alsea (FLT-102505).
   { id: 'alsea-mexico', title: 'Alsea México · Starbucks · 10 estados', locationId: 'alsea-mx-sbux-06-cdmx', circuit: 'alsea_mexico', command: '/demo dooh alsea', overview: '/vision general alsea', twinUrl: 'https://www.xpaceos.com/admira-xp/?autostart=cafeteria&loc=alsea-sbux-021' },
   { id: 'cafebreria', title: 'Cafebrería · Proyecto independiente', locationId: 'cafebreria-barcelona', circuit: 'cafebreria', twinUrl: 'https://www.pixeria.com/stock.html?type=xpaces&highlight=1790375438696-1ladz7' },
+  // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de): la misma demo que Alsea México con la marca blanca de
+  // Altadis (`marca`: los enlaces de la tarjeta llevan ?marca=altadis). Ficha del estanco de Madrid (Fuencarral 2).
+  { id: 'altadis-espana', title: 'Altadis España · 10 Xtancos', locationId: 'altadis-es-05-madrid', circuit: 'altadis_espana', marca: 'altadis', command: '/demo dooh altadis', overview: '/vision general altadis', twinUrl: 'https://www.admira.store/xpacios/altadis-18/?espacio=altadis-xtanco-08&loc=altadis-es-05-madrid&marca=altadis' },
 ];
 // Demos abiertas a cualquier usuario registrado (Carlos, 15-oct-2026 · FLT-102469): el Tour DooH de
-// Alsea México. Las demás siguen siendo solo de las dos identidades de Carlos.
-const OPEN_DEMOS = new Set(['alsea-mexico']);
+// Alsea México y, como ella, Altadis España (DCL-a6cb621be0ce5932f50960de). Las demás siguen siendo solo de las
+// dos identidades de Carlos.
+const OPEN_DEMOS = new Set(['alsea-mexico', 'altadis-espana']);
 export function sessionFromClaims(claims, now = Date.now()) {
   if (!claims || !GOOGLE_CLIENT_IDS.has(claims.aud) || !['accounts.google.com', 'https://accounts.google.com'].includes(claims.iss) || !claims.sub || !Number.isFinite(Number(claims.exp)) || Number(claims.exp) * 1000 <= now || ![true, 'true'].includes(claims.email_verified)) return null;
   const email = String(claims.email || '').toLowerCase();

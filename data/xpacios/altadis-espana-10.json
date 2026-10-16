@@ -1,0 +1,148 @@
+{
+ "schema": "admira.circuito-demo/1",
+ "circuito": "altadis_espana",
+ "cliente": "Altadis",
+ "marca": "altadis",
+ "locales": [
+  {
+   "id": "altadis-es-01-a-coruna",
+   "nombre": "Estanco Riego de Agua",
+   "direccion": "Rúa Rego da Auga 40 · 15001 A Coruña",
+   "ciudad": "A Coruña",
+   "coords": [
+    -8.398132,
+    43.3706048
+   ],
+   "tourOrder": 1,
+   "formato": "cliente-07",
+   "espacio": "altadis-xtanco-07",
+   "mapa": "https://www.admira.biz/?circuit=altadis_espana&loc=altadis-es-01-a-coruna&marca=altadis"
+  },
+  {
+   "id": "altadis-es-02-bilbao",
+   "nombre": "Estanco Exp. nº 2 · Bidebarrieta",
+   "direccion": "Calle Bidebarrieta 2 · 48005 Bilbao",
+   "ciudad": "Bilbao",
+   "coords": [
+    -2.9246562,
+    43.2589959
+   ],
+   "tourOrder": 2,
+   "formato": "cliente-17",
+   "espacio": "altadis-xtanco-17",
+   "mapa": "https://www.admira.biz/?circuit=altadis_espana&loc=altadis-es-02-bilbao&marca=altadis"
+  },
+  {
+   "id": "altadis-es-03-barcelona",
+   "nombre": "Estanc Gran de Gràcia 61",
+   "direccion": "Carrer Gran de Gràcia 61 · 08012 Barcelona",
+   "ciudad": "Barcelona",
+   "coords": [
+    2.155556,
+    41.3996304
+   ],
+   "tourOrder": 3,
+   "formato": "cliente-01",
+   "espacio": "altadis-xtanco-01",
+   "mapa": "https://www.admira.biz/?circuit=altadis_espana&loc=altadis-es-03-barcelona&marca=altadis"
+  },
+  {
+   "id": "altadis-es-04-zaragoza",
+   "nombre": "Estanco nº 53 · San Ignacio de Loyola",
+   "direccion": "Calle de San Ignacio de Loyola 7 · 50008 Zaragoza",
+   "ciudad": "Zaragoza",
+   "coords": [
+    -0.8834096,
+    41.646698
+   ],
+   "tourOrder": 4,
+   "formato": "cliente-16",
+   "espacio": "altadis-xtanco-16",
+   "mapa": "https://www.admira.biz/?circuit=altadis_espana&loc=altadis-es-04-zaragoza&marca=altadis"
+  },
+  {
+   "id": "altadis-es-05-madrid",
+   "nombre": "Estanco Exp. nº 167 · Fuencarral",
+   "direccion": "Calle de Fuencarral 2 · 28004 Madrid",
+   "ciudad": "Madrid",
+   "coords": [
+    -3.7015004,
+    40.420283
+   ],
+   "tourOrder": 5,
+   "formato": "cliente-08",
+   "espacio": "altadis-xtanco-08",
+   "mapa": "https://www.admira.biz/?circuit=altadis_espana&loc=altadis-es-05-madrid&marca=altadis"
+  },
+  {
+   "id": "altadis-es-06-valencia",
+   "nombre": "Estanco Del Carmen",
+   "direccion": "Plaça de Sant Jaume 5 · 46003 València",
+   "ciudad": "València",
+   "coords": [
+    -0.3799721,
+    39.4766998
+   ],
+   "tourOrder": 6,
+   "formato": "cliente-10",
+   "espacio": "altadis-xtanco-10",
+   "mapa": "https://www.admira.biz/?circuit=altadis_espana&loc=altadis-es-06-valencia&marca=altadis"
+  },
+  {
+   "id": "altadis-es-07-palma",
+   "nombre": "Estanc de l'Olivar · Exp. nº 21",
+   "direccion": "Plaça de l'Olivar 5 · 07002 Palma",
+   "ciudad": "Palma",
+   "coords": [
+    2.6528323,
+    39.5732702
+   ],
+   "tourOrder": 7,
+   "formato": "cliente-13",
+   "espacio": "altadis-xtanco-13",
+   "mapa": "https://www.admira.biz/?circuit=altadis_espana&loc=altadis-es-07-palma&marca=altadis"
+  },
+  {
+   "id": "altadis-es-08-sevilla",
+   "nombre": "El Palacio del Fumador",
+   "direccion": "Calle O'Donnell 5 · 41001 Sevilla",
+   "ciudad": "Sevilla",
+   "coords": [
+    -5.9953245,
+    37.3923553
+   ],
+   "tourOrder": 8,
+   "formato": "cliente-18",
+   "espacio": "altadis-xtanco-18",
+   "mapa": "https://www.admira.biz/?circuit=altadis_espana&loc=altadis-es-08-sevilla&marca=altadis"
+  },
+  {
+   "id": "altadis-es-09-malaga",
+   "nombre": "Tabacos Estanco Larios",
+   "direccion": "Calle Marqués de Larios 10 · 29005 Málaga",
+   "ciudad": "Málaga",
+   "coords": [
+    -4.4216755,
+    36.7191336
+   ],
+   "tourOrder": 9,
+   "formato": "cliente-12",
+   "espacio": "altadis-xtanco-12",
+   "mapa": "https://www.admira.biz/?circuit=altadis_espana&loc=altadis-es-09-malaga&marca=altadis"
+  },
+  {
+   "id": "altadis-es-10-granada",
+   "nombre": "Estanco Reyes Católicos · Exp. nº 24",
+   "direccion": "Calle Reyes Católicos 47 · 18001 Granada",
+   "ciudad": "Granada",
+   "coords": [
+    -3.5979781,
+    37.1756873
+   ],
+   "tourOrder": 10,
+   "formato": "cliente-09",
+   "espacio": "altadis-xtanco-09",
+   "mapa": "https://www.admira.biz/?circuit=altadis_espana&loc=altadis-es-10-granada&marca=altadis"
+  }
+ ]
+}

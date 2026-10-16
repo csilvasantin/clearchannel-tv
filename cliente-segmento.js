@@ -20,7 +20,7 @@
 
   // Alias de nombres de cliente → id del censo de admiranext.com/api/clientes.
   var ALIAS = {
-    altadis: 'altadis', estancosaltadis: 'altadis',
+    altadis: 'altadis', estancosaltadis: 'altadis', altadisespana: 'altadis', xtancosaltadis: 'altadis', altadisxtancos: 'altadis',
     jti: 'jti', jtixtanco: 'jti', xtanco: 'jti',
     starbucks: 'starbucks', alsea: 'starbucks', alseastarbucks: 'starbucks',
     starbucksmexico: 'starbucks-mexico', alseamexico: 'starbucks-mexico',
@@ -55,7 +55,8 @@
     }
     if (loc.client && /^[a-z0-9-]{2,60}$/.test(String(loc.client))) return String(loc.client);
     // 1 · Circuitos con dueño explícito (Altadis y JTI primero: nunca se mezclan).
-    if (/^altadis-bcn-/i.test(id) || circuit === 'altadis_bcn' || sponsor === 'altadis' || /circuito dooh altadis/.test(kind)) return 'altadis';
+    // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de) también es Altadis: ?marca=altadis enseña los dos circuitos.
+    if (/^altadis-(?:bcn|es)-/i.test(id) || circuit === 'altadis_bcn' || circuit === 'altadis_espana' || sponsor === 'altadis' || /circuito dooh altadis|xtanco altadis/.test(kind)) return 'altadis';
     // Xtanco es la enseña de JTI: el circuito de 100 y los gemelos xtanco, xtanco-bcn, xtanco-valencia.
     if (/^jti-xtanco-/i.test(id) || circuit === 'jti_xtanco' || /circuito dooh jti/.test(kind) || /^xtanco(-|$)/i.test(id) || /^xtanco\b/.test(name) || brand === 'xtanco') return 'jti';
     if (/^alsea-mx-/i.test(id) || circuit === 'alsea_mexico') return 'starbucks-mexico';

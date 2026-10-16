@@ -17,6 +17,9 @@
     {id: 'cafebreria', circuit: 'cafebreria', label: 'Cafebrería', es: 'Cafebrería · Proyecto independiente', en: 'Cafebrería · Independent project', aliases: ['cafebreria barcelona'], featured: true},
     {id: 'starbucks', circuit: 'alsea_starbucks', label: 'Starbucks', es: 'Starbucks España (Alsea)', en: 'Starbucks Spain (Alsea)', aliases: ['sbux', 'alsea', 'alsea starbucks', 'starbucks espana', 'starbucks spain'], featured: true},
     {id: 'starbucks-mexico', circuit: 'alsea_mexico', label: 'Starbucks México', es: 'Starbucks México (Alsea)', en: 'Starbucks Mexico (Alsea)', aliases: ['starbucks mx', 'sbux mx', 'alsea mexico', 'alsea mx'], featured: true},
+    // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de): va siempre con su marca blanca (marca=altadis) y
+    // nunca se confunde con JTI, su competidor (encargo #4969): «xtanco» sigue siendo JTI aunque Altadis tenga tour global.
+    {id: 'altadis', circuit: 'altadis_espana', label: 'Altadis España', es: 'Altadis España · Xtancos', en: 'Altadis Spain · Xtancos', aliases: ['altadis espana', 'altadis spain', 'xtancos altadis', 'altadis xtancos', 'estancos altadis'], marca: 'altadis', excludes: ['jti'], featured: true},
     {id: 'alcampo', circuit: 'alcampo', label: 'Alcampo', es: 'Alcampo · supermercados', en: 'Alcampo · supermarkets', aliases: ['auchan'], featured: true},
     {id: 'canalkiosk', circuit: 'kioskos', label: 'CanalKiosk', es: 'CanalKiosk · kioskos de prensa', en: 'CanalKiosk · press kiosks', aliases: ['canal kiosk', 'kioskos', 'kiosko', 'kioscos', 'kiosco', 'kiosk', 'kiosks'], featured: true},
     {id: 'jti', circuit: 'jti_xtanco', label: 'JTI Xtanco', es: 'JTI Xtanco España', en: 'JTI Xtanco Spain', aliases: ['jti xtanco', 'xtanco'], featured: true},
@@ -149,9 +152,14 @@
     if (!k) return globals[0] || null;
     const exact = resolveClient(value);
     if (exact && hasGlobalTour(exact)) return exact;
-    const preferred = globals.filter(c => [c.id, c.circuit, c.label, ...c.aliases].some(a => key(a).startsWith(k)));
+    const preferred = globals.filter(c => !(exact && (c.excludes || []).includes(exact.id)) && [c.id, c.circuit, c.label, ...c.aliases].some(a => key(a).startsWith(k)));
     return preferred.length === 1 ? preferred[0] : exact;
   }
+  // Un cliente con marca blanca propia (Altadis) se enseña siempre con ella: los enlaces la llevan y, si el mapa
+  // está con otra (o con ninguna), la orden se relanza en la portada con ?marca=<marca>.
+  const withBrand = (client, url) => url + (client && client.marca ? '&marca=' + encodeURIComponent(client.marca) : '');
+  const brandMismatch = (client, ctx) => !!(client && client.marca && ctx && typeof ctx.segmento === 'function'
+    && typeof ctx.open === 'function' && ctx.segmento() !== client.marca);
   // Enlace de demo (Carlos, 15-oct-2026 · FLT-102469): ?ax_cmd=demo-dooh-alsea abre el modo experto y
   // escribe la orden al cargar. Lista blanca: un enlace solo puede pedir /demo dooh [cliente].
   function linkedCommand(search) {
@@ -172,8 +180,8 @@
     if (!client) return {ok: false, command, lines: [typed
       ? L(lang, `Cliente no reconocido: «${typed}». Clientes: ${CLIENTS.map(c => c.id).join(', ')}.`, `Unknown client: “${typed}”. Clients: ${CLIENTS.map(c => c.id).join(', ')}.`)
       : L(lang, 'Uso: /vision general <cliente> · por ejemplo /vision general alsea.', 'Usage: /vision general <client> · e.g. /vision general alsea.')]};
-    if (ctx && typeof ctx.handoff === 'function') {
-      const r = (ctx.open && ctx.open('/?ax_cmd=' + encodeURIComponent('vision general ' + client.id) + '&lang=' + (lang === 'en' ? 'en' : 'es'))) || {};
+    if (ctx && (typeof ctx.handoff === 'function' || brandMismatch(client, ctx))) {
+      const r = (ctx.open && ctx.open(withBrand(client, '/?ax_cmd=' + encodeURIComponent('vision general ' + client.id) + '&lang=' + (lang === 'en' ? 'en' : 'es')))) || {};
       if (r.ok === false) return {ok: false, command, lines: [L(lang, 'No se pudo abrir el mapa de la portada.', 'The home map could not be opened.')]};
       return {ok: true, command, handoff: true, lines: [L(lang, `Abriendo el mapa de la portada con la visión general de ${clientName(client, lang)}…`, `Opening the home map with the ${clientName(client, lang)} overview…`)]};
     }
@@ -193,8 +201,8 @@
       ? L(lang, `Cliente no reconocido: «${typed}». Clientes: ${CLIENTS.map(c => c.id).join(', ')}.`, `Unknown client: “${typed}”. Clients: ${CLIENTS.map(c => c.id).join(', ')}.`)
       : L(lang, 'Uso: /demo dooh <cliente> · por ejemplo /demo dooh alsea.', 'Usage: /demo dooh <client> · e.g. /demo dooh alsea.')]};
     // Fuera de la portada: el enlace directo del circuito arranca el tour al cargar el mapa.
-    if (ctx && typeof ctx.handoff === 'function') {
-      const r = (ctx.open && ctx.open('/?circuit=' + encodeURIComponent(client.circuit) + '&tour=1&lang=' + (lang === 'en' ? 'en' : 'es'))) || {};
+    if (ctx && (typeof ctx.handoff === 'function' || brandMismatch(client, ctx))) {
+      const r = (ctx.open && ctx.open(withBrand(client, '/?circuit=' + encodeURIComponent(client.circuit) + '&tour=1&lang=' + (lang === 'en' ? 'en' : 'es')))) || {};
       if (r.ok === false) return {ok: false, command, lines: [L(lang, 'No se pudo abrir el mapa de la portada.', 'The home map could not be opened.')]};
       return {ok: true, command, handoff: true, lines: [L(lang, `Abriendo el mapa de la portada con el Tour DooH de ${clientName(client, lang)}…`, `Opening the home map with the ${clientName(client, lang)} DooH Tour…`)]};
     }
@@ -579,6 +587,8 @@
     return [
       {id: 'dooh:alsea', label: L(lang, 'Tour DooH Alsea México', 'DooH Tour Alsea Mexico'), command: '/demo dooh alsea', builtin: true},
       {id: 'vision:alsea', label: L(lang, 'Visión general Alsea México', 'Overview Alsea Mexico'), command: '/vision general alsea', builtin: true},
+      {id: 'dooh:altadis', label: L(lang, 'Tour DooH Altadis España', 'DooH Tour Altadis Spain'), command: '/demo dooh altadis', builtin: true},
+      {id: 'vision:altadis', label: L(lang, 'Visión general Altadis España', 'Overview Altadis Spain'), command: '/vision general altadis', builtin: true},
       ...featured.map(c => ({id: 'demo:' + c.id, label: 'Demo ' + c.label, command: '/demo ' + c.id, builtin: true})),
       ...featured.map(c => ({id: 'circuito:' + c.id, label: L(lang, 'Circuito ', 'Circuit ') + c.label, command: '/circuito ' + c.id, builtin: true})),
     ];
@@ -624,6 +634,7 @@
       L(lang, 'Forma: /demo starbucks · /demo cliente=alcampo · mayúsculas y acentos dan igual.', 'Form: /demo starbucks · /demo client=alcampo · case and accents do not matter.'),
       L(lang, 'Tour DooH: /demo dooh alsea va de México entero a la puerta de cada Starbucks de Alsea México · /demo dooh <cliente> recorre cualquier circuito.', 'DooH Tour: /demo dooh alsea goes from the whole of Mexico to the door of each Alsea Mexico Starbucks · /demo dooh <client> tours any circuit.'),
       L(lang, 'Visión general: /vision general alsea muestra Alsea México desde arriba · verde OK, amarillo con incidencia, rojo apagado.', 'Overview: /vision general alsea shows Alsea Mexico from above · green OK, yellow with issues, red off.'),
+      L(lang, 'Altadis España: /demo dooh altadis va de España entera a la puerta de cada uno de sus 10 Xtancos y /vision general altadis los muestra con su semáforo, siempre con la marca Altadis (?ax_cmd=demo-dooh-altadis&marca=altadis).', 'Altadis Spain: /demo dooh altadis goes from the whole of Spain to the door of each of its 10 Xtancos and /vision general altadis shows them with their status lights, always with the Altadis brand (?ax_cmd=demo-dooh-altadis&marca=altadis).'),
       L(lang, 'RUTINAS', 'ROUTINES'),
       ...routines.map(r => `${r.label} → ${r.command}${r.builtin ? '' : L(lang, ' (tuya)', ' (yours)')}`),
       L(lang, 'Avatar digital: /avatar good abre el calvo (cara 3D, 52 blendshapes) · /avatar better abre la chica (Ready Player Me, gafas) · /avatar best abre a Neo (MetaHuman; si el host de render está apagado, cae a la chica). /avatar sin nivel dice el estado. /avatarON lo muestra y /avatarOFF lo oculta. /avatar reset vuelve al interruptor del proyecto. También /avatarDigital (alias /digitalAvatar, /cli ayudante, /cli helper). /cli seguido de un cliente sigue siendo /demo.',

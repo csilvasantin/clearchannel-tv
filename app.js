@@ -28,9 +28,9 @@ const CIRCUIT_SCOPE_OPTIONS = [
   {value:'local', labelKey:'scope_local'},
 ];
 const CIRCUIT_IDS_BY_SCOPE = {
-  all: ['all', 'cafebreria', 'admiraxperience', 'metro_bcn', 'kioskos', 'estancos', 'altadis_bcn', 'jti_xtanco', 'alsea_starbucks', 'alsea_mexico', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
+  all: ['all', 'cafebreria', 'admiraxperience', 'metro_bcn', 'kioskos', 'estancos', 'altadis_bcn', 'jti_xtanco', 'alsea_starbucks', 'alsea_mexico', 'altadis_espana', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx', 'desigual', 'mango', 'retail'],
   global: ['desigual', 'mango'],
-  national: ['estancos', 'jti_xtanco', 'alsea_starbucks', 'alsea_mexico', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx'],
+  national: ['estancos', 'jti_xtanco', 'alsea_starbucks', 'alsea_mexico', 'altadis_espana', 'alcampo', 'decathlon', 'bbva', 'caixabank', 'banorte_mx', 'elcorteingles', 'correos', 'multiopticas', 'palacio', 'liverpool_mx'],
   city: ['cafebreria', 'metro_bcn', 'kioskos', 'altadis_bcn', 'admiraxperience'],
   local: ['all', 'cafebreria', 'admiraxperience'],
 };
@@ -279,7 +279,7 @@ const I18N = {
     circuit_panel_title:'Seleccionar circuito', target_panel_title:'Seleccionar target', target_panel_hint:'Estos criterios segmentan la creación de contenidos.',
     circuit_metro_bcn:'Metro Barcelona Ciudad', circuit_desigual:'Desigual Global', circuit_mango:'Mango Global',
     circuit_kioskos:'Kioskos de prensa', circuit_all:'Todos los puntos locales',
-    circuit_estancos:'Xtanco Nacional', circuit_jti_xtanco:'Circuito JTI Xtanco España 100', circuit_altadis_bcn:'Altadis · Estancos Barcelona 9', circuit_alsea_starbucks:'Circuito Alsea Starbucks España 100', circuit_cafebreria:'Cafebrería · Proyecto independiente', circuit_alsea_mexico:'Alsea México · Starbucks (10)', circuit_alcampo:'Alcampo · Supermercados (102)', circuit_decathlon:'Decathlon España', circuit_palacio:'El Palacio de Hierro · México', circuit_liverpool_mx:'Liverpool · México', circuit_bbva:'BBVA · España', circuit_banorte_mx:'Banorte · México', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · España', circuit_correos:'Correos · España', circuit_multiopticas:'MultiÓpticas · España', circuit_retail:'Otros retail físicos',
+    circuit_estancos:'Xtanco Nacional', circuit_jti_xtanco:'Circuito JTI Xtanco España 100', circuit_altadis_bcn:'Altadis · Estancos Barcelona 9', circuit_alsea_starbucks:'Circuito Alsea Starbucks España 100', circuit_cafebreria:'Cafebrería · Proyecto independiente', circuit_alsea_mexico:'Alsea México · Starbucks (10)', circuit_altadis_espana:'Altadis España · Xtancos (10)', circuit_alcampo:'Alcampo · Supermercados (102)', circuit_decathlon:'Decathlon España', circuit_palacio:'El Palacio de Hierro · México', circuit_liverpool_mx:'Liverpool · México', circuit_bbva:'BBVA · España', circuit_banorte_mx:'Banorte · México', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · España', circuit_correos:'Correos · España', circuit_multiopticas:'MultiÓpticas · España', circuit_retail:'Otros retail físicos',
     all_lines:'Todas las líneas', whole_line:'Toda línea', whole_circuit:'Todo circuito',
     points_label:'puntos', point_label:'punto', impr_day_compact:'impr/día', cpm_label:'CPM',
     circuit_points_title:'Puntos del circuito', view_map:'Ver en mapa', buy_selection:'Comprar selección',
@@ -367,7 +367,7 @@ const I18N = {
     wish_title:'¡Has atrapado una estrella fugaz!', wish_sub:'Cierra los ojos y pide un deseo…',
     wish_ok:'Pedido ✨', make_wish:'Pide un deseo',
     surfaces_available:'Dispositivos disponibles', live_bids:'Pujas en vivo', create_campaign:'➕ Crear campaña', ecosystem:'ecosistema',
-    how_auction:'Cómo funciona la subasta', view_twin:'Ver Gemelo Digital ↗', visit_twin:'Visita al Digital Twin ↗', digital_twin:'Gemelo Digital', navigation_menu:'Menú ☰', twin_hd:'🎥 Gemelo Hiperrealista ↗',
+    how_auction:'Cómo funciona la subasta', view_twin:'Ver Gemelo Digital ↗', visit_twin:'Visita al Digital Twin ↗', digital_twin:'Gemelo Digital', navigation_menu:'Menú ☰', twin_hd:'🎥 Gemelo Hiperrealista ↗', view_plano:'▤ Plano del Xpacio ↗',
     tour_start:'▶ Tour DooH', tour_stop:'⏸ Parar Tour DooH',
     tour_hint:'Tour DooH: vuela de punto en punto por el circuito y el target seleccionados.',
     map_preparing:'Preparando mapa · ', map_loading:'Cargando detalle · ',
@@ -415,7 +415,7 @@ const I18N = {
     circuit_panel_title:'Select circuit', target_panel_title:'Select target', target_panel_hint:'These criteria segment content creation.',
     circuit_metro_bcn:'Barcelona Metro City', circuit_desigual:'Global Desigual', circuit_mango:'Mango Global',
     circuit_kioskos:'Press kiosk', circuit_all:'All local registered points',
-    circuit_estancos:'National Xtanco', circuit_jti_xtanco:'JTI Xtanco Spain 100 circuit', circuit_altadis_bcn:'Altadis · Barcelona tobacconists 9', circuit_alsea_starbucks:'Alsea Starbucks Spain 100 circuit', circuit_cafebreria:'Cafebrería · Independent project', circuit_alsea_mexico:'Alsea Mexico · Starbucks (10)', circuit_alcampo:'Alcampo · Supermarkets (102)', circuit_decathlon:'Decathlon Spain', circuit_palacio:'El Palacio de Hierro · Mexico', circuit_liverpool_mx:'Liverpool · Mexico', circuit_bbva:'BBVA · Spain', circuit_banorte_mx:'Banorte · Mexico', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · Spain', circuit_correos:'Correos · Spain', circuit_multiopticas:'MultiÓpticas · Spain', circuit_retail:'Other physical retail',
+    circuit_estancos:'National Xtanco', circuit_jti_xtanco:'JTI Xtanco Spain 100 circuit', circuit_altadis_bcn:'Altadis · Barcelona tobacconists 9', circuit_alsea_starbucks:'Alsea Starbucks Spain 100 circuit', circuit_cafebreria:'Cafebrería · Independent project', circuit_alsea_mexico:'Alsea Mexico · Starbucks (10)', circuit_altadis_espana:'Altadis Spain · Xtancos (10)', circuit_alcampo:'Alcampo · Supermarkets (102)', circuit_decathlon:'Decathlon Spain', circuit_palacio:'El Palacio de Hierro · Mexico', circuit_liverpool_mx:'Liverpool · Mexico', circuit_bbva:'BBVA · Spain', circuit_banorte_mx:'Banorte · Mexico', circuit_caixabank:'La Caixa / CaixaBank · Barcelona', circuit_elcorteingles:'El Corte Inglés · Spain', circuit_correos:'Correos · Spain', circuit_multiopticas:'MultiÓpticas · Spain', circuit_retail:'Other physical retail',
     all_lines:'All lines', whole_line:'Whole line', whole_circuit:'Whole circuit',
     points_label:'points', point_label:'point', impr_day_compact:'impr/day', cpm_label:'CPM',
     circuit_points_title:'Circuit points', view_map:'View on map', buy_selection:'Buy selection',
@@ -503,7 +503,7 @@ const I18N = {
     wish_title:'You caught a shooting star!', wish_sub:'Close your eyes and make a wish…',
     wish_ok:'Wished ✨', make_wish:'Make a wish',
     surfaces_available:'Available devices', live_bids:'Live bids', create_campaign:'➕ Create campaign', ecosystem:'ecosystem',
-    how_auction:'How the auction works', view_twin:'View Digital Twin ↗', visit_twin:'Visit the Digital Twin ↗', digital_twin:'Digital Twin', navigation_menu:'Menu ☰', twin_hd:'🎥 Hyperrealistic Twin ↗',
+    how_auction:'How the auction works', view_twin:'View Digital Twin ↗', visit_twin:'Visit the Digital Twin ↗', digital_twin:'Digital Twin', navigation_menu:'Menu ☰', twin_hd:'🎥 Hyperrealistic Twin ↗', view_plano:'▤ Xpace floor plan ↗',
     tour_start:'▶ Tour DooH', tour_stop:'⏸ Stop Tour DooH',
     tour_hint:'Tour DooH: fly between points in the selected circuit and target.',
     map_preparing:'Preparing map · ', map_loading:'Loading detail · ',
@@ -876,7 +876,7 @@ function isKioskoLocation(loc) {
 }
 
 function isEstancoLocation(loc) {
-  if (isJtiXtancoLocation(loc) || isAltadisBcnLocation(loc)) return false;
+  if (isJtiXtancoLocation(loc) || isAltadisBcnLocation(loc) || isAltadisEspanaLocation(loc)) return false;
   const hay = normText([loc.id, loc.name, loc.kind].join(' '));
   return hay.includes('estanco') || hay.includes('xtanco');
 }
@@ -980,6 +980,10 @@ function isMultiopticasLocation(loc) {
 // en orden de ruta desde Planeta 7 (tourOrder). Cada punto: P1 vertical escaparate + P2 horizontal mostrador.
 // Semilla: data/circuitos/circuito-altadis-bcn-9.seed.json
 function isAltadisBcnLocation(loc) { return /^altadis-bcn-/i.test(String(loc.id || '')) || loc.circuit === 'altadis_bcn'; }
+// Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de, 16-oct-2026): un estanco real por ciudad, de A Coruña
+// a Granada (orden en tourOrder), cada uno con un formato Altadis. Semilla: data/circuitos/circuito-altadis-espana-10.seed.json
+// (tools/genera-altadis-espana.mjs); las fichas viajan en locations.js, sin tocar el catálogo KV.
+function isAltadisEspanaLocation(loc) { return /^altadis-es-/i.test(String(loc.id || '')) || loc.circuit === 'altadis_espana'; }
 function isJtiXtancoLocation(loc) { return /^jti-xtanco-/i.test(String(loc.id || '')) || loc.circuit === 'jti_xtanco'; }
 // Alsea · Starbucks (FLT-100992): 100 cafeterías reales (store locator Starbucks). Semilla: jti-alsea/circuito-alsea-starbucks-100.seed.json
 // Alsea México (propuesta Disney, 28-sep-2026): 10 Starbucks reales del localizador starbucks.com.mx,
@@ -1021,6 +1025,7 @@ function circuitLabel(loc) {
     const lines = metroLinesForLocation(loc);
     return lines.length ? 'Metro Barcelona · ' + lines.join(' ') : 'Metro Barcelona';
   }
+  if (isAltadisEspanaLocation(loc)) return 'Altadis España';
   if (isEstancoLocation(loc)) return 'Estancos';
   if (isKioskoLocation(loc)) return 'Kioscos';
   if (isMangoLocation(loc)) return 'Mango';
@@ -1072,6 +1077,7 @@ function circuitDefinitions() {
   const cafebreriaItems = LOCATIONS.filter(isCafebreriaLocation);
   const alseaStarbucksItems = LOCATIONS.filter(isAlseaStarbucksLocation);
   const alseaMexicoItems = LOCATIONS.filter(isAlseaMexicoLocation).sort((x, y) => (x.tourOrder || 99) - (y.tourOrder || 99));
+  const altadisEspanaItems = LOCATIONS.filter(isAltadisEspanaLocation).sort((x, y) => (x.tourOrder || 99) - (y.tourOrder || 99));
   const decathlonItems = LOCATIONS.filter(isDecathlonLocation);
   const palacioItems = LOCATIONS.filter(isPalacioLocation);
   const liverpoolItems = LOCATIONS.filter(isLiverpoolLocation);
@@ -1081,7 +1087,7 @@ function circuitDefinitions() {
   const elcorteinglesItems = LOCATIONS.filter(isElCorteInglesLocation);
   const correosItems = LOCATIONS.filter(isCorreosLocation);
   const multiopticasItems = LOCATIONS.filter(isMultiopticasLocation);
-  const retailItems = LOCATIONS.filter(l => !isCafebreriaLocation(l) && !isJtiXtancoLocation(l) && !isAltadisBcnLocation(l) && !isAlseaStarbucksLocation(l) && !isAlseaMexicoLocation(l) && !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l)).filter(l => !isDemoCircuitLocation(l));
+  const retailItems = LOCATIONS.filter(l => !isCafebreriaLocation(l) && !isJtiXtancoLocation(l) && !isAltadisBcnLocation(l) && !isAltadisEspanaLocation(l) && !isAlseaStarbucksLocation(l) && !isAlseaMexicoLocation(l) && !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l)).filter(l => !isDemoCircuitLocation(l));
   const demoDefs = demoCircuitDefinitions();
   return {
     ...demoDefs,
@@ -1125,6 +1131,11 @@ function circuitDefinitions() {
       label: t('circuit_alsea_mexico'),
       items: alseaMexicoItems,
       segmentation: circuitSegmentationForItems(alseaMexicoItems),
+    },
+    altadis_espana: {
+      label: t('circuit_altadis_espana'),
+      items: altadisEspanaItems,
+      segmentation: circuitSegmentationForItems(altadisEspanaItems),
     },
     alcampo: {
       label: t('circuit_alcampo'),
@@ -1867,7 +1878,7 @@ function startVisionGeneral(circuitId) {
   const def = circuitDefinitions()[circuitId];
   const items = def && Array.isArray(def.items) ? def.items.filter(l => Array.isArray(l.coords) && l.coords.every(Number.isFinite)) : [];
   if (!items.length) return {ok:false, reason:'empty'};
-  const health = VisionGeneral.circuitHealth(items, visionConnection, null);
+  const health = VisionGeneral.circuitHealth(items, visionConnection, null, circuitId);
   splash.classList.add('hidden');
   panel.classList.remove('open');
   rotating = false;
@@ -1889,7 +1900,7 @@ function startVisionGeneral(circuitId) {
 function refreshVisionGeneral() {
   const vg = visionGeneral;
   if (!vg) return;
-  vg.health = VisionGeneral.circuitHealth(vg.items, visionConnection, null);
+  vg.health = VisionGeneral.circuitHealth(vg.items, visionConnection, null, vg.circuitId);
   VisionGeneral.setData(map, VisionGeneral.pointsData(vg.items, vg.health));
   const label = (circuitDefinitions()[vg.circuitId] || {}).label || '';
   const card = VisionGeneral.createCard(document, label, vg.items, vg.health, LANG, stopVisionGeneral);
@@ -3972,6 +3983,19 @@ function renderPanel(loc) {
     if (hd) { pTwinHD.href = hd; pTwinHD.style.display = ''; pTwinHD.setAttribute('target', '_blank'); }
     else { pTwinHD.style.display = 'none'; }
   }
+  // Plano del Xpacio (DCL-a6cb621be0ce5932f50960de): un punto con `plano` (data/xpacios/<id>.json, el plano
+  // compartido de su formato en Altadis España) abre plano.html junto al gemelo. Si su botón especial ya lleva
+  // al plano (laboratorio de Gran de Gràcia 51), no se repite.
+  const pPlano = document.getElementById('p-plano');
+  if (pPlano) {
+    const planoHref = planoPageUrl(loc);
+    pPlano.hidden = !planoHref || !!(navigation && /\/plano\.html\b/.test(navigation.href));
+    if (pPlano.hidden) pPlano.removeAttribute('href'); else pPlano.href = planoHref;
+  }
+}
+function planoPageUrl(loc) {
+  const m = String((loc && loc.plano) || '').match(/^https:\/\/(?:www\.)?admira\.biz\/data\/xpacios\/([a-z0-9][a-z0-9-]{0,79})\.json$/);
+  return m ? '/plano.html?locationId=' + encodeURIComponent(m[1]) + '&lang=' + LANG : '';
 }
 
 function renderBidFeedEmpty() {
@@ -4324,7 +4348,7 @@ function locationCamera(loc, bearing = -20, zoom) {
 }
 
 function syncCircuitOverview(){
- const meta={kioskos:{name:'CanalKiosk',theme:'kiosk'},admiraxperience:{name:'AdmiraXperience',theme:'admira'},estancos:{name:'Xtanco',theme:'xtanco'},alsea_mexico:{name:'Alsea México',theme:'admira',color:'#00704a'}}[selectedCircuitId];
+ const meta={kioskos:{name:'CanalKiosk',theme:'kiosk'},admiraxperience:{name:'AdmiraXperience',theme:'admira'},estancos:{name:'Xtanco',theme:'xtanco'},alsea_mexico:{name:'Alsea México',theme:'admira',color:'#00704a'},altadis_espana:{name:'Altadis España',theme:'admira',color:'#F47920'}}[selectedCircuitId];
  const active=!!(tourRun||circuitDemo.running);
  if(!active||!meta){circuitOverview?.destroy();circuitOverview=null;return;}
  if(circuitOverview?.key===selectedCircuitId)return;
@@ -4436,10 +4460,24 @@ function applyCircuitDeepLink() {
   if (headerBtn) headerBtn.classList.add('active');
   if (toggle) toggle.textContent = '−';
   renderCircuitSelector();
-  const go = () => { try { zoomToSelectedCircuit(); } catch (_) {} };
+  // &loc=<id> (DCL-a6cb621be0ce5932f50960de): enlace profundo a un Xpacio del circuito, p. ej.
+  // /?circuit=altadis_espana&loc=altadis-es-05-madrid&marca=altadis. Centra el punto y abre su ficha una sola
+  // vez; las llamadas siguientes (catálogo completo, cambio de marca) ya no alejan la cámara a todo el circuito.
+  const locId = circuitLocParam();
+  const target = locId && !circuitLocDone ? def.items.find(l => l.id === locId) : null;
+  const go = () => {
+    try {
+      if (target) { if (!circuitLocDone) { circuitLocDone = true; flyToLocation(target); } }
+      else if (!locId || !circuitLocDone) zoomToSelectedCircuit();
+    } catch (_) {}
+  };
   if (map && map.loaded && map.loaded()) go();
   else if (map && map.once) map.once('load', go);
   return true;
+}
+var circuitLocDone = false;  // var: applyCircuitDeepLink puede llegar antes que esta línea
+function circuitLocParam() {
+  try { return new URLSearchParams(location.search || '').get('loc') || ''; } catch (_) { return ''; }
 }
 function watchCircuitDeepLink() {
   if (!circuitParam()) return;
@@ -4836,6 +4874,9 @@ function brandSegmentCount() { return { cliente: (window.AdmiraSegmento && windo
 window.AdmiraGlobo = Object.freeze({ segmento: brandSegmentCount, ids: () => LOCATIONS.map(l => l.id) });
 function fitBrandSegment() {
   if (!window.AdmiraSegmento || !window.AdmiraSegmento.actual() || LOCATIONS.length === LOCATIONS_ALL.length) return;
+  // Con un tour, la visión general o un vuelo en marcha, la cámara ya tiene dueño: encuadrar la marca encima
+  // cancelaba ese vuelo (el Tour DooH de Altadis, que siempre va con ?marca=altadis, se quedaba en la parada 1).
+  if (circuitDemo.running || tourRun || visionGeneral || tourCamera.isNavigating()) return;
   const pts = LOCATIONS.map(l => l.coords).filter(c => Array.isArray(c) && isFinite(c[0]) && isFinite(c[1]));
   if (!pts.length || !map || typeof map.fitBounds !== 'function') return;
   let w = 180, e = -180, so = 90, n = -90;
@@ -4854,7 +4895,11 @@ function applyBrandSegment(fit) {
 }
 document.addEventListener('admira:segmento', () => applyBrandSegment(true));
 document.documentElement.dataset.segmentoPuntos = String(LOCATIONS.length);
-if (window.AdmiraSegmento && window.AdmiraSegmento.actual()) { if (map.loaded()) fitBrandSegment(); else map.once('load', fitBrandSegment); }
+// Un enlace profundo (?circuit, ?loc, ?locationId, ?ax_cmd, ?previo) ya lleva la cámara a su sitio: no se encuadra la marca.
+function brandDeepLinked() {
+  try { const q = new URLSearchParams(location.search || ''); return ['circuit', 'loc', 'locationId', 'ax_cmd', 'previo'].some(k => q.has(k)); } catch (_) { return false; }
+}
+if (window.AdmiraSegmento && window.AdmiraSegmento.actual() && !brandDeepLinked()) { if (map.loaded()) fitBrandSegment(); else map.once('load', fitBrandSegment); }
 
 
 // Descubrir gemelos ONLINE (pantallas vivas) y refrescar cada 60s → el inventario

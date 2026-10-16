@@ -52,7 +52,18 @@
     {es: 'Escaparate con contenido caducado', en: 'Window screen showing expired content'},
     {es: 'Menu board reiniciándose en bucle', en: 'Menu board stuck in a reboot loop'},
   ];
-  function demoHealth(items) {
+  // Los estancos de Altadis España no tienen menu board ni zona de recogida (DCL-a6cb621be0ce5932f50960de).
+  const DEMO_ISSUES_BY_CIRCUIT = {
+    altadis_espana: [
+      // Válidas para cualquier formato (tableta, videowall, LED, stretch): el reparto es por orden, no por pantalla.
+      {es: 'Una pantalla sin señal desde hace 25 min', en: 'One screen without signal for 25 min'},
+      {es: 'Contenido de campaña caducado en pantalla', en: 'Expired campaign content on screen'},
+      {es: 'Reproductor del estanco reiniciándose en bucle', en: 'Shop player stuck in a reboot loop'},
+    ],
+  };
+  const issuesFor = circuitId => (Object.prototype.hasOwnProperty.call(DEMO_ISSUES_BY_CIRCUIT, circuitId) ? DEMO_ISSUES_BY_CIRCUIT[circuitId] : DEMO_ISSUES);
+  function demoHealth(items, circuitId) {
+    const issues = issuesFor(circuitId);
     const ranked = items.map(l => ({l, h: hash(l.id)})).sort((a, b) => a.h - b.h);
     const n = ranked.length, off = n >= 4 ? Math.max(1, Math.round(n / 10)) : 0, warn = n >= 4 ? Math.max(1, Math.round(n / 5)) : 0;
     const out = new Map();
@@ -63,16 +74,16 @@
         online: state === 'ok' ? total : state === 'incidencia' ? total - 1 : 0,
         offline: state === 'ok' ? 0 : state === 'incidencia' ? 1 : total, unknown: 0,
         // Cada incidencia de demo con su propio texto (por orden, no por hash: no se repiten).
-        incidents: state === 'incidencia' ? 1 : 0, issue: state === 'incidencia' ? DEMO_ISSUES[(i - off) % DEMO_ISSUES.length] : null});
+        incidents: state === 'incidencia' ? 1 : 0, issue: state === 'incidencia' ? issues[(i - off) % issues.length] : null});
     });
     return out;
   }
 
-  // Salud del circuito: real si algún Xpacio tiene un dato real; si no, la de demo.
-  function circuitHealth(items, connectionOf, incidentsOf) {
+  // Salud del circuito: real si algún Xpacio tiene un dato real; si no, la de demo (con las incidencias de su circuito).
+  function circuitHealth(items, connectionOf, incidentsOf, circuitId) {
     const real = new Map(items.map(l => [l.id, storeHealth(l, connectionOf, incidentsOf ? incidentsOf(l) : 0)]));
     const anyReal = [...real.values()].some(h => h.real);
-    const byId = anyReal ? real : demoHealth(items);
+    const byId = anyReal ? real : demoHealth(items, circuitId);
     const totals = {ok: 0, incidencia: 0, apagado: 0, sin_datos: 0};
     for (const h of byId.values()) totals[h.state]++;
     return {byId, totals, demo: !anyReal, count: items.length};
