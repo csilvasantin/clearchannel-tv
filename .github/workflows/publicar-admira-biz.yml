@@ -4,25 +4,42 @@ name: Publicar admira.biz
 # publicar desde el Mac Mini y los cambios mergeados esperaban a que alguien se acordara.
 # Firma: el agente que hizo el cambio (autor del último commit del PR) · GitHubActions.
 # Ver docs/publicacion-biz.md.
+# No se publica en rojo (Morfeo, 17-oct-2026): los tests corren en cada PR y antes de cada publicación,
+# y tras publicar se revisa la consola de producción.
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
 
-# Una publicación detrás de otra; si llegan varios merges seguidos, la pendiente se queda con el último.
-concurrency:
-  group: publicar-admira-biz
-  cancel-in-progress: false
-
 jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Tests
+        run: node --test tests/*.test.mjs tests/*.test.cjs
+
   publicar:
-    if: github.repository == 'csilvasantin/clearchannel-tv'
+    needs: tests
+    if: github.repository == 'csilvasantin/clearchannel-tv' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Una publicación detrás de otra; si llegan varios merges seguidos, la pendiente se queda con el último.
+    concurrency:
+      group: publicar-admira-biz
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
         with:
@@ -70,3 +87,8 @@ jobs:
           git fetch --quiet origin main
           if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then echo "· producción ya publica un commit posterior"; exit 0; fi
           echo "✗ admira.biz no sirve $esperado (sirve «$vivo»)"; exit 1
+
+      # Portada, backoffice, Bugito y plano en un Chrome sin ventana: si hay errores de consola, el flujo
+      # sale en rojo y avisa. Ya está publicado: se arregla con otro merge o se vuelve a la versión anterior.
+      - name: Revisar consola en producción
+        run: node tools/consola-produccion.mjs

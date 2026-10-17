@@ -27,6 +27,15 @@ test('el flujo usa los secretos de Cloudflare y firma con el agente del cambio �
   assert.match(flujo, /::add-mask::\$token/, 'el token limpio también se enmascara en los logs');
 });
 
+test('no se publica en rojo: los tests corren en cada PR y antes de publicar, y luego se revisa la consola', () => {
+  assert.match(flujo, /pull_request:\s*\n\s*branches: \[main\]/);
+  assert.match(flujo, /tests:[\s\S]*?run: node --test tests\/\*\.test\.mjs tests\/\*\.test\.cjs/);
+  assert.match(flujo, /publicar:\s*\n\s*needs: tests/, 'publicar espera a los tests');
+  assert.match(flujo, /github\.event_name != 'pull_request'/, 'un PR prueba pero no publica');
+  const tras = flujo.slice(flujo.indexOf('Comprobar producción'));
+  assert.match(tras, /run: node tools\/consola-produccion\.mjs/, 'la consola se revisa después de comprobar el commit');
+});
+
 test('deploy-biz.sh en CI no empuja ni usa el vault, se adelanta si main ya va por delante y respeta 4 por hora', () => {
   const ci = script.slice(script.indexOf('if (( BIZ_CI )); then'), script.indexOf('BIZ_DAY='));
   const [rama, local] = ci.split(/\nelse\n/);
