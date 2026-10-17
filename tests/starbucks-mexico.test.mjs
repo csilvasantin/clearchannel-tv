@@ -289,10 +289,12 @@ test('Biz publica el índice de Starbucks México (CORS de lectura); clearchanne
 });
 
 test('las páginas piden la versión nueva de lo que cambia', () => {
-  // Cada fichero, con el sello de su último cambio (tours DooH del 16-oct y main en verde del 17-oct).
+  // Cada fichero, con el sello de su último cambio (tours DooH del 16-oct, main en verde y portada sin WebGL del 17-oct).
   const html = read('index.html');
   assert.match(html, /vision-general\.js\?v=20261016-starbucks-es-1/);
-  for (const file of ['app.js', 'global-tour.js']) assert.ok(html.includes(file + '?v=20261016-total-tour-1'), file);
+  assert.ok(html.includes('global-tour.js?v=20261016-total-tour-1'), 'global-tour.js');
+  // app.js y mapa-sin-webgl.js: portada sin WebGL (17-oct), el mapa mudo se carga antes que app.js.
+  assert.ok(html.includes('<script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261017-sin-webgl-1"></script>'));
   assert.match(html, /marca-blanca\.js\?v=20261016-starbucks-mx-2/);
   assert.match(html, /expert-commands\.js\?v=20261017-main-verde-1/);
   // locations.js cambió por última vez con la recuperación de players: la portada y las fichas piden esa versión.
