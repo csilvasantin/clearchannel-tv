@@ -632,11 +632,12 @@
   function defaultRoutines(lang = 'es') {
     const featured = CLIENTS.filter(c => c.featured);
     return [
+      // Los cuatro accesos de México y Altadis van primero y en este orden (e75a8ad); el resto, detrás.
       {id: 'dooh:starbucks', label: L(lang, 'Tour DooH Starbucks México', 'DooH Tour Starbucks Mexico'), command: '/demo dooh starbucks', builtin: true},
-      {id:'tour:total',label:L(lang,'Tour DooH total','Total DooH Tour'),command:'/tour DooH total',builtin:true},
       {id: 'vision:starbucks', label: L(lang, 'Visión general Starbucks México', 'Overview Starbucks Mexico'), command: '/vision general starbucks', builtin: true},
       {id: 'dooh:altadis', label: L(lang, 'Tour DooH Altadis España', 'DooH Tour Altadis Spain'), command: '/demo dooh altadis', builtin: true},
       {id: 'vision:altadis', label: L(lang, 'Visión general Altadis España', 'Overview Altadis Spain'), command: '/vision general altadis', builtin: true},
+      {id:'tour:total',label:L(lang,'Tour DooH total','Total DooH Tour'),command:'/tour DooH total',builtin:true},
       {id: 'dooh:starbucks-espana', label: L(lang, 'Tour DooH Starbucks España · 3 destinos', 'DooH Tour Starbucks Spain · 3 destinations'), command: '/demo dooh starbucks espana', builtin: true},
       ...Object.entries(tourCircuits).filter(([id])=>!['alsea_mexico','alsea_starbucks','altadis_espana','dooh_total'].includes(id)).map(([id,d])=>({id:'tour:'+id,label:L(lang,'Tour DooH ','DooH Tour ')+d.label,command:'/tour '+id,builtin:true})),
       ...featured.map(c => ({id: 'demo:' + c.id, label: 'Demo ' + c.label, command: '/demo ' + c.id, builtin: true})),

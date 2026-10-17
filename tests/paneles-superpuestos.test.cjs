@@ -140,7 +140,8 @@ test('Options footer stops above a visibly minimized shared dock even with nativ
 // la suite desde responsive-shell.js (data-toggle="" evita que ella atienda la tecla por su lado).
 test('the expert CLI is fully hidden when closed and only its ⌘ key brings it up', () => {
   const index = read('index.html'), shell = read('galaxy-shell.js');
-  assert.match(index, /suite\/experto\.js\?v=[^"]+" data-min="hide" data-toggle=""/, 'portada');
+  // Desde 013889d (7-oct-2026) la portada no lleva la etiqueta escrita: la crea su arranque de la suite.
+  assert.match(index, /engine\.src = '[^']*\/suite\/experto\.js\?v=[^']+';\s*engine\.setAttribute\('data-min', 'hide'\);\s*engine\.setAttribute\('data-toggle', ''\);/, 'portada');
   assert.match(shell, /js\.dataset\.min = 'hide'; js\.dataset\.toggle = '';/, 'common shell');
   for (const src of [index, shell]) assert.match(src, /sessionStorage\.removeItem\('ax-experto-abierto'\)/);
   assert.match(read('responsive-shell.js'), /suite\(\)\[open\?'open':'close'\]\(\)/);

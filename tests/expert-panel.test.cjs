@@ -23,11 +23,11 @@ test('expert panel has three blocks in order: CLI, Verbos, Rutinas', () => {
 test('scripts load registry before panel and version the updated catalogue handlers together', () => {
   const order = ['responsive-shell.js', 'expert-commands.js', 'expert-panel.js'].map(f => html.indexOf(f + '?v='));
   assert.ok(order.every(i => i > 0) && order[0] < order[1] && order[1] < order[2]);
-  const stamp = html.match(/expert-panel\.js\?v=([^"]+)"/)[1];
-  assert.ok(html.includes('responsive-shell.css?v=' + stamp));
-  const evidenceStamp = html.match(/expert-commands\.js\?v=([^\"]+)\"/)[1];
-  assert.equal(evidenceStamp, '20261010-evidence-1');
-  assert.ok(html.includes('intro.js?v=' + evidenceStamp));
+  // Cada fichero lleva el sello de su último cambio (desde 033e4c0, 13-oct-2026, ya no comparten uno solo).
+  assert.ok(html.includes('expert-panel.js?v=20261016-total-tour-1'));
+  assert.ok(html.includes('expert-commands.js?v=20261017-main-verde-1'));
+  assert.ok(html.includes('responsive-shell.css?v=20261006-experto-tecla-1'));
+  assert.ok(html.includes('intro.js?v=20261016-altadis-es-1'));
   const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
   const shell = new RegExp(sw.match(/const SHELL_CODE = \/(.+)\/;/)[1]);
   for (const f of ['/expert-commands.js', '/expert-panel.js', '/responsive-shell.js', '/intro.js']) assert.ok(shell.test(f), f);
