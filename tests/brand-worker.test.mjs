@@ -18,6 +18,7 @@ console.log('brand worker: ok');
 // cuando el Host es admira.app — y NO cuando es clearchannel.tv.
 import { readFile } from 'node:fs/promises';
 import worker, { ADMIRA_MCP_FILES, AVATAR_TAG, SELLO_TAG } from '../_worker.js';
+import { CC_NATIVE_PREFIX } from '../server/native-clear-channel.mjs';
 
 // The native HTML injection must fetch the ACK-capable avatar after a reload,
 // without relying on an expired edge/browser cache of the old pill query.
@@ -43,7 +44,11 @@ assert.match(llms, /https:\/\/www\.admira\.app\/mcp\/manifest\.json/);
 const env = { ASSETS: { fetch(req) { return new Response(new URL(req.url).pathname, { headers: { 'content-type': 'application/json' } }); } } };
 assert.equal(await (await worker.fetch(new Request('https://www.admira.app/mcp/manifest.json'), env)).text(), '/mcp/admira-app/manifest.json');
 assert.equal(await (await worker.fetch(new Request('https://admira.app/mcp/llms.txt'), env)).text(), '/mcp/admira-app/llms.txt');
-assert.equal(await (await worker.fetch(new Request('https://www.clearchannel.tv/mcp/manifest.json'), env)).text(), '/mcp/manifest.json');
+// clearchannel.tv no recibe la puerta de admira.app: desde el 12-oct-2026 sirve su propia release
+// nativa (/__admira_cc_native, autorizada por Carlos), nunca el manifest de admira.app.
+const ccManifest = await (await worker.fetch(new Request('https://www.clearchannel.tv/mcp/manifest.json'), env)).text();
+assert.equal(ccManifest, CC_NATIVE_PREFIX + '/mcp/manifest.json');
+assert.notEqual(ccManifest, ADMIRA_MCP_FILES['/mcp/manifest.json']);
 
 console.log('brand worker · puerta MCP de admira.app: ok');
 
@@ -162,7 +167,8 @@ for (const host of ['www.admira.app', 'admira.app', 'www.clearchannel.tv', 'clea
 console.log('brand worker · admira.biz (marca, canónica, Yokup movido, /auth/*): ok');
 
 // Entrada de agentes (#5067): el POST a /auth/agente en admira.app va a api.admira.app con
-// método, Authorization y cuerpo; el GET sigue en ASSETS; clearchannel.tv no reenvía.
+// método, Authorization y cuerpo; desde el 13-oct-2026 el GET también va a la API (el formulario
+// de agentes sale de ella, en el mismo origen: tests/agent-login-ui.test.mjs); clearchannel.tv no reenvía.
 {
   const { AGENT_LOGIN_HOST, agentUpstream } = await import('../_worker.js');
   assert.equal(AGENT_LOGIN_HOST.test('www.admira.app'), true);
@@ -194,10 +200,13 @@ console.log('brand worker · admira.biz (marca, canónica, Yokup movido, /auth/*
     assert.equal(wwwBiz.status, 401);
     assert.equal(seen[2].url, 'https://api.admira.biz/auth/agente');
     assert.equal(seen[2].origin, 'https://www.admira.biz');
-    assert.equal(await (await worker.fetch(new Request('https://www.admira.app/auth/agente'), assets)).text(), 'page');
-    assert.equal(await (await worker.fetch(new Request('https://admira.biz/auth/agente'), assets)).text(), 'page');
+    const getApp = await worker.fetch(new Request('https://www.admira.app/auth/agente'), assets);
+    assert.equal(getApp.headers.get('cache-control'), 'no-store');
+    assert.deepEqual(seen[3], { url: 'https://api.admira.app/auth/agente', method: 'GET', auth: null, origin: 'https://www.admira.app', body: '' });
+    await worker.fetch(new Request('https://admira.biz/auth/agente'), assets);
+    assert.deepEqual([seen[4].url, seen[4].method, seen[4].body], ['https://api.admira.biz/auth/agente', 'GET', '']);
     assert.equal((await worker.fetch(new Request('https://www.clearchannel.tv/auth/agente', { method: 'POST' }), assets)).status, 200);
-    assert.equal(seen.length, 3);
+    assert.equal(seen.length, 5);
   } finally { globalThis.fetch = realFetch; }
   console.log('brand worker · /auth/agente proxy: ok');
 }

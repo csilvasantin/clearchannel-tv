@@ -11,7 +11,7 @@ const C = require('../expert-commands.js');
 
 const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
-const STAMP = '20261003-superpuestos-1';
+const STAMP = '20261016-starbucks-mx-2';
 const memory = (init = {}) => {
   const mem = new Map(Object.entries(init));
   return {mem, getItem: k => (mem.has(k) ? mem.get(k) : null), setItem: (k, v) => mem.set(k, String(v)), removeItem: k => mem.delete(k)};
@@ -202,7 +202,9 @@ test('the portada and the common shell share the same single mechanism', () => {
   assert.equal(index.split(tag).length - 1, 1, 'the portada loads marca-blanca.js once');
   const head = index.slice(0, index.indexOf('</head>'));
   assert.ok(head.includes(tag) && head.indexOf(tag) < head.indexOf('responsive-shell.js?v='), 'in <head>, before the shell behaviour');
-  assert.ok(index.includes(`expert-panel.js?v=${STAMP}`), 'same stamp as the expert scripts it talks to');
+  // Desde c98529b (15-oct-2026) marca-blanca.js lleva el sello de su último cambio, como el resto de la
+  // portada (tests/marca-alsea.test.mjs), y ya no comparte el de expert-*.js: basta con que cargue antes.
+  assert.ok(head.indexOf(tag) < head.indexOf('expert-panel.js?v='), 'before the expert scripts it talks to');
   const shell = read('galaxy-shell.js');
   assert.match(shell, /load\('marca-blanca\.js'\)\.catch\(/, 'galaxy-shell.js loads the very same file, with its own stamp, without blocking the shell');
   for (const page of pages.filter(p => p !== 'index.html')) assert.ok(!read(page).includes('marca-blanca.js'), `${page}: gets it through galaxy-shell.js`);
@@ -323,8 +325,9 @@ test('/marca is in /help, completes catalogue ids with Tab and keeps the registr
   assert.equal(C.complete('/marca star').value, '/marca starbucks');
   assert.deepEqual(C.setBrands([{id: '../x'}]).map(b => b.id), ['admira', 'starbucks'], 'invalid lists are ignored');
   C.setBrands(C.BRAND_SEED);
-  // Generated routines are unchanged; a /marca command can be saved as an own routine.
-  assert.ok(C.defaultRoutines('es').every(r => /^\/(demo|circuito) /.test(r.command)));
+  // Generated routines never change the brand (no /marca among them); since FLT-102501 and the auto
+  // tours of 16-oct-2026 they also include /vision and /tour. A /marca command can be saved as an own routine.
+  assert.ok(C.defaultRoutines('es').every(r => /^\/(demo|circuito|vision|tour) /.test(r.command)));
   assert.ok(C.addRoutine([], '/marca lumbre').ok);
   assert.ok(C.addRoutine([], '/marca off').ok);
   const docs = read('docs/marca-blanca.md');

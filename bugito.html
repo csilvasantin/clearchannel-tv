@@ -11,19 +11,20 @@
   <link rel="stylesheet" href="plano.css?v=20261014-crear-1">
   <link rel="stylesheet" href="brand.css">
   <script src="brand.js"></script>
+  <!-- Bugito (DCL-5da4653d859552490fd5ae1d): banco de pruebas del ▤ Creador de incidencias.
+       Su hoja va antes de galaxy-shell.css: el shell gana los empates, como en el resto de páginas. -->
+  <link rel="stylesheet" href="bugito.css?v=20261014-bugito-3">
+  <link rel="stylesheet" href="bugito-xpacios.css?v=20261015-xpacios-1">
   <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
   <script>
   // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones manda; bugito.mjs escucha admira:lang.
   window.ADMIRA_SHELL = { section: { es: '/ bugito · banco de pruebas', en: '/ bugito · test bench' }, setLang() {} };
   </script>
-  <script defer src="/galaxy-shell.js?v=20261014-bugito-1"></script>
-  <!-- Bugito (DCL-5da4653d859552490fd5ae1d): banco de pruebas del ▤ Creador de incidencias. -->
-  <link rel="stylesheet" href="bugito.css?v=20261014-bugito-3">
+  <script defer src="/galaxy-shell.js?v=20261017-main-verde-1"></script>
   <!-- Opción B · login de owner para el dispositivo real (la cuenta propia por Google, no un token maestro). -->
   <script src="https://accounts.google.com/gsi/client" async></script>
   <script defer src="bugito-super.js?v=20261014-bugito-3"></script>
   <script type="module" src="bugito.mjs?v=20261014-display-mbp16-1"></script>
-  <link rel="stylesheet" href="bugito-xpacios.css?v=20261015-xpacios-1">
   <script type="module" src="bugito-xpacios-ui.mjs?v=20261015-command-1"></script>
 </head>
 <body>
@@ -55,7 +56,7 @@
     </form>
     <div class="bb-grid">
       <section class="bb-player card" aria-labelledby="bb-player-title">
-        <header class="bb-head">
+        <header class="bb-head" data-shell-keep>
           <h2 id="bb-player-title" data-bb="player">Player virtual de laboratorio</h2>
           <code id="bb-screen" class="bb-chip">virtual-lab-bugito</code>
           <span class="bb-chip" data-bb="landscape">horizontal · 16:9</span>
@@ -89,7 +90,7 @@
       </section>
 
       <aside id="bb-bugito" class="bb-bugito card" aria-labelledby="bb-bugito-title">
-        <header class="bb-head">
+        <header class="bb-head" data-shell-keep>
           <h2 id="bb-bugito-title" data-bb="bugito">Bugito</h2>
           <span id="bb-bugito-estado" class="bb-chip bb-estado"></span>
           <button type="button" id="bb-toggle" class="bb-mini" data-bb="hide">Ocultar a Bugito</button>

@@ -289,14 +289,14 @@ test('Biz publica el índice de Starbucks México (CORS de lectura); clearchanne
 });
 
 test('las páginas piden la versión nueva de lo que cambia', () => {
+  // Cada fichero, con el sello de su último cambio (tours DooH del 16-oct y main en verde del 17-oct).
   const html = read('index.html');
-  for (const f of ['app.js', 'vision-general.js']) {
-    assert.match(html, new RegExp(f.replace('.', '\\.') + '\\?v=20261016-starbucks-es-1'), f);
-  }
-  for (const file of ['locations.js','global-tour.js']) assert.ok(html.includes(file+'?v=20261016-player-recovery-1'));
-  for (const f of ['marca-blanca.js']) assert.match(html, new RegExp(f.replace('.', '\\.') + '\\?v=20261016-starbucks-mx-2'), f);
-  assert.match(html, /expert-commands\.js\?v=20261016-starbucks-es-1/);
-  for (const page of ['detail.html', 'walk.html', 'backoffice.html']) assert.match(read(page), /locations\.js\?v=20261016-starbucks-mx-1/, page);
+  assert.match(html, /vision-general\.js\?v=20261016-starbucks-es-1/);
+  for (const file of ['app.js', 'global-tour.js']) assert.ok(html.includes(file + '?v=20261016-total-tour-1'), file);
+  assert.match(html, /marca-blanca\.js\?v=20261016-starbucks-mx-2/);
+  assert.match(html, /expert-commands\.js\?v=20261017-main-verde-1/);
+  // locations.js cambió por última vez con la recuperación de players: la portada y las fichas piden esa versión.
+  for (const page of ['index.html', 'detail.html', 'walk.html', 'backoffice.html']) assert.match(read(page), /locations\.js\?v=20261016-player-recovery-1/, page);
 });
 
 test('los enlaces de la suite común del Experto abren México con la marca Starbucks', () => {
@@ -314,7 +314,11 @@ test('los enlaces de la suite común del Experto abren México con la marca Star
     assert.equal(r.ok, true, q);
     assert.deepEqual(calls, ['alsea_mexico'], q);
   }
-  assert.match(read('expert-panel.js'), /C\.resolveDoohClient\(linked\.split\(' '\)\.slice\(2\)\.join\(' '\)\)/);
+  // Desde d8453bd (16-oct-2026) el enlace también admite «/tour X»: ahí el cliente empieza en la segunda palabra.
+  assert.match(read('expert-panel.js'), /C\.resolveDoohClient\(linked\.split\(' '\)\.slice\(linked\.startsWith\('\/tour '\) \? 1 : 2\)\.join\(' '\)\)/);
+  const tour = C.linkedCommand('?ax_cmd=tour-alsea-mexico&marca=starbucks');
+  assert.equal(tour, '/tour alsea mexico');
+  assert.equal(C.resolveDoohClient(tour.split(' ').slice(1).join(' ')).circuit, 'alsea_mexico');
 });
 
 // marca-blanca.js en un navegador mínimo: el cargador de admiranext.com falla `fallos` veces y luego carga.

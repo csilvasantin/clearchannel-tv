@@ -33,7 +33,8 @@ test('the contract rejects generic and non-XpaceOS URLs while keeping labelled t
 
 test('Paseo de Gracia 103 opens Starbucks Matrix from slim and full records only', () => {
   const id = 'alsea-sbux-021';
-  const expected = 'https://www.xpaceos.com/admira-xp/?autostart=xtanco&visual=matrix&loc=alsea-sbux-021';
+  // Enlace canónico del selector de proyectos de admira.store (#41, 7-oct-2026).
+  const expected = 'https://www.admira.store/admira-xp/?quality=matrix&loc=alsea-sbux-021&project=starbucks&circuit=alsea_starbucks';
   for (const record of [{id}, {id, name:'Starbucks Paseo de Gracia', twin:'https://www.xpaceos.com/admira-xp/?autostart=cafeteria'}]) {
     assert.equal(associationUrl(record), expected);
     assert.deepEqual(panelNavigation(record), {kind:'xpacio',href:expected,labelKey:'visit_twin'});

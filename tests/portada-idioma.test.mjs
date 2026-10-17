@@ -21,6 +21,8 @@ test('the pill and the Options menu switch share the same language code', () => 
 });
 
 test('interior pages keep Expert (galaxy-shell.js still renders ⌘)', () => {
-  assert.match(galaxia, /id="header-expert-toggle"[^>]*>⌘<\/button>/);
-  assert.doesNotMatch(galaxia, /header-lang-toggle/);
+  // Desde FLT-102501 (15-oct-2026) la cabecera común también lleva la pastilla de idioma, pero al lado
+  // de ⌘ y no en su sitio: las páginas interiores conservan el modo Experto visible.
+  assert.match(galaxia, /id="header-expert-toggle"[^>]*>⌘<\/button>\s*<button type="button" id="header-lang-toggle" class="mode-toggle header-lang"/);
+  assert.doesNotMatch(galaxia + leer('galaxy-shell.css'), /#header-expert-toggle\{display:none/);
 });
