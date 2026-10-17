@@ -23,6 +23,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          # El test del release hace git archive de la revisión preservada de clearchannel.tv.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
