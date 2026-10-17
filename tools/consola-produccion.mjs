@@ -12,6 +12,7 @@
 //   node tools/consola-produccion.mjs --base https://<preview>.pages.dev [--pagina /walk.html]…
 //   node tools/consola-produccion.mjs --espera 5 --ignorar 'patrón'…   (un --ignorar por patrón, regex)
 //   node tools/consola-produccion.mjs --estricto                      → cuenta también el ruido conocido (RUIDO)
+//   node tools/consola-produccion.mjs --sin-webgl                     → como un navegador sin WebGL (sin GPU ni SwiftShader)
 //   CHROME=/ruta/a/chrome node tools/consola-produccion.mjs
 import { spawn } from 'node:child_process';
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
@@ -35,7 +36,7 @@ export const RUIDO = [
 ];
 
 export function leerArgs(argv) {
-  const o = { base: 'https://admira.biz', paginas: [], espera: 4, ignorar: [], estricto: false };
+  const o = { base: 'https://admira.biz', paginas: [], espera: 4, ignorar: [], estricto: false, sinWebGL: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i], v = argv[i + 1];
     if (a === '--base') { o.base = v.replace(/\/+$/, ''); i++; }
@@ -43,6 +44,7 @@ export function leerArgs(argv) {
     else if (a === '--espera') { o.espera = Number(v); i++; }
     else if (a === '--ignorar') { o.ignorar.push(new RegExp(v)); i++; }
     else if (a === '--estricto') o.estricto = true;
+    else if (a === '--sin-webgl') o.sinWebGL = true;
     else throw new Error(`argumento desconocido: ${a}`);
   }
   if (!o.paginas.length) o.paginas = PAGINAS;
@@ -73,12 +75,13 @@ function buscarChrome() {
   return c;
 }
 
-function arrancarChrome() {
+function arrancarChrome(sinWebGL) {
   const perfil = mkdtempSync(join(tmpdir(), 'consola-biz-'));
   const args = ['--headless=new', '--remote-debugging-port=0', `--user-data-dir=${perfil}`,
     '--no-first-run', '--no-default-browser-check', '--window-size=1366,900',
     // WebGL por software (SwiftShader): el mapa de la portada lo necesita y en CI no hay GPU.
-    '--use-angle=swiftshader', '--enable-unsafe-swiftshader'];
+    // --sin-webgl lo quita y apaga la GPU, como un navegador sin WebGL.
+    ...(sinWebGL ? ['--disable-gpu', '--disable-software-rasterizer'] : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'])];
   // En los runners de GitHub (Ubuntu 24.04) el sandbox de Chrome choca con AppArmor.
   if (process.env.CI) args.push('--no-sandbox');
   const proc = spawn(buscarChrome(), args, { stdio: ['ignore', 'ignore', 'pipe'] });
@@ -135,7 +138,7 @@ async function revisarPagina(cdp, url, esperaS) {
 
 async function main() {
   const o = leerArgs(process.argv.slice(2));
-  const chrome = arrancarChrome();
+  const chrome = arrancarChrome(o.sinWebGL);
   let fallos = 0;
   try {
     const cdp = conectar(await chrome.ws);

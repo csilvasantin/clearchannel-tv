@@ -2729,7 +2729,8 @@ const GLOBE_QUALITY = (function(){
 })();
 document.documentElement.dataset.globeQuality = GLOBE_QUALITY;
 if (GLOBE_QUALITY === 'good') STYLE_TIERRA.sources.esri.tileSize = 512;
-const map = new maplibregl.Map({
+// Sin WebGL (o sin maplibre del CDN) ccCrearMapa devuelve un mapa mudo y la portada sigue en pie (mapa-sin-webgl.js).
+const map = ccCrearMapa({
   container: 'map', style: STYLE_TIERRA,
   center: HOME_VIEW.center, zoom: HOME_VIEW.zoom, pitch: HOME_VIEW.pitch,
   attributionControl: false,
