@@ -95,7 +95,10 @@
     if (!link) return;
     if (host) host.hidden = true;
     link.hidden = false;
-    link.removeAttribute('data-i18n');   // el traductor de la página no debe volver a poner «Login»
+    link.removeAttribute('data-i18n');   // el traductor de la portada no debe volver a poner «Login»
+    // …ni el de la cabecera común (responsive-shell.js reescribe data-shell-text-es/en al arrancar y al cambiar de
+    // idioma): en las páginas interiores el enlace volvía a decir «Login» con la sesión abierta (18-oct-2026).
+    link.dataset.shellTextEs = link.dataset.shellTextEn = 'Backoffice';
     link.textContent = 'Backoffice';
     link.title = T('Sesión de Google: ', 'Google session: ') + session.email;
     link.classList.add('is-signed');

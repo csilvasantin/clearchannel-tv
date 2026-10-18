@@ -45,3 +45,31 @@ test('popup de Google en la portada y en las páginas de la piel común, publica
   assert.match(fs.readFileSync(path.join(root, 'galaxy-shell.js'), 'utf8'), /load\('login-google\.js'\)/);
   assert.match(fs.readFileSync(path.join(root, 'server/biz-assets.mjs'), 'utf8'), /'login-google\.js'/);
 });
+
+// 18-oct-2026: en las páginas interiores (cabecera de galaxy-shell.js) el enlace volvía a decir «Login» con la sesión
+// abierta, porque responsive-shell.js reescribe data-shell-text-es/en al arrancar y al cambiar de idioma.
+test('con sesión, el enlace dice «Backoffice» también después del traductor de la cabecera común', () => {
+  const vm = require('node:vm');
+  const src = fs.readFileSync(path.join(root, 'login-google.js'), 'utf8');
+  const shell = fs.readFileSync(path.join(root, 'responsive-shell.js'), 'utf8');
+  assert.match(shell, /document\.querySelectorAll\('\[data-shell-text-es\]'\)\.forEach\(el=>\{el\.textContent=es\(\)\?el\.dataset\.shellTextEs:el\.dataset\.shellTextEn;\}\);/,
+    'el traductor común sigue leyendo data-shell-text-es/en');
+  for (const lang of ['es', 'en']) {
+    // El enlace tal como lo pinta galaxy-shell.js (bilingual): textos de Login en los dos idiomas.
+    const link = {textContent: 'Login', title: '', hidden: false, dataset: {shellTextEs: 'Login', shellTextEn: 'Login'}, classList: {add() {}},
+      removeAttribute() {}, after() {}};
+    const clases = new Set();
+    const token = jwt({email: 'prueba@admira.biz', exp: Math.floor(Date.now() / 1000) + 3600});
+    const ctx = {document: {documentElement: {lang, classList: {add: c => clases.add(c)}}, getElementById: id => (id === 'header-login' ? link : null), head: {append() {}}},
+      localStorage: mem(JSON.stringify({token, email: 'prueba@admira.biz'})), location: {pathname: '/help/', hostname: 'www.admira.biz'},
+      atob: s => Buffer.from(s, 'base64').toString('binary'), Buffer, MutationObserver: class { observe() {} disconnect() {} }, setTimeout: () => 0, clearTimeout() {}, JSON, Date};
+    ctx.window = ctx; ctx.globalThis = ctx;
+    vm.runInNewContext(src, ctx);
+    assert.equal(link.textContent, 'Backoffice', lang + ': login-google.js lo pone');
+    // Lo que hace responsive-shell.js al arrancar o al cambiar de idioma.
+    link.textContent = lang === 'es' ? link.dataset.shellTextEs : link.dataset.shellTextEn;
+    assert.equal(link.textContent, 'Backoffice', lang + ': y el traductor común lo respeta');
+    assert.match(link.title, /prueba@admira\.biz/);
+    assert.ok(clases.has('admira-con-sesion'));
+  }
+});
