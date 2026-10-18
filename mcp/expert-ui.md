@@ -18,3 +18,7 @@ Canonical engine: https://www.admiranext.com/suite/experto.js . Canonical skin: 
 `/bugito restaurar starbucks gran de gracia 51`
 
 Guía ES/EN: https://www.admiranext.com/mcp/BUGITO.md · MCP de AdmiraNeXT: `help {"tema":"bugito"}`. Negro es standby del contenido, no apagado eléctrico. La recuperación conserva la incidencia abierta; las fotos necesitan cámara disponible y encuadre libre. Los alias cortos del banco no seleccionan el MBP16. / Black is content standby, not power-off. Recovery keeps the incident open; photos require an available camera and unobstructed view. Short bench aliases do not select MBP16.
+
+## Supervisor
+
+`/supervisor estado` · `/supervisor status`: ES: en Biz, el parte del Supervisor sin salir de la página: pantalla del MBP16 (encendida, a oscuras o no se ve), última lectura, foto publicada e incidencia abierta, leído de `https://api.yokup.com/supervisor/soluciones?id=macmini-insta360`. `/supervisor` solo abre la Insta360 con sus controles en Admira Live. El banco de Bugito (https://www.admira.biz/bugito.html) enseña el Supervisor en vivo y, tras cada orden física, si lo vio o no; sin una lectura posterior a la orden no lo da por visto. / EN: on Biz, the Supervisor report without leaving the page: MBP16 screen (on, dark or not visible), latest reading, published photo and open incident. `/supervisor` alone opens the Insta360 with its controls in Admira Live. The Bugito bench shows Supervisor live and, after each physical command, whether it saw it; without a reading taken after the command it never reports it as seen.

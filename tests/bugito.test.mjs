@@ -202,7 +202,7 @@ test('la página del banco y el botón «Probar con Bugito» del ▤ Creador de 
   const plano = readFileSync(new URL('../plano.html', import.meta.url), 'utf8');
   const inc = readFileSync(new URL('../plano-incidencias.mjs', import.meta.url), 'utf8');
   assert.match(html, /<script defer src="\/galaxy-shell\.js/, 'el shell cuadrático como el plano');
-  assert.match(html, /<script type="module" src="bugito\.mjs\?v=20261014-display-mbp16-1"><\/script>/);
+  assert.match(html, /<script type="module" src="bugito\.mjs\?v=20261018-supervisor-1"><\/script>/);
   assert.ok(html.indexOf('id="bb-player-frame"') < html.indexOf('id="bb-cara-frame"'), 'player a la izquierda, Bugito a la derecha');
   for (const k of [...html.matchAll(/data-bb="([a-zA-Z]+)"/g)].map((m) => m[1])) assert.ok(new RegExp(`\\b${k}:`).test(ui), `falta el texto ${k}`);
   assert.match(ui, /en: \{/);

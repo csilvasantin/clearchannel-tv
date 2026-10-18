@@ -13,7 +13,7 @@
   <script src="brand.js"></script>
   <!-- Bugito (DCL-5da4653d859552490fd5ae1d): banco de pruebas del ▤ Creador de incidencias.
        Su hoja va antes de galaxy-shell.css: el shell gana los empates, como en el resto de páginas. -->
-  <link rel="stylesheet" href="bugito.css?v=20261014-bugito-3">
+  <link rel="stylesheet" href="bugito.css?v=20261018-supervisor-1">
   <link rel="stylesheet" href="bugito-xpacios.css?v=20261015-xpacios-1">
   <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
   <script>
@@ -24,8 +24,9 @@
   <!-- Opción B · login de owner para el dispositivo real (la cuenta propia por Google, no un token maestro). -->
   <script src="https://accounts.google.com/gsi/client" async></script>
   <script defer src="bugito-super.js?v=20261014-bugito-3"></script>
-  <script type="module" src="bugito.mjs?v=20261014-display-mbp16-1"></script>
+  <script type="module" src="bugito.mjs?v=20261018-supervisor-1"></script>
   <script type="module" src="bugito-xpacios-ui.mjs?v=20261015-command-1"></script>
+  <script type="module" src="supervisor-live.mjs?v=20261018-supervisor-1"></script>
 </head>
 <body>
   <main class="bugito-banco">
@@ -54,6 +55,24 @@
       <button type="submit" data-bx-es="Generar incidencia abierta" data-bx-en="Create open incident">Generar incidencia abierta</button>
       <p role="status" aria-live="polite"></p>
     </form>
+    <!-- Supervisor en vivo (Morfeo, 18-oct-2026): lo que ve la Insta360 del MacMini y su veredicto tras cada orden física. -->
+    <section id="bb-supervisor" class="bb-supervisor card" aria-labelledby="bb-sv-title">
+      <header class="bb-head" data-shell-keep>
+        <h2 id="bb-sv-title" data-sv="titulo">Supervisor · lo que ve la cámara</h2>
+        <span id="bb-sv-estado" class="bb-chip bb-sv-estado" data-estado="leyendo">Leyendo…</span>
+        <a id="bb-sv-web" class="bb-mini" href="https://www.admira.app/supervisor" target="_blank" rel="noopener" data-sv="abrir">Abrir el Supervisor</a>
+      </header>
+      <div class="bb-sv-cuerpo">
+        <figure class="bb-sv-foto"><img id="bb-sv-img" alt="" width="232" height="114" referrerpolicy="no-referrer" hidden><figcaption data-sv="pie">Última foto publicada · sólo el recorte de la pantalla</figcaption></figure>
+        <div class="bb-sv-datos">
+          <p class="bb-sv-objetivo" data-sv="objetivo">MBP16 · GDG51-PAN-07 · Insta360 del MacMini</p>
+          <p id="bb-sv-lectura" class="bb-sv-lectura"></p>
+          <ul id="bb-sv-incidencias" class="bb-sv-incidencias"></ul>
+          <p id="bb-sv-veredicto" class="bb-sv-veredicto" role="status" aria-live="polite"></p>
+          <p class="bb-note" data-sv="nota">La cámara ve si la pantalla luce o está a oscuras; giro, popup, lienzo y recorte los mide el reproductor y el Supervisor los registra como incidencia. Recuperar la emisión no cierra la incidencia.</p>
+        </div>
+      </div>
+    </section>
     <div class="bb-grid">
       <section class="bb-player card" aria-labelledby="bb-player-title">
         <header class="bb-head" data-shell-keep>
@@ -105,7 +124,7 @@
           <button type="button" id="bb-display-on">Encender pantalla del MBP16</button>
           <p id="bb-display-note">Pantalla física del MBP16. El ordenador sigue trabajando. Requiere sesión de owner.</p>
           <p id="bb-display-status" role="status"></p>
-          <a href="https://www.admira.app/supervisor" target="_blank" rel="noopener">Supervisor</a>
+          <a href="#bb-supervisor" data-sv="ir">Ver qué ve el Supervisor</a>
         </div>
         <ol id="bb-pasos" class="inc-steps bb-pasos" aria-live="polite" hidden></ol>
         <p id="bb-status" class="upload-status bb-status" role="status"></p>

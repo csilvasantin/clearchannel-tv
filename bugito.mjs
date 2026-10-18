@@ -573,7 +573,9 @@ async function enviarPantalla(ordenFisica) {
     const response = await fetch(BUGITO_DISPLAY_API, { method: 'POST', headers, body: JSON.stringify({ ...ordenFisica, confirm: a.nonce }) });
     const d = await response.json();
     if (!response.ok || !d.ok) throw new Error(d.error || 'HTTP ' + response.status);
-    return decir(`Orden de ${apagar ? 'apagado' : 'encendido'} del MBP16 en cola (${d.id}). Comprueba el resultado en el Supervisor.`, `MBP16 display ${apagar ? 'off' : 'on'} queued (${d.id}). Check the physical result in Supervisor.`);
+    // El Supervisor del banco (supervisor-live.mjs) abre su veredicto con la misma señal que las órdenes de la consola.
+    window.dispatchEvent(new CustomEvent('bugito:command-queued', { detail: { fault: apagar ? 'display-off' : 'display-on', after: Date.now(), request_id: d.id } }));
+    return decir(`Orden de ${apagar ? 'apagado' : 'encendido'} del MBP16 en cola (${d.id}). El Supervisor dirá arriba si lo ve.`, `MBP16 display ${apagar ? 'off' : 'on'} queued (${d.id}). Supervisor will say above whether it sees it.`);
   } catch (e) { return decir('No se ha confirmado la orden: ' + e.message, 'Command not confirmed: ' + e.message); }
   finally { pantallaOcupada = false; $('bb-display-off').disabled = $('bb-display-on').disabled = false; }
 }
