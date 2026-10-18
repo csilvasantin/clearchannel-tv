@@ -21,10 +21,9 @@
     ]
   },
   "novedades": [
-    "Starbucks México · Alsea al nivel de Altadis España: los 10 Starbucks reales (Tijuana → Cancún), cada uno con un formato de Altadis en versión cafetería, sus pantallas, impactos/día y su plano compartido.",
-    "Tour DooH y visión general con la marca blanca de Starbucks: /demo dooh starbucks (también alsea y sbux), /vision general starbucks y ?ax_cmd=demo-dooh-starbucks&marca=starbucks; la ficha de la puerta dice formato, pantallas e impactos.",
-    "Cada tienda abre el gemelo de su formato en admira.store y «▤ Plano del Xpacio»; el gemelo Matrix de Paseo de Gràcia 103 queda como enlace secundario. Mis demos: tarjeta «Starbucks México · Alsea» con ?marca=starbucks.",
-    "Enlace profundo a una tienda: ?circuit=alsea_mexico&loc=<id>&marca=starbucks centra el punto y abre su ficha; índice público en /data/xpacios/alsea-mexico-10.json."
+    "Supervisor en vivo en el banco de Bugito (/bugito): foto de la Insta360, estado de la pantalla del MBP16, última lectura e incidencia abierta.",
+    "Tras cada orden física al MBP16, el Supervisor dice si lo vio o no; sin una lectura posterior a la orden nunca lo da por visto.",
+    "⌘ Experto: /supervisor estado da el parte del Supervisor sin salir de admira.biz; /supervisor sigue abriendo su cámara en Admira Live."
   ],
   "nativeClearChannel": {
     "enabled": true,
