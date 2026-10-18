@@ -23,7 +23,7 @@ import { ID_RE, normalizarId } from './plano-subida.mjs?v=20261014-subir-1';
 // con su procedencia (modelo, confianza) y las pantallas vistas desolapadas. El Arquitecto la reutiliza tal cual.
 import { planoDesdeEstimacion, ESTIMADOR } from './plano-foto.mjs?v=20261014-foto-2';
 
-export const ORDENES = Object.freeze(['crear', 'reformar', 'inventariar', 'detallar', 'modelar', 'video']);
+export const ORDENES = Object.freeze(['crear', 'reformar', 'inventariar', 'detallar', 'modelar', 'video', 'fotos']);
 export const ESTUDIO_URL = 'https://www.admira.biz/arquitecto.html';
 export const PORTAL_IMPORTAR = 'https://admira.app/retailer';
 export const TRASPASO_SCHEMA = 'admira.arquitecto-inventario/1';
@@ -58,6 +58,8 @@ const ALIAS_ORDEN = {
   modelar: 'modelar', modela: 'modelar', modelo: 'modelar', model: 'modelar', modeling: 'modelar', modelling: 'modelar', cad: 'modelar', dxf: 'modelar', '3d': 'modelar', gemelo: 'modelar', twin: 'modelar',
   // /arquitecto video (Carlos, 18-10-2026): del recorrido grabado con XpaceScan al plano con medidas reales (arquitecto-video.mjs).
   video: 'video', videos: 'video', recorrido: 'video', grabar: 'video', grabacion: 'video', escanear: 'video', escaneo: 'video', scan: 'video', xpacescan: 'video', walkthrough: 'video',
+  // /arquitecto fotos (Carlos, 18-10-2026): fotos del local por pared y su 360 como vista Matrix del gemelo (arquitecto-galeria.mjs).
+  fotos: 'fotos', foto: 'fotos', fotografias: 'fotos', imagenes: 'fotos', imagen: 'fotos', photos: 'fotos', photo: 'fotos', pictures: 'fotos', '360': 'fotos', panorama: 'fotos', panoramica: 'fotos', matrix: 'fotos', galeria: 'fotos',
   // /arquitecto formatos [NN] [xtanco|starbucks]: «Espacio por formato · Altadis 18» dentro de crear (DCL-d7966deb02734a6f34beb54e).
   formatos: 'crear', formato: 'crear', formats: 'crear', format: 'crear', altadis: 'crear'
 };

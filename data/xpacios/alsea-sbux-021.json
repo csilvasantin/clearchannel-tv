@@ -1,7 +1,7 @@
 {
   "schema": "admira.xpacio-plano/1",
   "id": "alsea-sbux-021",
-  "version": "2026-10-18-colocacion-1",
+  "version": "2026-10-18-panorama-1",
   "nombre": "Starbucks Paseo de Gracia 103",
   "direccion": "Paseo de Gracia 103 · 08008 Barcelona",
   "fuente": {
@@ -9,7 +9,8 @@
     "medidas": "Sala de 14 × 8 m y 3,30 m de alto tomada de la rejilla del gemelo de XpaceOS (Matrix), que no es un levantamiento medido",
     "pantallas": "Mural doble H V–H–V–V–H–V de la instalación starbucks-six de admira.studio (lienzo 8160×1920, players Mac Studio y Mac mini) con diagonal de 55″ supuesta; el gemelo de Matrix pinta seis verticales en grupos 3/1/2 y falta confirmar cuál es la distribución real",
     "itil": "Códigos ITIL de las pantallas por cruzar con Yokup, el maestro del ITIL",
-    "colocacion": "Tipo, catálogo y elemento del gemelo de cada pieza (orden «modelar» del Arquitecto, 18-oct-2026). Las tres cestas (53–55) y el iPad (52) están donde los pinta el gemelo de XpaceOS; medidas nominales, sin medir en tienda."
+    "colocacion": "Tipo, catálogo y elemento del gemelo de cada pieza (orden «modelar» del Arquitecto, 18-oct-2026). Las tres cestas (53–55) y el iPad (52) están donde los pinta el gemelo de XpaceOS; medidas nominales, sin medir en tienda.",
+    "panorama": "Foto 360 real del local (Insta360 X4) para la vista Matrix del gemelo; las esquinas de las pantallas, en píxeles de la foto (orden «fotos» del Arquitecto, 18-oct-2026)."
   },
   "planta": {
     "ancho": 14,
@@ -366,5 +367,149 @@
       "z": 1.75,
       "fuente": "admira.studio · instalación starbucks-six (posición nominal)"
     }
-  ]
+  ],
+  "panorama": {
+    "src": "/xpacios/starbucks-centros/referencias/paseo-gracia-103.webp",
+    "srcMovil": "/xpacios/starbucks-centros/referencias/paseo-gracia-103-4k.jpg",
+    "base": [
+      8192,
+      4096
+    ],
+    "vista": {
+      "yaw": 160.47,
+      "pitch": -13.37,
+      "fov": 100,
+      "sphereX": -3,
+      "sphereY": 0
+    },
+    "pantallas": [
+      {
+        "id": "PG103-MENU-01",
+        "esquinas": [
+          [
+            7019,
+            1719
+          ],
+          [
+            7102,
+            1696
+          ],
+          [
+            7118,
+            1924
+          ],
+          [
+            7031,
+            1931
+          ]
+        ]
+      },
+      {
+        "id": "PG103-MENU-02",
+        "esquinas": [
+          [
+            7110,
+            1695
+          ],
+          [
+            7208,
+            1669
+          ],
+          [
+            7224,
+            1912
+          ],
+          [
+            7124,
+            1923
+          ]
+        ]
+      },
+      {
+        "id": "PG103-MENU-03",
+        "esquinas": [
+          [
+            7395,
+            1624
+          ],
+          [
+            7536,
+            1598
+          ],
+          [
+            7551,
+            1885
+          ],
+          [
+            7410,
+            1894
+          ]
+        ]
+      },
+      {
+        "id": "PG103-MENU-04",
+        "esquinas": [
+          [
+            8022,
+            1550
+          ],
+          [
+            20,
+            1548
+          ],
+          [
+            20,
+            1862
+          ],
+          [
+            8025,
+            1864
+          ]
+        ]
+      },
+      {
+        "id": "PG103-MENU-05",
+        "esquinas": [
+          [
+            35,
+            1548
+          ],
+          [
+            220,
+            1555
+          ],
+          [
+            217,
+            1865
+          ],
+          [
+            34,
+            1862
+          ]
+        ]
+      },
+      {
+        "id": "PG103-MENU-06",
+        "esquinas": [
+          [
+            243,
+            1554
+          ],
+          [
+            414,
+            1573
+          ],
+          [
+            403,
+            1872
+          ],
+          [
+            233,
+            1865
+          ]
+        ]
+      }
+    ],
+    "origen": "Foto 360 de Paseo de Gràcia 103 del visor de centros (xpacios/starbucks-centros/centros.json), Insta360 X4, 8192 × 4096."
+  }
 }

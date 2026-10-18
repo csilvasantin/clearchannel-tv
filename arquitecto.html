@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Arquitecto · crear, reformar, inventariar, detallar, modelar y medir en vídeo Xpacios · Clear Channel</title>
-  <meta name="description" content="Estudio del Arquitecto: Admirito con casco de obra crea Xpacios nuevos, reforma los que hay desde una foto, un vídeo o lo que le cuentes, hace su inventario ITIL para darlo de alta en Yokup, detalla sus objetos desde fotos para el Taller 3D, lo modela (gemelo 3D, colocación como datos y planta en DXF) y lo mide desde el vídeo de un recorrido.">
+  <title>Arquitecto · crear, reformar, inventariar, detallar, modelar, medir en vídeo y fotografiar Xpacios · Clear Channel</title>
+  <meta name="description" content="Estudio del Arquitecto: Admirito con casco de obra crea Xpacios nuevos, reforma los que hay desde una foto, un vídeo o lo que le cuentes, hace su inventario ITIL para darlo de alta en Yokup, detalla sus objetos desde fotos para el Taller 3D, lo modela (gemelo 3D, colocación como datos y planta en DXF), lo mide desde el vídeo de un recorrido y guarda sus fotos por pared y su 360 para la vista Matrix.">
   <meta name="admiranext-version" content="__ADMIRANEXT_VERSION__">
   <meta name="robots" content="noindex">
   <link rel="canonical" href="https://www.admira.biz/arquitecto.html">
@@ -12,14 +12,14 @@
   <link rel="stylesheet" href="brand.css">
   <script src="brand.js"></script>
   <!-- Estudio del Arquitecto (DCL-66d9ae0d5e756d0067127f24): su hoja va antes del shell, que gana los empates. -->
-  <link rel="stylesheet" href="arquitecto.css?v=20261018-video-1">
+  <link rel="stylesheet" href="arquitecto.css?v=20261018-fotos-1">
   <link rel="stylesheet" href="/galaxy-shell.css?v=20261006-experto-tecla-1">
   <script>
   // Shell cuadrático (FLT-101311): el ENG/ESP de ☰ Opciones manda; arquitecto.mjs escucha admira:lang.
   window.ADMIRA_SHELL = { section: { es: '/ arquitecto · estudio', en: '/ architect · studio' }, setLang() {} };
   </script>
   <script defer src="/galaxy-shell.js?v=20261018-backoffice-1"></script>
-  <script type="module" src="arquitecto.mjs?v=20261018-video-1"></script>
+  <script type="module" src="arquitecto.mjs?v=20261018-fotos-1"></script>
 </head>
 <body>
   <main class="arq-estudio">
@@ -27,8 +27,8 @@
       <div>
         <a id="arq-back" class="back" href="plano.html" data-t="back">← Plano y obras</a>
         <p class="eyebrow" data-t="eyebrow">Estudio del Arquitecto · Xpacios</p>
-        <h1 data-t="title">Crear, reformar, inventariar, detallar, modelar o medir en vídeo</h1>
-        <p class="address" data-t="intro">El Arquitecto es Admirito con casco de obra: inventa Xpacios nuevos, reforma los que hay desde una foto, un vídeo o lo que le cuentes, hace su inventario ITIL para darlo de alta en Yokup, detalla sus objetos desde fotos para el Taller 3D, lo modela (gemelo 3D, colocación como datos y planta en DXF) y lo mide desde el vídeo de un recorrido.</p>
+        <h1 data-t="title">Crear, reformar, inventariar, detallar, modelar, medir en vídeo o fotografiar</h1>
+        <p class="address" data-t="intro">El Arquitecto es Admirito con casco de obra: inventa Xpacios nuevos, reforma los que hay desde una foto, un vídeo o lo que le cuentes, hace su inventario ITIL para darlo de alta en Yokup, detalla sus objetos desde fotos para el Taller 3D, lo modela (gemelo 3D, colocación como datos y planta en DXF), lo mide desde el vídeo de un recorrido y guarda sus fotos por pared y su 360 para la vista Matrix.</p>
       </div>
     </div>
 
@@ -48,6 +48,7 @@
           <button type="button" role="tab" id="tab-detallar" aria-controls="arq-detallar" aria-selected="false" tabindex="-1" data-orden="detallar"><span class="ico" aria-hidden="true">◈</span><span data-t="detallar">Detallar</span></button>
           <button type="button" role="tab" id="tab-modelar" aria-controls="arq-modelar" aria-selected="false" tabindex="-1" data-orden="modelar"><span class="ico" aria-hidden="true">⬢</span><span data-t="modelar">Modelar</span></button>
           <button type="button" role="tab" id="tab-video" aria-controls="arq-video" aria-selected="false" tabindex="-1" data-orden="video"><span class="ico" aria-hidden="true">▶</span><span data-t="video">Vídeo</span></button>
+          <button type="button" role="tab" id="tab-fotos" aria-controls="arq-fotos" aria-selected="false" tabindex="-1" data-orden="fotos"><span class="ico" aria-hidden="true">◐</span><span data-t="tabFotos">Fotos</span></button>
         </div>
 
         <section id="arq-ayuda" class="arq-pane" aria-live="polite">
@@ -60,6 +61,7 @@
             <li><code>/arquitecto detallar</code> <span data-t="ayudaDetallar">las fotos de los objetos de un local (cestas, carteles, productos) → una receta del Taller 3D con sus texturas; las fotos no salen del navegador</span></li>
             <li><code>/arquitecto modelar</code> <span data-t="ayudaModelar">del plano del local a su gemelo: cada pieza con su sitio como datos, el gemelo 3D con los modelos del catálogo y la planta en DXF</span></li>
             <li><code>/arquitecto video</code> <span data-t="ayudaVideo">del recorrido grabado con el móvil (XpaceScan) a un plano con medidas reales: suelo, techo y paredes de la nube 3D, a escala con una medida del local</span></li>
+            <li><code>/arquitecto fotos</code> <span data-t="ayudaFotos">las fotos del local, cada una en su pared (se quedan en el navegador), y su foto 360 como vista Matrix del gemelo, con la vista inicial y las pantallas marcadas</span></li>
           </ul>
         </section>
 
@@ -140,6 +142,7 @@
         <section id="arq-detallar" class="arq-pane" role="tabpanel" aria-labelledby="tab-detallar" hidden></section>
         <section id="arq-modelar" class="arq-pane" role="tabpanel" aria-labelledby="tab-modelar" hidden></section>
         <section id="arq-video" class="arq-pane" role="tabpanel" aria-labelledby="tab-video" hidden></section>
+        <section id="arq-fotos" class="arq-pane" role="tabpanel" aria-labelledby="tab-fotos" hidden></section>
         <p id="arq-status" class="upload-status arq-status" role="status"></p>
       </aside>
 
@@ -172,6 +175,7 @@
       <section id="dt-card" class="arq-plano card dt-card" aria-labelledby="dt-titulo" hidden></section>
       <section id="md-card" class="arq-plano card dt-card md-card" aria-labelledby="md-titulo" hidden></section>
       <section id="vd-card" class="arq-plano card dt-card vd-card" aria-labelledby="vd-titulo" hidden></section>
+      <section id="ft-card" class="arq-plano card dt-card ft-card" aria-labelledby="ft-titulo" hidden></section>
     </div>
   </main>
 </body>
