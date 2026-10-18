@@ -21,8 +21,7 @@
     ]
   },
   "novedades": [
-    "Con la sesión iniciada, el botón de idioma de la barra deja su sitio al ⌘ del modo Experto, en la portada y en todas las páginas; el idioma sigue en ☰ Opciones.",
-    "Sin sesión, la barra no cambia: en la portada, la pastilla ENG/ESP en el sitio de ⌘."
+    "Con la sesión iniciada, el enlace de la cabecera dice «Backoffice» en todas las páginas, no sólo en la portada, también al cambiar de idioma."
   ],
   "nativeClearChannel": {
     "enabled": true,
