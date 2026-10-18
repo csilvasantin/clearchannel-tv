@@ -21,9 +21,8 @@
     ]
   },
   "novedades": [
-    "Supervisor en vivo en el banco de Bugito (/bugito): foto de la Insta360, estado de la pantalla del MBP16, última lectura e incidencia abierta.",
-    "Tras cada orden física al MBP16, el Supervisor dice si lo vio o no; sin una lectura posterior a la orden nunca lo da por visto.",
-    "⌘ Experto: /supervisor estado da el parte del Supervisor sin salir de admira.biz; /supervisor sigue abriendo su cámara en Admira Live."
+    "El Supervisor tiene cara: Admirito con gorra de vigilante y ojo de cámara, en el panel del avatar al usar /supervisor y /supervisor estado.",
+    "⌘ Experto: /supervisor y /supervisor estado son ya el verbo común de la suite, igual que en Studio, Store, TV y App; el parte sale sin salir de admira.biz y la cámara sigue en Admira Live."
   ],
   "nativeClearChannel": {
     "enabled": true,
