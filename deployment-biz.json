@@ -21,8 +21,8 @@
     ]
   },
   "novedades": [
-    "Arquitecto · detallar: debajo de las fotos sale el plano del local; eliges la pieza y tocas dónde va. Dice junto a qué mueble queda y avisa si se solapa.",
-    "El código ITIL de cada pieza se propone con el siguiente libre del inventario público del local (por ejemplo PDG103-CES-04). La receta lleva el sitio y el alta para Yokup."
+    "Arquitecto: nueva orden /arquitecto modelar. Del plano del local a su gemelo: cada pieza con su sitio como datos (JSON), el gemelo 3D de xpaceos con los modelos del catálogo y la planta en DXF para cualquier programa de CAD.",
+    "El plano de Starbucks Paseo de Gràcia trae ya las tres cestas y el iPad, con su tipo, su modelo y su código ITIL: la colocación del gemelo de la tienda sale del plano, pieza a pieza."
   ],
   "nativeClearChannel": {
     "enabled": true,

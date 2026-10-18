@@ -128,12 +128,13 @@ export function sitioEnPlano(plano, [px, py], huella = HUELLA) {
 const cajaDe = (s, huella = HUELLA) => ({ x: s.x, y: s.y, w: huella, d: huella });
 const separacion = (a, b) => Math.hypot(Math.max(b.x - (a.x + a.w), a.x - (b.x + b.w), 0), Math.max(b.y - (a.y + a.d), a.y - (b.y + b.d), 0));
 // El mueble del plano más cercano a la pieza, a 1,5 m como mucho, para decir «junto a Pilar». A igual distancia entre
-// bordes gana el de centro más cercano (la cesta junto al pilar y la caja a la vez es «junto a Pilar»).
+// bordes gana el de centro más cercano (la cesta junto al pilar y la caja a la vez es «junto a Pilar»). Las piezas del
+// catálogo ya colocadas en el plano (cestas, iPad: campo `catalogo`) no cuentan como referencia, sólo el mobiliario fijo.
 export function juntoA(plano, sitio, huella = HUELLA) {
   const a = cajaDe(sitio, huella), centro = b => [b.x + b.w / 2, b.y + b.d / 2];
   let mejor = null, clave = [1.5 + 1e-9, Infinity];
   for (const m of (plano && plano.mobiliario) || []) {
-    if (![m.x, m.y, m.w, m.d].every(Number.isFinite)) continue;
+    if (m.catalogo || ![m.x, m.y, m.w, m.d].every(Number.isFinite)) continue;
     const k = [r2(separacion(a, m)), dist(centro(a), centro(m))];
     if (k[0] < clave[0] || (k[0] === clave[0] && k[1] < clave[1])) { clave = k; mejor = m; }
   }
