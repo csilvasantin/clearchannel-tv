@@ -1,5 +1,5 @@
 // Commercial proposals use the existing CampaignPlanner; no duplicate price model.
-export const STEPS = Object.freeze(['brief', 'audiencias', 'ubicaciones', 'propuesta']);
+export const STEPS = Object.freeze(['brief', 'audiencias', 'ubicaciones', 'propuesta', 'comercios']);
 const clean = (v, max = 2000) => String(v ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, max);
 export function normalizeBrief(raw = {}) {
   return {advertiser:clean(raw.advertiser,160),objective:clean(raw.objective),audience:clean(raw.audience),
@@ -33,3 +33,13 @@ export function proposalText(p,lang='es') {
 }
 
 export function sameSelection(a,b){return !!(a?.ready&&b?.ready&&(a.circuitKey??a.circuit)===(b.circuitKey??b.circuit)&&(a.targetKey??a.target)===(b.targetKey??b.target)&&a.items.map(x=>x.id).sort().join('\n')===b.items.map(x=>x.id).sort().join('\n'));}
+
+export function merchantBrief(raw={}) {
+ const out={schema:'admira.comercial-comercio/1',status:'draft',name:clean(raw.name,120),city:clean(raw.city,120),address:clean(raw.address,300),contact:clean(raw.contact,254),screens:Number(raw.screens),notes:clean(raw.notes)};
+ if(!out.name||!out.city||!out.address||!Number.isInteger(out.screens)||out.screens<1||out.screens>10000)throw Error('merchant_required');
+ return out;
+}
+export function merchantText(p,lang='es') {
+ const t=(a,b)=>lang==='en'?b:a;
+ return [t('Captación de comercio · borrador','Merchant recruitment · draft'),p.name,p.city,p.address,t('Contacto: ','Contact: ')+p.contact,t('Pantallas: ','Screens: ')+p.screens,p.notes,t('Siguiente paso: entrar en el portal de comercios, añadir o elegir el establecimiento y registrar sus pantallas. Revisar permisos, ubicación y condiciones de incorporación.','Next: sign in to the merchant portal, add or choose the location and register its screens. Review permissions, location and onboarding terms.'),'https://admira.app/retailer',t('Ficha preparatoria: no crea una cuenta, no incorpora el comercio ni publica sus datos.','Preparation brief: does not create an account, onboard the merchant or publish its data.')].filter(Boolean).join('\n');
+}

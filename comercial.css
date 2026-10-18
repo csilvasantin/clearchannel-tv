@@ -3,3 +3,5 @@
 #commercial-result-actions[hidden]{display:none}
 #comercial-panel>header{position:static;inset:auto;width:auto;height:auto;margin:0;padding:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;z-index:auto;border:0;box-shadow:none;flex-wrap:nowrap}#comercial-panel .commercial-face{flex:0 0 108px}#comercial-panel h2{font-family:system-ui;letter-spacing:normal;text-transform:none}@media(max-width:600px){#comercial-panel .commercial-face{flex-basis:82px}}
 #comercial-panel>header{flex-direction:row;align-items:center;justify-content:flex-start;gap:12px}
+
+#comercial-panel section[hidden],#commercial-merchant-actions[hidden]{display:none}#comercial-panel a{color:#b9e6a2}
