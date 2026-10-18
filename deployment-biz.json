@@ -22,7 +22,9 @@
   "novedades": [
     "Comercial en admira.biz: Admirito con corbata y maletín prepara campañas para anunciantes, audiencias, ubicaciones y propuestas.",
     "Reutiliza catálogo, target y planificador: selección exacta, estimaciones identificadas y propuesta descargable sin reservar ni publicar.",
-    "/comercial y /admirito comercial en el motor compartido; /admirito vuelve al verde estándar. El encargo se conserva al cambiar ES/EN."
+    "/comercial y /admirito comercial en el motor compartido; /admirito vuelve al verde estándar. El encargo se conserva al cambiar ES/EN.",
+    "Arquitecto: nueva orden /arquitecto fotos. Las fotos del local, cada una en su pared del plano, se guardan en este navegador (nunca se publican). La foto 360 del local se prepara en tres tamaños y se marcan su vista inicial y las esquinas de cada pantalla.",
+    "Publicar una 360 exige confirmar que no salen personas; el gemelo 3D desde el plano la enseña en su vista «360 · Matrix». Paseo de Gràcia ya la tiene."
   ],
   "nativeClearChannel": {
     "enabled": true,
