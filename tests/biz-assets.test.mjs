@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { bizAssetPath, BIZ_ASSET_FILES } from '../server/biz-assets.mjs';
 import worker from '../_worker.js';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -114,6 +114,8 @@ test('the built release serves corrected biz assets while preserving the other d
       const baseline = execFileSync('git', ['show', config.preservedRevision + ':' + file], {cwd:root, encoding:'utf8'});
       assert.equal(readFileSync(join(output, file), 'utf8'), baseline.replaceAll('__ADMIRANEXT_VERSION__', config.preservedVersion.version), `preserved ${file}`);
     }
+    // Un único motor: ninguna de las dos releases publica copia de suite/experto.js (tests/motor-unico.test.mjs).
+    for (const scope of ['__admira_biz','__admira_cc_native']) assert.deepEqual(readdirSync(join(output, scope, 'suite')), ['biz-native-context.js'], scope);
     for (const file of ['index.html','help/index.html','mcp/index.html']) {
       const text=readFileSync(join(output,'__admira_cc_native',file),'utf8');
       assert.ok(!/galaxy-shell\.js\?v=20261006/.test(text), 'modified loader cache pin is fresh: '+file);
@@ -150,7 +152,8 @@ test('the built release serves corrected biz assets while preserving the other d
 
 test('ClearChannel native overlay is limited to authorized hosts, methods and files',()=>{
  for(const host of ['clearchannel.tv','www.clearchannel.tv']){
-  assert.equal(clearChannelNativePath(new URL('https://'+host+'/suite/demo-android.mjs')),CC_NATIVE_PREFIX+'/suite/demo-android.mjs');
+  assert.equal(clearChannelNativePath(new URL('https://'+host+'/suite/biz-native-context.js')),CC_NATIVE_PREFIX+'/suite/biz-native-context.js');
+  assert.equal(clearChannelNativePath(new URL('https://'+host+'/suite/demo-android.mjs')),'');
   assert.equal(clearChannelNativePath(new URL('https://'+host+'/mcp/native-players.md')),CC_NATIVE_PREFIX+'/mcp/native-players.md');
   for(const path of ['/app.js','/api/orders','/auth/agente','/backoffice','/walk'])assert.equal(clearChannelNativePath(new URL('https://'+host+path)), '');
   assert.equal(clearChannelNativePath(new URL('https://'+host+'/'), 'POST'),'');

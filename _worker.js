@@ -5,7 +5,7 @@ import { handleOrders } from './server/orders.mjs';
 import { handleDemoSession } from './server/demo-session.mjs';
 import {handleGlobalDemo} from './server/global-demo.mjs';
 import {onRequest as avatarAsk} from './avatar-ask.js';
-import { bizAssetPath, BIZ_ASSET_PREFIX } from './server/biz-assets.mjs';
+import { bizAssetPath, BIZ_ASSET_PREFIX, suiteCanonicalURL } from './server/biz-assets.mjs';
 
 // admira.app (hoy) y admira.biz (tras el intercambio de dominios con Yokup, oct-2026)
 // son la misma cara Admira de este proyecto: la marca sale del apex del Host.
@@ -250,6 +250,9 @@ export default {
     var plano = PLANO_JSON.test(url.pathname);
     if (plano && request.method === 'OPTIONS') return sharedPlanPreflight();
     var assetPath = bizAssetPath(url, request.method) || clearChannelNativePath(url, request.method);
+    // ⌘ Experto: sin copia local del motor de la suite; /suite/ va a admiranext.com (server/biz-assets.mjs).
+    var suite = !assetPath && suiteCanonicalURL(url, request.method);
+    if (suite) return new Response(null, {status:302, headers:{location:suite, 'cache-control':'public, max-age=300'}});
     var assetRequest = request;
     if (assetPath) {
       var assetUrl = new URL(request.url);
