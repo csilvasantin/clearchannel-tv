@@ -1,4 +1,4 @@
-import {STEPS,proposal,proposalText} from './comercial-core.mjs?v=20261018-comercial-1';
+import {STEPS,proposal,proposalText,sameSelection} from './comercial-core.mjs?v=20261018-comercial-2';
 if(!/^(www\.)?admira\.biz$/.test(location.hostname)&&!['localhost','127.0.0.1'].includes(location.hostname)&&!/(?:^|\.)clearchannel-tv\.pages\.dev$/.test(location.hostname))throw Error('commercial_host_required');
 const ctx=window.AdmiraCommercialContext;
 const language=()=>ctx?.language()==='en'?'en':'es';
@@ -21,7 +21,7 @@ form.elements.start.value=today();form.elements.end.value=new Date(Date.parse(to
 let selected=null,result=null;
 function translate(){for(const el of document.querySelectorAll('[data-commercial]')){const a=labels[el.dataset.commercial];if(a)el.textContent=a[language()==='en'?1:0];}panel.querySelector('[data-commercial-aria]').setAttribute('aria-label',T(...labels.close));if(result)$('commercial-proposal').textContent=proposalText(result,language());if(selected)$('commercial-selection').textContent=selectionText(selected);}
 function selectionText(s){return s.circuit+' · '+s.items.length+' '+T('ubicaciones incorporadas','adopted locations')+' · '+s.target;}
-function sameSelection(a,b){return a?.ready&&b?.ready&&a.circuit===b.circuit&&a.target===b.target&&a.items.map(x=>x.id).sort().join('\n')===b.items.map(x=>x.id).sort().join('\n');}
+
 function close(){panel.hidden=true;back.hidden=true;}
 function open(step='brief'){
  if(!STEPS.includes(step))return {ok:false,error:'commercial_step_invalid'};
@@ -44,6 +44,7 @@ $('commercial-download').onclick=()=>{if(!result)return;const url=URL.createObje
 window.AdmiraComercial={lanzar:open,cerrar:close};
 window.addEventListener('admira:assistant-default',close);
 for(const event of ['admira:lang','admira:languagechange','admiranext:lang'])window.addEventListener(event,translate);
+new MutationObserver(()=>{if(selected){const current=ctx.snapshot();if(sameSelection(current,selected)){selected.circuit=current.circuit;selected.target=current.target;}}translate();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 translate();
 const query=new URLSearchParams(location.search);
 if(query.get('asistente')==='comercial')open(STEPS.includes(query.get('paso'))?query.get('paso'):'brief');

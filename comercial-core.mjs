@@ -31,3 +31,5 @@ export function proposalText(p,lang='es') {
     p.budgetExceeded?t('La estimación supera el presupuesto.','The estimate exceeds the budget.'):'',
     t('Estimación, no personas únicas. Disponibilidad y precio sujetos a confirmación. No reserva ni publica una campaña.','Estimate, not unique people. Availability and price require confirmation. Does not book or publish a campaign.')].filter(Boolean).join('\n');
 }
+
+export function sameSelection(a,b){return !!(a?.ready&&b?.ready&&(a.circuitKey??a.circuit)===(b.circuitKey??b.circuit)&&(a.targetKey??a.target)===(b.targetKey??b.target)&&a.items.map(x=>x.id).sort().join('\n')===b.items.map(x=>x.id).sort().join('\n'));}

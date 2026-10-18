@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import planner from '../planner-core.js';
-import {proposal,proposalText,normalizeBrief} from '../comercial-core.mjs';
+import {proposal,proposalText,normalizeBrief,sameSelection} from '../comercial-core.mjs';
 import {BIZ_ASSET_FILES,bizAssetPath} from '../server/biz-assets.mjs';
 const brief={advertiser:'Anunciante de prueba',objective:'Presentar una campaña',audience:'Público adulto',start:'2026-10-20',end:'2026-10-21',passesDay:500,durationSec:30,budget:100};
 const snapshot={ready:true,circuit:'Circuito elegido',target:'Target elegido',items:[{id:'a',name:'Punto A',impr:1000,surfaces:1,cpm:5},{id:'b',name:'Punto B',impr:3000,surfaces:2,cpm:10}]};
@@ -13,3 +13,5 @@ test('exact selected subset is deduplicated and ES/EN exports keep provenance',(
 test('commercial release is scoped to Biz, including its existing planner UI',()=>{for(const f of ['comercial.mjs','comercial-core.mjs','comercial.css','assets/comercial.svg','planner-ui.js']){assert(BIZ_ASSET_FILES.includes(f));assert(bizAssetPath(new URL('https://www.admira.biz/'+f)));assert.equal(bizAssetPath(new URL('https://clearchannel.tv/'+f)),'');}const source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8');assert(!/localStorage|sessionStorage|fetch\(/.test(source));assert.match(source,/sameSelection\(ctx.snapshot\(\),selected\)/);});
 
 test('demonstration provenance stays explicit in a draft and both exports',()=>{const p=proposal(brief,{...snapshot,items:[{...snapshot.items[0],demo:true}]},planner,'2026-10-18');assert.equal(p.hasDemonstration,true);assert.equal(p.locations[0].demo,true);assert.match(proposalText(p,'es'),/demostración/);assert.match(proposalText(p,'en'),/demonstration/);});
+
+test('selection identity survives language changes but rejects target or location changes',()=>{const a={...snapshot,circuitKey:'c1',targetKey:'t1'},b={...a,circuit:'English label',target:'English target'};assert(sameSelection(a,b));assert(!sameSelection(a,{...b,targetKey:'t2'}));assert(!sameSelection(a,{...b,items:[]}));});
