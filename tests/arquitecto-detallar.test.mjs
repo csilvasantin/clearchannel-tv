@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {
   homografia, aplicar, tamRecorte, validarEsquinas, ordenarEsquinas, enderezar, siguientesNumeros, revisarEncargo, recetaDetallar,
-  MUEBLES, CONTENIDOS, RECETA_SCHEMA, slug
+  sitioEnPlano, juntoA, revisarSitios, siguientesCodigos, MUEBLES, CONTENIDOS, RECETA_SCHEMA, HUELLA, INVENTARIOS, slug
 } from '../arquitecto-detallar.mjs';
 
 // Arquitecto · «detallar»: fotos → recortes enderezados → receta del Taller 3D (xpaceos.taller-3d.receta/1).
@@ -86,4 +87,65 @@ test('every content family and fixture offered by the Architect is one the works
   assert.deepEqual(Object.keys(CONTENIDOS).sort(), ['bolsas_almohada', 'bolsas_de_pie', 'ninguno', 'vasos']);
   for (const m of Object.values(MUEBLES)) { assert.equal(m.familia, 'cesta_trenzada'); assert.ok(m.borde[0] > m.fondo[0] && m.borde[1] >= m.fondo[1]); }
   assert.equal(slug('Cesta de Café «1971»'), 'cesta-de-cafe-1971');
+});
+
+// ── Dónde va (mejora 2, 18-oct-2026): sitio en el plano del local y alta ITIL ──
+const PLANO = JSON.parse(fs.readFileSync(new URL('../data/xpacios/alsea-sbux-021.json', import.meta.url)));
+const INVENTARIO = { location_id: 'alsea-sbux-021', units: ['PDG103-BAR-01', 'PDG103-MES-02', 'PDG103-CES-01', 'PDG103-CES-02', 'PDG103-CES-03', 'otro'].map(itil_code => ({ itil_code })) };
+
+test('a tap on the plan becomes the footprint corner, centred on the tap and kept inside the room', () => {
+  assert.deepEqual(sitioEnPlano(PLANO, [2.36, 4.12]), { x: 2.04, y: 3.8 });
+  assert.deepEqual(sitioEnPlano(PLANO, [-3, 99]), { x: 0, y: PLANO.planta.fondo - HUELLA });
+  assert.throws(() => sitioEnPlano({ planta: { ancho: 0, fondo: 0 } }, [1, 1]), /plano/);
+});
+
+test('the published baskets sit inside the Paseo de Gràcia plan, next to the furniture Carlos named', () => {
+  // Las posiciones del gemelo (starbucks-room.js): vasos y snacks junto al pilar; café 1971 frente a la estantería de tazas.
+  const cestas = [{ nombre: 'vasos', sitio: { x: 2.04, y: 3.8 } }, { nombre: 'snacks', sitio: { x: 2.74, y: 4.18 } }, { nombre: 'café', sitio: { x: 1.08, y: 4.98 } }];
+  assert.deepEqual(cestas.map(c => juntoA(PLANO, c.sitio)), ['Pilar', 'Pilar', 'Tazas']);
+  const r = revisarSitios(PLANO, cestas);
+  assert.deepEqual(r.fuera, []);
+  assert.ok(r.solapes.some(x => x.pieza === 0 && x.con === 'Pilar'), 'el plano es esquemático: el solape es aviso, no error');
+  assert.equal(juntoA(PLANO, { x: 10, y: 7.2 }), null, 'nada a menos de 1,5 m');
+});
+
+test('a spot outside the room is an error; overlaps between pieces are only warnings', () => {
+  const r = revisarSitios(PLANO, [{ nombre: 'a', sitio: { x: 13.8, y: 1 } }, { nombre: 'b', sitio: { x: 9, y: 5 } }, { nombre: 'c', sitio: { x: 9.3, y: 5.2 } }]);
+  assert.deepEqual(r.fuera, [0]);
+  assert.deepEqual(r.solapes, [{ pieza: 1, con: 'c', otra: 2 }]);
+});
+
+test('ITIL codes continue the venue family in the public inventory and never repeat', () => {
+  assert.deepEqual(siguientesCodigos(INVENTARIO, 'CES', 2), ['PDG103-CES-04', 'PDG103-CES-05']);
+  assert.deepEqual(siguientesCodigos(INVENTARIO, 'CES', 1, ['PDG103-CES-04']), ['PDG103-CES-05']);
+  assert.deepEqual(siguientesCodigos(INVENTARIO, 'EXP', 1), ['PDG103-EXP-01']);
+  assert.deepEqual(siguientesCodigos(null, 'CES', 2), [null, null]);
+  assert.ok(INVENTARIOS['alsea-sbux-021'].startsWith('https://www.xpaceos.com/inventario/'));
+  for (const m of Object.values(MUEBLES)) assert.equal(m.itil, 'CES');
+});
+
+test('with a plan every piece needs its spot; without one the recipe is allowed but warned', () => {
+  const sinSitio = revisarEncargo(cesta({ plano: PLANO }));
+  assert.equal(sinSitio.ok, false); assert.ok(sinSitio.errores.includes('pieza-0-falta-sitio') && sinSitio.errores.includes('pieza-1-falta-sitio'));
+  const sinPlano = revisarEncargo(cesta());
+  assert.equal(sinPlano.ok, true); assert.ok(sinPlano.avisos.includes('sin-plano') && sinPlano.avisos.includes('pieza-0-itil'));
+  const malItil = revisarEncargo(cesta({ piezas: cesta().piezas.map(p => ({ ...p, itil: 'pdg 4' })) }));
+  assert.ok(malItil.errores.includes('pieza-0-itil-formato'));
+  const repetido = revisarEncargo(cesta({ piezas: cesta().piezas.map(p => ({ ...p, itil: 'PDG103-CES-04' })) }));
+  assert.ok(repetido.errores.includes('pieza-1-itil-repetido'));
+});
+
+test('the recipe says where each piece goes, in twin grid units, and carries its Yokup CI', () => {
+  const piezas = cesta().piezas.map((p, i) => ({ ...p, sitio: [{ x: 1.08, y: 4.98 }, { x: 2.04, y: 3.8 }][i], itil: ['PDG103-CES-04', 'PDG103-CES-05'][i] }));
+  const r = recetaDetallar(cesta({ plano: PLANO, piezas }));
+  assert.deepEqual(r.plano, { id: 'alsea-sbux-021', version: PLANO.version });
+  const [cafe, vasos] = r.piezas;
+  assert.deepEqual(cafe.colocacion, { xpacio: 'alsea-sbux-021', plano: PLANO.version, x: 1.08, y: 4.98, huella: [HUELLA, HUELLA], junto_a: 'Tazas' });
+  assert.equal(vasos.colocacion.junto_a, 'Pilar');
+  assert.deepEqual(Object.keys(cafe.itil).sort(), ['admira_store_id', 'category', 'group_name', 'itil_code', 'name', 'position', 'role']);
+  assert.equal(cafe.itil.itil_code, 'PDG103-CES-04'); assert.equal(cafe.itil.position, cafe.instancia); assert.equal(cafe.itil.admira_store_id, 'alsea-sbux-021');
+  assert.match(cafe.itil.role, /^Taller 3D · catálogo 56 · bolsas de pie de relleno visual, sin stock medido$/);
+  for (const p of r.piezas) assert.ok(p.itil.role.length <= 120, 'Yokup limita role a 120 caracteres');
+  const sinPlano = recetaDetallar(cesta());
+  assert.equal(sinPlano.plano, null); assert.ok(sinPlano.piezas.every(p => p.colocacion === null && p.itil.itil_code === null));
 });

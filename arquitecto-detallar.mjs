@@ -6,17 +6,28 @@
 // plana (un cartel, la cara de una bolsa, el logo de un vaso) y el navegador la endereza. Las fotos NO salen del
 // navegador: la receta sólo lleva los recortes de objetos, dentro (`fuentes_embebidas`), para que no viajen personas.
 // El taller las convierte en texturas y modelos Good, Better, Best; la fase 3 (cierre automático) vendrá después.
+//
+// Dónde va (Carlos, 18-oct-2026, mejora 2): cada pieza se coloca en el plano del local (admira.xpacio-plano/1). Sus
+// metros son las unidades de la rejilla del gemelo (col = x, row = y), con el origen en la esquina de la huella, así
+// que la fase 3 puede ponerla en el gemelo tal cual. La receta lleva también los datos del alta ITIL en Yokup.
 
 export const RECETA_SCHEMA = 'xpaceos.taller-3d.receta/1';
 export const MAX_LADO_RECORTE = 1024;
 export const MAX_RECORTES = 24;
 export const MAX_PIEZAS = 8;
 export const REGISTRO_URL = 'https://www.xpaceos.com/inventario/registry.json';
+export const HUELLA = 0.64;
+export const GRUPO_ITIL = 'Zona de clientes';
+// Inventarios públicos de xpaceos con los códigos ITIL ya dados de alta, por local. Sin inventario, código por asignar.
+export const INVENTARIOS = Object.freeze({
+  'alsea-sbux-021': 'https://www.xpaceos.com/inventario/starbucks/manifest.json',
+  'cafebreria-xpacio-001': 'https://www.xpaceos.com/inventario/cafebreria/manifest.json'
+});
 
 // Tamaños nominales de las cestas ya hechas (receta cestas-pg103): borde y fondo [alto, radio] en metros.
 export const MUEBLES = Object.freeze({
-  cesta_baja: Object.freeze({ familia: 'cesta_trenzada', borde: [0.50, 0.30], fondo: [0.24, 0.14], repeticion: 4, es: 'Cesta trenzada baja', en: 'Low woven basket' }),
-  cesta_alta: Object.freeze({ familia: 'cesta_trenzada', borde: [0.84, 0.30], fondo: [0.58, 0.14], repeticion: 4, es: 'Cesta trenzada alta', en: 'Tall woven basket' })
+  cesta_baja: Object.freeze({ familia: 'cesta_trenzada', borde: [0.50, 0.30], fondo: [0.24, 0.14], repeticion: 4, itil: 'CES', es: 'Cesta trenzada baja', en: 'Low woven basket' }),
+  cesta_alta: Object.freeze({ familia: 'cesta_trenzada', borde: [0.84, 0.30], fondo: [0.58, 0.14], repeticion: 4, itil: 'CES', es: 'Cesta trenzada alta', en: 'Tall woven basket' })
 });
 // Contenidos que el taller sabe montar desde recortes y qué caras pide cada uno.
 export const CONTENIDOS = Object.freeze({
@@ -103,8 +114,64 @@ export function siguientesNumeros(registro, n) {
   return out;
 }
 
+// ── Dónde va: sitio en el plano del local ───────────────────────────────────────────────────────────────────
+// plano admira.xpacio-plano/1: planta {ancho, fondo} en metros, x a lo ancho, y hacia el fondo; mobiliario [{nombre, x, y, w, d}].
+const r2 = v => Math.round(v * 100) / 100;
+const entre = (v, a, b) => Math.min(Math.max(v, a), b);
+const planoValido = pl => !!(pl && pl.planta && pl.planta.ancho > 0 && pl.planta.fondo > 0);
+// Punto tocado en el plano → esquina de la huella, centrada en el punto y dentro de la sala.
+export function sitioEnPlano(plano, [px, py], huella = HUELLA) {
+  if (!planoValido(plano) || ![px, py].every(Number.isFinite)) throw new Error('plano');
+  const { ancho, fondo } = plano.planta;
+  return { x: r2(entre(px - huella / 2, 0, ancho - huella)), y: r2(entre(py - huella / 2, 0, fondo - huella)) };
+}
+const cajaDe = (s, huella = HUELLA) => ({ x: s.x, y: s.y, w: huella, d: huella });
+const separacion = (a, b) => Math.hypot(Math.max(b.x - (a.x + a.w), a.x - (b.x + b.w), 0), Math.max(b.y - (a.y + a.d), a.y - (b.y + b.d), 0));
+// El mueble del plano más cercano a la pieza, a 1,5 m como mucho, para decir «junto a Pilar». A igual distancia entre
+// bordes gana el de centro más cercano (la cesta junto al pilar y la caja a la vez es «junto a Pilar»).
+export function juntoA(plano, sitio, huella = HUELLA) {
+  const a = cajaDe(sitio, huella), centro = b => [b.x + b.w / 2, b.y + b.d / 2];
+  let mejor = null, clave = [1.5 + 1e-9, Infinity];
+  for (const m of (plano && plano.mobiliario) || []) {
+    if (![m.x, m.y, m.w, m.d].every(Number.isFinite)) continue;
+    const k = [r2(separacion(a, m)), dist(centro(a), centro(m))];
+    if (k[0] < clave[0] || (k[0] === clave[0] && k[1] < clave[1])) { clave = k; mejor = m; }
+  }
+  return mejor ? limpio(mejor.nombre, 60) : null;
+}
+// Fuera de la sala (error) y solapes con muebles del plano o con otras piezas (aviso: el plano es esquemático).
+export function revisarSitios(plano, piezas, huella = HUELLA) {
+  const fuera = [], solapes = [];
+  if (!planoValido(plano)) return { fuera, solapes };
+  const { ancho, fondo } = plano.planta, dentro = (a, b) => a.x < b.x + b.w - 1e-6 && b.x < a.x + a.w - 1e-6 && a.y < b.y + b.d - 1e-6 && b.y < a.y + a.d - 1e-6;
+  piezas.forEach((p, i) => {
+    const s = p && p.sitio; if (!s) return;
+    if (!(s.x >= 0 && s.y >= 0 && s.x + huella <= ancho + 1e-6 && s.y + huella <= fondo + 1e-6)) { fuera.push(i); return; }
+    for (const m of plano.mobiliario || []) if (dentro(cajaDe(s, huella), m)) solapes.push({ pieza: i, con: limpio(m.nombre, 60) });
+    piezas.forEach((q, j) => { if (j > i && q && q.sitio && dentro(cajaDe(s, huella), cajaDe(q.sitio, huella))) solapes.push({ pieza: i, con: limpio(q.nombre, 60) || `#${j + 1}`, otra: j }); });
+  });
+  return { fuera, solapes };
+}
+
+// ── Alta ITIL: los siguientes códigos libres de la familia en el inventario público del local ──────────────
+// PDG103-CES-01…03 → PDG103-CES-04. El prefijo es el del local (el más repetido en sus códigos).
+export const CODIGO_ITIL_RE = /^[A-Z0-9]{2,12}(-[A-Z0-9]{2,6}){1,3}$/;
+export function siguientesCodigos(inventario, familia, n, usados = []) {
+  const codigos = (((inventario && inventario.units) || []).map(u => u && u.itil_code)).filter(c => typeof c === 'string' && CODIGO_ITIL_RE.test(c));
+  const veces = {}; for (const c of codigos) { const k = c.split('-')[0]; veces[k] = (veces[k] || 0) + 1; }
+  const prefijo = Object.keys(veces).sort((a, b) => veces[b] - veces[a])[0];
+  if (!prefijo || !/^[A-Z0-9]{2,6}$/.test(familia || '')) return Array.from({ length: n }, () => null);
+  const ocupados = new Set([...codigos, ...usados]), re = new RegExp(`^${prefijo}-${familia}-(\\d+)$`);
+  let k = Math.max(0, ...codigos.map(c => { const m = c.match(re); return m ? +m[1] : 0; }));
+  const out = [];
+  while (out.length < n) { k++; const c = `${prefijo}-${familia}-${String(k).padStart(2, '0')}`; if (!ocupados.has(c)) out.push(c); }
+  return out;
+}
+const rolItil = (numero, contenido) => limpio(`Taller 3D · catálogo ${Number.isSafeInteger(numero) ? numero : 'por asignar'} · ${contenido === 'ninguno' || !CONTENIDOS[contenido] ? 'sin contenido' : CONTENIDOS[contenido].es.replace(/ \(.*\)$/, '').toLowerCase() + ' de relleno visual, sin stock medido'}`, 120);
+
 // ── Revisión del encargo antes de hacer la receta ──────────────────────────────────────────────────────────
-// encargo {nombre, local, autor, lugar, fecha, piezas:[{nombre, nombre_en, numero, mueble, contenido, cantidad, cartel:{ancho, alto, poste}}],
+// encargo {nombre, local, autor, lugar, fecha, plano (admira.xpacio-plano/1 o null),
+//          piezas:[{nombre, nombre_en, numero, mueble, contenido, cantidad, cartel:{ancho, alto, poste}, sitio:{x, y}, itil}],
 //          recortes:[{nombre, pieza, rol, png (dataURL), esquinas, foto}]}
 export function revisarEncargo(e) {
   const errores = [], avisos = [];
@@ -127,6 +194,21 @@ export function revisarEncargo(e) {
     for (const r of suyos) if (r.rol !== 'cartel' && !pide.includes(r.rol)) avisos.push(`pieza-${i}-rol-${r.rol}-sin-uso`);
   });
   for (const r of recortes) if (!/^data:image\/png;base64,/.test(r.png || '')) errores.push(`recorte-${r.nombre}-png`);
+  // Dónde va: con plano, cada pieza necesita su sitio dentro de la sala; sin plano, se avisa y la receta sale sin sitio.
+  const plano = e && e.plano;
+  if (!planoValido(plano)) { if (piezas.length) avisos.push('sin-plano'); }
+  else {
+    piezas.forEach((p, i) => { if (!p.sitio) errores.push(`pieza-${i}-falta-sitio`); });
+    const { fuera, solapes } = revisarSitios(plano, piezas);
+    for (const i of fuera) errores.push(`pieza-${i}-fuera`);
+    for (const i of new Set(solapes.map(s => s.pieza))) avisos.push(`pieza-${i}-solapa`);
+  }
+  const codigos = piezas.map(p => p && p.itil).filter(Boolean);
+  piezas.forEach((p, i) => {
+    if (!p.itil) avisos.push(`pieza-${i}-itil`);
+    else if (!CODIGO_ITIL_RE.test(p.itil)) errores.push(`pieza-${i}-itil-formato`);
+    else if (codigos.indexOf(p.itil) !== codigos.lastIndexOf(p.itil)) errores.push(`pieza-${i}-itil-repetido`);
+  });
   return { ok: !errores.length, errores, avisos };
 }
 
@@ -178,12 +260,18 @@ export function recetaDetallar(e) {
     } else if (p.contenido === 'bolsas_almohada') {
       pieza.contenido = { familia: 'bolsas_almohada', cantidad, semilla: 300 + i, disenos: suyos.filter(r => r.rol === 'diseno').slice(0, 3).map(salida) };
     } else pieza.contenido = null;
+    const plano = planoValido(e.plano) ? e.plano : null;
+    pieza.colocacion = plano && p.sitio ? { xpacio: limpio(plano.id || e.local, 80), plano: limpio(plano.version, 60) || null, x: r2(p.sitio.x), y: r2(p.sitio.y),
+      huella: [HUELLA, HUELLA], junto_a: juntoA(plano, p.sitio) } : null;
+    pieza.itil = { admira_store_id: limpio(e.local, 80), itil_code: p.itil && CODIGO_ITIL_RE.test(p.itil) ? p.itil : null, name: nombre, category: 'mobiliario',
+      role: rolItil(pieza.numero, p.contenido), group_name: GRUPO_ITIL, position: pieza.instancia };
     return pieza;
   });
   return {
     schema: RECETA_SCHEMA, encargo,
     descripcion: limpio(e.descripcion, 400) || `Detallado en el Arquitecto (admira.biz) para ${e.local}: ${piezas.map(p => p.nombre).join(', ')}.`,
     local: limpio(e.local, 80), origen: 'admira.biz/arquitecto · detallar',
+    plano: planoValido(e.plano) ? { id: limpio(e.plano.id || e.local, 80), version: limpio(e.plano.version, 60) || null } : null,
     fotos: { autor: limpio(e.autor) || 'Arquitecto', lugar: limpio(e.lugar) || limpio(e.local), fecha, publicables: false,
       nota: 'Las fotos no salen del navegador; la receta sólo lleva recortes de objetos enderezados en el Arquitecto.' },
     fuentes: encargo, texturas_dir: `inventario/assets/catalog/${encargo}/textures`, texturas, piezas,

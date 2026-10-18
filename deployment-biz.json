@@ -21,8 +21,8 @@
     ]
   },
   "novedades": [
-    "Arquitecto: nueva orden /arquitecto detallar. Subes fotos de los objetos de un local, marcas 4 esquinas de cada cara y sale la receta para el Taller 3D de xpaceos.",
-    "Solo viajan los recortes de los objetos; las fotos originales no salen del navegador. El número de catálogo se propone con el siguiente libre del registro."
+    "Arquitecto · detallar: debajo de las fotos sale el plano del local; eliges la pieza y tocas dónde va. Dice junto a qué mueble queda y avisa si se solapa.",
+    "El código ITIL de cada pieza se propone con el siguiente libre del inventario público del local (por ejemplo PDG103-CES-04). La receta lleva el sitio y el alta para Yokup."
   ],
   "nativeClearChannel": {
     "enabled": true,

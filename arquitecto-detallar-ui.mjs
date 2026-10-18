@@ -2,7 +2,9 @@
 // Izquierda: local, fotos, piezas y recortes. Derecha: la foto elegida; se marcan 4 esquinas de una cara plana (cartel,
 // cara de bolsa, logo de vaso) y el navegador la endereza. «Descargar receta» da el JSON del Taller 3D de xpaceos, con
 // los recortes dentro. Las fotos no salen del navegador ni se suben a ningún sitio.
-import { MUEBLES, CONTENIDOS, ROLES, MAX_PIEZAS, MAX_RECORTES, REGISTRO_URL, ordenarEsquinas, validarEsquinas, tamRecorte, enderezar, siguientesNumeros, revisarEncargo, recetaDetallar } from './arquitecto-detallar.mjs?v=20261018-detallar-1';
+// Debajo, «Dónde va»: el plano del local; se elige la pieza y se toca su sitio. El código ITIL sale del inventario público.
+import { MUEBLES, CONTENIDOS, ROLES, MAX_PIEZAS, MAX_RECORTES, REGISTRO_URL, HUELLA, INVENTARIOS, ordenarEsquinas, validarEsquinas, tamRecorte, enderezar, siguientesNumeros,
+  sitioEnPlano, juntoA, revisarSitios, siguientesCodigos, revisarEncargo, recetaDetallar } from './arquitecto-detallar.mjs?v=20261018-detallar-2';
 import { prepararFotos } from './arquitecto-fotos.mjs?v=20261014-arquitecto-1';
 
 const TEXTOS = {
@@ -17,7 +19,13 @@ const TEXTOS = {
     sinFotos: 'Sube fotos o un vídeo a la izquierda.', preparando: 'Preparando fotos…', fotosListas: n => `${n} foto${n === 1 ? '' : 's'} lista${n === 1 ? '' : 's'}.`,
     recortado: (rol, p) => `Recorte «${rol}» para ${p}.`, cruzadas: 'Las esquinas se cruzan: márcalas otra vez.', registroNo: 'No pude leer el catálogo: pon los números a mano o déjalos por asignar.',
     revisa: 'Antes de la receta:', listo: 'Receta lista para el Taller 3D.', descargada: f => `Receta descargada: ${f}.`, avisos: 'Avisos',
-    err: { local: 'falta el local', 'sin-piezas': 'añade al menos una pieza', 'demasiadas-piezas': 'demasiadas piezas', 'demasiados-recortes': 'demasiados recortes',
+    donde: 'Dónde va', planoCargando: 'Buscando el plano del local…', ayudaPlano: p => `Toca en el plano dónde va «${p}». Las cestas ocupan ${HUELLA.toLocaleString('es-ES')} × ${HUELLA.toLocaleString('es-ES')} m.`,
+    sinPlano: id => `No encuentro el plano de «${id || '—'}»: la receta saldrá sin sitio. Créalo con /arquitecto crear o súbelo en plano.html.`,
+    sitio: 'Sitio', sinSitio: 'sin sitio: tócalo en el plano', junto: n => `junto a ${n}`, colocada: (p, s) => `«${p}»: ${s}.`, itil: 'Código ITIL',
+    planoSala: (n, a, f) => `Plano de ${n}: sala de ${a} × ${f} m.`,
+    err: { local: 'falta el local', 'falta-sitio': 'falta su sitio en el plano', fuera: 'su sitio queda fuera de la sala', solapa: 'se solapa en el plano con',
+      itil: 'código ITIL por asignar', 'itil-formato': 'el código ITIL no tiene el formato de Yokup (por ejemplo PDG103-CES-04)', 'itil-repetido': 'código ITIL repetido',
+      'sin-plano': 'el local no tiene plano: la receta sale sin sitio', 'sin-piezas': 'añade al menos una pieza', 'demasiadas-piezas': 'demasiadas piezas', 'demasiados-recortes': 'demasiados recortes',
       nombre: 'una pieza sin nombre', mueble: 'una pieza sin mueble', contenido: 'una pieza sin contenido', 'falta-logo': 'los vasos piden el logo del vaso',
       'falta-frente': 'las bolsas de pie piden la cara frontal', 'falta-diseno': 'las bolsas almohada piden un diseño de bolsa', 'falta-cartel': 'marcaste «lleva cartel» y falta su recorte',
       numero: 'número de catálogo por asignar', png: 'un recorte no es una imagen' }
@@ -33,7 +41,13 @@ const TEXTOS = {
     sinFotos: 'Upload photos or a video on the left.', preparando: 'Preparing photos…', fotosListas: n => `${n} photo${n === 1 ? '' : 's'} ready.`,
     recortado: (rol, p) => `“${rol}” crop for ${p}.`, cruzadas: 'The corners cross: mark them again.', registroNo: 'I could not read the catalogue: type the numbers or leave them unassigned.',
     revisa: 'Before the recipe:', listo: 'Recipe ready for the 3D workshop.', descargada: f => `Recipe downloaded: ${f}.`, avisos: 'Warnings',
-    err: { local: 'the venue is missing', 'sin-piezas': 'add at least one piece', 'demasiadas-piezas': 'too many pieces', 'demasiados-recortes': 'too many crops',
+    donde: 'Where it goes', planoCargando: 'Looking for the venue’s floor plan…', ayudaPlano: p => `Tap on the plan where “${p}” goes. Baskets take ${HUELLA} × ${HUELLA} m.`,
+    sinPlano: id => `I can’t find the floor plan of “${id || '—'}”: the recipe will have no spot. Create it with /arquitecto crear or upload it in plano.html.`,
+    sitio: 'Spot', sinSitio: 'no spot yet: tap it on the plan', junto: n => `next to ${n}`, colocada: (p, s) => `“${p}”: ${s}.`, itil: 'ITIL code',
+    planoSala: (n, a, f) => `Floor plan of ${n}: ${a} × ${f} m room.`,
+    err: { local: 'the venue is missing', 'falta-sitio': 'its spot on the plan is missing', fuera: 'its spot is outside the room', solapa: 'overlaps on the plan with',
+      itil: 'ITIL code to be assigned', 'itil-formato': 'the ITIL code does not follow the Yokup format (e.g. PDG103-CES-04)', 'itil-repetido': 'repeated ITIL code',
+      'sin-plano': 'the venue has no floor plan: the recipe has no spot', 'sin-piezas': 'add at least one piece', 'demasiadas-piezas': 'too many pieces', 'demasiados-recortes': 'too many crops',
       nombre: 'a piece without a name', mueble: 'a piece without a fixture', contenido: 'a piece without contents', 'falta-logo': 'cups need the cup logo',
       'falta-frente': 'standing bags need the front face', 'falta-diseno': 'pillow bags need a bag design', 'falta-cartel': '“has a sign” is ticked but its crop is missing',
       numero: 'catalogue number to be assigned', png: 'a crop is not an image' }
@@ -46,8 +60,12 @@ const el = (tag, attrs = {}, ...hijos) => {
   n.append(...hijos.filter(h => h != null)); return n;
 };
 
-export function montarDetallar({ pane, card, getLang = () => 'es', status = () => {}, localInicial = '' }) {
-  const st = { fotos: [], foto: -1, puntos: [], piezas: [], recortes: [], registro: null, numerosLibres: [], pieza: 0, rol: 'cartel', img: null };
+const NS = 'http://www.w3.org/2000/svg';
+const sv = (tag, attrs = {}, texto) => { const n = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, String(v)); if (texto != null) n.textContent = texto; return n; };
+
+export function montarDetallar({ pane, card, getLang = () => 'es', status = () => {}, localInicial = '', leerPlano = async () => null }) {
+  const st = { fotos: [], foto: -1, puntos: [], piezas: [], recortes: [], registro: null, numerosLibres: [], pieza: 0, rol: 'cartel', img: null,
+    plano: null, planoLocal: null, buscandoPlano: false, inventario: null };
   const t = (k, ...a) => { const v = TEXTOS[getLang() === 'en' ? 'en' : 'es'][k]; return typeof v === 'function' ? v(...a) : v; };
   const nombreRol = r => (ROLES[r] || {})[getLang() === 'en' ? 'en' : 'es'] || r;
 
@@ -82,9 +100,12 @@ export function montarDetallar({ pane, card, getLang = () => 'es', status = () =
   const lienzo = el('canvas', { id: 'dt-lienzo', class: 'dt-lienzo', width: 800, height: 600 });
   const ayuda = el('p', { class: 'hint', id: 'dt-ayuda' });
   const vista = el('canvas', { id: 'dt-vista', class: 'dt-vista', width: 1, height: 1, hidden: true });
+  const tituloPlano = el('h3', { id: 'dt-titulo-plano', class: 'dt-titulo-plano' }), ayudaPlano = el('p', { class: 'hint', id: 'dt-ayuda-plano' });
+  const cajaPlano = el('div', { id: 'dt-plano', class: 'dt-plano' });
   card.replaceChildren(el('div', { class: 'card-head' }, titulo),
     el('div', { class: 'dt-barra' }, el('label', {}, lPieza, selPieza), el('label', {}, lRol, selRol), btnDeshacer, btnBorrar, btnRecortar),
-    tira, el('div', { class: 'dt-foto' }, lienzo), ayuda, vista);
+    tira, el('div', { class: 'dt-foto' }, lienzo), ayuda, vista,
+    el('section', { class: 'dt-donde', 'aria-labelledby': 'dt-titulo-plano' }, tituloPlano, ayudaPlano, cajaPlano));
 
   // ── Catálogo: números libres desde el registro público de xpaceos ─────────
   fetch(REGISTRO_URL, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(reg => { st.registro = reg; numerar(); pintar(); })
@@ -95,12 +116,78 @@ export function montarDetallar({ pane, card, getLang = () => 'es', status = () =
     const libres = siguientesNumeros({ numbers: { ...st.registro.numbers, ...Object.fromEntries(usados.map((n, i) => ['x' + i, n])) } }, st.piezas.length);
     for (const p of st.piezas) if (!Number.isSafeInteger(p.numero)) p.numero = libres.shift();
   }
+  // Códigos ITIL: los siguientes libres del inventario público del local (PDG103-CES-04…); a mano si no lo hay.
+  function codificar() {
+    if (!st.inventario) return;
+    const usados = st.piezas.map(p => p.itil).filter(Boolean);
+    for (const p of st.piezas) if (!p.itil) { const [c] = siguientesCodigos(st.inventario, MUEBLES[p.mueble].itil, 1, usados); if (c) { p.itil = c; p.itilAuto = true; usados.push(c); } }
+  }
+
+  // ── Dónde va: el plano del local ──────────────────────────────────────────
+  let pedido = 0, espera = 0;
+  async function cargarLocal() {
+    const id = inLocal.value.trim(); if (id === st.planoLocal) return;
+    const n = ++pedido; st.planoLocal = id; st.plano = null; st.inventario = null; st.buscandoPlano = true;
+    for (const p of st.piezas) { p.sitio = null; if (p.itilAuto) { p.itil = null; p.itilAuto = false; } }
+    pintar();
+    const url = INVENTARIOS[id];
+    const [plano, inventario] = await Promise.all([leerPlano(id).catch(() => null),
+      url ? fetch(url, { cache: 'no-store' }).then(r => (r.ok ? r.json() : null)).catch(() => null) : null]);
+    if (n !== pedido) return;
+    st.buscandoPlano = false;
+    st.plano = plano && plano.planta && plano.planta.ancho > 0 && plano.planta.fondo > 0 ? plano : null;
+    st.inventario = inventario && inventario.location_id === id ? inventario : null;
+    codificar(); pintar();
+  }
+  inLocal.addEventListener('input', () => { clearTimeout(espera); espera = setTimeout(cargarLocal, 600); });
+  inLocal.addEventListener('change', () => { clearTimeout(espera); cargarLocal(); });
+  const num = v => v.toLocaleString(getLang() === 'en' ? 'en-GB' : 'es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const nombrePieza = i => (st.piezas[i] && st.piezas[i].nombre) || `${t('pieza')} ${i + 1}`;
+  function textoSitio(p) {
+    if (!p.sitio) return t('sinSitio');
+    const junto = st.plano && juntoA(st.plano, p.sitio);
+    return `x ${num(p.sitio.x)} · y ${num(p.sitio.y)} m${junto ? ' · ' + t('junto', junto) : ''}`;
+  }
+  function pintarPlano() {
+    const pl = st.plano;
+    tituloPlano.textContent = pl ? `${t('donde')} · ${pl.nombre || pl.id || st.planoLocal}` : t('donde');
+    if (!pl) { cajaPlano.replaceChildren(); ayudaPlano.textContent = st.buscandoPlano ? t('planoCargando') : t('sinPlano', st.planoLocal || inLocal.value.trim()); return; }
+    const { ancho, fondo } = pl.planta, m = 0.35;
+    ayudaPlano.textContent = st.piezas.length ? t('ayudaPlano', nombrePieza(st.pieza)) : '';
+    const svg = sv('svg', { viewBox: `${-m} ${-m} ${ancho + 2 * m} ${fondo + 2 * m}`, class: 'dt-plano-svg', id: 'dt-plano-svg', role: 'img',
+      'aria-label': t('planoSala', pl.nombre || pl.id, num(ancho), num(fondo)) });
+    svg.append(sv('rect', { x: 0, y: 0, width: ancho, height: fondo, class: 'sala' }));
+    for (const h of pl.huecos || []) {
+      const w = (pl.paredes || []).find(q => q.id === h.pared); if (!w || !Array.isArray(w.a) || !Array.isArray(w.b)) continue;
+      const L = Math.hypot(w.b[0] - w.a[0], w.b[1] - w.a[1]) || 1, ux = (w.b[0] - w.a[0]) / L, uy = (w.b[1] - w.a[1]) / L, d0 = +h.desde || 0, d1 = d0 + (+h.ancho || 0);
+      svg.append(sv('line', { x1: w.a[0] + ux * d0, y1: w.a[1] + uy * d0, x2: w.a[0] + ux * d1, y2: w.a[1] + uy * d1, class: 'hueco' }));
+    }
+    for (const mu of pl.mobiliario || []) {
+      if (![mu.x, mu.y, mu.w, mu.d].every(Number.isFinite)) continue;
+      svg.append(sv('rect', { x: mu.x, y: mu.y, width: mu.w, height: mu.d, class: 'mueble' }),
+        sv('text', { x: mu.x + mu.w / 2, y: mu.y + mu.d / 2, class: 'mueble-txt', 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 0.24 }, String(mu.nombre || '')));
+    }
+    st.piezas.forEach((p, i) => {
+      if (!p.sitio) return;
+      const g = sv('g', { class: 'pieza' + (i === st.pieza ? ' activa' : '') }), cx = p.sitio.x + HUELLA / 2, cy = p.sitio.y + HUELLA / 2;
+      g.append(sv('title', {}, `${nombrePieza(i)} · ${textoSitio(p)}`), sv('circle', { cx, cy, r: HUELLA / 2 }),
+        sv('text', { x: cx, y: cy, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 0.3 }, String(i + 1)));
+      svg.append(g);
+    });
+    svg.addEventListener('click', ev => {
+      const p = st.piezas[st.pieza], ctm = svg.getScreenCTM(); if (!p || !ctm) return;
+      const q = new DOMPoint(ev.clientX, ev.clientY).matrixTransform(ctm.inverse());
+      p.sitio = sitioEnPlano(pl, [q.x, q.y]); status(t('colocada', nombrePieza(st.pieza), textoSitio(p)));
+      pintarPiezas(); pintarPlano(); revisar();
+    });
+    cajaPlano.replaceChildren(svg);
+  }
 
   // ── Piezas ────────────────────────────────────────────────────────────────
   function nuevaPieza() {
     if (st.piezas.length >= MAX_PIEZAS) return;
-    st.piezas.push({ nombre: '', numero: null, mueble: 'cesta_alta', contenido: 'bolsas_de_pie', cantidad: CONTENIDOS.bolsas_de_pie.cantidad, cartel: null });
-    numerar(); st.pieza = st.piezas.length - 1; pintar();
+    st.piezas.push({ nombre: '', numero: null, mueble: 'cesta_alta', contenido: 'bolsas_de_pie', cantidad: CONTENIDOS.bolsas_de_pie.cantidad, cartel: null, sitio: null, itil: null });
+    numerar(); codificar(); st.pieza = st.piezas.length - 1; pintar();
   }
   addPieza.addEventListener('click', nuevaPieza);
   function opciones(sel, pares, valor) { sel.replaceChildren(...pares.map(([v, txt]) => el('option', { value: v, selected: v === valor }, txt))); }
@@ -108,6 +195,9 @@ export function montarDetallar({ pane, card, getLang = () => 'es', status = () =
     const lang = getLang() === 'en' ? 'en' : 'es';
     const nombre = el('input', { value: p.nombre, maxlength: 80, 'aria-label': t('nombre'), placeholder: t('nombre') });
     nombre.addEventListener('input', () => { p.nombre = nombre.value; pintarBarra(); pintarRecortes(); });
+    const itil = el('input', { value: p.itil || '', maxlength: 32, spellcheck: false, autocomplete: 'off', placeholder: 'PDG103-CES-04', 'aria-label': t('itil') });
+    itil.addEventListener('change', () => { p.itil = itil.value.trim().toUpperCase() || null; p.itilAuto = false; itil.value = p.itil || ''; revisar(); });
+    const sitio = el('output', { class: 'dt-sitio-valor' }, textoSitio(p));
     const numero = el('input', { type: 'number', min: 1, max: 9999, value: p.numero ?? '', 'aria-label': t('numero') });
     numero.addEventListener('change', () => { const n = parseInt(numero.value, 10); p.numero = Number.isSafeInteger(n) && n > 0 ? n : null; });
     const mueble = el('select', { 'aria-label': t('mueble') }); opciones(mueble, Object.entries(MUEBLES).map(([k, m]) => [k, m[lang]]), p.mueble);
@@ -131,6 +221,7 @@ export function montarDetallar({ pane, card, getLang = () => 'es', status = () =
       el('div', { class: 'arq-dims dt-cartel' }, el('label', {}, el('span', {}, t('cantidad')), cantidad),
         el('label', { class: 'arq-check' }, conCartel, el('span', {}, t('cartel'))), el('label', { class: 'arq-check' }, poste, el('span', {}, t('poste'))),
         el('label', {}, el('span', {}, t('ancho')), ancho), el('label', {}, el('span', {}, t('alto')), alto)),
+      el('div', { class: 'arq-dims arq-dims-2' }, el('label', {}, el('span', {}, t('itil')), itil), el('div', { class: 'dt-sitio' }, el('span', {}, t('sitio')), sitio)),
       el('div', { class: 'arq-actions' }, quitar));
   }
 
@@ -154,7 +245,7 @@ export function montarDetallar({ pane, card, getLang = () => 'es', status = () =
     opciones(selRol, roles.map(r => [r, nombreRol(r)]), st.rol);
     btnRecortar.disabled = !(st.puntos.length === 4 && p && st.rol);
   }
-  selPieza.addEventListener('change', () => { st.pieza = parseInt(selPieza.value, 10) || 0; pintar(); });
+  selPieza.addEventListener('change', () => { st.pieza = parseInt(selPieza.value, 10) || 0; pintarPiezas(); pintarPlano(); pintarBarra(); });
   selRol.addEventListener('change', () => { st.rol = selRol.value; });
 
   // ── Fotos y lienzo ────────────────────────────────────────────────────────
@@ -210,10 +301,14 @@ export function montarDetallar({ pane, card, getLang = () => 'es', status = () =
   });
 
   // ── Revisión y receta ─────────────────────────────────────────────────────
-  const encargo = () => ({ nombre: inNombre.value, local: inLocal.value.trim(), autor: inAutor.value, piezas: st.piezas, recortes: st.recortes });
+  const encargo = () => ({ nombre: inNombre.value, local: inLocal.value.trim(), autor: inAutor.value, plano: st.plano, piezas: st.piezas, recortes: st.recortes });
   function textoError(code) {
     const m = String(code).match(/^pieza-(\d+)-(.+)$/), err = t('err');
-    if (m) { const p = st.piezas[+m[1]]; return `${(p && p.nombre) || `${t('pieza')} ${+m[1] + 1}`}: ${err[m[2]] || m[2]}`; }
+    if (m && m[2] === 'solapa') {
+      const con = [...new Set(revisarSitios(st.plano, st.piezas).solapes.filter(x => x.pieza === +m[1]).map(x => `«${x.con}»`))].join(', ');
+      return `${nombrePieza(+m[1])}: ${err.solapa} ${con}`;
+    }
+    if (m) return `${nombrePieza(+m[1])}: ${err[m[2]] || m[2]}`;
     return err[code] || err[String(code).replace(/^recorte-.*-/, '')] || code;
   }
   function revisar() {
@@ -230,13 +325,14 @@ export function montarDetallar({ pane, card, getLang = () => 'es', status = () =
     status(t('descargada', nombre));
   });
   for (const n of [inLocal, inNombre]) n.addEventListener('input', revisar);
+  const pintarPiezas = () => listaPiezas.replaceChildren(...st.piezas.map(filaPieza));
 
   function pintarTextos() {
     lead.textContent = t('lead'); lbl.local.textContent = t('local'); lbl.nombre.textContent = t('encargo'); lbl.autor.textContent = t('autor'); lbl.fotos.textContent = t('fotos');
     lbl.piezas.textContent = t('piezas'); lbl.recortes.textContent = t('recortes'); addPieza.textContent = t('addPieza'); descargar.textContent = t('descargar');
     titulo.textContent = t('taller'); lPieza.textContent = t('pieza'); lRol.textContent = t('rol'); btnRecortar.textContent = t('recortar'); btnDeshacer.textContent = t('deshacer'); btnBorrar.textContent = t('borrar');
   }
-  function pintar() { pintarTextos(); listaPiezas.replaceChildren(...st.piezas.map(filaPieza)); pintarRecortes(); dibujar(); revisar(); }
-  nuevaPieza();
+  function pintar() { pintarTextos(); pintarPiezas(); pintarRecortes(); dibujar(); pintarPlano(); revisar(); }
+  nuevaPieza(); cargarLocal();
   return { setLang: pintar, estado: () => st };
 }
