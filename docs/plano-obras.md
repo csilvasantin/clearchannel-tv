@@ -208,6 +208,22 @@ Misión DCL-d7966deb02734a6f34beb54e («Hoy #22»), orden de Carlos del 15-oct-2
 - **El cubo (cliente-08):** `forma: 'cubo-4-caras'` y `cubo: {centro: [x, y], lado, alto, peana, caras: [{cara, n, recorte}]}`, que es lo que pinta el prisma en 3D (`n`, la normal de cada cara; `recorte`, su cuarto del lienzo de 1600×600). La pantalla del plano 2D es UNA cara, la que da a la sala: `pared` es el lateral junto al que está el cubo y `s` la proyección de su centro en esa pared; `z` es la altura de la peana; `dimensiones` (0,75 × 1,125 m), `pulgadas` (53,2, diagonal de la cara), `recorte` y `resolucion` (400×600) son los de esa cara; `separacion` (1,10 m) es la distancia de la pared a esa cara. La peana va en `mobiliario` (`m-peana`).
 - **Arquitecto:** en «Crear», «Espacio por formato · Altadis 18»: selector de formato y de Xtanco / Starbucks, planta y alzado con las pantallas del formato resaltadas, ficha (W×H, rejilla, pantallas físicas y tamaños, uso, zona y avisos), galería «Los 18» y enlaces a «Ver gemelo» (`https://www.admira.store/xpacios/altadis-18/?espacio=<id>`), «Crear y adaptar contenido» (`https://admira.studio/adaptaciones/?formato=cliente-NN`), Plano y obras y el enlace directo `arquitecto.html?formato=cliente-NN&tipo=xtanco|cafe`. También `/arquitecto formatos [NN] [xtanco|starbucks]` y `?espacio=altadis-cafe-NN`.
 
+## Vídeo (`/arquitecto video`)
+
+Del recorrido grabado con el móvil a un plano con medidas reales (Carlos, 18-10-2026):
+1. **Grabar** con XpaceScan (https://www.xpaceos.com/scan/): entre 60 y 120 s, despacio, con todas las paredes y algo de suelo y techo. Sube el vídeo por trozos a `scan.admira.store`.
+2. **Reconstruir** en un Mac con COLMAP y ffmpeg: `scan/pipeline/scan-pull.sh <escena>` en xpaceos. Hace fotogramas, COLMAP y la nube `points.ply`, la sube y deja la escena «lista». Necesita `XPACESCAN_TOKEN` de la bóveda. El 18-10-2026 el MBP14 tenía COLMAP; el Mac Studio no.
+3. **Levantar** en el Arquitecto (`arquitecto-video.mjs`, en el navegador), con la escena elegida:
+   - **Vertical:** la dirección en la que la nube es más corta, afinada con el plano del suelo y del techo.
+   - **Suelo y techo:** los picos de alturas; sin pico claro, el borde de la nube.
+   - **Giro:** el que alinea las paredes con los ejes.
+   - **Paredes:** la pared clara más de fuera de cada lado, o en «envolvente», todo lo que cubre la nube (2 %–98 %).
+   - **Muebles grandes:** rejilla de 20 cm entre 12 cm y 2,2 m de alto.
+4. **Escala:** COLMAP no sabe de metros. Una medida tomada en el local fija la escala: alto libre, ancho o fondo. Sin ella se supone un techo de 2,70 m y el plano lo dice. Si el suelo o el techo apenas se ven, mejor el ancho o el fondo; el alto queda «aproximado».
+5. **Salidas:** «Usar este plano» (se guarda como cualquier plano), el JSON y «Pasar a modelar» (gemelo 3D, colocación y DXF).
+6. **Controles a mano:** invertir suelo y techo, girar 90° (cambia qué pared es F) y el ajuste.
+7. **Límites:** sala rectangular; puertas, ventanas y pantallas se marcan después en plano.html. Probado con salas sintéticas (medidas al centímetro con una medida) y con las nubes reales del Xpacio Star Wars, que no es rectangular y da confianza baja.
+
 ## Siguientes pasos
 
 1. Confirmar medidas y distribución real de Starbucks 103. Con «Subir plano» se puede superponer el plano real como calco para cotejarlo.

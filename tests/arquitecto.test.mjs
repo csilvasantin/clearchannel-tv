@@ -29,14 +29,14 @@ const ESTIMACION = {
 };
 
 test('/arquitecto: tres órdenes (y sus alias en inglés), el tipo al crear y nada más', () => {
-  assert.deepEqual(ORDENES, ['crear', 'reformar', 'inventariar', 'detallar', 'modelar']);
+  assert.deepEqual(ORDENES, ['crear', 'reformar', 'inventariar', 'detallar', 'modelar', 'video']);
   assert.deepEqual(parseOrden(''), { orden: '', tipo: '', resto: '' });
   assert.deepEqual(parseOrden('/arquitecto'), { orden: '', tipo: '', resto: '' });
   assert.equal(parseOrden('/arquitecto crear cafetería').orden, 'crear');
   assert.equal(parseOrden('/arquitecto crear cafetería').tipo, 'cafeteria');
   assert.equal(parseOrden(['crear', 'estanco']).tipo, 'estanco');
   assert.equal(parseOrden('/architect create coffee shop').tipo, 'cafeteria');
-  for (const [t, o] of [['reformar', 'reformar'], ['reforma', 'reformar'], ['renovate', 'reformar'], ['inventariar', 'inventariar'], ['inventory', 'inventariar'], ['survey', 'inventariar'], ['nuevo', 'crear'], ['detallar', 'detallar'], ['detail', 'detallar'], ['texturas', 'detallar'], ['taller', 'detallar'], ['modelar', 'modelar'], ['cad', 'modelar'], ['dxf', 'modelar'], ['3d', 'modelar'], ['gemelo', 'modelar'], ['model', 'modelar']]) assert.equal(parseOrden(t).orden, o, t);
+  for (const [t, o] of [['reformar', 'reformar'], ['reforma', 'reformar'], ['renovate', 'reformar'], ['inventariar', 'inventariar'], ['inventory', 'inventariar'], ['survey', 'inventariar'], ['nuevo', 'crear'], ['detallar', 'detallar'], ['detail', 'detallar'], ['texturas', 'detallar'], ['taller', 'detallar'], ['modelar', 'modelar'], ['cad', 'modelar'], ['dxf', 'modelar'], ['3d', 'modelar'], ['gemelo', 'modelar'], ['model', 'modelar'], ['video', 'video'], ['vídeo', 'video'], ['recorrido', 'video'], ['escanear', 'video'], ['xpacescan', 'video']]) assert.equal(parseOrden(t).orden, o, t);
   assert.equal(parseOrden('demoler el local'), null);
   assert.equal(parseOrden('/arquitectura'), null, '/arquitectura es el organigrama, no el Arquitecto');
   assert.deepEqual(parametros('?orden=crear&tipo=kiosco&locationId=lab-1'), { orden: 'crear', tipo: 'kiosco', locationId: 'lab-1' });
@@ -250,7 +250,7 @@ test('la página: shell cuadrático, el Arquitecto a un lado y el plano al otro,
   assert.ok(html.indexOf('window.ADMIRA_SHELL') < html.indexOf('/galaxy-shell.js?v='));
   const head = html.slice(html.indexOf('/galaxy-shell.css'), html.indexOf('</head>'));
   assert.doesNotMatch(head, /rel="stylesheet"|<style[\s>]/, 'ninguna hoja de la página después del shell');
-  for (const id of ['arq-cara-frame', 'tab-crear', 'tab-reformar', 'tab-inventariar', 'tab-detallar', 'tab-modelar', 'arq-crear', 'arq-reformar', 'arq-inventariar', 'arq-detallar', 'arq-modelar', 'dt-card', 'md-card', 'arq-plano-card', 'arq-planta', 'arq-alzado', 'in-tabla', 'in-yokup', 'rf-mic', 'in-mic'])
+  for (const id of ['arq-cara-frame', 'tab-crear', 'tab-reformar', 'tab-inventariar', 'tab-detallar', 'tab-modelar', 'tab-video', 'arq-crear', 'arq-reformar', 'arq-inventariar', 'arq-detallar', 'arq-modelar', 'arq-video', 'dt-card', 'md-card', 'vd-card', 'arq-plano-card', 'arq-planta', 'arq-alzado', 'in-tabla', 'in-yokup', 'rf-mic', 'in-mic'])
     assert.match(html, new RegExp(`id="${id}"`), id);
   assert.match(html, /allow="autoplay; microphone"/, 'el micro de la nube también vale');
   assert.match(js, /window\.AdmiraArquitecto = \{/);
