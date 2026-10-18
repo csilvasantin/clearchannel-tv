@@ -139,3 +139,18 @@
 .dt-vista { display: block; max-width: 100%; max-height: 280px; margin-top: 8px; border-radius: 6px; background: #111; }
 #dt-revision .cab { list-style: none; font-weight: 600; margin-left: -1em; }
 #dt-revision .aviso { opacity: .8; }
+/* «Detallar» · Dónde va: el plano del local en planta; se toca el sitio de cada pieza. */
+.dt-donde { margin-top: 14px; border-top: 1px solid var(--line, rgba(255,255,255,.14)); padding-top: 10px; }
+.dt-titulo-plano { font-size: .95rem; margin: 0 0 4px; }
+.dt-plano { border-radius: 8px; background: #0b0f0e; padding: 6px; }
+.dt-plano-svg { display: block; width: 100%; height: auto; cursor: crosshair; touch-action: manipulation; }
+.dt-plano-svg .sala { fill: #1a201e; stroke: #9aa5a0; stroke-width: .06; }
+.dt-plano-svg .hueco { stroke: #7cffb2; stroke-width: .14; stroke-linecap: round; }
+.dt-plano-svg .mueble { fill: #2c3532; stroke: #5d6a65; stroke-width: .03; }
+.dt-plano-svg .mueble-txt { fill: #c9d3cf; pointer-events: none; }
+.dt-plano-svg .pieza circle { fill: rgba(255,196,77,.28); stroke: #ffc44d; stroke-width: .05; }
+.dt-plano-svg .pieza text { fill: #ffe2a0; font-weight: 700; pointer-events: none; }
+.dt-plano-svg .pieza.activa circle { fill: rgba(124,255,178,.32); stroke: #7cffb2; stroke-width: .08; }
+.dt-plano-svg .pieza.activa text { fill: #eafff3; }
+.dt-sitio { display: grid; gap: 2px; font-size: .78rem; align-content: start; }
+.dt-sitio-valor { font-size: .82rem; line-height: 1.3; opacity: .9; }

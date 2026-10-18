@@ -22,7 +22,7 @@ import {
   planDesdeEstimacion, planDesdeDescripcion, prefijoDe, construirCis, revisarCis, inventarioTraspaso, codificarTraspaso, urlPortal,
   caraUrl, baseLocal, ordenDeNube, CARA_ORIGEN, PREFIJO_RE, normalizarId
 } from './arquitecto-core.mjs?v=20261018-detallar-1';
-import { montarDetallar } from './arquitecto-detallar-ui.mjs?v=20261018-detallar-1';
+import { montarDetallar } from './arquitecto-detallar-ui.mjs?v=20261018-detallar-2';
 import { svgPlanta, svgAlzado, svgMiniatura } from './arquitecto-dibujo.mjs?v=20261015-altadis-1';
 import {
   FORMATOS_ALTADIS, TIPOS_ESPACIO, ZONAS, MONTAJES, REQUISITOS, FISICO, tipoEspacio, formatoDe, zonaDe, celdas, espacioDeFormato, resumenEspacio, urlGemelo, urlStudio, urlArquitecto,
@@ -752,17 +752,23 @@ window.AdmiraArquitecto = {
 };
 function abrirAyuda() { $('arq-ayuda').hidden = false; $('in-cis').hidden = true; $('arq-plano-card').hidden = false; $('dt-card').hidden = true; for (const t of tabs) { t.setAttribute('aria-selected', 'false'); $(t.getAttribute('aria-controls')).hidden = true; } st.orden = ''; pintarPlano(); }
 
-async function cargarPlano(id) {
-  if (!id) return;
+// El plano de un local: el guardado en este navegador o, si no, el publicado (data/xpacios/<id>.json). Lo usa también «detallar».
+async function leerPlano(id) {
+  if (!id || !ID_RE.test(id)) return null;
   const reg = await conTiempo(almacen.leer(id), ESPERA_IDB, null);
-  if (reg && reg.plan) { st.plan = reg.plan; st.registro = reg; st.origen = 'guardado'; return; }
+  if (reg && reg.plan) return { plan: reg.plan, registro: reg, origen: 'guardado' };
   try {
     const r = await fetch(`data/xpacios/${encodeURIComponent(id)}.json`, { cache: 'no-store' });
-    if (r.ok && /json/i.test(r.headers.get('content-type') || '')) { const p = await r.json(); if (p && Array.isArray(p.paredes) && Array.isArray(p.pantallas)) { st.plan = p; st.origen = 'publicado'; } }
+    if (r.ok && /json/i.test(r.headers.get('content-type') || '')) { const p = await r.json(); if (p && Array.isArray(p.paredes) && Array.isArray(p.pantallas)) return { plan: p, origen: 'publicado' }; }
   } catch { /* sin plano publicado */ }
+  return null;
 }
-// «Detallar» (fase 2 del Arquitecto automático): su panel y su taller de recortes.
-const detallar = montarDetallar({ pane: $('arq-detallar'), card: $('dt-card'), getLang: () => lang, status, localInicial: P.locationId });
+async function cargarPlano(id) {
+  const r = await leerPlano(id); if (!r) return;
+  st.plan = r.plan; st.origen = r.origen; if (r.registro) st.registro = r.registro;
+}
+// «Detallar» (fase 2 del Arquitecto automático): su panel, su taller de recortes y el plano del local para decir dónde va cada pieza.
+const detallar = montarDetallar({ pane: $('arq-detallar'), card: $('dt-card'), getLang: () => lang, status, localInicial: P.locationId, leerPlano: async id => (await leerPlano(id))?.plan || null });
 async function init() {
   traducir();
   fillDims(medidasMedias(st.tipo));
