@@ -21,8 +21,8 @@
     ]
   },
   "novedades": [
-    "El Supervisor tiene cara: Admirito con gorra de vigilante y ojo de cámara, en el panel del avatar al usar /supervisor y /supervisor estado.",
-    "⌘ Experto: /supervisor y /supervisor estado son ya el verbo común de la suite, igual que en Studio, Store, TV y App; el parte sale sin salir de admira.biz y la cámara sigue en Admira Live."
+    "Con la sesión iniciada, el botón de idioma de la barra deja su sitio al ⌘ del modo Experto, en la portada y en todas las páginas; el idioma sigue en ☰ Opciones.",
+    "Sin sesión, la barra no cambia: en la portada, la pastilla ENG/ESP en el sitio de ⌘."
   ],
   "nativeClearChannel": {
     "enabled": true,

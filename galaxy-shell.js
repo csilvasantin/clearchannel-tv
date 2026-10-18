@@ -126,7 +126,21 @@
     return {header, options, advanced, expert, html: [header, options, advanced, expert].join('\n')};
   }
 
-  const api = {PANEL_IDS, COMMON_OPTIONS, esc, languageKey, preferredLanguage, normalizeConfig, markup};
+  // Con sesión, ⌘ ocupa el sitio de la pastilla de idioma (Carlos, 18-oct-2026: «una vez loginados, el icono de
+  // selección de idioma pasa a ser el modo experto»). Sesión = la de login-google.js (omnip-bo-gtoken) con el ID token
+  // de Google sin caducar; la misma regla que su stored(). Se mira al pintar para que la barra no parpadee.
+  function sesionVigente(storage, now = Date.now()) {
+    try {
+      const o = JSON.parse((storage && storage.getItem('omnip-bo-gtoken')) || 'null');
+      let p = o && o.token ? String(o.token).split('.')[1] : '';
+      if (!p) return false;
+      p = p.replace(/-/g, '+').replace(/_/g, '/');
+      while (p.length % 4) p += '=';
+      const c = JSON.parse(typeof atob === 'function' ? atob(p) : Buffer.from(p, 'base64').toString('binary'));
+      return !!(c && c.exp && c.exp * 1000 > now);
+    } catch (_) { return false; }
+  }
+  const api = {PANEL_IDS, COMMON_OPTIONS, esc, languageKey, preferredLanguage, normalizeConfig, markup, sesionVigente};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof document === 'undefined') return;
 
@@ -163,6 +177,15 @@
   }
   advancedPanel.querySelector('.galaxy-shell-empty').hidden = !!advancedActions.children.length;
   for (const old of document.querySelectorAll('body > header:not(.galaxy-shell):not([data-shell-keep]), [data-shell-slots]')) old.remove();
+  let sesion = false;
+  try { sesion = sesionVigente(root.localStorage); } catch (_) {}
+  if (sesion) html.classList.add('admira-con-sesion');
+  if (!document.getElementById('galaxy-shell-sesion')) {
+    const regla = document.createElement('style');
+    regla.id = 'galaxy-shell-sesion';
+    regla.textContent = 'html.admira-con-sesion #header-lang-toggle{display:none!important}';
+    document.head.append(regla);
+  }
   document.body.prepend(...shellNodes);
   document.body.classList.add('galaxy-shell-page');
   html.dataset.shell = 'galaxy';
