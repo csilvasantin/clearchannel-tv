@@ -172,3 +172,11 @@
 .vd-opciones { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 4px 0 8px; font-size: .82rem; }
 .vd-lienzo { display: block; width: 100%; height: auto; border-radius: 6px; }
 #vd-escena { width: 100%; }
+/* «Fotos»: fotos por pared (miniaturas con su pared) y editor de la 360 (foto equirectangular con las pantallas marcadas). */
+.ft-lista { display: grid; gap: 10px; }
+.ft-grupo-cab { font-size: .8rem; font-weight: 600; opacity: .85; margin: 2px 0 4px; }
+.ft-mini { cursor: zoom-in; }
+.ft-lista figcaption select { width: 100%; font-size: .72rem; }
+.ft-foto-img { display: block; max-width: 100%; max-height: 60vh; margin: 6px auto 10px; border-radius: 6px; }
+.ft-lienzo { display: block; width: 100%; height: auto; cursor: crosshair; }
+.ft-marcadas { list-style: none; padding: 0; margin: 4px 0 8px; display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: .8rem; }

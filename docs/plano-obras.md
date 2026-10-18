@@ -42,6 +42,12 @@ Los mosaicos se mueven enteros salvo que se desmarque «Mover el mosaico entero�
   - `gemelo`: el id del elemento en el gemelo 2D/Matrix de XpaceOS (`starbucks-room.js`).
   - `base`: altura de montaje (el iPad sobre la barra, 0,96 m).
   - `itil`: el código del CI en Yokup. No pasa a la copia pública del plano.
+- **Panorama** (opcional): la foto 360 del local para la vista «360 · Matrix» del gemelo. Mismo esquema que los centros de Starbucks (`xpacios/starbucks-centros/centros.json` de xpaceos):
+  - `src`, `srcMovil` y `previa`: rutas de xpaceos y admira.store, `/xpacios/…`.
+  - `base`: [ancho, alto] de la foto, 2:1.
+  - `vista`: `yaw`, `pitch`, `fov`, `sphereX` y `sphereY`.
+  - `pantallas`: `[{id, esquinas}]`, en píxeles de la foto: arriba-izquierda, arriba-derecha, abajo-derecha, abajo-izquierda. Una pantalla puede cruzar el borde de la foto.
+  - La copia pública lo conserva, porque ya es público.
 - **Dispositivos** (opcional): players, webcam y demás CI que no son pantallas, con `id`, `nombre`, `categoria` (`player` o `iot`), `rol`, `pared` e `itil`. Con `s` (y `z`) se sitúan en su pared; un player sin `s` se pinta al final de las pantallas que mueve (las de su mismo `player`). En planta salen como marcas pequeñas con su CI en el título, y en el inventario, en la tabla «Players y dispositivos · ITIL».
 - **Yokup** (opcional): `yokup.site_id`, `yokup.portal` y `yokup.cis`, el establecimiento y sus CI en el maestro del ITIL. Con `yokup.portal` (https y dominio de Yokup), el enlace de vuelta de la página es «← Ver en Yokup (ITIL)» en lugar de «← Volver a la ficha», porque ese Xpacio no está en el mapa comercial.
 - **Escala del dibujo:** los rótulos, los trazos finos y los márgenes se escalan con el tamaño del Xpacio (`--k`: 1 en un local de 14 m como Starbucks y proporcional en salas pequeñas), para que se lean igual en pantalla. Paredes, huecos, muebles y pantallas van siempre a su medida real.
@@ -223,6 +229,25 @@ Del recorrido grabado con el móvil a un plano con medidas reales (Carlos, 18-10
 5. **Salidas:** «Usar este plano» (se guarda como cualquier plano), el JSON y «Pasar a modelar» (gemelo 3D, colocación y DXF).
 6. **Controles a mano:** invertir suelo y techo, girar 90° (cambia qué pared es F) y el ajuste.
 7. **Límites:** sala rectangular; puertas, ventanas y pantallas se marcan después en plano.html. Probado con salas sintéticas (medidas al centímetro con una medida) y con las nubes reales del Xpacio Star Wars, que no es rectangular y da confianza baja.
+
+## Fotos (`/arquitecto fotos`)
+
+Las fotos del local por pared y su 360 como vista Matrix del gemelo (Carlos, 18-10-2026):
+1. **Fotos de las paredes:**
+   - Se suben varias a la vez y cada una se asigna a una pared del plano (o «sin pared»).
+   - Se guardan reducidas a 1.600 px en este navegador (IndexedDB `admira-fotos`), como mucho 80 por local.
+   - **No se publican nunca**: pueden salir personas.
+2. **Foto 360:** equirectangular 2:1 (Insta360).
+   - El Arquitecto prepara sus tres tamaños: hasta 8K en WebP, 4K y la previa de 2.400 px.
+   - Se marcan la vista inicial y las cuatro esquinas de cada pantalla, en cualquier orden.
+   - La conversión entre píxel y vista es la del visor de los centros: yaw = 360·x/ancho + 180 y pitch = 90 − 180·y/alto.
+   - Si el local ya tiene su 360 en el plano, se abre la publicada para revisar sus pantallas.
+3. **Publicar:**
+   - Exige confirmar que no salen personas reconocibles.
+   - Se descargan el bloque `panorama` y las tres imágenes (`/xpacios/360/<local>/`).
+   - Neo las sube a xpaceos y admira.store, añade el bloque al plano y rehace la copia pública con respaldo. Hasta entonces el gemelo no las ve.
+4. **En el gemelo 3D desde el plano:** la vista «360 · Matrix» (`?vista=360`) pinta la foto con el visor de los centros. De momento sin cuadros encima de las pantallas.
+5. **Paseo de Gràcia** lleva ya la 360 del visor de centros (Insta360 X4, 8192 × 4096, 6 menús marcados). En esa foto salen dos baristas; ya era pública en los centros.
 
 ## Siguientes pasos
 
