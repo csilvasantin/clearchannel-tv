@@ -10,10 +10,9 @@
     "deployedAt": "2026-10-09T00:09:34+0200",
     "dirty": false,
     "novedades": [
-      "SneakerStore: fondo con pantalla LED y puerta central; mesa de caja pegada a la pared derecha.",
-      "El LED comparte el canal horizontal validado; nueva vista Fondo LED y migración conservando las ediciones.",
-      "Guía ES/EN, tutorial y contratos MCP actualizados."
-    ],
+    "Arquitecto: nueva orden /arquitecto video. Del recorrido grabado con el móvil (XpaceScan) a un plano con medidas reales: suelo, techo y paredes salen de la nube 3D, y la escala de una medida que tomes en el local (alto, ancho o fondo).",
+    "El plano del vídeo se guarda como cualquier otro y pasa a «modelar» con un botón: gemelo 3D, colocación y planta en DXF."
+  ],
     "domains": [
       "www.clearchannel.tv",
       "www.admira.app",

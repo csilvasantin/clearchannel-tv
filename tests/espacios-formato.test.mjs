@@ -301,7 +301,7 @@ test('la página: «Espacio por formato · Altadis 18» en crear, con galería, 
     assert.match(html, new RegExp(`id="${id}"`), id);
   assert.match(html, /Espacio por formato · Altadis 18/);
   assert.match(html, /\/arquitecto formatos/);
-  assert.match(html, /arquitecto\.mjs\?v=20261018-modelar-1/);
+  assert.match(html, /arquitecto\.mjs\?v=20261018-video-1/);
   assert.match(js, /from '\.\/espacios-formato\.mjs\?v=20261015-altadis-1'/);
   assert.match(read('espacios-formato.mjs'), /from '\.\/plano-core\.mjs\?v=20261014-plano-1'/, 'el mismo plano-core que el resto del estudio');
   assert.match(read('espacios-formato.mjs'), /from '\.\/plano-generador\.mjs\?v=20261014-foto-1'/);

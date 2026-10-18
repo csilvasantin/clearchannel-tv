@@ -168,3 +168,7 @@
 .md-tabla { width: 100%; border-collapse: collapse; font-size: .8rem; }
 .md-tabla th, .md-tabla td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line, rgba(255,255,255,.12)); white-space: nowrap; }
 .md-tabla th { opacity: .7; font-weight: 600; }
+/* «Video»: del recorrido de XpaceScan al plano. Opciones del levantamiento y la nube vista desde arriba. */
+.vd-opciones { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 4px 0 8px; font-size: .82rem; }
+.vd-lienzo { display: block; width: 100%; height: auto; border-radius: 6px; }
+#vd-escena { width: 100%; }
