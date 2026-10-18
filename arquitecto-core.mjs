@@ -23,7 +23,7 @@ import { ID_RE, normalizarId } from './plano-subida.mjs?v=20261014-subir-1';
 // con su procedencia (modelo, confianza) y las pantallas vistas desolapadas. El Arquitecto la reutiliza tal cual.
 import { planoDesdeEstimacion, ESTIMADOR } from './plano-foto.mjs?v=20261014-foto-2';
 
-export const ORDENES = Object.freeze(['crear', 'reformar', 'inventariar']);
+export const ORDENES = Object.freeze(['crear', 'reformar', 'inventariar', 'detallar']);
 export const ESTUDIO_URL = 'https://www.admira.biz/arquitecto.html';
 export const PORTAL_IMPORTAR = 'https://admira.app/retailer';
 export const TRASPASO_SCHEMA = 'admira.arquitecto-inventario/1';
@@ -52,6 +52,8 @@ const ALIAS_ORDEN = {
   crear: 'crear', crea: 'crear', create: 'crear', nuevo: 'crear', nueva: 'crear', new: 'crear', inventar: 'crear',
   reformar: 'reformar', reforma: 'reformar', reform: 'reformar', renovar: 'reformar', renovate: 'reformar', renovation: 'reformar', obra: 'reformar', obras: 'reformar',
   inventariar: 'inventariar', inventario: 'inventariar', inventaria: 'inventariar', inventory: 'inventariar', survey: 'inventariar', levantamiento: 'inventariar', itil: 'inventariar',
+  // /arquitecto detallar (Carlos, 18-10-2026): fotos de objetos → receta del Taller 3D de xpaceos (arquitecto-detallar.mjs).
+  detallar: 'detallar', detalla: 'detallar', detalle: 'detallar', detail: 'detallar', details: 'detallar', texturizar: 'detallar', texturas: 'detallar', textures: 'detallar', taller: 'detallar', workshop: 'detallar',
   // /arquitecto formatos [NN] [xtanco|starbucks]: «Espacio por formato · Altadis 18» dentro de crear (DCL-d7966deb02734a6f34beb54e).
   formatos: 'crear', formato: 'crear', formats: 'crear', format: 'crear', altadis: 'crear'
 };

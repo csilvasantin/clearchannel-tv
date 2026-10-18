@@ -7,6 +7,8 @@
 //   · reformar    → órdenes (lo contado + fotos/vídeo) aplicadas como Propuesta de obra (localStorage admira.plano.<id>,
 //                   la misma clave que plano.html con ?modo=obra) y la orden de obra admira.orden-obra/1 en JSON.
 //   · inventariar → /xpacio/estimar o la descripción → plano + CI ITIL editables → traspaso al Portal del comercio.
+//   · detallar    → fotos de los objetos → recortes enderezados en el navegador → receta del Taller 3D de xpaceos
+//                   (arquitecto-detallar.mjs y arquitecto-detallar-ui.mjs). Las fotos no salen del navegador.
 //   · crear · «Espacio por formato · Altadis 18» (DCL-d7966deb02734a6f34beb54e) → espacioDeFormato de espacios-formato.mjs:
 //                   los 18 formatos de Altadis, cada uno en un Xtanco o un Starbucks, con su ficha, la galería «Los 18» y
 //                   los enlaces al gemelo (admira.store) y a las adaptaciones (admira.studio). ?formato=cliente-NN&tipo=…
@@ -19,7 +21,8 @@ import {
   ORDENES, CATEGORIAS, MAX_ORDENES, parseOrden, parametros, tipoDe, leerDescripcion, medidasDe, interpretarReforma, reformaDesdeEstimacion, aplicarReforma,
   planDesdeEstimacion, planDesdeDescripcion, prefijoDe, construirCis, revisarCis, inventarioTraspaso, codificarTraspaso, urlPortal,
   caraUrl, baseLocal, ordenDeNube, CARA_ORIGEN, PREFIJO_RE, normalizarId
-} from './arquitecto-core.mjs?v=20261015-altadis-1';
+} from './arquitecto-core.mjs?v=20261018-detallar-1';
+import { montarDetallar } from './arquitecto-detallar-ui.mjs?v=20261018-detallar-1';
 import { svgPlanta, svgAlzado, svgMiniatura } from './arquitecto-dibujo.mjs?v=20261015-altadis-1';
 import {
   FORMATOS_ALTADIS, TIPOS_ESPACIO, ZONAS, MONTAJES, REQUISITOS, FISICO, tipoEspacio, formatoDe, zonaDe, celdas, espacioDeFormato, resumenEspacio, urlGemelo, urlStudio, urlArquitecto,
@@ -30,13 +33,13 @@ import { prepararFotos, estimar, urlEstimador, origenEstimador } from './arquite
 const $ = id => document.getElementById(id);
 const textos = {
   es: {
-    back: '← Plano y obras', eyebrow: 'Estudio del Arquitecto · Xpacios', title: 'Crear, reformar o inventariar',
-    intro: 'El Arquitecto es Admirito con casco de obra: inventa Xpacios nuevos, reforma los que hay desde una foto, un vídeo o lo que le cuentes, y hace su inventario ITIL para darlo de alta en Yokup.',
+    back: '← Plano y obras', eyebrow: 'Estudio del Arquitecto · Xpacios', title: 'Crear, reformar, inventariar o detallar',
+    intro: 'El Arquitecto es Admirito con casco de obra: inventa Xpacios nuevos, reforma los que hay desde una foto, un vídeo o lo que le cuentes, hace su inventario ITIL para darlo de alta en Yokup y detalla sus objetos desde fotos para el Taller 3D.',
     arquitecto: 'El Arquitecto', hide: 'Ocultar al Arquitecto', show: 'Mostrar al Arquitecto', caraTitle: 'El Arquitecto, Admirito con casco de obra', tabs: 'Órdenes del Arquitecto',
-    crear: 'Crear', reformar: 'Reformar', inventariar: 'Inventariar',
+    crear: 'Crear', reformar: 'Reformar', inventariar: 'Inventariar', detallar: 'Detallar',
     ayudaLead: '¿Qué hacemos? Pídemelo aquí, con el micro de la nube o en ⌘ Experto:',
     ayudaCrear: 'un Xpacio nuevo, inventado según el tipo (o con tus medidas)', ayudaReformar: 'una reforma del plano abierto desde una foto, un vídeo o lo que me cuentes, como propuesta de obra',
-    ayudaInventariar: 'el plano y el inventario ITIL desde una foto, un vídeo o una descripción; al final, alta en Yokup',
+    ayudaInventariar: 'el plano y el inventario ITIL desde una foto, un vídeo o una descripción; al final, alta en Yokup', ayudaDetallar: 'las fotos de los objetos de un local (cestas, carteles, productos) → una receta del Taller 3D con sus texturas; las fotos no salen del navegador',
     ayudaFormatos: 'los 18 espacios Altadis: cada formato de pantalla en un Xtanco o en un Starbucks',
     modoCrear: 'Qué crear', modoTipo: 'Xpacio por tipo', modoFormato: 'Espacio por formato · Altadis 18',
     formatosLead: 'Los 18 formatos de pantalla que pide Altadis, cada uno en su espacio tipo: un Xtanco o una cafetería Starbucks, para crear, adaptar y enseñar el contenido a su medida.',
@@ -104,19 +107,19 @@ const textos = {
     traspasoGrande: 'El inventario es demasiado grande para la dirección: descárgalo y súbelo en el Portal del comercio («Importar inventario del Arquitecto»).',
     demasiadasOrdenes: n => `Como mucho ${n} órdenes por reforma: el resto, en otra.`,
     noCisValidos: 'Corrige los errores del inventario antes del alta.',
-    vozCrear: 'Creo el Xpacio con lo que me has contado.', vozOrden: o => `Vamos con «${o}».`, pideFotos: 'Sube fotos o un vídeo del local, o cuéntame cómo es.', pideReforma: 'Cuéntame qué cambiamos o súbeme una foto de cómo debe quedar.',
-    ayudaOrdenes: 'Arquitecto: /arquitecto crear [tipo] · /arquitecto formatos · /arquitecto reformar · /arquitecto inventariar', ordenDesconocida: x => `El Arquitecto no conoce «${x}». Prueba: crear, formatos, reformar o inventariar.`,
+    vozCrear: 'Creo el Xpacio con lo que me has contado.', vozOrden: o => `Vamos con «${o}».`, pideFotos: 'Sube fotos o un vídeo del local, o cuéntame cómo es.', pideDetalle: 'Sube fotos de los objetos y marca las cuatro esquinas de cada cara plana: yo la enderezo y preparo la receta del taller.', pideReforma: 'Cuéntame qué cambiamos o súbeme una foto de cómo debe quedar.',
+    ayudaOrdenes: 'Arquitecto: /arquitecto crear [tipo] · /arquitecto formatos · /arquitecto reformar · /arquitecto inventariar · /arquitecto detallar', ordenDesconocida: x => `El Arquitecto no conoce «${x}». Prueba: crear, formatos, reformar o inventariar.`,
     abierta: o => `Arquitecto: orden «${o}» abierta en el estudio.`, ocultoMsg: 'Arquitecto oculto (vuelve con /arquitecto).', vistoMsg: 'Arquitecto a la vista.',
     dictadoNo: 'Este navegador no tiene dictado: escribe o usa el micro de la nube.', escuchando: 'Escuchando… (puedes corregir el texto)'
   },
   en: {
-    back: '← Floor plan and works', eyebrow: 'Architect studio · Xpaces', title: 'Create, renovate or survey',
-    intro: 'The Architect is Admirito in a hard hat: he invents new Xpaces, renovates existing ones from a photo, a video or what you tell him, and builds their ITIL inventory to register it in Yokup.',
+    back: '← Floor plan and works', eyebrow: 'Architect studio · Xpaces', title: 'Create, renovate, survey or detail',
+    intro: 'The Architect is Admirito in a hard hat: he invents new Xpaces, renovates existing ones from a photo, a video or what you tell him, builds their ITIL inventory to register it in Yokup, and details their objects from photos for the 3D workshop.',
     arquitecto: 'The Architect', hide: 'Hide the Architect', show: 'Show the Architect', caraTitle: 'The Architect, Admirito in a hard hat', tabs: 'Architect commands',
-    crear: 'Create', reformar: 'Renovate', inventariar: 'Survey',
+    crear: 'Create', reformar: 'Renovate', inventariar: 'Survey', detallar: 'Detail',
     ayudaLead: 'What shall we do? Ask me here, with the cloud\'s microphone or in ⌘ Expert:',
     ayudaCrear: 'a new Xpace, invented from its type (or with your measurements)', ayudaReformar: 'a renovation of the open plan from a photo, a video or what you tell me, as a works proposal',
-    ayudaInventariar: 'the floor plan and ITIL inventory from a photo, a video or a description; then, registration in Yokup',
+    ayudaInventariar: 'the floor plan and ITIL inventory from a photo, a video or a description; then, registration in Yokup', ayudaDetallar: 'photos of a venue’s objects (baskets, signs, products) → a 3D-workshop recipe with their textures; photos never leave the browser',
     ayudaFormatos: 'the 18 Altadis spaces: each screen format in a Xtanco or in a Starbucks',
     modoCrear: 'What to create', modoTipo: 'Xpace by type', modoFormato: 'Space by format · Altadis 18',
     formatosLead: 'The 18 screen formats Altadis asks for, each in its own typical space: a Xtanco or a Starbucks café, to create, adapt and show content made to measure.',
@@ -182,8 +185,8 @@ const textos = {
     traspasoGrande: 'The inventory is too large for the address: download it and upload it in the retailer portal (“Import the Architect\'s inventory”).',
     demasiadasOrdenes: n => `At most ${n} orders per renovation: the rest in another one.`,
     noCisValidos: 'Fix the inventory errors before registering.',
-    vozCrear: 'Creating the Xpace from what you told me.', vozOrden: o => `Let's go with “${o}”.`, pideFotos: 'Upload photos or a video of the space, or tell me what it is like.', pideReforma: 'Tell me what to change or upload a photo of how it should look.',
-    ayudaOrdenes: 'Architect: /arquitecto crear [type] · /arquitecto formatos · /arquitecto reformar · /arquitecto inventariar', ordenDesconocida: x => `The Architect does not know “${x}”. Try: crear, formatos, reformar or inventariar.`,
+    vozCrear: 'Creating the Xpace from what you told me.', vozOrden: o => `Let's go with “${o}”.`, pideFotos: 'Upload photos or a video of the space, or tell me what it is like.', pideDetalle: 'Upload photos of the objects and mark the four corners of each flat face: I straighten it and prepare the workshop recipe.', pideReforma: 'Tell me what to change or upload a photo of how it should look.',
+    ayudaOrdenes: 'Architect: /arquitecto crear [type] · /arquitecto formatos · /arquitecto reformar · /arquitecto inventariar · /arquitecto detallar', ordenDesconocida: x => `The Architect does not know “${x}”. Try: crear, formatos, reformar or inventariar.`,
     abierta: o => `Architect: “${o}” open in the studio.`, ocultoMsg: 'Architect hidden (/arquitecto brings him back).', vistoMsg: 'Architect in sight.',
     dictadoNo: 'This browser has no dictation: type or use the cloud\'s microphone.', escuchando: 'Listening… (you can edit the text)'
   }
@@ -261,6 +264,8 @@ function deVoz({ orden, texto }) {
     crear(!(d.ancho && d.largo));
     return;
   }
+  // Detallar se trabaja con las fotos y las esquinas que marca quien detalla: por voz sólo se explica.
+  if (o === 'detallar') { nube('escuchando', { texto: tr('pideDetalle') }); return; }
   // Sólo se trabaja solo con lo que se entiende («desde una foto» o «este local» no describen nada: se espera).
   const util = o === 'reformar' ? interpretarReforma(resto, (st.plan && st.plan.pantallas) || []).ops.length > 0
     : (() => { const d = leerDescripcion(resto); return !!(d.pantallas.length || d.ancho || d.m2 || d.camaras); })();
@@ -279,13 +284,14 @@ function abrirOrden(orden, { silencio = false, foco = false } = {}) {
   st.orden = orden;
   for (const t of tabs) { const on = t.dataset.orden === orden; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; $(t.getAttribute('aria-controls')).hidden = !on; if (on && foco) t.focus(); }
   $('arq-ayuda').hidden = true;
+  $('arq-plano-card').hidden = orden === 'detallar'; $('dt-card').hidden = orden !== 'detallar';
   if (orden === 'reformar') pintarBaseReforma();
   $('in-cis').hidden = !(orden === 'inventariar' && st.inv);
   if (orden === 'inventariar') { $('in-abierto-l').hidden = !st.plan; if (!$('in-prefijo').value) $('in-prefijo').value = prefijoDe((st.plan && st.plan.id) || normalizarId($('in-nombre').value) || 'xpacio'); }
   pintarPlano();
   if (!silencio) {
     if (orden === 'reformar' && !st.plan) nube('dudando', { texto: tr('sinBaseVoz') });
-    else nube('escuchando', { orden });
+    else nube('escuchando', { orden, ...(orden === 'detallar' ? { texto: tr('pideDetalle') } : {}) });
   }
   return true;
 }
@@ -713,7 +719,7 @@ function traducir() {
   document.querySelectorAll('[data-t-title]').forEach(n => n.setAttribute('title', tr(n.dataset.tTitle)));
   $('arq-toggle').textContent = tr(document.querySelector('.arq-estudio').classList.contains('sin-arquitecto') ? 'show' : 'hide');
   $('arq-estado').textContent = tr('estados')[st.estado] || '';
-  pintarTipos(); pintarBaseReforma(); pintarFormatos();
+  pintarTipos(); pintarBaseReforma(); pintarFormatos(); detallar.setLang();
   if (st.creado && st.creado.formato) pintarFicha(st.creado);
   if (st.ops.length) pintarReforma();
   if (st.inv) pintarCis();
@@ -744,7 +750,7 @@ window.AdmiraArquitecto = {
   lanzar(arg) { return window.AdmiraArquitecto.orden(String(arg || '').replace(/-/g, ' ')); },
   estado() { return { orden: st.orden, estado: st.estado, plan: st.plan && st.plan.id, inventario: st.inv && st.inv.id, cis: st.cis.length, ops: st.ops.length }; }
 };
-function abrirAyuda() { $('arq-ayuda').hidden = false; $('in-cis').hidden = true; for (const t of tabs) { t.setAttribute('aria-selected', 'false'); $(t.getAttribute('aria-controls')).hidden = true; } st.orden = ''; pintarPlano(); }
+function abrirAyuda() { $('arq-ayuda').hidden = false; $('in-cis').hidden = true; $('arq-plano-card').hidden = false; $('dt-card').hidden = true; for (const t of tabs) { t.setAttribute('aria-selected', 'false'); $(t.getAttribute('aria-controls')).hidden = true; } st.orden = ''; pintarPlano(); }
 
 async function cargarPlano(id) {
   if (!id) return;
@@ -755,6 +761,8 @@ async function cargarPlano(id) {
     if (r.ok && /json/i.test(r.headers.get('content-type') || '')) { const p = await r.json(); if (p && Array.isArray(p.paredes) && Array.isArray(p.pantallas)) { st.plan = p; st.origen = 'publicado'; } }
   } catch { /* sin plano publicado */ }
 }
+// «Detallar» (fase 2 del Arquitecto automático): su panel y su taller de recortes.
+const detallar = montarDetallar({ pane: $('arq-detallar'), card: $('dt-card'), getLang: () => lang, status, localInicial: P.locationId });
 async function init() {
   traducir();
   fillDims(medidasMedias(st.tipo));
