@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {leerTablero, leerSupervisor, veredicto, esperado, textoVeredicto, parteSupervisor, SUPERVISOR_API, FRESCO_MS, VEREDICTO_MS} from '../supervisor-core.mjs';
-import {montarSupervisor} from '../supervisor-live.mjs';
+import {montarSupervisor, caraSupervisorUrl, mensajeCara, esDeCara, ordenCara, CARA_ORIGEN} from '../supervisor-live.mjs';
 import {BIZ_ASSET_FILES} from '../server/biz-assets.mjs';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -126,7 +126,7 @@ function fakeDom(ids) {
       set textContent(v) { this._text = String(v); this.children = []; },
       setAttribute(k, v) { this.attrs[k] = String(v); }, getAttribute(k) { return k in this.attrs ? this.attrs[k] : null; },
       append(...xs) { this.children.push(...xs); }, replaceChildren() { this._text = ''; this.children = []; },
-      querySelectorAll() { return []; }};
+      querySelectorAll() { return []; }, _on: {}, addEventListener(t, f) { (this._on[t] ||= []).push(f); }};
     return el;
   };
   const byId = Object.fromEntries(ids.map(id => [id, mk('div')]));
@@ -134,8 +134,11 @@ function fakeDom(ids) {
   const doc = {hidden: false, documentElement: {lang: 'es'}, getElementById: id => byId[id] || null, createElement: mk,
     querySelectorAll: () => Object.values(byId).filter(e => e.dataset.sv),
     addEventListener(t, f) { (listeners[t] ||= []).push(f); }};
-  const win = {addEventListener(t, f) { (listeners['win:' + t] ||= []).push(f); }, removeEventListener() {}};
-  return {doc, win, byId, fire: (t, detail) => Promise.all((listeners['win:' + t] || []).map(f => f({detail})))};
+  const win = {addEventListener(t, f) { (listeners['win:' + t] ||= []).push(f); },
+    removeEventListener(t, f) { listeners['win:' + t] = (listeners['win:' + t] || []).filter(g => g !== f); }};
+  return {doc, win, byId, fire: (t, detail) => Promise.all((listeners['win:' + t] || []).map(f => f({detail}))),
+    // Un evento tal cual (message, admira:commands-ready) a la ventana.
+    emit: (t, ev = {}) => (listeners['win:' + t] || []).splice(0).forEach(f => { f(ev); if (t !== 'admira:commands-ready') (listeners['win:' + t] ||= []).push(f); })};
 }
 
 test('el banco pinta el Supervisor y da el veredicto de la orden de Bugito', async () => {
@@ -170,7 +173,7 @@ test('el banco pinta el Supervisor y da el veredicto de la orden de Bugito', asy
 test('cableado: tarjeta antes del banco, botones de pantalla con veredicto, /supervisor común de la suite y assets de Biz', () => {
   const html = read('bugito.html'), ui = read('bugito.mjs'), panel = read('expert-panel.js'), live = read('supervisor-live.mjs');
   assert.ok(html.indexOf('id="bb-supervisor"') > html.indexOf('id="bugito-xpacios"') && html.indexOf('id="bb-supervisor"') < html.indexOf('class="bb-grid"'));
-  assert.match(html, /<script type="module" src="supervisor-live\.mjs\?v=20261018-supervisor-1"><\/script>/);
+  assert.match(html, /<script type="module" src="supervisor-live\.mjs\?v=20261018-cara-banco-1"><\/script>/);
   assert.match(html, /<a href="#bb-supervisor" data-sv="ir">/);
   assert.doesNotMatch(html, /data-bb="[^"]*"[^>]*id="bb-sv-/, 'los textos del Supervisor son suyos (data-sv), no del diccionario de bugito.mjs');
   assert.match(ui, /dispatchEvent\(new CustomEvent\('bugito:command-queued', \{ detail: \{ fault: apagar \? 'display-off' : 'display-on'/);
@@ -193,4 +196,155 @@ test('contrato con la suite: leerSupervisor, parteSupervisor y textoEstado', asy
   assert.equal(core.textoEstado('encendida', 'es'), 'Pantalla encendida');
   assert.equal(core.textoEstado('sin-senal', 'en'), 'No signal from Supervisor');
   assert.ok(core.parteSupervisor(l, 'es').length >= 2);
+});
+
+// La cara del Supervisor en su tarjeta (18-oct-2026): contrato de admiranext.com/mcp/SUPERVISOR.md.
+test('la cara: URL exacta, estados del tablero y del veredicto tal cual y ticket sólo con una INC- válida', () => {
+  assert.equal(CARA_ORIGEN, 'https://digitalavatar.ai');
+  assert.equal(caraSupervisorUrl('es'), 'https://digitalavatar.ai/nube.html?personaje=supervisor&embed=1&audio=off&lang=es');
+  assert.equal(caraSupervisorUrl('en'), 'https://digitalavatar.ai/nube.html?personaje=supervisor&embed=1&audio=off&lang=en');
+  assert.equal(new URL(caraSupervisorUrl('fr')).searchParams.get('lang'), 'es');
+  // Cada lectura del tablero, tal cual (la cara la traduce: vigilando, alerta, ciego, sin-senal).
+  for (const estado of ['encendida', 'apagada', 'sin-dato'])
+    assert.deepEqual(mensajeCara({lectura: leerTablero(tablero({estado, abiertas: [VIEJA]}), T0), lang: 'es'}),
+      {type: 'da-supervisor', estado, lang: 'es', ticket: 'INC-KOBKYX'}, estado);
+  assert.deepEqual(mensajeCara({lectura: leerTablero(null, T0), lang: 'en'}), {type: 'da-supervisor', estado: 'sin-senal', lang: 'en'});
+  assert.deepEqual(mensajeCara({lectura: leerTablero(tablero(), T0)}), {type: 'da-supervisor', estado: 'encendida', lang: 'es'});
+  assert.equal(mensajeCara({}), null);
+  // Tras la orden de Bugito, el veredicto tal cual con texto = textoVeredicto() y la incidencia INC-.
+  const desde = T0, antes = leerTablero(tablero({abiertas: [VIEJA]}), T0 - 1000), fin = T0 + VEREDICTO_MS + 1000;
+  const espera = veredicto({fault: 'display-off', antes, lectura: antes, desde, ahora: T0 + 2000});
+  assert.deepEqual(mensajeCara({veredicto: espera, lectura: antes, lang: 'es'}),
+    {type: 'da-supervisor', estado: 'esperando', espera: 'apagada', lang: 'es', texto: textoVeredicto(espera, 'es')});
+  const vista = leerTablero(tablero({estado: 'apagada', publicado: T0 + 9000, capturada: T0 + 8000, abiertas: [VIEJA]}), T0 + 9000);
+  const visto = veredicto({fault: 'display-off', antes, lectura: vista, desde, ahora: T0 + 9000});
+  assert.deepEqual(mensajeCara({veredicto: visto, lectura: vista, lang: 'en'}),
+    {type: 'da-supervisor', estado: 'visto', espera: 'apagada', ticket: 'INC-KOBKYX', lang: 'en', texto: textoVeredicto(visto, 'en')});
+  const igual = leerTablero(tablero({publicado: fin, capturada: fin - 1000, abiertas: [VIEJA]}), fin);
+  const sinNueva = mensajeCara({veredicto: veredicto({fault: 'popup', antes, lectura: igual, desde, ahora: fin}), lectura: igual});
+  assert.deepEqual([sinNueva.estado, sinNueva.espera, sinNueva.ticket], ['sin-nueva', 'incidencia', 'INC-KOBKYX']);
+  const noVisto = mensajeCara({veredicto: veredicto({fault: 'black', antes: leerTablero(tablero(), T0), lectura: leerTablero(tablero({publicado: fin, capturada: fin - 1000}), fin), desde, ahora: fin})});
+  assert.deepEqual([noVisto.estado, noVisto.ticket], ['no-visto', undefined]);
+  for (const m of [sinNueva, noVisto]) assert.ok(m.texto.length > 0 && m.texto.length <= 240);
+  // Una orden sin veredicto deja hablar al tablero; un id raro nunca llega a la cara como ticket.
+  assert.equal(mensajeCara({veredicto: {estado: 'desconocido', espera: ''}, lectura: igual}).estado, 'encendida');
+  assert.equal('ticket' in mensajeCara({veredicto: {estado: 'visto', espera: 'apagada', por: 'camara', incidencia: {id: '<img src=x>'}}}), false);
+});
+
+test('la cara sólo se escucha desde su iframe y desde digitalavatar.ai; sus órdenes son las del verbo común', () => {
+  const w = {}, ok = {source: w, origin: 'https://digitalavatar.ai', data: {type: 'da-supervisor-listo'}};
+  assert.equal(esDeCara(ok, w), true);
+  for (const origin of ['https://evil.example', 'https://digitalavatar.ai.evil.com', 'http://digitalavatar.ai', '*', 'null'])
+    assert.equal(esDeCara({...ok, origin}, w), false, origin);
+  assert.equal(esDeCara({...ok, source: {}}, w), false, 'otra ventana');
+  assert.equal(esDeCara({...ok, data: 'da-supervisor-listo'}, w), false);
+  assert.equal(esDeCara(ok, null), false);
+  assert.equal(ordenCara({type: 'da-supervisor-orden', orden: 'estado'}), '/supervisor estado');
+  assert.equal(ordenCara({type: 'da-supervisor-orden', orden: 'camara'}), '/supervisor');
+  for (const d of [{type: 'da-supervisor-orden', orden: 'borrar'}, {type: 'da-supervisor-orden'}, {type: 'da-command', orden: 'estado'}, null])
+    assert.equal(ordenCara(d), '');
+});
+
+const ID_TARJETA = ['bb-supervisor', 'bb-sv-title', 'bb-sv-estado', 'bb-sv-web', 'bb-sv-img', 'bb-sv-lectura', 'bb-sv-incidencias', 'bb-sv-veredicto', 'bb-sv-cara-frame'];
+function conCara() {
+  const dom = fakeDom(ID_TARJETA), sent = [];
+  const frame = dom.byId['bb-sv-cara-frame'];
+  frame.contentWindow = {postMessage(m, o) { sent.push([structuredClone(m), o]); }};
+  dom.cargar = () => frame._on.load.forEach(f => f());
+  dom.deCara = data => dom.emit('message', {source: frame.contentWindow, origin: 'https://digitalavatar.ai', data});
+  return {...dom, frame, sent, supervisor: () => sent.filter(([m]) => m.type === 'da-supervisor').map(([m]) => m)};
+}
+const tic = () => new Promise(r => setTimeout(r, 0));
+
+test('el banco le cuenta a la cara cada lectura y cada veredicto, sin repetirse y sólo al origen exacto', async () => {
+  const {doc, win, frame, sent, supervisor, cargar, deCara, fire} = conCara();
+  let reloj = T0 + 2000, respuesta = tablero({abiertas: [VIEJA]});
+  const sv = montarSupervisor(doc, {fetcher: async () => Response.json(respuesta), ahora: () => reloj, cada: 3600000, win});
+  try {
+    assert.equal(frame.src, 'https://digitalavatar.ai/nube.html?personaje=supervisor&embed=1&audio=off&lang=es');
+    assert.equal(frame.title, 'Cara del Supervisor: Admirito con gorra de vigilante y ojo de cámara');
+    await sv.refrescar();
+    assert.equal(sent.length, 0, 'nada antes de que la cara cargue');
+    cargar();
+    assert.deepEqual(sent[0], [{type: 'da-context', lang: 'es'}, 'https://digitalavatar.ai']);
+    assert.deepEqual(supervisor(), [{type: 'da-supervisor', estado: 'encendida', lang: 'es', ticket: 'INC-KOBKYX'}]);
+    reloj += 5000; await sv.refrescar();
+    assert.equal(supervisor().length, 1, 'la misma lectura no se repite cada 5 s');
+    // Orden de Bugito → veredicto tal cual con su texto.
+    await fire('bugito:command-queued', {fault: 'black', after: T0 + 8000});
+    assert.deepEqual(supervisor().at(-1), {type: 'da-supervisor', estado: 'esperando', espera: 'apagada', lang: 'es',
+      texto: 'Esperando a que el Supervisor lo vea (cámara cada 5 s, telemetría hasta 2 min)…'});
+    reloj = T0 + 15000; respuesta = tablero({estado: 'apagada', publicado: reloj, capturada: T0 + 12000, abiertas: [VIEJA]});
+    await sv.refrescar();
+    const visto = supervisor().at(-1);
+    assert.deepEqual([visto.estado, visto.espera, visto.ticket], ['visto', 'apagada', 'INC-KOBKYX']);
+    assert.match(visto.texto, /^El Supervisor lo ha visto: la cámara ve la pantalla del MBP16 a oscuras · INC-KOBKYX\.$/);
+    const n = supervisor().length;
+    reloj += 5000; respuesta = tablero({estado: 'apagada', publicado: reloj, capturada: reloj - 1000, abiertas: [VIEJA]});
+    await sv.refrescar();
+    assert.equal(supervisor().length, n, 'el veredicto sigue en la cara mientras el tablero no cambie');
+    // La cara se recarga: se le pone al día en silencio, sin repetir la frase.
+    deCara({type: 'da-supervisor-listo'});
+    assert.deepEqual(supervisor().at(-1), {...visto, silencio: true});
+    // Alguien enciende la pantalla: la cara pasa a lo que ve ahora.
+    reloj += 5000; respuesta = tablero({publicado: reloj, capturada: reloj - 1000, abiertas: [VIEJA]});
+    await sv.refrescar();
+    assert.deepEqual(supervisor().at(-1), {type: 'da-supervisor', estado: 'encendida', lang: 'es', ticket: 'INC-KOBKYX'});
+    // Cambio de lengua: la cara recibe lo mismo en inglés.
+    doc.documentElement.lang = 'en'; reloj += 1000; await sv.refrescar();
+    assert.deepEqual(supervisor().at(-1), {type: 'da-supervisor', estado: 'encendida', lang: 'en', ticket: 'INC-KOBKYX'});
+    assert.equal(frame.title, 'Supervisor face: Admirito with a security cap and a camera eye');
+    assert.ok(sent.every(([, origen]) => origen === 'https://digitalavatar.ai'), 'nunca a «*» ni a otro origen');
+  } finally { sv.parar(); }
+});
+
+test('órdenes de la cara: sólo de su iframe y de digitalavatar.ai, y las atiende AdmiraExperto.exec', async () => {
+  const {doc, win, frame, supervisor, cargar, deCara, emit} = conCara();
+  const exec = [];
+  let abierto = 0;
+  const sv = montarSupervisor(doc, {fetcher: async () => Response.json(tablero()), ahora: () => T0 + 2000, cada: 3600000, win});
+  try {
+    await sv.refrescar(); cargar();
+    // Sin motor todavía: la orden espera a admira:commands-ready.
+    deCara({type: 'da-supervisor-orden', orden: 'estado', texto: '¿Qué ves?'});
+    win.AdmiraExperto = {exec(t) { exec.push(t); return Promise.resolve({ok: true}); }, open() { abierto++; }};
+    emit('admira:commands-ready');
+    await tic(); await tic();
+    assert.deepEqual(exec, ['/supervisor estado']);
+    assert.equal(abierto, 1, 'se abre el ⌘ para ver el parte');
+    // Tras el parte, la cara (que se quedó enfocando) vuelve a decir lo que ve, aunque sea lo mismo.
+    assert.deepEqual(supervisor().slice(-2), [{type: 'da-supervisor', estado: 'encendida', lang: 'es'}, {type: 'da-supervisor', estado: 'encendida', lang: 'es'}]);
+    deCara({type: 'da-supervisor-orden', orden: 'camara'});
+    await tic();
+    assert.deepEqual(exec, ['/supervisor estado', '/supervisor']);
+    // Otra ventana, otro origen u otra orden: nada.
+    emit('message', {source: {}, origin: 'https://digitalavatar.ai', data: {type: 'da-supervisor-orden', orden: 'estado'}});
+    emit('message', {source: frame.contentWindow, origin: 'https://evil.example', data: {type: 'da-supervisor-orden', orden: 'estado'}});
+    deCara({type: 'da-supervisor-orden', orden: 'borrar'});
+    deCara({type: 'da-command', texto: '/supervisor estado'});
+    await tic();
+    assert.deepEqual(exec, ['/supervisor estado', '/supervisor']);
+  } finally { sv.parar(); }
+});
+
+test('cableado de la cara: su casilla en la rejilla de la tarjeta, sin src fijo y versiones subidas', () => {
+  const html = read('bugito.html'), css = read('bugito.css'), live = read('supervisor-live.mjs'), ui = read('bugito.mjs');
+  const tarjeta = html.slice(html.indexOf('id="bb-supervisor"'), html.indexOf('class="bb-grid"'));
+  const cuerpo = tarjeta.slice(tarjeta.indexOf('class="bb-sv-cuerpo"'));
+  assert.match(cuerpo, /<div class="bb-sv-cara"><iframe id="bb-sv-cara-frame" title="Cara del Supervisor[^"]*" referrerpolicy="strict-origin-when-cross-origin"><\/iframe><\/div>/);
+  assert.doesNotMatch(html, /id="bb-sv-cara-frame"[^>]*\ssrc=/, 'la URL la pone supervisor-live.mjs con la lengua de la página');
+  assert.match(html, /bugito\.css\?v=20261018-cara-banco-1/);
+  assert.match(html, /bugito\.mjs\?v=20261018-cara-banco-1/);
+  // No tapa nada: es una casilla de la rejilla (foto · datos · cara), no una capa encima de la tarjeta.
+  assert.match(css, /\.bb-sv-cuerpo\{[^}]*grid-template-areas:"foto datos cara"/);
+  assert.match(css, /\.bb-sv-cara\{grid-area:cara;position:relative;/);
+  assert.doesNotMatch(css, /\.bb-sv-cara\{[^}]*position:(absolute|fixed)/);
+  // Un iframe absoluto no se estira con inset (se queda en 300×150): tamaño explícito, 4 px dentro de las esquinas.
+  assert.match(css, /\.bb-sv-cara iframe\{position:absolute;top:4px;left:4px;width:calc\(100% - 8px\);height:calc\(100% - 8px\);/);
+  assert.match(css, /@media \(max-width:900px\)\{\s*\.bb-sv-cuerpo\{[^}]*"foto datos" "cara datos"/);
+  assert.match(css, /@media \(max-width:560px\)\{\s*\.bb-sv-cuerpo\{[^}]*"foto" "cara" "datos"/);
+  assert.doesNotMatch(live, /postMessage\([^)]*'\*'/, 'nunca a «*»');
+  assert.match(live, /window\.AdmiraSupervisorCore \|\|= nucleo/, 'la suite reutiliza el lector de la página');
+  // Una sola lengua en la página: la tarjeta y la cara leen <html lang>, que fija bugito.mjs.
+  assert.match(ui, /document\.documentElement\.lang = lang;/);
 });

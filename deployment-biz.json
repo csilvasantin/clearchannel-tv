@@ -22,7 +22,10 @@
   },
   "novedades": [
     "⌘ Experto: un solo motor. admira.biz y clearchannel.tv dejan de publicar en /suite/ una copia vieja del motor, sin /supervisor estado. La portada, las páginas interiores y los clones ya usaban el de admiranext.com, el mismo de Studio, Store, TV y App.",
-    "Quien pida /suite/experto.js, su piel o sus demos a admira.biz o clearchannel.tv va ahora al de admiranext.com: un enlace o una caché antigua reciben el motor de hoy."
+    "Quien pida /suite/experto.js, su piel o sus demos a admira.biz o clearchannel.tv va ahora al de admiranext.com: un enlace o una caché antigua reciben el motor de hoy.",
+    "Banco de Bugito: la tarjeta del Supervisor ya tiene su cara, Admirito con gorra de vigilante y ojo de cámara. Bugito y el Supervisor se ven en la misma pantalla.",
+    "La cara cuenta lo que ve la cámara del MBP16 y, tras cada orden de Bugito, su veredicto: enfoca mientras espera y avisa con la incidencia INC- cuando lo ve.",
+    "Si la cara pide el parte o la cámara, lo atiende el verbo común /supervisor del ⌘ Experto. Tiene su propia casilla en la tarjeta y no tapa nada, también en móvil y en inglés."
   ],
   "nativeClearChannel": {
     "enabled": true,
