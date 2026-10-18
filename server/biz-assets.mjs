@@ -3,7 +3,9 @@
 // admira.biz (and the Pages preview used to verify that release).
 export const BIZ_ASSET_PREFIX = '/__admira_biz';
 export const BIZ_ASSET_FILES = Object.freeze([
-  'suite/experto.js', 'suite/experto.css', 'suite/demo-ios.mjs', 'suite/demo-android.mjs', 'suite/biz-native-context.js',
+  // ⌘ Experto: el motor común de la suite (experto.js, su piel y sus demos) vive sólo en admiranext.com.
+  // De /suite/ aquí queda el contexto propio de Biz; el resto va al canónico (suiteCanonicalURL).
+  'suite/biz-native-context.js',
   'galaxy-shell.js', 'expert-panel.js', 'responsive-shell.js',
   // Tour DooH global (FLT-102469): Alsea México, del país entero a la puerta de cada Starbucks.
   'tour-health.js', 'global-tour.js', 'global-tour.css', 'circuit-overview.js',
@@ -67,4 +69,17 @@ export function bizAssetPath(url, method = 'GET') {
   // redirect (a direct fetch of an .html asset may redirect to its clean URL).
   const path = file === 'index.html' ? '/' : file.endsWith('/index.html') ? '/' + file.slice(0, -10) : '/' + file.replace(/\.html$/, '');
   return BIZ_ASSET_PREFIX + path;
+}
+
+// Un único manejador de comandos de la suite (admira-next-web AGENTS.md, Carlos, 12-10-2026): admira.biz y
+// los clones nativos de clearchannel.tv no guardan copia del motor ⌘ Experto. Lo que se pida bajo /suite/
+// y no sea un fichero propio va a admiranext.com con su ?v=: un cargador olvidado o una página en caché
+// reciben el motor de hoy, no una copia vieja ni la portada servida como si fuera JavaScript.
+export const SUITE_CANONICAL_ORIGIN = 'https://www.admiranext.com';
+export function suiteCanonicalURL(url, method = 'GET') {
+  if (method !== 'GET' && method !== 'HEAD') return '';
+  if (!/^(?:www\.)?(?:admira\.biz|clearchannel\.tv)$/i.test(url.hostname)
+      && !/(?:^|\.)clearchannel-tv\.pages\.dev$/i.test(url.hostname)) return '';
+  if (!url.pathname.startsWith('/suite/') || assets.has(url.pathname.slice(1))) return '';
+  return SUITE_CANONICAL_ORIGIN + url.pathname + url.search;
 }
