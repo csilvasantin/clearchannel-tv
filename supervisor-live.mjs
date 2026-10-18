@@ -3,6 +3,48 @@
 // incidencia abierta y, tras cada orden física, si el Supervisor lo vio o no. Sólo lee api.yokup.com/supervisor.
 import {leerSupervisor, veredicto, textoEstado, textoEdad, textoVeredicto, SUPERVISOR_WEB, OBJETIVO}
   from './supervisor-core.mjs?v=20261018-supervisor-1';
+import * as nucleo from './supervisor-core.mjs?v=20261018-supervisor-1';
+
+// La cara del Supervisor en su tarjeta (Morfeo, 18-oct-2026): la cuarta piel de Admirito (digitalavatar.ai#43), con
+// gorra de vigilante y ojo de cámara, junto a lo que ve la Insta360, para que Bugito y el Supervisor se vean en la misma
+// pantalla. Contrato publicado: https://www.admiranext.com/mcp/SUPERVISOR.md. La cara no lee el tablero: sabe lo que le
+// cuenta este banco, y sólo se le habla a su iframe y al origen exacto, nunca a '*'.
+export const CARA_ORIGEN = 'https://digitalavatar.ai';
+const INC = /^INC-[A-Z0-9]{3,16}$/;
+export function caraSupervisorUrl(lang) {
+  const u = new URL('/nube.html', CARA_ORIGEN);
+  u.searchParams.set('personaje', 'supervisor');
+  u.searchParams.set('embed', '1');
+  u.searchParams.set('audio', 'off');
+  u.searchParams.set('lang', lang === 'en' ? 'en' : 'es');
+  return u.href;
+}
+// Qué se le cuenta: el veredicto de la orden de Bugito si lo hay o la lectura del tablero, con sus estados tal cual
+// (la cara los traduce a los suyos: vigilando, enfocando, alerta, conforme, dudando…). ticket sólo con una INC- válida.
+export function mensajeCara({lectura = null, veredicto: v = null, lang = 'es'} = {}) {
+  const L = lang === 'en' ? 'en' : 'es';
+  if (v && v.estado && v.estado !== 'desconocido') {
+    const m = {type: 'da-supervisor', estado: v.estado, texto: textoVeredicto(v, L).slice(0, 240), lang: L};
+    if (v.espera) m.espera = v.espera;
+    if (v.incidencia && INC.test(String(v.incidencia.id))) m.ticket = v.incidencia.id;
+    return m;
+  }
+  if (!lectura) return null;
+  const m = {type: 'da-supervisor', estado: lectura.estado, lang: L};
+  const abierta = lectura.abiertas && lectura.abiertas[0];
+  if (abierta && INC.test(String(abierta.id))) m.ticket = abierta.id;
+  return m;
+}
+export function esDeCara(ev, ventana) {
+  return !!(ev && ventana && ev.source === ventana && ev.origin === CARA_ORIGEN && ev.data && typeof ev.data === 'object');
+}
+// Las dos órdenes de la cara son las del verbo común de la suite; cualquier otra cosa no ejecuta nada.
+export function ordenCara(d) {
+  if (!d || d.type !== 'da-supervisor-orden') return '';
+  return d.orden === 'estado' ? '/supervisor estado' : d.orden === 'camara' ? '/supervisor' : '';
+}
+// Un veredicto fijado sigue en la cara mientras el tablero no cambie; si cambia, manda lo que ve ahora.
+const firmaTablero = l => (l ? l.estado + '|' + ((l.abiertas && l.abiertas[0] && l.abiertas[0].id) || '') : '');
 
 const TEXTOS = {
   titulo: ['Supervisor · lo que ve la cámara', 'Supervisor · what the camera sees'],
@@ -16,7 +58,8 @@ const TEXTOS = {
   ninguna: ['Sin incidencias abiertas en el MBP16.', 'No open incidents on the MBP16.'],
   abierta: ['Incidencia abierta', 'Open incident'],
   desde: ['desde', 'since'],
-  ficha: ['Ver la ficha', 'Open the ticket']
+  ficha: ['Ver la ficha', 'Open the ticket'],
+  cara: ['Cara del Supervisor: Admirito con gorra de vigilante y ojo de cámara', 'Supervisor face: Admirito with a security cap and a camera eye']
 };
 
 export function montarSupervisor(doc = document, {fetcher = (...a) => fetch(...a), ahora = () => Date.now(), cada = 5000, win = window} = {}) {
@@ -26,6 +69,47 @@ export function montarSupervisor(doc = document, {fetcher = (...a) => fetch(...a
   const lang = () => (doc.documentElement.lang === 'en' ? 'en' : 'es');
   const T = k => TEXTOS[k][lang() === 'en' ? 1 : 0];
   let lectura = null, orden = null, final = null, timer = null, enCurso = null, parado = false;
+  const cara = $('bb-sv-cara-frame');
+  let caraLista = false, ultimoCara = '', finalFirma = '';
+
+  // Sólo cuando la cara ya escucha, y sin repetir lo mismo cada 5 s: con forzar la frase se vuelve a decir; si la
+  // cara se recarga (da-supervisor-listo otra vez) y no hay nada nuevo, se le pone al día en silencio.
+  function avisarCara({forzar = false, listo = false} = {}) {
+    const w = cara && cara.contentWindow;
+    if (!w || !caraLista) return;
+    const v = orden ? veredicto({...orden, lectura, ahora: ahora()}) : (final && firmaTablero(lectura) === finalFirma ? final : null);
+    const m = mensajeCara({lectura, veredicto: v, lang: lang()});
+    if (!m) return;
+    const firma = JSON.stringify(m);
+    if (firma === ultimoCara && !forzar && !listo) return;
+    const envio = listo && firma === ultimoCara ? {...m, silencio: true} : m;
+    ultimoCara = firma;
+    try { w.postMessage(envio, CARA_ORIGEN); } catch { /* la cara no está */ }
+  }
+  // «¿Qué ves?» o «Abre la cámara» en la cara: lo atiende el verbo común de la suite, como si se escribiera en el ⌘.
+  function ordenar(texto) {
+    const correr = E => {
+      try { E.open && E.open(); } catch { /* el panel ya está */ }
+      return Promise.resolve(E.exec(texto)).then(r => {
+        // Tras el parte, la cara (que se quedó enfocando) dice lo que ve ahora.
+        if (texto === '/supervisor estado') return refrescar().then(() => { avisarCara({forzar: true}); return r; });
+        return r;
+      });
+    };
+    const E = win.AdmiraExperto;
+    if (E && typeof E.exec === 'function') return correr(E);
+    return new Promise(res => win.addEventListener('admira:commands-ready', () => {
+      const listo = win.AdmiraExperto;
+      res(listo && typeof listo.exec === 'function' ? correr(listo) : null);
+    }, {once: true}));
+  }
+  function alMensaje(ev) {
+    if (!cara || !esDeCara(ev, cara.contentWindow)) return;
+    const d = ev.data;
+    if (d.type === 'da-supervisor-listo') { caraLista = true; avisarCara({listo: true}); return; }
+    const texto = ordenCara(d);
+    if (texto) ordenar(texto);
+  }
 
   function enlace(href, texto) {
     const a = doc.createElement('a');
@@ -66,6 +150,8 @@ export function montarSupervisor(doc = document, {fetcher = (...a) => fetch(...a
       salida.append(textoVeredicto(v, L));
       if (v.incidencia) salida.append(' ', enlace(v.incidencia.url, T('ficha')));
     } else delete salida.dataset.estado;
+    if (cara) cara.title = T('cara');
+    avisarCara();
   }
   // Una sola lectura a la vez: quien llama durante otra espera a esa misma.
   function refrescar() {
@@ -77,7 +163,7 @@ export function montarSupervisor(doc = document, {fetcher = (...a) => fetch(...a
       lectura = l;
       if (orden) {
         const v = veredicto({...orden, lectura, ahora: ahora()});
-        if (!/^esperando/.test(v.estado)) { final = v; orden = null; }
+        if (!/^esperando/.test(v.estado)) { final = v; orden = null; finalFirma = firmaTablero(lectura); }
       }
       pintar();
     }).finally(() => { clearTimeout(corte); enCurso = null; });
@@ -98,16 +184,33 @@ export function montarSupervisor(doc = document, {fetcher = (...a) => fetch(...a
     tarjeta.scrollIntoView?.({block: 'nearest', behavior: 'smooth'});
   }
   win.addEventListener('bugito:command-queued', alEnviar);
+  win.addEventListener('message', alMensaje);
   doc.addEventListener('visibilitychange', programar);
   doc.addEventListener('admira:lang', pintar);
   $('bb-sv-web').href = SUPERVISOR_WEB;
+  if (cara) {
+    cara.addEventListener('load', () => {
+      // da-context fija este banco como anfitrión de confianza aunque la cara llegue sin referrer.
+      caraLista = true;
+      try { cara.contentWindow.postMessage({type: 'da-context', lang: lang()}, CARA_ORIGEN); } catch { /* sin cara */ }
+      avisarCara({listo: true});
+    });
+    cara.src = caraSupervisorUrl(lang());
+  }
   pintar();
   programar();
   return {
-    refrescar, alEnviar,
-    estado: () => ({lectura, orden, final}),
-    parar() { parado = true; clearInterval(timer); win.removeEventListener('bugito:command-queued', alEnviar); }
+    refrescar, alEnviar, ordenar,
+    estado: () => ({lectura, orden, final, caraLista}),
+    parar() {
+      parado = true; clearInterval(timer);
+      win.removeEventListener('bugito:command-queued', alEnviar); win.removeEventListener('message', alMensaje);
+    }
   };
 }
 
-if (typeof document !== 'undefined' && document.getElementById('bb-supervisor')) window.AdmiraSupervisor = montarSupervisor();
+if (typeof document !== 'undefined' && document.getElementById('bb-supervisor')) {
+  // La suite (/supervisor estado) usa este mismo lector si ya está en la página, sin volver a cargarlo.
+  window.AdmiraSupervisorCore ||= nucleo;
+  window.AdmiraSupervisor = montarSupervisor();
+}

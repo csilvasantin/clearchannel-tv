@@ -104,7 +104,12 @@
 .bb-sv-estado[data-estado="apagada"]{color:var(--bug-ink);border-color:rgba(226,48,46,.6);background:rgba(58,11,13,.6)}
 .bb-sv-estado[data-estado="sin-dato"],.bb-sv-estado[data-estado="sin-senal"]{color:var(--warn,#f0a35e);border-color:rgba(240,163,94,.5)}
 .bb-supervisor .bb-head a.bb-mini{text-decoration:none}
-.bb-sv-cuerpo{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 16px;align-items:start}
+.bb-sv-cuerpo{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"foto datos cara";gap:12px 16px;align-items:start}
+.bb-sv-foto{grid-area:foto}.bb-sv-datos{grid-area:datos}
+/* La cara del Supervisor tiene su casilla en la rejilla: nunca va encima de la foto, los datos ni el banco. */
+.bb-sv-cara{grid-area:cara;position:relative;width:200px;height:224px;border-radius:12px;overflow:hidden;background:#04110f;border:1px solid rgba(127,227,161,.35)}
+/* 4 px dentro: el iframe (se compone aparte) nunca toca las esquinas redondeadas, así no se recorta. */
+.bb-sv-cara iframe{position:absolute;inset:4px;border:0;background:transparent}
 .bb-sv-foto{margin:0;display:grid;gap:4px;justify-items:start}
 .bb-sv-foto img{display:block;width:232px;max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line);background:#000;image-rendering:pixelated}
 .bb-sv-foto img[hidden]{display:none}
@@ -121,4 +126,12 @@
 .bb-sv-veredicto[data-estado]{padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card2)}
 .bb-sv-veredicto[data-estado="visto"]{border-color:rgba(136,255,170,.55)}
 .bb-sv-veredicto[data-estado="no-visto"],.bb-sv-veredicto[data-estado="sin-senal"],.bb-sv-veredicto[data-estado="sin-dato"],.bb-sv-veredicto[data-estado="sin-nueva"]{border-color:rgba(240,163,94,.55)}
-@media (max-width:560px){ .bb-sv-cuerpo{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:900px){
+  .bb-sv-cuerpo{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"foto datos" "cara datos"}
+  .bb-sv-cara{width:min(232px,100%)}
+}
+/* Móvil: la cara en su propia fila a todo el ancho, para que se lea su bocadillo. */
+@media (max-width:560px){
+  .bb-sv-cuerpo{grid-template-columns:minmax(0,1fr);grid-template-areas:"foto" "cara" "datos"}
+  .bb-sv-cara{width:100%;height:200px}
+}

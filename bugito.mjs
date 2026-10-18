@@ -100,6 +100,8 @@ const textos = {
 const LANGUAGE_KEY = (window.ADMIRA_SITE_BRAND?.id || 'clearchannel') + '-lang';
 let lang = 'es';
 try { lang = localeFor(location.hostname, location.search, localStorage.getItem(LANGUAGE_KEY) || ''); } catch { lang = localeFor(location.hostname, location.search, ''); }
+// Una sola lengua en toda la página: la barra, la tarjeta del Supervisor y su cara leen <html lang>.
+document.documentElement.lang = lang;
 const tr = (k, ...a) => { const v = textos[lang][k]; return typeof v === 'function' ? v(...a) : v; };
 const nombre = id => { const t = tipoIncidencia(id); return t ? (t[lang] || t.es) : tr('normal'); };
 
