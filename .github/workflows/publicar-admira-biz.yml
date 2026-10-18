@@ -31,8 +31,9 @@ jobs:
         with:
           node-version: 22
 
+      # npm test es la forma canónica: el package.json de la raíz hace que dé lo mismo en cualquier carpeta.
       - name: Tests
-        run: node --test tests/*.test.mjs tests/*.test.cjs
+        run: npm test
 
   publicar:
     needs: tests
