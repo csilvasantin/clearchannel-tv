@@ -6,9 +6,8 @@ podía publicar desde el Mac Mini, y un cambio mergeado se quedaba sin salir has
 
 ## Qué hace
 
-0. **Tests primero (17-oct-2026).** En cada PR contra `main` y en cada merge corre
-   `node --test tests/*.test.mjs tests/*.test.cjs`. En un PR solo prueba. En un merge, si algún test
-   falla, no se publica.
+0. **Tests primero (17-oct-2026).** En cada PR contra `main` y en cada merge corre `npm test`
+   (ver [Tests](#tests)). En un PR solo prueba. En un merge, si algún test falla, no se publica.
 1. Al mergear en `main`, el flujo saca el repo con todo el historial (la revisión preservada de
    clearchannel.tv sale de git) y lanza `deploy-biz.sh`.
 2. **Firma:** el agente que hizo el cambio (el autor del último commit del PR) · `GitHubActions`,
@@ -22,6 +21,37 @@ podía publicar desde el Mac Mini, y un cambio mergeado se quedaba sin salir has
    en rojo. No despublica: se arregla con otro merge o se vuelve a la versión anterior. El ruido de
    Google sin sesión (FedCM) no cuenta; `--estricto` lo cuenta también. A mano, desde un Mac con Chrome:
    `node tools/consola-produccion.mjs`.
+
+## Tests
+
+Antes de publicar o de revertir, se pasan así, desde la raíz del repo:
+
+```bash
+npm test
+```
+
+Es lo mismo que corre el flujo: `node --test tests/*.test.mjs tests/*.test.cjs`. No hay nada que
+instalar.
+
+**Da lo mismo en cualquier carpeta (18-oct-2026).** En el Mac Mini el repo vive bajo
+`~/Documents/Admirito`, que tiene su propio `package.json` con `"type": "module"`. Sin uno en la raíz,
+Node lo heredaba: los `.js` clásicos (`login-google.js`, `galaxy-shell.js`, `expert-panel.js`…) se
+cargaban como ESM, y los `.cjs` que les hacen `require()` daban unos 128 fallos falsos. Fuera de esa
+carpeta, o en CI, pasaba entero. Ese día hubo que repetir varias baterías en un worktree en `/tmp`.
+
+El `package.json` de la raíz corta esa herencia. No lleva `"type"`, y es a propósito:
+
+- Con `"type": "commonjs"`, Node ya no detecta la sintaxis y `_worker.js` (ESM) no carga: fallan 6
+  ficheros de test.
+- Con `"type": "module"`, vuelve el problema de los `.js` clásicos.
+- Sin `"type"`, Node carga como CommonJS los `.js` clásicos y detecta que `_worker.js` y `avatar-ask.js`
+  son ESM. Al hacerlo avisa con `MODULE_TYPELESS_PACKAGE_JSON`, y `npm test` calla ese aviso con
+  `--disable-warning`. La detección necesita Node 22.7 o posterior; el flujo usa Node 22.
+
+No se publica. El release de admira.biz parte de la revisión preservada de clearchannel.tv y copia una
+lista cerrada de ficheros (`server/biz-assets.mjs`), que no lo incluye. Cloudflare Pages recibe un
+paquete ya montado (*direct upload*), así que no hay build que cambie al verlo. Lo comprueba
+`tests/publicar-biz.test.mjs`.
 
 ## Qué necesita
 
