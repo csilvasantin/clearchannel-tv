@@ -4,9 +4,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
+import { BIZ_ASSET_FILES } from '../server/biz-assets.mjs';
 
 const flujo = await readFile(new URL('../.github/workflows/publicar-admira-biz.yml', import.meta.url), 'utf8');
 const script = await readFile(new URL('../deploy-biz.sh', import.meta.url), 'utf8');
+const paquete = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
 
 test('el flujo publica al mergear en main, de uno en uno y con historial completo', () => {
   assert.match(flujo, /on:\s*\n\s*push:\s*\n\s*branches: \[main\]/);
@@ -29,7 +31,7 @@ test('el flujo usa los secretos de Cloudflare y firma con el agente del cambio �
 
 test('no se publica en rojo: los tests corren en cada PR y antes de publicar, y luego se revisa la consola', () => {
   assert.match(flujo, /pull_request:\s*\n\s*branches: \[main\]/);
-  assert.match(flujo, /tests:[\s\S]*?run: node --test tests\/\*\.test\.mjs tests\/\*\.test\.cjs/);
+  assert.match(flujo, /tests:[\s\S]*?run: npm test/);
   assert.match(flujo, /publicar:\s*\n\s*needs: tests/, 'publicar espera a los tests');
   assert.match(flujo, /github\.event_name != 'pull_request'/, 'un PR prueba pero no publica');
   const tras = flujo.slice(flujo.indexOf('Comprobar producción'));
@@ -50,4 +52,13 @@ test('deploy-biz.sh sigue exigiendo firma y es bash válido', () => {
   assert.match(script, /Declare ADMIRA_RELEASE_AGENT and ADMIRA_RELEASE_MACHINE/);
   const r = spawnSync('bash', ['-n', new URL('../deploy-biz.sh', import.meta.url).pathname]);
   assert.equal(r.status, 0, String(r.stderr));
+});
+
+// En el Mac Mini el repo vive bajo ~/Documents/Admirito, cuyo package.json es «type»: «module»: sin uno propio,
+// los .cjs que hacen require() de los .js clásicos daban unos 128 fallos falsos (18-oct-2026).
+test('npm test da lo mismo en cualquier carpeta: package.json propio, sin «type» y fuera del release', () => {
+  assert.equal(paquete.private, true);
+  assert.equal('type' in paquete, false, 'con «commonjs» no carga _worker.js (ESM); con «module», los .js clásicos');
+  assert.match(paquete.scripts.test, /^node (--disable-warning=MODULE_TYPELESS_PACKAGE_JSON )?--test tests\/\*\.test\.mjs tests\/\*\.test\.cjs$/);
+  assert.equal(BIZ_ASSET_FILES.includes('package.json'), false, 'no se publica en admira.biz');
 });

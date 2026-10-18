@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "Solo para que los tests den lo mismo en cualquier carpeta. Sin «type» a propósito: corta la herencia del package.json de ~/Documents/Admirito («type»: «module»), que daba unos 128 fallos falsos, y deja que Node detecte que _worker.js y avatar-ask.js son ESM; con «type»: «commonjs», _worker.js no cargaría. No se publica: el release de admira.biz copia una lista cerrada (server/biz-assets.mjs). Ver docs/publicacion-biz.md.",
+  "scripts": {
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/*.test.mjs tests/*.test.cjs"
+  }
+}
