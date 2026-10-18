@@ -44,6 +44,7 @@ export const BIZ_ASSET_FILES = Object.freeze([
   ...['xtanco', 'cafe'].flatMap(tipo => Array.from({ length: 18 }, (_, i) => `data/xpacios/altadis-${tipo}-${String(i + 1).padStart(2, '0')}.json`)),
   // El laboratorio también como ficha del mapa (OMNIP_LOCATIONS_EXTRA): sin tocar el catálogo KV.
   'locations.js',
+  'comercial.mjs', 'comercial-core.mjs', 'comercial.css', 'assets/comercial.svg', 'planner-ui.js',
   // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de): índice público del circuito para el gemelo de
   // admira.store (CORS de lectura en _worker.js, como los planos) y la segmentación con los alias de Altadis España.
   'data/xpacios/altadis-espana-10.json', 'cliente-segmento.js',

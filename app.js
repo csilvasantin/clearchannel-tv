@@ -5809,3 +5809,39 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
   function start(){ render(); setInterval(render, 12000); wireEditor(); wireCampaign(); const cb=document.getElementById('extad-circuit-btn'); if(cb) cb.onclick=circuitReport; const eb=document.getElementById('extad-emit-btn'); if(eb) eb.onclick=emissionDeck; wireAdvancedEmission(); }
   if(document.readyState!=='loading') start(); else document.addEventListener('DOMContentLoaded', start);
 })();
+
+// Commercial assistant: actions reuse the catalogue, targeting UI and planner.
+window.AdmiraCommercialContext = {
+  language: () => LANG,
+  snapshot() {
+    const circuitIds=new Set(currentCircuitItems().map(x=>x.id));
+    return {ready:plannerCatalogReady,circuit:currentCircuitLabel(),target:circuitTargetSummary(),
+      items:selectedLocations().filter(x=>circuitIds.has(x.id)).map(loc=>{
+        const surfaces=Array.isArray(loc.surfaces)?loc.surfaces:[],normalized={...loc,surfaces};
+        const cpms=locationCpmValues(normalized),known=surfaces.some(s=>finiteImpr(s.impr)!==null);
+        return {id:loc.id,name:loc.name||loc.nombre||loc.id,impr:known?locationDailyImpr(normalized):null,demo:inventorySummary(normalized).demo,
+          cpm:cpms.length?cpms.reduce((a,b)=>a+b,0)/cpms.length:null,surfaces:locationSurfaceCount(normalized)};
+      })};
+  },
+  hideLocations() {
+    const panel=document.getElementById('circuit-panel');if(panel)panel.hidden=true;
+    document.getElementById('header-circuit-btn')?.classList.remove('active');
+  },
+  locations(target=false) {
+    const panel=document.getElementById('circuit-panel');
+    if(panel){panel.hidden=false;panel.classList.remove('collapsed');}
+    document.getElementById('header-circuit-btn')?.classList.add('active');
+    setCircuitTargetMode(target);renderCircuitSelector();
+  },
+  planner(brief) {
+    if(!plannerCatalogReady)throw Error('catalogue_loading');
+    plannerAdoptCurrentTarget=true;openPlanner();
+    for(const key of ['start','end','budget','passesDay','durationSec']){
+      const id={passesDay:'passes',durationSec:'duration'}[key]||key;
+      document.getElementById('plan-'+id).value=brief[key];
+    }
+    // Adopt this exact current selection, rather than an older stored plan.
+    document.getElementById('plan-scope').value=selectedCircuitScope;
+    plannerChosen=plannerCurrent?'current':'';renderPlanner();
+  }
+};
