@@ -167,17 +167,30 @@ test('el banco pinta el Supervisor y da el veredicto de la orden de Bugito', asy
   } finally { sv.parar(); }
 });
 
-test('cableado: tarjeta antes del banco, botones de pantalla con veredicto, /supervisor estado en el Experto y assets de Biz', () => {
+test('cableado: tarjeta antes del banco, botones de pantalla con veredicto, /supervisor común de la suite y assets de Biz', () => {
   const html = read('bugito.html'), ui = read('bugito.mjs'), panel = read('expert-panel.js'), live = read('supervisor-live.mjs');
   assert.ok(html.indexOf('id="bb-supervisor"') > html.indexOf('id="bugito-xpacios"') && html.indexOf('id="bb-supervisor"') < html.indexOf('class="bb-grid"'));
   assert.match(html, /<script type="module" src="supervisor-live\.mjs\?v=20261018-supervisor-1"><\/script>/);
   assert.match(html, /<a href="#bb-supervisor" data-sv="ir">/);
   assert.doesNotMatch(html, /data-bb="[^"]*"[^>]*id="bb-sv-/, 'los textos del Supervisor son suyos (data-sv), no del diccionario de bugito.mjs');
   assert.match(ui, /dispatchEvent\(new CustomEvent\('bugito:command-queued', \{ detail: \{ fault: apagar \? 'display-off' : 'display-on'/);
-  assert.match(panel, /registerAdapter\(\{id:'biz-supervisor',verbs:\[\{name:'supervisor',args:'\[estado\|status\]'/);
-  assert.match(panel, /visionVerb\(engine\);supervisorVerb\(engine\);/);
-  assert.match(panel, /https:\/\/www\.admira\.live\/analizar\?supervisor=1&lang=/, 'sin argumento, la cámara de la suite');
-  const stamp = /supervisor-core\.mjs\?v=([\w-]+)/;
-  assert.equal(panel.match(stamp)[1], live.match(stamp)[1], 'el Experto y el banco piden la misma versión del núcleo');
+  // /supervisor y /supervisor estado son el verbo común de la suite (admira-next-web#216, con la cara del Supervisor):
+  // Biz ya no lo sustituye con su adaptador (norma «un único manejador de comandos»).
+  assert.doesNotMatch(panel, /biz-supervisor|supervisorVerb|name:'supervisor'/);
+  assert.match(panel, /visionVerb\(engine\);\}/);
+  assert.match(live, /supervisor-core\.mjs\?v=20261018-supervisor-1/, 'la suite pide esta misma versión del núcleo');
   for (const f of ['supervisor-core.mjs', 'supervisor-live.mjs']) assert.ok(BIZ_ASSET_FILES.includes(f), f);
+});
+
+// La suite (admiranext suite/experto.js, /supervisor estado) importa https://www.admira.biz/supervisor-core.mjs y usa
+// estas tres funciones con esta forma: cambiarlas rompe el verbo común en todas las aplicaciones.
+test('contrato con la suite: leerSupervisor, parteSupervisor y textoEstado', async () => {
+  const core = await import('../supervisor-core.mjs');
+  for (const f of ['leerSupervisor', 'parteSupervisor', 'textoEstado']) assert.equal(typeof core[f], 'function', f);
+  const l = core.leerTablero(null, Date.now());
+  assert.equal(l.estado, 'sin-senal');
+  assert.ok(Array.isArray(l.abiertas));
+  assert.equal(core.textoEstado('encendida', 'es'), 'Pantalla encendida');
+  assert.equal(core.textoEstado('sin-senal', 'en'), 'No signal from Supervisor');
+  assert.ok(core.parteSupervisor(l, 'es').length >= 2);
 });

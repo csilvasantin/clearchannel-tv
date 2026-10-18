@@ -34,6 +34,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'bugito.html', 'bugito.mjs', 'bugito.css', 'bugito-core.mjs', 'bugito-objetivos.json', 'bugito-super.js',
   // Estudio del Arquitecto (DCL-66d9ae0d5e756d0067127f24): /arquitecto crear · reformar · inventariar (admira.biz/arquitecto).
   'arquitecto.html', 'arquitecto.mjs', 'arquitecto.css', 'arquitecto-core.mjs', 'arquitecto-dibujo.mjs', 'arquitecto-fotos.mjs',
+  // «Detallar» (fase 2 del Arquitecto automático, 18-10-2026): fotos de objetos → receta del Taller 3D.
+  'arquitecto-detallar.mjs', 'arquitecto-detallar-ui.mjs', 'arquitecto-modelar.mjs', 'arquitecto-modelar-ui.mjs',
   // Los 18 espacios Altadis (DCL-d7966deb02734a6f34beb54e): un Xtanco y un Starbucks por formato y su índice,
   // planos compartidos (CORS de lectura en _worker.js). Los escribe tools/genera-espacios-altadis.mjs.
   'espacios-formato.mjs', 'data/xpacios/altadis-18.json',

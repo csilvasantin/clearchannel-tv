@@ -16,9 +16,9 @@ const backoffice = read('backoffice.html');
 // galaxy-shell.js y los verbos del Experto (expert-*) llevan el sello de su último cambio:
 // ya no comparten el del componente desde que galaxy-shell.js cambió solo (13-oct-2026).
 const STAMP = '20261006-experto-tecla-1';
-const SHELL_JS_STAMP = '20261017-main-verde-1';
+const SHELL_JS_STAMP = '20261018-backoffice-1';
 const COMMANDS_STAMP = '20261017-main-verde-1';
-const PANEL_STAMP = '20261018-supervisor-1';
+const PANEL_STAMP = '20261018-supervisor-cara-1';
 const PAGES_STAMP = '20261006-experto-tecla-1';
 const PORTADA_STAMP = '20261006-experto-tecla-1';
 const squash = html => html.replace(/\s+/g, ' ').replace(/> </g, '><').trim();

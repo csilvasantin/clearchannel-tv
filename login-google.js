@@ -40,6 +40,10 @@
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof document === 'undefined') return;
 
+  // Con sesión, ⌘ ocupa el sitio de la pastilla de idioma (Carlos, 18-oct-2026): la marca vive en <html> y la
+  // leen las reglas de la portada (index.html) y de la cabecera común (galaxy-shell.js).
+  const marcarSesion = () => document.documentElement.classList.add('admira-con-sesion');
+  try { if (stored(root.localStorage)) marcarSesion(); } catch (_) {}
   const lang = () => (String(document.documentElement.lang || 'es').slice(0, 2) === 'en' ? 'en' : 'es');
   const T = (es, en) => (lang() === 'en' ? en : es);
 
@@ -87,10 +91,14 @@
 
   let link = null, host = null, shownLocale = '', repaint = 0;
   function signedIn(session) {
+    marcarSesion();
     if (!link) return;
     if (host) host.hidden = true;
     link.hidden = false;
-    link.removeAttribute('data-i18n');   // el traductor de la página no debe volver a poner «Login»
+    link.removeAttribute('data-i18n');   // el traductor de la portada no debe volver a poner «Login»
+    // …ni el de la cabecera común (responsive-shell.js reescribe data-shell-text-es/en al arrancar y al cambiar de
+    // idioma): en las páginas interiores el enlace volvía a decir «Login» con la sesión abierta (18-oct-2026).
+    link.dataset.shellTextEs = link.dataset.shellTextEn = 'Backoffice';
     link.textContent = 'Backoffice';
     link.title = T('Sesión de Google: ', 'Google session: ') + session.email;
     link.classList.add('is-signed');

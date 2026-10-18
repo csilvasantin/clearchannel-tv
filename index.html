@@ -766,7 +766,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="responsive-shell.js?v=20261006-experto-tecla-1"></script>
 <script defer src="expert-commands.js?v=20261017-main-verde-1"></script>
 <script defer src="/suite/biz-native-context.js?v=20261012-1"></script>
-<script defer src="expert-panel.js?v=20261018-supervisor-1"></script>
+<script defer src="expert-panel.js?v=20261018-supervisor-cara-1"></script>
 <!-- ⌘ EXPERTO · CLI con el look de digitalavatar.ai: piel compartida de la suite (admiranext.com/suite). -->
 <link rel="stylesheet" href="https://www.admiranext.com/suite/experto.css?v=20261005-experto-idioma-1">
 <!-- Cerrado = oculto del todo (Carlos, 6-oct-2026): sin la línea «› /help» anclada abajo; solo se ve al
@@ -796,10 +796,17 @@ addEventListener('resize',ccFitIntro);
   document.head.appendChild(engine);
 })();
 </script>
+<script>
+/* Con sesión, ⌘ ocupa el sitio de la pastilla de idioma (Carlos, 18-oct-2026). La marca se pone antes de pintar
+   la cabecera, con la misma regla que login-google.js stored(): omnip-bo-gtoken con el ID token sin caducar. */
+(function(){try{var o=JSON.parse(localStorage.getItem('omnip-bo-gtoken')||'null'),p=o&&o.token?String(o.token).split('.')[1]:'';if(!p)return;p=p.replace(/-/g,'+').replace(/_/g,'/');while(p.length%4)p+='=';var c=JSON.parse(atob(p));if(c&&c.exp&&c.exp*1000>Date.now())document.documentElement.classList.add('admira-con-sesion');}catch(_){}})();
+</script>
 <style>
-  /* Portada sin modo Experto (Carlos, 15-oct-2026): ⌘ no se ve aquí; en su sitio, la pastilla de idioma
-     con la misma caja que ☰ y ▤ (.mode-toggle). ENG pasa a inglés; ESP vuelve al castellano. */
-  #header-expert-toggle{display:none!important}
+  /* Portada sin modo Experto para quien no ha entrado (Carlos, 15-oct-2026): en el sitio de ⌘, la pastilla de
+     idioma con la misma caja que ☰ y ▤ (.mode-toggle). ENG pasa a inglés; ESP vuelve al castellano.
+     Con sesión (18-oct-2026), ⌘ vuelve a su sitio y la pastilla se va: el idioma sigue en ☰ Opciones. */
+  html:not(.admira-con-sesion) #header-expert-toggle{display:none!important}
+  html.admira-con-sesion #header-lang-toggle{display:none!important}
   .mode-toggle.header-lang{font:700 12px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.06em}
 </style>
 <link rel="stylesheet" href="bugito-xpacios.css?v=20261015-xpacios-1">
@@ -1428,7 +1435,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="tour-map.js?v=20260906-1"></script>
 <script defer src="tour-health.js?v=20261016-player-recovery-1"></script>
 <script defer src="global-tour.js?v=20261016-total-tour-1"></script>
-<script defer src="login-google.js?v=20261015-login-1"></script>
+<script defer src="login-google.js?v=20261018-backoffice-1"></script>
 <script defer src="vision-general.js?v=20261016-starbucks-es-1"></script>
 <script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=20261015-alsea-1"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20261007-calle-1"></script><script defer src="inventory-evidence.js?v=20261010-evidence-1"></script><script defer src="incident-map-tooltip.js?v=20261016-1"></script><script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261017-sin-webgl-1"></script><script defer src="intro.js?v=20261016-altadis-es-1"></script>
 <script>

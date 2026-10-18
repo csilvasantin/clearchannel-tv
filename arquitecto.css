@@ -116,3 +116,55 @@
 .scr-cubo .scr-body{stroke-dasharray:none}
 @media (max-width:980px){ .arq-grid{grid-template-columns:minmax(0,1fr)} .arq-cara{height:clamp(340px,44vh,420px)} }
 @media (max-width:460px){ .arq-dims{grid-template-columns:repeat(3,minmax(0,1fr))} .arq-dims-2{grid-template-columns:minmax(0,1fr)} .arq-tabs button{font-size:12px} }
+
+/* «Detallar» · taller de recortes (fase 2 del Arquitecto automático) */
+.dt-piezas { display: grid; gap: 10px; }
+.dt-pieza { border: 1px solid var(--line, rgba(255,255,255,.14)); border-radius: 10px; padding: 8px 10px 4px; margin: 0; }
+.dt-pieza.activa { border-color: var(--accent, #7cffb2); }
+.dt-pieza legend { font-size: .78rem; opacity: .75; padding: 0 4px; }
+.dt-cartel { grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); align-items: end; }
+.dt-recortes { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+.dt-recorte { position: relative; margin: 0; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,.25); }
+.dt-recorte img { display: block; width: 100%; height: 110px; object-fit: contain; background: #111; }
+.dt-recorte figcaption { font-size: .72rem; padding: 4px 6px; line-height: 1.25; }
+.dt-recorte .arq-mini { position: absolute; top: 4px; right: 4px; padding: 0 6px; }
+.dt-barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin: 6px 0 10px; }
+.dt-barra label { display: grid; gap: 2px; font-size: .78rem; }
+.dt-tira { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; }
+.dt-miniatura { padding: 0; border: 2px solid transparent; border-radius: 6px; background: none; cursor: pointer; flex: 0 0 auto; }
+.dt-miniatura[aria-selected="true"] { border-color: var(--accent, #7cffb2); }
+.dt-miniatura img { display: block; height: 64px; border-radius: 4px; }
+.dt-foto { overflow: auto; max-height: 70vh; border-radius: 8px; background: #0b0f0e; }
+.dt-lienzo { display: block; width: 100%; height: auto; cursor: crosshair; }
+.dt-vista { display: block; max-width: 100%; max-height: 280px; margin-top: 8px; border-radius: 6px; background: #111; }
+#dt-revision .cab { list-style: none; font-weight: 600; margin-left: -1em; }
+#dt-revision .aviso { opacity: .8; }
+/* «Detallar» · Dónde va: el plano del local en planta; se toca el sitio de cada pieza. */
+.dt-donde { margin-top: 14px; border-top: 1px solid var(--line, rgba(255,255,255,.14)); padding-top: 10px; }
+.dt-titulo-plano { font-size: .95rem; margin: 0 0 4px; }
+.dt-plano { border-radius: 8px; background: #0b0f0e; padding: 6px; }
+.dt-plano-svg { display: block; width: 100%; height: auto; cursor: crosshair; touch-action: manipulation; }
+.dt-plano-svg .sala { fill: #1a201e; stroke: #9aa5a0; stroke-width: .06; }
+.dt-plano-svg .hueco { stroke: #7cffb2; stroke-width: .14; stroke-linecap: round; }
+.dt-plano-svg .mueble { fill: #2c3532; stroke: #5d6a65; stroke-width: .03; }
+.dt-plano-svg .mueble-txt { fill: #c9d3cf; pointer-events: none; }
+.dt-plano-svg .pieza circle { fill: rgba(255,196,77,.28); stroke: #ffc44d; stroke-width: .05; }
+.dt-plano-svg .pieza text { fill: #ffe2a0; font-weight: 700; pointer-events: none; }
+.dt-plano-svg .pieza.activa circle { fill: rgba(124,255,178,.32); stroke: #7cffb2; stroke-width: .08; }
+.dt-plano-svg .pieza.activa text { fill: #eafff3; }
+.dt-sitio { display: grid; gap: 2px; font-size: .78rem; align-content: start; }
+.dt-sitio-valor { font-size: .82rem; line-height: 1.3; opacity: .9; }
+/* «Modelar»: del plano al gemelo. Resumen, salidas, planta con las piezas del catálogo y tabla de la colocación. */
+.md-resumen { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0 10px; font-size: .86rem; }
+.md-resumen dt { opacity: .7; }
+.md-resumen dd { margin: 0; }
+.md-salidas { flex-wrap: wrap; gap: 8px; }
+.md-salidas a.arq-btn { text-decoration: none; }
+.md-salidas a[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+.md-plano-svg { cursor: default; }
+.dt-plano-svg .pieza-cat { fill: rgba(255,196,77,.30); stroke: #ffc44d; stroke-width: .05; }
+.dt-plano-svg .pieza-cat-txt { fill: #ffe2a0; font-weight: 700; }
+.md-tabla-wrap { overflow-x: auto; }
+.md-tabla { width: 100%; border-collapse: collapse; font-size: .8rem; }
+.md-tabla th, .md-tabla td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line, rgba(255,255,255,.12)); white-space: nowrap; }
+.md-tabla th { opacity: .7; font-weight: 600; }

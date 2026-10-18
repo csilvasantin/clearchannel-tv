@@ -1,14 +1,15 @@
 {
   "schema": "admira.xpacio-plano/1",
   "id": "alsea-sbux-021",
-  "version": "2026-10-14-esquematico-1",
+  "version": "2026-10-18-colocacion-1",
   "nombre": "Starbucks Paseo de Gracia 103",
   "direccion": "Paseo de Gracia 103 · 08008 Barcelona",
   "fuente": {
     "titulo": "Plano esquemático · por confirmar en visita técnica",
     "medidas": "Sala de 14 × 8 m y 3,30 m de alto tomada de la rejilla del gemelo de XpaceOS (Matrix), que no es un levantamiento medido",
     "pantallas": "Mural doble H V–H–V–V–H–V de la instalación starbucks-six de admira.studio (lienzo 8160×1920, players Mac Studio y Mac mini) con diagonal de 55″ supuesta; el gemelo de Matrix pinta seis verticales en grupos 3/1/2 y falta confirmar cuál es la distribución real",
-    "itil": "Códigos ITIL de las pantallas por cruzar con Yokup, el maestro del ITIL"
+    "itil": "Códigos ITIL de las pantallas por cruzar con Yokup, el maestro del ITIL",
+    "colocacion": "Tipo, catálogo y elemento del gemelo de cada pieza (orden «modelar» del Arquitecto, 18-oct-2026). Las tres cestas (53–55) y el iPad (52) están donde los pinta el gemelo de XpaceOS; medidas nominales, sin medir en tienda."
   },
   "planta": {
     "ancho": 14,
@@ -81,65 +82,144 @@
     {
       "id": "barra",
       "nombre": "Barra · espresso",
+      "tipo": "barra",
       "x": 3,
       "y": 0,
       "w": 10,
       "d": 1,
-      "alto": 0.96
+      "alto": 0.96,
+      "gemelo": "sb-backbar"
     },
     {
       "id": "caja",
       "nombre": "Caja · TPV",
+      "tipo": "caja",
       "x": 3,
       "y": 3,
       "w": 4,
       "d": 1,
-      "alto": 1.05
+      "alto": 1.05,
+      "gemelo": "sb-pos"
     },
     {
       "id": "vitrina",
       "nombre": "Vitrina",
+      "tipo": "vitrina",
       "x": 7,
       "y": 3,
       "w": 6,
       "d": 1,
-      "alto": 1.35
+      "alto": 1.35,
+      "gemelo": "sb-pastry"
     },
     {
       "id": "tazas",
       "nombre": "Tazas",
+      "tipo": "estanteria",
       "x": 0,
       "y": 3,
       "w": 1,
       "d": 3,
-      "alto": 2.1
+      "alto": 2.1,
+      "gemelo": "sb-mugs"
     },
     {
       "id": "pilar",
       "nombre": "Pilar",
+      "tipo": "pilar",
       "x": 2,
       "y": 3,
       "w": 1,
       "d": 1,
-      "alto": 3.3
+      "alto": 3.3,
+      "gemelo": "sb-pillar"
     },
     {
       "id": "mesa-a",
       "nombre": "Mesa",
+      "tipo": "mesa",
       "x": 3,
       "y": 6,
       "w": 2,
       "d": 2,
-      "alto": 0.75
+      "alto": 0.75,
+      "gemelo": "sb-table-a"
     },
     {
       "id": "mesa-b",
       "nombre": "Mesa",
+      "tipo": "mesa",
       "x": 6,
       "y": 6,
       "w": 2,
       "d": 2,
-      "alto": 0.75
+      "alto": 0.75,
+      "gemelo": "sb-table-b"
+    },
+    {
+      "id": "ipad-tpv",
+      "nombre": "iPad horizontal",
+      "tipo": "ipad",
+      "x": 7.6,
+      "y": 0.4,
+      "w": 0.65,
+      "d": 0.35,
+      "alto": 0.3,
+      "base": 0.96,
+      "catalogo": {
+        "id": "native:ipadLandscape",
+        "numero": 52
+      },
+      "gemelo": "starbucks-ipad-01",
+      "itil": "PDG103-IPAD-01"
+    },
+    {
+      "id": "cesta-vasos",
+      "nombre": "Cesta de vasos · BE GREEN",
+      "tipo": "cesta",
+      "x": 2.04,
+      "y": 3.8,
+      "w": 0.64,
+      "d": 0.64,
+      "alto": 0.5,
+      "catalogo": {
+        "id": "native:starbucksCupBasket",
+        "numero": 53
+      },
+      "gemelo": "sb-cup-basket",
+      "itil": "PDG103-CES-01"
+    },
+    {
+      "id": "cesta-snacks",
+      "nombre": "Cesta de snacks",
+      "tipo": "cesta",
+      "x": 2.74,
+      "y": 4.18,
+      "w": 0.64,
+      "d": 0.64,
+      "alto": 0.84,
+      "catalogo": {
+        "id": "native:starbucksSnackBasket",
+        "numero": 54
+      },
+      "gemelo": "sb-snack-basket",
+      "itil": "PDG103-CES-02"
+    },
+    {
+      "id": "cesta-cafe",
+      "nombre": "Cesta de café 1971",
+      "tipo": "cesta",
+      "x": 1.08,
+      "y": 4.98,
+      "w": 0.64,
+      "d": 0.64,
+      "alto": 0.84,
+      "catalogo": {
+        "id": "native:starbucksCoffeeBasket",
+        "numero": 55
+      },
+      "gemelo": "sb-coffee-basket",
+      "itil": "PDG103-CES-03"
     }
   ],
   "contenidos": {
