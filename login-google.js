@@ -35,7 +35,15 @@
     } catch (_) { return null; }
   }
 
-  const api = {clientFor, isBackoffice, parseJwt, stored, KEY};
+  async function serverSession(fetcher) {
+    try {
+      const r = await fetcher('https://api.admira.biz/auth/session', {credentials:'include',cache:'no-store',signal:AbortSignal.timeout(5000)});
+      if (!r.ok) return null;
+      const s = await r.json();
+      return s.ok === true && typeof s.email === 'string' && s.email.trim() ? {email:s.email,source:'server'} : null;
+    } catch (_) { return null; }
+  }
+  const api = {clientFor, isBackoffice, parseJwt, stored, serverSession, KEY};
   root.AdmiraLoginGoogle = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof document === 'undefined') return;
@@ -89,8 +97,9 @@
     return gsiPromise;
   }
 
-  let link = null, host = null, shownLocale = '', repaint = 0;
+  let link = null, host = null, shownLocale = '', repaint = 0, verifiedSession = false;
   function signedIn(session) {
+    verifiedSession = true;
     marcarSesion();
     if (!link) return;
     if (host) host.hidden = true;
@@ -100,7 +109,7 @@
     // idioma): en las páginas interiores el enlace volvía a decir «Login» con la sesión abierta (18-oct-2026).
     link.dataset.shellTextEs = link.dataset.shellTextEn = 'Backoffice';
     link.textContent = 'Backoffice';
-    link.title = T('Sesión de Google: ', 'Google session: ') + session.email;
+    link.title = (session.source === 'server' ? T('Sesión verificada: ', 'Verified session: ') : T('Sesión de Google: ', 'Google session: ')) + session.email;
     link.classList.add('is-signed');
   }
   function renderButton() {
@@ -142,7 +151,9 @@
     host.className = 'header-login-gis';
     host.hidden = true;
     link.after(host);
+    if (/^(www\.)?admira\.biz$/i.test(root.location.hostname)) serverSession(root.fetch.bind(root)).then(s => { if (s) signedIn(s); });
     loadGsi().then(google => {
+      if (verifiedSession) return;
       google.accounts.id.initialize({client_id: clientFor(root.location.hostname), callback: onCredential,
         ux_mode: 'popup', auto_select: false, cancel_on_tap_outside: true});
       if (!renderButton()) return;
