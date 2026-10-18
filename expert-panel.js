@@ -267,7 +267,32 @@
     const run=parts=>{const result=C.visionGeneral((Array.isArray(parts)?parts:[]).join(' '),ctx,lang());return record(result.command,Object.assign({parsed:{ok:result.ok,verb:{id:'vision',local:true},args:{},raw:result.command}},result),false);};
     engine.registerAdapter({id:'biz-vision',verbs:[{name:'vision',alias:['visión','visiongeneral','vision-general'],desc:['visión general del circuito con semáforo por Xpacio: /vision general alsea','circuit overview with a status light per Xpace: /vision general alsea'],run}]});
   }
-  function connectSuiteCommands(engine){engine.registerAdapter({id:'biz'});C.VERBS.forEach(def=>suiteAction(engine,def));visionVerb(engine);}
+  // /supervisor estado (Morfeo, 18-oct-2026): el parte del Supervisor (Insta360 del MacMini sobre el MBP16) sin salir
+  // de la página, desde supervisor-core.mjs. Sin argumento hace lo mismo que el verbo de la suite: abre la cámara con
+  // sus controles en Admira Live. Este adaptador sustituye al de la suite en Biz; si allí cambia /supervisor, revisar aquí.
+  function supervisorVerb(engine){
+    const run=parts=>{
+      const words=(Array.isArray(parts)?parts:[]).map(w=>String(w).toLowerCase());
+      const command='/supervisor'+(words.length?' '+words.join(' '):'');
+      const parsed={ok:true,verb:{id:'supervisor',local:true},args:{},raw:command};
+      if(!words.length){
+        const url='https://www.admira.live/analizar?supervisor=1&lang='+lang();
+        setTimeout(()=>ctx.open(url),400);
+        return record(command,{ok:true,parsed,command,lines:[T('Supervisor: abriendo la cámara Insta360 con sus controles en Admira Live…','Supervisor: opening the Insta360 camera with its controls in Admira Live…')],url},false);
+      }
+      if(words.length>1||!/^(estado|status)$/.test(words[0])){
+        const usage=T('Usa /supervisor estado para el parte del Supervisor, o /supervisor para abrir su cámara.','Use /supervisor status for the Supervisor report, or /supervisor to open its camera.');
+        return record(command,{ok:false,parsed,command,lines:[usage],error:usage},false);
+      }
+      const later=import('/supervisor-core.mjs?v=20261018-supervisor-1')
+        .then(m=>m.leerSupervisor().then(l=>({ok:l.estado!=='sin-senal',lines:m.parteSupervisor(l,lang())})));
+      return record(command,{ok:true,parsed,command,lines:[T('Supervisor: leyendo la cámara del MBP16…','Supervisor: reading the MBP16 camera…')],later},false);
+    };
+    engine.registerAdapter({id:'biz-supervisor',verbs:[{name:'supervisor',args:'[estado|status]',desc:[
+      'sin nada, abre la Insta360 del Mac mini en Admira Live con sus controles; estado da aquí el parte del MBP16: pantalla, última lectura, foto e incidencia abierta',
+      'alone, opens the Mac mini Insta360 in Admira Live with its controls; status gives the MBP16 report here: screen, latest reading, photo and open incident'],run}]});
+  }
+  function connectSuiteCommands(engine){engine.registerAdapter({id:'biz'});C.VERBS.forEach(def=>suiteAction(engine,def));visionVerb(engine);supervisorVerb(engine);}
   (root.AdmiraCommandAdapters=root.AdmiraCommandAdapters||[]).push(connectSuiteCommands);
   if(root.AdmiraExperto)connectSuiteCommands(root.AdmiraExperto);
   function run(command,{echo=true}={}){
