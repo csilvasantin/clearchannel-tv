@@ -36,6 +36,12 @@ Los mosaicos se mueven enteros salvo que se desmarque «Mover el mosaico entero�
   - `orientacion`, `pulgadas`, `resolucion`
   - `pared`, `s`: centro desde la izquierda, en metros
   - `z`: base sobre el suelo, en metros
+- **Mobiliario:** `id`, `nombre`, `x`, `y`, `w`, `d` y `alto` en metros (esquina de la huella). Desde la orden «modelar» (18-10-2026), opcionales:
+  - `tipo`: `barra`, `caja`, `vitrina`, `estanteria`, `pilar`, `mesa`, `silla`, `nevera`, `recreativa`, `cesta`, `ipad` o `mueble`. Sin él se deduce del nombre.
+  - `catalogo`: `{id: 'native:…', numero}`, la pieza del catálogo de xpaceos. El gemelo 3D carga su modelo (`inventario/assets/catalog/<numero>/better.glb`).
+  - `gemelo`: el id del elemento en el gemelo 2D/Matrix de XpaceOS (`starbucks-room.js`).
+  - `base`: altura de montaje (el iPad sobre la barra, 0,96 m).
+  - `itil`: el código del CI en Yokup. No pasa a la copia pública del plano.
 - **Dispositivos** (opcional): players, webcam y demás CI que no son pantallas, con `id`, `nombre`, `categoria` (`player` o `iot`), `rol`, `pared` e `itil`. Con `s` (y `z`) se sitúan en su pared; un player sin `s` se pinta al final de las pantallas que mueve (las de su mismo `player`). En planta salen como marcas pequeñas con su CI en el título, y en el inventario, en la tabla «Players y dispositivos · ITIL».
 - **Yokup** (opcional): `yokup.site_id`, `yokup.portal` y `yokup.cis`, el establecimiento y sus CI en el maestro del ITIL. Con `yokup.portal` (https y dominio de Yokup), el enlace de vuelta de la página es «← Ver en Yokup (ITIL)» en lugar de «← Volver a la ficha», porque ese Xpacio no está en el mapa comercial.
 - **Escala del dibujo:** los rótulos, los trazos finos y los márgenes se escalan con el tamaño del Xpacio (`--k`: 1 en un local de 14 m como Starbucks y proporcional en salas pequeñas), para que se lean igual en pantalla. Paredes, huecos, muebles y pantallas van siempre a su medida real.
@@ -65,6 +71,18 @@ Misión DCL-58288891486617b36ed8777d (Hoy #86), orden de Carlos del 14-oct-2026.
 - **Diagonal:** 55″ **supuesta**.
 - **Fuentes que no coinciden:** el gemelo de Matrix pinta seis verticales en grupos 3/1/2. Falta confirmar en visita técnica cuál es la distribución real y las medidas.
 - **ITIL:** los códigos de las pantallas están por cruzar con Yokup (maestro del ITIL). Fuera de las pruebas no hay códigos de pantalla en ningún repo.
+- **Piezas del catálogo (18-10-2026):** las tres cestas (53–55, `PDG103-CES-01…03`) y el iPad de la barra (52, `PDG103-IPAD-01`) están en `mobiliario` donde los pinta el gemelo. Con `tipo` y `gemelo` en cada mueble, la colocación del gemelo 2D/Matrix sale del plano pieza a pieza (lo comprueban `tests/arquitecto-modelar.test.mjs` aquí y `plano3d.test.mjs` en xpaceos).
+
+## Modelar (`/arquitecto modelar`)
+
+Del plano del local a su gemelo (Carlos, 18-10-2026):
+1. Se elige el local; el Arquitecto lee su plano (el guardado en el navegador o `data/xpacios/<id>.json`).
+2. Enseña la planta con cada pieza, las del catálogo en amarillo, y la tabla de la colocación.
+3. Salidas:
+   - **Gemelo 3D**: la página de xpaceos.com que pinta el plano (`/xpacios/starbucks-paseo-de-gracia/` o `/xpacios/gran-de-gracia-51/?loc=<id>`), con los modelos del catálogo. Sin sesión pinta la copia pública de xpaceos (`data/xpacios/<id>.json`, sólo Paseo de Gràcia y el laboratorio); con sesión, el plano de admira.biz.
+   - **Colocación (JSON)**, esquema `admira.xpacio-colocacion/1`: cada pieza con su sitio, tipo, modelo, elemento del gemelo y código ITIL, las pantallas y el layout del gemelo 2D/Matrix.
+   - **Planta (DXF)**: AutoCAD R12 en metros, capas MUROS, PUERTAS, HUECOS, MOBILIARIO, PIEZAS, PANTALLAS, COTAS y TEXTOS. Textos en ASCII llano. La pared del fondo queda arriba, como en el plano.
+4. Avisos: muebles sin tipo (se deduce), ninguno enlazado con el gemelo 2D, piezas fuera de la sala y plano esquemático.
 
 ## Creación de Xpacios (▤ Modo avanzado)
 
@@ -193,5 +211,5 @@ Misión DCL-d7966deb02734a6f34beb54e («Hoy #22»), orden de Carlos del 15-oct-2
 ## Siguientes pasos
 
 1. Confirmar medidas y distribución real de Starbucks 103. Con «Subir plano» se puede superponer el plano real como calco para cotejarlo.
-2. Leer y escribir el plano desde el modelo del gemelo (`xpaceos.xpacio.v1` y el layout `starbucks_pg103_v1` de admira.store), para que haya un solo plano.
+2. Un solo plano: la colocación del gemelo de Paseo de Gràcia ya sale del plano (orden «modelar»); falta que `starbucks-room.js` la lea del plano en vez de llevarla escrita, y lo mismo con `xpaceos.xpacio.v1`.
 3. Al aprobar una obra, dar de alta o de baja los CI en Yokup (`itil_ci_upsert` / `itil_ci_retire`) y rehacer la instalación de admira.studio.
