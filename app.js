@@ -5815,7 +5815,7 @@ window.AdmiraCommercialContext = {
   language: () => LANG,
   snapshot() {
     const circuitIds=new Set(currentCircuitItems().map(x=>x.id));
-    return {ready:plannerCatalogReady,circuit:currentCircuitLabel(),target:circuitTargetSummary(),
+    return {ready:plannerCatalogReady,circuit:currentCircuitLabel(),target:circuitTargetSummary(),circuitKey:selectedCircuitId+'|'+selectedMetroLine,targetKey:JSON.stringify(sanitizeCircuitTarget(circuitTarget)),
       items:selectedLocations().filter(x=>circuitIds.has(x.id)).map(loc=>{
         const surfaces=Array.isArray(loc.surfaces)?loc.surfaces:[],normalized={...loc,surfaces};
         const cpms=locationCpmValues(normalized),known=surfaces.some(s=>finiteImpr(s.impr)!==null);
