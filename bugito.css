@@ -108,8 +108,9 @@
 .bb-sv-foto{grid-area:foto}.bb-sv-datos{grid-area:datos}
 /* La cara del Supervisor tiene su casilla en la rejilla: nunca va encima de la foto, los datos ni el banco. */
 .bb-sv-cara{grid-area:cara;position:relative;width:200px;height:224px;border-radius:12px;overflow:hidden;background:#04110f;border:1px solid rgba(127,227,161,.35)}
-/* 4 px dentro: el iframe (se compone aparte) nunca toca las esquinas redondeadas, así no se recorta. */
-.bb-sv-cara iframe{position:absolute;inset:4px;border:0;background:transparent}
+/* 4 px dentro: el iframe (se compone aparte) nunca toca las esquinas redondeadas, así no se recorta.
+   Con tamaño explícito: un iframe absoluto no se estira con inset, se queda en 300×150. */
+.bb-sv-cara iframe{position:absolute;top:4px;left:4px;width:calc(100% - 8px);height:calc(100% - 8px);border:0;background:transparent}
 .bb-sv-foto{margin:0;display:grid;gap:4px;justify-items:start}
 .bb-sv-foto img{display:block;width:232px;max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line);background:#000;image-rendering:pixelated}
 .bb-sv-foto img[hidden]{display:none}

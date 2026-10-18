@@ -339,6 +339,8 @@ test('cableado de la cara: su casilla en la rejilla de la tarjeta, sin src fijo 
   assert.match(css, /\.bb-sv-cuerpo\{[^}]*grid-template-areas:"foto datos cara"/);
   assert.match(css, /\.bb-sv-cara\{grid-area:cara;position:relative;/);
   assert.doesNotMatch(css, /\.bb-sv-cara\{[^}]*position:(absolute|fixed)/);
+  // Un iframe absoluto no se estira con inset (se queda en 300×150): tamaño explícito, 4 px dentro de las esquinas.
+  assert.match(css, /\.bb-sv-cara iframe\{position:absolute;top:4px;left:4px;width:calc\(100% - 8px\);height:calc\(100% - 8px\);/);
   assert.match(css, /@media \(max-width:900px\)\{\s*\.bb-sv-cuerpo\{[^}]*"foto datos" "cara datos"/);
   assert.match(css, /@media \(max-width:560px\)\{\s*\.bb-sv-cuerpo\{[^}]*"foto" "cara" "datos"/);
   assert.doesNotMatch(live, /postMessage\([^)]*'\*'/, 'nunca a «*»');
