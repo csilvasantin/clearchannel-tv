@@ -99,8 +99,8 @@
 
   let link = null, host = null, shownLocale = '', repaint = 0, verifiedSession = false;
   function signedIn(session) {
-    verifiedSession = true;
     marcarSesion();
+    verifiedSession = true;
     if (!link) return;
     if (host) host.hidden = true;
     link.hidden = false;
