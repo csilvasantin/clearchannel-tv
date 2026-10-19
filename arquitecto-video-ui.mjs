@@ -4,10 +4,10 @@
 // El vídeo no pasa por aquí: sólo se lee la nube de puntos de la escena (scan.admira.store).
 // Desde el 19-oct-2026 también entra una escena de SuperSplat (superspl.at/scene/<id>): nube densa, ya en metros y con
 // color, de la que se separan los objetos (muebles, lo que hay encima, lo que cuelga) con su código ITIL.
-import { SCAN_API, SCAN_APP, ALTO_SUPUESTO, REFERENCIAS, AJUSTES, leerPLY, levantar, escala, mueblesDetectados, planoDesdeLevantamiento } from './arquitecto-video.mjs?v=20261019-splat-1';
-import { cargarSuperSplat, decodificarWebp, urlSuperSplat, ALFA_MIN } from './arquitecto-splat.mjs?v=20261019-splat-1';
-import { aSala, ampliarSala, objetosDetectados, clasificar, cruzarConInventario, cisDeObjetos } from './arquitecto-objetos.mjs?v=20261019-splat-1';
-import { INVENTARIOS } from './arquitecto-detallar.mjs?v=20261018-detallar-3';
+import { SCAN_API, SCAN_APP, ALTO_SUPUESTO, REFERENCIAS, AJUSTES, leerPLY, levantar, escala, mueblesDetectados, planoDesdeLevantamiento } from './arquitecto-video.mjs?v=20261019-splat-2';
+import { cargarSuperSplat, decodificarWebp, urlSuperSplat, ALFA_MIN } from './arquitecto-splat.mjs?v=20261019-splat-2';
+import { aSala, ampliarSala, objetosDetectados, clasificar, cruzarConInventario, cisDeObjetos } from './arquitecto-objetos.mjs?v=20261019-splat-2';
+import { INVENTARIOS } from './arquitecto-detallar.mjs?v=20261019-detallar-4';
 export const MIN_PUNTOS_OBJETOS = 100000;   // por debajo, la nube (COLMAP) no da para separar objetos: muebles grandes como antes
 
 const TEXTOS = {

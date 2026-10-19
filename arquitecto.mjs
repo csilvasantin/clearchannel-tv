@@ -28,9 +28,9 @@ import {
   planDesdeEstimacion, planDesdeDescripcion, prefijoDe, construirCis, revisarCis, inventarioTraspaso, codificarTraspaso, urlPortal,
   caraUrl, baseLocal, ordenDeNube, CARA_ORIGEN, PREFIJO_RE, normalizarId
 } from './arquitecto-core.mjs?v=20261018-fotos-1';
-import { montarDetallar } from './arquitecto-detallar-ui.mjs?v=20261018-detallar-3';
+import { montarDetallar } from './arquitecto-detallar-ui.mjs?v=20261019-detallar-4';
 import { montarModelar } from './arquitecto-modelar-ui.mjs?v=20261018-modelar-1';
-import { montarVideo } from './arquitecto-video-ui.mjs?v=20261019-splat-1';
+import { montarVideo } from './arquitecto-video-ui.mjs?v=20261019-splat-2';
 import { montarGaleria } from './arquitecto-galeria-ui.mjs?v=20261018-fotos-1';
 import { svgPlanta, svgAlzado, svgMiniatura } from './arquitecto-dibujo.mjs?v=20261015-altadis-1';
 import {

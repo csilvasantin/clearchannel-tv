@@ -13,7 +13,7 @@
 //   5. cisDeObjetos: las altas propuestas con los campos de itil_ci_upsert, con `parent_itil_code` para lo que está encima.
 // Medidas en metros, redondeadas al centímetro. Nada se escribe en Yokup desde aquí: el alta la confirma la persona.
 
-import { prefijoDe } from './arquitecto-core.mjs?v=20261019-splat-1';
+import { prefijoDe } from './arquitecto-core.mjs?v=20261019-splat-2';
 
 export const CELDA = 0.05;
 export const MAX_OBJETOS = 80;

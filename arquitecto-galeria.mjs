@@ -7,7 +7,7 @@
 //   foto. El bloque `panorama` es el mismo de los centros de Starbucks (xpaceos/xpacios/starbucks-centros/centros.json) y
 //   el que pinta la vista «360 · Matrix» del gemelo desde el plano. Para publicarla hace falta que no salgan personas
 //   reconocibles; las imágenes van a xpaceos (`/xpacios/360/<local>/`) con respaldo.
-import { ordenarEsquinas, validarEsquinas } from './arquitecto-detallar.mjs?v=20261018-detallar-3';
+import { ordenarEsquinas, validarEsquinas } from './arquitecto-detallar.mjs?v=20261019-detallar-4';
 
 export const XPACEOS = 'https://www.xpaceos.com';
 export const LADO_FOTO = 1600;
