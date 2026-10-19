@@ -9,11 +9,13 @@
 //   3. planoDesdeLevantamiento: la escala sale de UNA medida tomada en el local (alto libre, ancho o fondo) y da un
 //      plano `admira.xpacio-plano/1` rectangular, con los muebles grandes que se ven en la nube si se piden.
 // COLMAP no sabe de metros: sin una medida, la escala se supone (techo de 2,70 m) y el plano lo dice.
+// Desde el 19-oct-2026 la nube también puede venir de un escaneo de SuperSplat (arquitecto-splat.mjs): ya en metros
+// (`referencia.tipo = 'metrica'`), con color, y lo bastante densa para separar los objetos (arquitecto-objetos.mjs).
 
 export const SCAN_API = 'https://scan.admira.store';
 export const SCAN_APP = 'https://www.xpaceos.com/scan/';
 export const ALTO_SUPUESTO = 2.7;
-export const REFERENCIAS = Object.freeze(['alto', 'ancho', 'fondo']);
+export const REFERENCIAS = Object.freeze(['alto', 'ancho', 'fondo', 'metrica']);
 export const MAX_PUNTOS = 120000;
 
 // ── Nube de puntos PLY ──────────────────────────────────────────────────────
@@ -36,11 +38,20 @@ export function leerPLY(buffer) {
   }
   const ix = ['x', 'y', 'z'].map(k => props.findIndex(p => p.nombre === k));
   if (!(n > 0) || ix.some(i => i < 0)) throw new Error('ply-xyz');
+  // Color y opacidad si los trae (red/green/blue o r/g/b, alpha/opacity de 8 bits): los usa la separación de objetos.
+  const ic = [['red', 'r', 'diffuse_red'], ['green', 'g', 'diffuse_green'], ['blue', 'b', 'diffuse_blue']].map(ks => props.findIndex(p => ks.includes(p.nombre) && /^u?char$|^u?int8$/.test(p.tipo)));
+  const ia = props.findIndex(p => ['alpha', 'opacity', 'a'].includes(p.nombre) && /^u?char$|^u?int8$/.test(p.tipo));
+  const conColor = ic.every(i => i >= 0), rgb = conColor ? new Uint8Array(n * 3) : null, alfa = ia >= 0 ? new Uint8Array(n) : null;
   const x = new Float32Array(n), y = new Float32Array(n), z = new Float32Array(n);
   let inicio = fin + 'end_header'.length; while (inicio < bytes.length && bytes[inicio] !== 10) inicio++; inicio++;
   if (formato === 'ascii') {
     const filas = new TextDecoder('latin1').decode(bytes.subarray(inicio)).split(/\r?\n/);
-    for (let i = 0, k = 0; i < filas.length && k < n; i++) { const v = filas[i].trim().split(/\s+/); if (v.length < props.length) continue; x[k] = +v[ix[0]]; y[k] = +v[ix[1]]; z[k] = +v[ix[2]]; k++; }
+    for (let i = 0, k = 0; i < filas.length && k < n; i++) {
+      const v = filas[i].trim().split(/\s+/); if (v.length < props.length) continue;
+      x[k] = +v[ix[0]]; y[k] = +v[ix[1]]; z[k] = +v[ix[2]];
+      if (rgb) { rgb[k * 3] = +v[ic[0]]; rgb[k * 3 + 1] = +v[ic[1]]; rgb[k * 3 + 2] = +v[ic[2]]; } if (alfa) alfa[k] = +v[ia];
+      k++;
+    }
   } else {
     const off = [], tam = props.map(p => { const t = TIPOS_PLY[p.tipo]; if (!t) throw new Error('ply-tipo'); return t; });
     let paso = 0; for (const t of tam) { off.push(paso); paso += t[0]; }
@@ -49,8 +60,10 @@ export function leerPLY(buffer) {
     const lee = j => { const [, f] = tam[ix[j]]; return (o) => dv[f](o + off[ix[j]], true); };
     const lx = lee(0), ly = lee(1), lz = lee(2);
     for (let i = 0; i < n; i++) { const o = i * paso; x[i] = lx(o); y[i] = ly(o); z[i] = lz(o); }
+    if (rgb) for (let i = 0; i < n; i++) { const o = i * paso; rgb[i * 3] = dv.getUint8(o + off[ic[0]]); rgb[i * 3 + 1] = dv.getUint8(o + off[ic[1]]); rgb[i * 3 + 2] = dv.getUint8(o + off[ic[2]]); }
+    if (alfa) for (let i = 0; i < n; i++) alfa[i] = dv.getUint8(i * paso + off[ia]);
   }
-  return { n, x, y, z };
+  return { n, x, y, z, ...(rgb ? { rgb } : {}), ...(alfa ? { alfa } : {}) };
 }
 
 // ── Álgebra pequeña ─────────────────────────────────────────────────────────
@@ -218,14 +231,18 @@ export function levantar(nube, { invertir = false, girar = false, maxPuntos = MA
   return {
     techoVisible: d.fuerzaAlto >= 1.8, sueloVisible: d.fuerzaBajo >= 1.8,
     puntos: nube.n, usados: M, franja: A.length, vertical: v, giro: th, ejes3d, unidades: { ancho, fondo, alto }, confianza, apoyo,
-    ajuste: medir === envolvente ? 'envolvente' : 'paredes', fuerzas: { suelo: d.fuerzaBajo, techo: d.fuerzaAlto, paredes: fuerzasParedes }, sala
+    ajuste: medir === envolvente ? 'envolvente' : 'paredes', fuerzas: { suelo: d.fuerzaBajo, techo: d.fuerzaAlto, paredes: fuerzasParedes }, sala,
+    // El marco de la sala, para llevar cualquier punto del mundo a coordenadas de sala (aSala, en arquitecto-objetos.mjs).
+    marco: { e1, e2, ca, cb, ejeX, ejeY, x0: pu.min, y0: pw.min, v, suelo }
   };
 }
 
 // ── Escala ──────────────────────────────────────────────────────────────────
 // Metros por unidad de COLMAP a partir de una medida tomada en el local; sin ella, techo de 2,70 m supuesto.
 export function escala(lev, referencia = null) {
-  const tipo = referencia && REFERENCIAS.includes(referencia.tipo) ? referencia.tipo : null, valor = referencia && Number(referencia.valor);
+  // Nube ya en metros (escaneos de SuperSplat y del móvil): 1 unidad = 1 m, sin medida que tomar.
+  if (referencia && referencia.tipo === 'metrica') return { k: 1, tipo: 'metrica', valor: 1, supuesta: false };
+  const tipo = referencia && REFERENCIAS.includes(referencia.tipo) && referencia.tipo !== 'metrica' ? referencia.tipo : null, valor = referencia && Number(referencia.valor);
   if (tipo && valor > 0 && lev.unidades[tipo] > 0) return { k: valor / lev.unidades[tipo], tipo, valor, supuesta: false };
   return { k: ALTO_SUPUESTO / lev.unidades.alto, tipo: 'alto', valor: ALTO_SUPUESTO, supuesta: true };
 }
@@ -267,18 +284,27 @@ export function mueblesDetectados(lev, k, { celda = 0.2, margen = 0.3, max = 12 
 // ── Plano admira.xpacio-plano/1 ─────────────────────────────────────────────
 const r2 = v => Math.round(v * 100) / 100;
 const limpio = (v, max = 120) => String(v ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
-export function planoDesdeLevantamiento(lev, { id, nombre = '', escena = '', referencia = null, muebles = true, fecha = new Date().toISOString().slice(0, 10) } = {}) {
+// `objetos`: la lista de arquitecto-objetos.mjs (objetosDetectados + clasificar + cruzarConInventario) ya en metros; con ella,
+// el mobiliario del plano son esos objetos, cada uno con su base, su altura y su código ITIL (existente o propuesto).
+// `origen`: de dónde viene la nube ({tipo: 'supersplat', enlace}); sin él, de XpaceScan.
+export function planoDesdeLevantamiento(lev, { id, nombre = '', escena = '', referencia = null, muebles = true, objetos = null, origen = null, fecha = new Date().toISOString().slice(0, 10) } = {}) {
   if (!/^[a-z0-9][a-z0-9-]{0,79}$/.test(id || '')) throw new Error('id');
   const esc = escala(lev, referencia), k = esc.k;
   const A = r2(lev.unidades.ancho * k), F = r2(lev.unidades.fondo * k), H = r2(lev.unidades.alto * k);
-  const mob = muebles ? mueblesDetectados(lev, k).map((m, i) => ({ id: `detectado-${i + 1}`, nombre: `Mueble detectado ${i + 1}`, tipo: 'mueble',
-    x: r2(m.x), y: r2(m.y), w: r2(m.w), d: r2(m.d), alto: r2(m.alto), detectado: true })) : [];
-  const medida = esc.supuesta ? `escala supuesta: techo de ${String(ALTO_SUPUESTO).replace('.', ',')} m (sin medida del local)`
+  const mob = Array.isArray(objetos) ? objetos.map((o, i) => ({ id: o.id || `objeto-${i + 1}`, nombre: limpio(o.nombre || `Objeto ${i + 1}`, 80), tipo: o.tipo || 'mueble',
+    x: r2(o.x), y: r2(o.y), w: r2(o.w), d: r2(o.d), alto: r2(o.alto), ...(o.base > 0 ? { base: r2(o.base) } : {}), ...(o.itil ? { itil: o.itil } : {}),
+    ...(o.apoyadoEn ? { apoyadoEn: o.apoyadoEn } : {}), ...(o.color ? { color: o.color } : {}), clase: o.clase || 'mueble', itilEstado: o.itilEstado || (o.itil ? 'existente' : 'sin-codigo'), detectado: true }))
+    : muebles ? mueblesDetectados(lev, k).map((m, i) => ({ id: `detectado-${i + 1}`, nombre: `Mueble detectado ${i + 1}`, tipo: 'mueble',
+      x: r2(m.x), y: r2(m.y), w: r2(m.w), d: r2(m.d), alto: r2(m.alto), detectado: true })) : [];
+  const medida = esc.tipo === 'metrica' ? 'escala real: la nube ya está en metros' : esc.supuesta ? `escala supuesta: techo de ${String(ALTO_SUPUESTO).replace('.', ',')} m (sin medida del local)`
     : `escala con una medida del local: ${esc.tipo} = ${String(esc.valor).replace('.', ',')} m`;
+  const splat = origen && origen.tipo === 'supersplat';
   return {
-    schema: 'admira.xpacio-plano/1', id, version: `video-${fecha}-1`, nombre: limpio(nombre) || id, direccion: '',
-    fuente: { titulo: `Levantado desde un vídeo (XpaceScan) · ${medida}`, escena: limpio(escena, 80) || null, puntos: lev.puntos, confianza: lev.confianza,
-      referencia: { tipo: esc.tipo, valor: esc.valor, supuesta: esc.supuesta }, metodo: 'nube COLMAP → suelo, techo y cuatro paredes; sala rectangular',
+    schema: 'admira.xpacio-plano/1', id, version: `${splat ? 'splat' : 'video'}-${fecha}-1`, nombre: limpio(nombre) || id, direccion: '',
+    fuente: { titulo: `${splat ? 'Levantado desde un escaneo 3D (SuperSplat)' : 'Levantado desde un vídeo (XpaceScan)'} · ${medida}`, escena: limpio(splat ? origen.enlace || escena : escena, 120) || null, puntos: lev.puntos, confianza: lev.confianza,
+      referencia: { tipo: esc.tipo, valor: esc.valor, supuesta: esc.supuesta },
+      metodo: Array.isArray(objetos) ? 'nube densa → suelo, techo y cuatro paredes; objetos separados por vóxeles (muebles, lo que hay encima y lo que cuelga), cada uno con su código ITIL' : 'nube COLMAP → suelo, techo y cuatro paredes; sala rectangular',
+      ...(Array.isArray(objetos) ? { objetos: { total: mob.length, conItil: mob.filter(m => m.itil).length, propuestos: mob.filter(m => m.itilEstado === 'propuesto').length } } : {}),
       pendiente: 'puertas, ventanas y pantallas: márcalas en plano.html',
       ...(lev.techoVisible && lev.sueloVisible ? {} : { alto: `alto aproximado: el ${lev.sueloVisible ? 'techo' : lev.techoVisible ? 'suelo' : 'suelo y el techo'} apenas se ve${lev.sueloVisible || lev.techoVisible ? '' : 'n'} en la nube` }) },
     planta: { ancho: A, fondo: F, alto: H },

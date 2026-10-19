@@ -38,6 +38,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'arquitecto.html', 'arquitecto.mjs', 'arquitecto.css', 'arquitecto-core.mjs', 'arquitecto-dibujo.mjs', 'arquitecto-fotos.mjs',
   // «Detallar» (fase 2 del Arquitecto automático, 18-10-2026): fotos de objetos → receta del Taller 3D.
   'arquitecto-detallar.mjs', 'arquitecto-detallar-ui.mjs', 'arquitecto-modelar.mjs', 'arquitecto-modelar-ui.mjs', 'arquitecto-video.mjs', 'arquitecto-video-ui.mjs', 'arquitecto-galeria.mjs', 'arquitecto-galeria-ui.mjs',
+  // «video» desde SuperSplat con los objetos separados y su ITIL (19-10-2026).
+  'arquitecto-splat.mjs', 'arquitecto-objetos.mjs',
   // Los 18 espacios Altadis (DCL-d7966deb02734a6f34beb54e): un Xtanco y un Starbucks por formato y su índice,
   // planos compartidos (CORS de lectura en _worker.js). Los escribe tools/genera-espacios-altadis.mjs.
   'espacios-formato.mjs', 'data/xpacios/altadis-18.json',

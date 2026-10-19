@@ -30,7 +30,7 @@ import {
 } from './arquitecto-core.mjs?v=20261018-fotos-1';
 import { montarDetallar } from './arquitecto-detallar-ui.mjs?v=20261018-detallar-3';
 import { montarModelar } from './arquitecto-modelar-ui.mjs?v=20261018-modelar-1';
-import { montarVideo } from './arquitecto-video-ui.mjs?v=20261018-video-1';
+import { montarVideo } from './arquitecto-video-ui.mjs?v=20261019-splat-1';
 import { montarGaleria } from './arquitecto-galeria-ui.mjs?v=20261018-fotos-1';
 import { svgPlanta, svgAlzado, svgMiniatura } from './arquitecto-dibujo.mjs?v=20261015-altadis-1';
 import {
@@ -50,7 +50,7 @@ const textos = {
     ayudaCrear: 'un Xpacio nuevo, inventado según el tipo (o con tus medidas)', ayudaReformar: 'una reforma del plano abierto desde una foto, un vídeo o lo que me cuentes, como propuesta de obra',
     ayudaInventariar: 'el plano y el inventario ITIL desde una foto, un vídeo o una descripción; al final, alta en Yokup', ayudaDetallar: 'las fotos de los objetos de un local (cestas, carteles, productos) → una receta del Taller 3D con sus texturas; las fotos no salen del navegador',
     ayudaModelar: 'del plano del local a su gemelo: cada pieza con su sitio como datos, el gemelo 3D con los modelos del catálogo y la planta en DXF',
-    ayudaVideo: 'del recorrido grabado con el móvil (XpaceScan) a un plano con medidas reales: suelo, techo y paredes de la nube 3D, a escala con una medida del local',
+    ayudaVideo: 'del recorrido grabado con el móvil (XpaceScan) o de un escaneo de SuperSplat (superspl.at/scene/…) a un plano con medidas reales: suelo, techo y paredes de la nube 3D; con la nube densa, cada objeto separado (muebles, lo que hay encima y lo que cuelga) con su código ITIL',
     ayudaFotos: 'las fotos del local, cada una en su pared (se quedan en el navegador), y su foto 360 como vista Matrix del gemelo, con la vista inicial y las pantallas marcadas',
     ayudaFormatos: 'los 18 espacios Altadis: cada formato de pantalla en un Xtanco o en un Starbucks',
     modoCrear: 'Qué crear', modoTipo: 'Xpacio por tipo', modoFormato: 'Espacio por formato · Altadis 18',
@@ -119,7 +119,7 @@ const textos = {
     traspasoGrande: 'El inventario es demasiado grande para la dirección: descárgalo y súbelo en el Portal del comercio («Importar inventario del Arquitecto»).',
     demasiadasOrdenes: n => `Como mucho ${n} órdenes por reforma: el resto, en otra.`,
     noCisValidos: 'Corrige los errores del inventario antes del alta.',
-    vozCrear: 'Creo el Xpacio con lo que me has contado.', vozOrden: o => `Vamos con «${o}».`, pideFotos: 'Sube fotos o un vídeo del local, o cuéntame cómo es.', pideDetalle: 'Sube fotos de los objetos y marca las cuatro esquinas de cada cara plana: yo la enderezo y preparo la receta del taller.', pideModelo: 'Dime el local: saco su gemelo 3D, la colocación de cada pieza y la planta en DXF.', pideVideo: 'Graba el recorrido con XpaceScan; cuando esté reconstruido, elige la escena y dame una medida del local.', pideFotos: 'Sube las fotos del local y dime en qué pared va cada una; con la 360, marca la vista inicial y las pantallas.', pideReforma: 'Cuéntame qué cambiamos o súbeme una foto de cómo debe quedar.',
+    vozCrear: 'Creo el Xpacio con lo que me has contado.', vozOrden: o => `Vamos con «${o}».`, pideFotos: 'Sube fotos o un vídeo del local, o cuéntame cómo es.', pideDetalle: 'Sube fotos de los objetos y marca las cuatro esquinas de cada cara plana: yo la enderezo y preparo la receta del taller.', pideModelo: 'Dime el local: saco su gemelo 3D, la colocación de cada pieza y la planta en DXF.', pideVideo: 'Graba el recorrido con XpaceScan o pégame el enlace de SuperSplat; con la nube separo los objetos y les pongo su código ITIL.', pideFotos: 'Sube las fotos del local y dime en qué pared va cada una; con la 360, marca la vista inicial y las pantallas.', pideReforma: 'Cuéntame qué cambiamos o súbeme una foto de cómo debe quedar.',
     ayudaOrdenes: 'Arquitecto: /arquitecto crear [tipo] · /arquitecto formatos · /arquitecto reformar · /arquitecto inventariar · /arquitecto detallar · /arquitecto modelar · /arquitecto video · /arquitecto fotos', ordenDesconocida: x => `El Arquitecto no conoce «${x}». Prueba: crear, formatos, reformar o inventariar.`,
     abierta: o => `Arquitecto: orden «${o}» abierta en el estudio.`, ocultoMsg: 'Arquitecto oculto (vuelve con /arquitecto).', vistoMsg: 'Arquitecto a la vista.',
     dictadoNo: 'Este navegador no tiene dictado: escribe o usa el micro de la nube.', escuchando: 'Escuchando… (puedes corregir el texto)'
@@ -133,7 +133,7 @@ const textos = {
     ayudaCrear: 'a new Xpace, invented from its type (or with your measurements)', ayudaReformar: 'a renovation of the open plan from a photo, a video or what you tell me, as a works proposal',
     ayudaInventariar: 'the floor plan and ITIL inventory from a photo, a video or a description; then, registration in Yokup', ayudaDetallar: 'photos of a venue’s objects (baskets, signs, products) → a 3D-workshop recipe with their textures; photos never leave the browser',
     ayudaModelar: 'from the venue floor plan to its twin: every piece placed as data, the 3D twin with catalogue models and a DXF floor plan',
-    ayudaVideo: 'from a phone walkthrough (XpaceScan) to a floor plan with real measurements: floor, ceiling and walls from the 3D cloud, scaled with one on-site measurement',
+    ayudaVideo: 'from a phone walkthrough (XpaceScan) or a SuperSplat scan (superspl.at/scene/…) to a floor plan with real measurements: floor, ceiling and walls from the 3D cloud; with a dense cloud, every object separated (furniture, what sits on it and what hangs) with its ITIL code',
     ayudaFotos: 'the venue photos, each on its wall (they stay in the browser), and its 360 photo as the twin’s Matrix view, with the starting view and the screens marked',
     ayudaFormatos: 'the 18 Altadis spaces: each screen format in a Xtanco or in a Starbucks',
     modoCrear: 'What to create', modoTipo: 'Xpace by type', modoFormato: 'Space by format · Altadis 18',
@@ -200,7 +200,7 @@ const textos = {
     traspasoGrande: 'The inventory is too large for the address: download it and upload it in the retailer portal (“Import the Architect\'s inventory”).',
     demasiadasOrdenes: n => `At most ${n} orders per renovation: the rest in another one.`,
     noCisValidos: 'Fix the inventory errors before registering.',
-    vozCrear: 'Creating the Xpace from what you told me.', vozOrden: o => `Let's go with “${o}”.`, pideFotos: 'Upload photos or a video of the space, or tell me what it is like.', pideDetalle: 'Upload photos of the objects and mark the four corners of each flat face: I straighten it and prepare the workshop recipe.', pideModelo: 'Tell me the venue: I bring out its 3D twin, the placement of every piece and the DXF floor plan.', pideVideo: 'Record the walkthrough with XpaceScan; once it is rebuilt, pick the scene and give me one on-site measurement.', pideFotos: 'Upload the venue photos and tell me which wall each goes on; with the 360, mark the starting view and the screens.', pideReforma: 'Tell me what to change or upload a photo of how it should look.',
+    vozCrear: 'Creating the Xpace from what you told me.', vozOrden: o => `Let's go with “${o}”.`, pideFotos: 'Upload photos or a video of the space, or tell me what it is like.', pideDetalle: 'Upload photos of the objects and mark the four corners of each flat face: I straighten it and prepare the workshop recipe.', pideModelo: 'Tell me the venue: I bring out its 3D twin, the placement of every piece and the DXF floor plan.', pideVideo: 'Record the walkthrough with XpaceScan or paste me the SuperSplat link; from the cloud I separate the objects and give them their ITIL code.', pideFotos: 'Upload the venue photos and tell me which wall each goes on; with the 360, mark the starting view and the screens.', pideReforma: 'Tell me what to change or upload a photo of how it should look.',
     ayudaOrdenes: 'Architect: /arquitecto crear [type] · /arquitecto formatos · /arquitecto reformar · /arquitecto inventariar · /arquitecto detallar · /arquitecto modelar · /arquitecto video · /arquitecto fotos', ordenDesconocida: x => `The Architect does not know “${x}”. Try: crear, formatos, reformar or inventariar.`,
     abierta: o => `Architect: “${o}” open in the studio.`, ocultoMsg: 'Architect hidden (/arquitecto brings him back).', vistoMsg: 'Architect in sight.',
     dictadoNo: 'This browser has no dictation: type or use the cloud\'s microphone.', escuchando: 'Listening… (you can edit the text)'

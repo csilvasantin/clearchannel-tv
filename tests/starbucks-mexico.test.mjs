@@ -294,8 +294,8 @@ test('las páginas piden la versión nueva de lo que cambia', () => {
   assert.match(html, /vision-general\.js\?v=20261016-starbucks-es-1/);
   assert.ok(html.includes('global-tour.js?v=20261016-total-tour-1'), 'global-tour.js');
   // app.js y mapa-sin-webgl.js: portada sin WebGL (17-oct), el mapa mudo se carga antes que app.js. app.js cambió después
-  // con el asistente Comercial (18-oct, 20261018-comercial-2).
-  assert.ok(html.includes('<script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261018-comercial-2"></script>'));
+  // con el asistente Comercial (18-oct, 20261018-comercial-2) y con la captación de comercios (comercial-3).
+  assert.ok(html.includes('<script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261018-comercial-3"></script>'));   // comercial-3: captación de comercios (ad19174)
   assert.match(html, /marca-blanca\.js\?v=20261016-starbucks-mx-2/);
   assert.match(html, /expert-commands\.js\?v=20261017-main-verde-1/);
   // locations.js cambió por última vez con la recuperación de players: la portada y las fichas piden esa versión.
