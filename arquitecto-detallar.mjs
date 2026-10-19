@@ -158,7 +158,8 @@ export function revisarSitios(plano, piezas, huella = HUELLA) {
 // PDG103-CES-01…03 → PDG103-CES-04. El prefijo es el del local (el más repetido en sus códigos).
 export const CODIGO_ITIL_RE = /^[A-Z0-9]{2,12}(-[A-Z0-9]{2,6}){1,3}$/;
 export function siguientesCodigos(inventario, familia, n, usados = []) {
-  const codigos = (((inventario && inventario.units) || []).map(u => u && u.itil_code)).filter(c => typeof c === 'string' && CODIGO_ITIL_RE.test(c));
+  // `units` son las piezas con modelo y foto; `scan_units`, los CI dados de alta desde un escaneo 3D (19-10-2026), sin modelo.
+  const codigos = ([...((inventario && inventario.units) || []), ...((inventario && inventario.scan_units) || [])].map(u => u && u.itil_code)).filter(c => typeof c === 'string' && CODIGO_ITIL_RE.test(c));
   const veces = {}; for (const c of codigos) { const k = c.split('-')[0]; veces[k] = (veces[k] || 0) + 1; }
   const prefijo = Object.keys(veces).sort((a, b) => veces[b] - veces[a])[0];
   if (!prefijo || !/^[A-Z0-9]{2,6}$/.test(familia || '')) return Array.from({ length: n }, () => null);

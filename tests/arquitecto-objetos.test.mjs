@@ -106,6 +106,9 @@ test('objects are crossed with the ITIL inventory: existing codes by family, the
   assert.equal(por['obj-5'].itil, null); assert.equal(por['obj-5'].itilEstado, 'menor');
   assert.equal(por['obj-6'].itil, null); assert.equal(por['obj-6'].itilEstado, 'sin-codigo');
   assert.deepEqual(noVistos.map(u => u.itil_code), ['PDG103-MES-01'], 'la mesa del inventario no se ha visto');
+  // Los CI dados de alta desde un escaneo (`scan_units` del manifiesto) cuentan como existentes y ocupan su número.
+  const conEscaneo = cruzarConInventario(objetos, { units: inventario.units, scan_units: [{ itil_code: 'PDG103-CES-02', name: 'Cesta 02', category: 'mobiliario' }, { itil_code: 'PDG103-CES-03', name: 'Cesta 03', category: 'mobiliario' }] });
+  assert.deepEqual(conEscaneo.objetos.filter(o => o.tipo === 'cesta').map(o => o.itil).sort(), ['PDG103-CES-01', 'PDG103-CES-02']); assert.ok(conEscaneo.objetos.every(o => o.itil !== 'PDG103-CES-03' || o.itilEstado === 'existente'));
   // Sin inventario: prefijo del id del local y códigos nuevos desde 01.
   const sin = cruzarConInventario(objetos.slice(0, 2), null, { localId: 'cafe-gracia' }); assert.equal(sin.prefijo, 'CAFEGRACIA'); assert.equal(sin.objetos[0].itil, 'CAFEGRACIA-BAR-01');
   // Altas propuestas con los campos de itil_ci_upsert; lo de encima cuelga de su mueble.

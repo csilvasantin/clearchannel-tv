@@ -118,6 +118,8 @@ test('a spot outside the room is an error; overlaps between pieces are only warn
 test('ITIL codes continue the venue family in the public inventory and never repeat', () => {
   assert.deepEqual(siguientesCodigos(INVENTARIO, 'CES', 2), ['PDG103-CES-04', 'PDG103-CES-05']);
   assert.deepEqual(siguientesCodigos(INVENTARIO, 'CES', 1, ['PDG103-CES-04']), ['PDG103-CES-05']);
+  // Los CI dados de alta desde un escaneo (`scan_units`, 19-10-2026) también ocupan su número.
+  assert.deepEqual(siguientesCodigos({ ...INVENTARIO, scan_units: [{ itil_code: 'PDG103-CES-04' }, { itil_code: 'PDG103-CES-17' }] }, 'CES', 1), ['PDG103-CES-18']);
   assert.deepEqual(siguientesCodigos(INVENTARIO, 'EXP', 1), ['PDG103-EXP-01']);
   assert.deepEqual(siguientesCodigos(null, 'CES', 2), [null, null]);
   assert.ok(INVENTARIOS['alsea-sbux-021'].startsWith('https://www.xpaceos.com/inventario/'));

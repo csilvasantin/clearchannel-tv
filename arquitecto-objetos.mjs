@@ -241,7 +241,8 @@ export function clasificar(o, { H = 2.7 } = {}) {
 // de objetos recibe el siguiente código libre de su familia como propuesta. Las posibles pantallas no reciben código
 // (las pantallas del plano ya tienen el suyo). Devuelve { objetos, prefijo, noVistos }.
 export function cruzarConInventario(objetos, inventario, { prefijo = null, localId = '' } = {}) {
-  const unidades = (Array.isArray(inventario) ? inventario : (inventario && inventario.units) || (inventario && inventario.cis) || []).filter(u => u && typeof u.itil_code === 'string');
+  // El manifiesto público trae `units` (piezas con modelo y foto) y, desde el 19-10-2026, `scan_units` (CI dados de alta desde un escaneo).
+  const unidades = (Array.isArray(inventario) ? inventario : [...((inventario && inventario.units) || []), ...((inventario && inventario.scan_units) || []), ...((inventario && inventario.cis) || [])]).filter(u => u && typeof u.itil_code === 'string');
   const re = /^([A-Z0-9]{2,12})-([A-Z0-9]{2,12})-(\d{1,4})$/;
   const veces = {}; for (const u of unidades) { const m = u.itil_code.match(re); if (m) veces[m[1]] = (veces[m[1]] || 0) + 1; }
   const P = prefijo || Object.keys(veces).sort((a, b) => veces[b] - veces[a])[0] || prefijoDe(localId || 'xpacio');
