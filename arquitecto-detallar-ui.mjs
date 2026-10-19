@@ -4,7 +4,7 @@
 // los recortes dentro. Las fotos no salen del navegador ni se suben a ningún sitio.
 // Debajo, «Dónde va»: el plano del local; se elige la pieza y se toca su sitio. El código ITIL sale del inventario público.
 import { MUEBLES, CONTENIDOS, ROLES, MAX_PIEZAS, MAX_RECORTES, REGISTRO_URL, HUELLA, INVENTARIOS, ordenarEsquinas, validarEsquinas, tamRecorte, enderezar, siguientesNumeros,
-  sitioEnPlano, juntoA, revisarSitios, siguientesCodigos, revisarEncargo, recetaDetallar } from './arquitecto-detallar.mjs?v=20261018-detallar-3';
+  sitioEnPlano, juntoA, revisarSitios, siguientesCodigos, revisarEncargo, recetaDetallar } from './arquitecto-detallar.mjs?v=20261019-detallar-4';
 import { prepararFotos } from './arquitecto-fotos.mjs?v=20261014-arquitecto-1';
 
 const TEXTOS = {
