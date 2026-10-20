@@ -42,12 +42,11 @@ function selectionText(s){return s.circuit+' · '+s.items.length+' '+T('ubicacio
 // ── Voz: la nube de Admirito (digitalavatar.ai) o, si no carga, la voz del navegador ──
 const nubeCaja=document.getElementById('commercial-nube');let nubeFrame=null,nubeLista=false;
 function montarNube(){if(nubeFrame||!nubeCaja)return;nubeFrame=document.createElement('iframe');nubeFrame.src=nubeUrl(language());nubeFrame.title='Comercial · Admirito';nubeFrame.setAttribute('allow','microphone');nubeCaja.append(nubeFrame);}   /* sin loading=lazy: dentro de un hueco oculto no cargaba nunca y la nube no avisaba de que estaba lista */
-// La nube pone la cara, el gesto, el bocadillo y el lip-sync (como el Arquitecto); la voz audible la pone el navegador
-// (speechSynthesis), porque la nube habla sin sonido cuando el texto se lo manda el anfitrión. Con la nube callada, la
-// nube recibe el texto en silencio para que el bocadillo coincida con lo que se oye.
+// La nube pone la cara, el gesto, el bocadillo, el lip-sync y, desde el 20-oct-2026, la voz de Admirito con audio
+// (ElevenLabs, por api.admira.store/tts, dentro de la propia nube). Sólo si la nube no está, la voz del navegador.
 function hablar(texto){try{if('speechSynthesis' in window&&texto){const u=new SpeechSynthesisUtterance(texto);u.lang=language()==='en'?'en-GB':'es-ES';u.rate=1.02;window.speechSynthesis.cancel();window.speechSynthesis.speak(u);}}catch{}}
 function decir(estado,texto,silencio=false){
- if(nubeLista&&nubeFrame){try{nubeFrame.contentWindow.postMessage({type:'da-comercial',estado,texto:texto||'',silencio,lang:language()},NUBE_ORIGEN);}catch{}}
+ if(nubeLista&&nubeFrame){try{nubeFrame.contentWindow.postMessage({type:'da-comercial',estado,texto:texto||'',silencio,lang:language()},NUBE_ORIGEN);return;}catch{}}
  if(!silencio&&texto)hablar(texto);
 }
 window.addEventListener('message',ev=>{
