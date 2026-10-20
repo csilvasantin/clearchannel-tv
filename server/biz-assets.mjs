@@ -23,6 +23,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   // laboratorio de Gran de Gràcia 51 (DCL-6ae9d5b0e2d48ee2fd9c7b19).
   'plano.html', 'plano.mjs', 'plano-core.mjs', 'plano-subida.mjs', 'plano.css', 'data/xpacios/alsea-sbux-021.json',
   'data/xpacios/lab-gran-de-gracia-51.json',
+  // handON del laboratorio AdmiraNeXT (20-oct-2026): guía pública /laboratorio/ y su detalle.
+  'laboratorio/index.html', 'docs/laboratorio-admiranext.md',
   // ▤ Creación de Xpacios (DCL-35708977d7b8520386dad95f): planos inventados por tipo; «Con foto o vídeo»
   // (DCL-ddf3203078fe9471f3796130): estimación con Gemini Pro en api.admira.store/xpacio/estimar.
   'plano-generador.mjs', 'plano-foto.mjs',
@@ -67,7 +69,7 @@ export function bizAssetPath(url, method = 'GET') {
   if (!/^(?:www\.)?admira\.biz$/i.test(url.hostname)
       && !/(?:^|\.)clearchannel-tv\.pages\.dev$/i.test(url.hostname)) return '';
   let file = url.pathname === '/' ? 'index.html' : url.pathname.slice(1);
-  if (/^(help|players|tutorial|demo)\/?$/.test(file)) file = file.replace(/\/$/, '') + '/index.html';
+  if (/^(help|players|tutorial|demo|laboratorio)\/?$/.test(file)) file = file.replace(/\/$/, '') + '/index.html';
   if (['walk', 'detail', 'about', 'marketplace', 'backoffice', 'plano', 'bugito', 'arquitecto'].includes(file)) file += '.html';
   if (!assets.has(file)) return '';
   // Pages' clean URLs serve HTML without exposing the internal namespace in a
