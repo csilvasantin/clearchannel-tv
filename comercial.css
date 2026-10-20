@@ -1,7 +1,55 @@
-#comercial-panel{position:fixed;inset:76px 18px 65px auto;width:min(455px,calc(100vw - 28px));z-index:7800;background:#081b25;color:#edf8ec;border:1px solid #668f69;border-radius:22px;box-shadow:0 24px 70px #0008;overflow:auto;padding:22px;font:15px/1.5 system-ui;box-sizing:border-box}#comercial-panel[hidden]{display:none}#comercial-panel header{display:flex;align-items:center;gap:12px}#comercial-panel h2{margin:0;font-size:27px}#comercial-panel .commercial-face{width:108px;height:95px;object-fit:contain;animation:comercial-float 5s ease-in-out infinite}#comercial-panel .commercial-close{margin-left:auto;align-self:flex-start;font-size:26px;background:none;border:0;color:inherit;cursor:pointer}#comercial-panel p{color:#bdd0cc}#comercial-panel label{display:grid;gap:5px;margin:12px 0}#comercial-panel input,#comercial-panel textarea,#comercial-panel select{box-sizing:border-box;width:100%;padding:10px;border-radius:9px;border:1px solid #41616a;background:#102a35;color:#f3f9e8;font:inherit}#comercial-panel textarea{min-height:65px;resize:vertical}#comercial-panel button:not(.commercial-close){padding:10px 13px;border:1px solid #5d8370;background:#183e42;color:#f3f9e8;border-radius:10px;font:inherit;cursor:pointer}#comercial-panel button.primary{background:#b9e6a2;color:#132b1a;font-weight:700}#comercial-panel button:disabled{opacity:.5;cursor:wait}#comercial-panel .commercial-actions{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}#comercial-panel .commercial-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}#comercial-panel pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#04121b;border-radius:12px;padding:16px;font:14px/1.5 system-ui}#comercial-panel [role=status]{color:#f8d282}#commercial-return{position:fixed;right:18px;bottom:76px;z-index:7790;padding:10px 16px;background:#b9e6a2;color:#132b1a;border:1px solid #486c40;border-radius:30px;font:700 15px system-ui;cursor:pointer}#commercial-return[hidden]{display:none}@keyframes comercial-float{50%{transform:translateY(-5px)}}@media(prefers-reduced-motion:reduce){#comercial-panel .commercial-face{animation:none}}@media(max-width:600px){#comercial-panel{inset:66px 12px 72px;width:auto;padding:16px}#comercial-panel .commercial-face{width:82px;height:78px}}
-
-#commercial-result-actions[hidden]{display:none}
-#comercial-panel>header{position:static;inset:auto;width:auto;height:auto;margin:0;padding:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;z-index:auto;border:0;box-shadow:none;flex-wrap:nowrap}#comercial-panel .commercial-face{flex:0 0 108px}#comercial-panel h2{font-family:system-ui;letter-spacing:normal;text-transform:none}@media(max-width:600px){#comercial-panel .commercial-face{flex-basis:82px}}
-#comercial-panel>header{flex-direction:row;align-items:center;justify-content:flex-start;gap:12px}
-
-#comercial-panel section[hidden],#commercial-merchant-actions[hidden]{display:none}#comercial-panel a{color:#b9e6a2}
+/* Comercial · Admirito con corbata y maletín (look and feel del 20-oct-2026, orden de Carlos).
+   Viste con la marca de la página (variables de brand.css: --card, --card2, --line, --ink, --mut, --brand) más su propio
+   acento, el azul de la corbata y el oro del cierre del maletín (los del SVG), como el Arquitecto tiene su amarillo de
+   obra y Bugito su rojo. La ventana se mueve por la cabecera, cambia de tamaño por la esquina y se cierra con ✕
+   (movible.mjs); en móvil ocupa el ancho y no se mueve. */
+#comercial-panel{--com:#5b9bff;--com-ink:#d6e6ff;--com-deep:#132f4d;--com-oro:#e8cd7b;
+  position:fixed;inset:76px 18px auto auto;width:min(455px,calc(100vw - 28px));max-height:calc(100vh - 141px);z-index:7800;
+  display:flex;flex-direction:column;background:linear-gradient(180deg,rgba(19,47,77,.55),var(--card,#100c20) 38%);color:var(--ink,#f2efff);
+  border:1px solid var(--line,rgba(184,156,255,.24));border-radius:18px;box-shadow:0 24px 70px #0009,inset 0 1px 0 rgba(255,255,255,.06);
+  padding:0;font:15px/1.5 system-ui,-apple-system,sans-serif;box-sizing:border-box;overflow:hidden}
+#comercial-panel[hidden]{display:none}
+#comercial-panel>header{position:static;inset:auto;width:auto;height:auto;margin:0;z-index:auto;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+  display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;flex-wrap:nowrap;padding:14px 16px 12px 18px;
+  border:0;border-bottom:1px solid var(--line,rgba(184,156,255,.24));background:rgba(19,47,77,.35);cursor:grab;touch-action:none;user-select:none}
+#comercial-panel>header:active{cursor:grabbing}
+#comercial-panel .commercial-face{flex:0 0 84px;width:84px;height:74px;object-fit:contain;animation:comercial-float 5s ease-in-out infinite;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
+#comercial-panel .commercial-titulo{display:grid;gap:2px;min-width:0}
+#comercial-panel .commercial-eyebrow{font:700 11px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--com)}
+#comercial-panel h2{margin:0;font:700 22px/1.15 system-ui,-apple-system,sans-serif;letter-spacing:normal;text-transform:none;color:var(--ink,#f2efff)}
+#comercial-panel .commercial-close{margin-left:auto;align-self:flex-start;width:34px;height:34px;display:grid;place-items:center;font-size:22px;line-height:1;background:transparent;border:1px solid transparent;border-radius:10px;color:var(--mut,#a69bc8);cursor:pointer}
+#comercial-panel .commercial-close:hover{color:var(--ink,#f2efff);border-color:var(--line,rgba(184,156,255,.24));background:var(--card2,#17102c)}
+#comercial-panel .commercial-cuerpo{overflow:auto;padding:14px 18px 18px;scrollbar-width:thin}
+#comercial-panel p{color:var(--mut,#a69bc8);margin:0 0 12px}
+#comercial-panel p[data-commercial="intro"]{font-size:14px}
+/* Los dos modos, como un selector: el activo lleva el azul de la corbata. */
+#comercial-panel .commercial-modos{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:0 0 14px;padding:3px;border:1px solid var(--line,rgba(184,156,255,.24));border-radius:12px;background:var(--card2,#17102c)}
+#comercial-panel .commercial-modos button{border:0;background:transparent;color:var(--mut,#a69bc8);border-radius:9px;padding:9px 10px;font:600 14px/1.3 system-ui,-apple-system,sans-serif;cursor:pointer}
+#comercial-panel .commercial-modos button[aria-pressed="true"]{background:var(--com-deep);color:var(--com-ink);box-shadow:inset 0 0 0 1px rgba(91,155,255,.55)}
+#comercial-panel label{display:grid;gap:5px;margin:0 0 12px}
+#comercial-panel label>span{font-size:12.5px;font-weight:600;color:var(--mut,#a69bc8);letter-spacing:.01em}
+#comercial-panel input,#comercial-panel textarea,#comercial-panel select{box-sizing:border-box;width:100%;padding:10px 11px;border-radius:10px;border:1px solid var(--line,rgba(184,156,255,.24));background:var(--card2,#17102c);color:var(--ink,#f2efff);font:inherit;color-scheme:dark}
+#comercial-panel input:focus-visible,#comercial-panel textarea:focus-visible,#comercial-panel select:focus-visible,#comercial-panel button:focus-visible{outline:2px solid var(--com);outline-offset:2px}
+#comercial-panel textarea{min-height:65px;resize:vertical}
+#comercial-panel button:not(.commercial-close){padding:10px 13px;border:1px solid var(--line,rgba(184,156,255,.24));background:var(--card2,#17102c);color:var(--ink,#f2efff);border-radius:10px;font:600 14px/1.3 system-ui,-apple-system,sans-serif;cursor:pointer}
+#comercial-panel button:not(.commercial-close):hover{border-color:var(--com);color:var(--com-ink)}
+#comercial-panel button.primary{background:var(--brand,#7dffd0);border-color:var(--brand,#7dffd0);color:#0b1a14;font-weight:700}
+#comercial-panel button.primary:hover{filter:brightness(1.06);color:#0b1a14}
+#comercial-panel button:disabled{opacity:.5;cursor:wait}
+#comercial-panel .commercial-actions{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+#comercial-panel .commercial-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#comercial-panel pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0 0;background:var(--card2,#17102c);border:1px solid var(--line,rgba(184,156,255,.24));border-left:3px solid var(--com);border-radius:12px;padding:14px 16px;font:14px/1.5 system-ui,-apple-system,sans-serif;color:var(--ink,#f2efff)}
+#comercial-panel [role=status]{color:var(--com-oro);font-size:14px;margin:6px 0}
+#comercial-panel [role=status]:empty{display:none}
+#comercial-panel a{color:var(--com-ink);text-decoration-color:var(--com)}
+#comercial-panel section[hidden],#commercial-result-actions[hidden],#commercial-merchant-actions[hidden]{display:none}
+/* Movible: asa y esquina (movible.mjs). */
+#comercial-panel.sc-movida{max-height:calc(100vh - 16px)}   /* movida: nunca más alta que la pantalla; con la esquina, el alto lo pone la persona */
+#comercial-panel .vent-esquina{position:absolute;right:3px;bottom:3px;width:18px;height:18px;cursor:nwse-resize;touch-action:none;z-index:2;opacity:.7;border-radius:4px;
+  background:linear-gradient(135deg,transparent 0 50%,var(--com) 50% 58%,transparent 58% 70%,var(--com) 70% 78%,transparent 78%)}
+#comercial-panel .vent-esquina:hover{opacity:1}
+#commercial-return{position:fixed;right:18px;bottom:76px;z-index:7790;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:var(--brand,#7dffd0);color:#0b1a14;border:1px solid var(--brand,#7dffd0);border-radius:30px;font:700 14px/1.2 system-ui,-apple-system,sans-serif;cursor:pointer;box-shadow:0 10px 30px #0008}
+#commercial-return[hidden]{display:none}
+@keyframes comercial-float{50%{transform:translateY(-4px)}}
+@media(prefers-reduced-motion:reduce){#comercial-panel .commercial-face{animation:none}}
+@media(max-width:600px){#comercial-panel{inset:66px 12px 72px;width:auto;max-height:none;border-radius:14px}#comercial-panel>header{padding:10px 12px;cursor:default}#comercial-panel .commercial-face{flex-basis:64px;width:64px;height:58px}#comercial-panel h2{font-size:19px}#comercial-panel .commercial-cuerpo{padding:12px 14px 16px}#comercial-panel .vent-esquina{display:none}}
