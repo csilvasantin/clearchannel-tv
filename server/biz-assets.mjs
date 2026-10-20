@@ -49,6 +49,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   // El laboratorio también como ficha del mapa (OMNIP_LOCATIONS_EXTRA): sin tocar el catálogo KV.
   'locations.js',
   'comercial.mjs', 'comercial-core.mjs', 'comercial.css', 'assets/comercial.svg', 'planner-ui.js',
+  // Ventana movible de Comercial (20-10-2026), copia de movible.mjs de xpaceos.
+  'movible.mjs',
   // Altadis España · 10 Xtancos (DCL-a6cb621be0ce5932f50960de): índice público del circuito para el gemelo de
   // admira.store (CORS de lectura en _worker.js, como los planos) y la segmentación con los alias de Altadis España.
   'data/xpacios/altadis-espana-10.json', 'cliente-segmento.js',
