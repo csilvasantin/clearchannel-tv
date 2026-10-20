@@ -14,7 +14,7 @@ test('commercial release is scoped to Biz, including its existing planner UI',()
 test('commercial has visible entry points: header button and «Anunciarme aquí» in the Xpacio card, hidden until the module loads',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8'),source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8'),app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  assert.match(html,/<button type="button" id="header-comercial-toggle" class="mode-toggle header-comercial" hidden/);assert.match(html,/<a href="#" id="p-comercial" class="p-comercial" hidden data-commercial="here">/);
- assert.match(html,/comercial\.mjs\?v=20261020-comercial-16/);assert.match(html,/app\.js\?v=20261020-comercial-9/);
+ assert.match(html,/comercial\.mjs\?v=20261020-comercial-17/);assert.match(source,/decir\('apuntando',T\('Incorporado ','Added '\)\+\(it\.name\|\|/,'al abrirse con un local dice su nombre, no el resumen de la selección');assert.match(html,/app\.js\?v=20261020-comercial-9/);
  assert.match(source,/entrada\.hidden=false/);assert.match(source,/aqui\.hidden=false/);assert.match(source,/function abrirConLocal\(id\)/);assert.match(source,/ctx\.seleccionar\(id\)/);
  assert.match(app,/seleccionar\(id\) \{/);assert.match(app,/selectedLocationIds=new Set\(\[loc\.id\]\);\n    try\{renderCircuitSelector\(\);\}/);assert.match(app,/comercialAqui\.dataset\.comercialLocal = loc\.id/);
 });
