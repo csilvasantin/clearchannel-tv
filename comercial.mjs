@@ -1,4 +1,4 @@
-import {STEPS,proposal,proposalText,proposalHtml,proposalMailto,sameSelection,merchantBrief,merchantText,merchantHtml,merchantMailto} from './comercial-core.mjs?v=20261020-comercial-8';
+import {STEPS,proposal,proposalText,proposalHtml,proposalMailto,sameSelection,merchantBrief,merchantText,merchantHtml,merchantMailto} from './comercial-core.mjs?v=20261020-comercial-9';
 import {hacerMovible} from './movible.mjs?v=20261020-comercial-4';
 // Entradas visibles (Carlos, 20-oct-2026): botón en la cabecera de la portada y «Anunciarme aquí» en la ficha de cada
 // Xpacio, que abre Comercial con ese local ya incorporado. Ambos vienen ocultos en el HTML: sólo aparecen si este módulo
@@ -66,7 +66,10 @@ $('commercial-plan').onclick=()=>{if(!result)return;try{const current=ctx.snapsh
 // un iframe oculto; en el diálogo, «Guardar como PDF». Sin librerías ni API: el brief no sale de la pestaña.
 function propuestaHtml(){if(!result)return '';const css=getComputedStyle(document.documentElement);return proposalHtml(result,{lang:language(),brand:window.ADMIRA_SITE_BRAND||{},colors:{band:css.getPropertyValue('--card').trim()||'#100c20',accent:css.getPropertyValue('--brand').trim()||'#7dffd0'}});}
 function imprimir(html){return new Promise((resolve,reject)=>{const f=document.createElement('iframe');f.setAttribute('aria-hidden','true');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
- const quitar=()=>setTimeout(()=>f.remove(),1500);f.onload=()=>{try{const w=f.contentWindow;w.addEventListener('afterprint',quitar,{once:true});w.focus();w.print();resolve();}catch(e){f.remove();reject(e);}};f.srcdoc=html;document.body.append(f);});}
+ const quitar=()=>setTimeout(()=>f.remove(),1500);
+ // Las teselas del mapa y las fotos cargan dentro del documento: se espera a que estén (4 s como mucho) antes de imprimir.
+ const imagenes=d=>Promise.race([Promise.all([...d.images].map(i=>i.complete?Promise.resolve():new Promise(r=>{i.onload=i.onerror=r;}))),new Promise(r=>setTimeout(r,4000))]);
+ f.onload=async()=>{try{const w=f.contentWindow;await imagenes(w.document);w.addEventListener('afterprint',quitar,{once:true});w.focus();w.print();resolve();}catch(e){f.remove();reject(e);}};f.srcdoc=html;document.body.append(f);});}
 $('commercial-pdf').onclick=async()=>{if(!result)return;try{await imprimir(propuestaHtml());$('commercial-status').textContent=T(...labels.pdfListo);}catch{$('commercial-status').textContent=T(...labels.pdfNo);}};
 // Enviar por correo (20-10-2026): mailto con el anunciante, el contacto en copia, el asunto y el resumen; el PDF se adjunta a mano.
 function correoPropuesta(){return result?proposalMailto(result,{lang:language()}):'';}

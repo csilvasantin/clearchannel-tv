@@ -14,7 +14,7 @@ test('commercial release is scoped to Biz, including its existing planner UI',()
 test('commercial has visible entry points: header button and «Anunciarme aquí» in the Xpacio card, hidden until the module loads',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8'),source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8'),app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  assert.match(html,/<button type="button" id="header-comercial-toggle" class="mode-toggle header-comercial" hidden/);assert.match(html,/<a href="#" id="p-comercial" class="p-comercial" hidden data-commercial="here">/);
- assert.match(html,/comercial\.mjs\?v=20261020-comercial-8/);assert.match(html,/app\.js\?v=20261020-zona-protegida-1/);
+ assert.match(html,/comercial\.mjs\?v=20261020-comercial-9/);assert.match(html,/app\.js\?v=20261020-comercial-9/);
  assert.match(source,/entrada\.hidden=false/);assert.match(source,/aqui\.hidden=false/);assert.match(source,/function abrirConLocal\(id\)/);assert.match(source,/ctx\.seleccionar\(id\)/);
  assert.match(app,/seleccionar\(id\) \{/);assert.match(app,/selectedLocationIds=new Set\(\[loc\.id\]\);\n    try\{renderCircuitSelector\(\);\}/);assert.match(app,/comercialAqui\.dataset\.comercialLocal = loc\.id/);
 });
@@ -59,4 +59,26 @@ test('merchant brief: branded A4 document and mailto with the merchant contact a
  const q=new URLSearchParams(url.slice(url.indexOf('?')+1));assert.equal(q.get('subject'),'Incorporación de pantallas · Panadería <La Espiga> · Barcelona');assert.match(q.get('body'),/^Hola,[\s\S]*PDF adjunto[\s\S]*Pantallas: 3[\s\S]*Comercial · info@admira\.com$/);assert.ok(q.get('body').length<=1800);
  const tel=merchantMailto(merchantBrief({...m,contact:'600 000 000'}),{lang:'en'});assert.match(tel,/^mailto:\?cc=/);assert.match(decodeURIComponent(tel),/Screen onboarding · Panadería <La Espiga>/);
  const source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8');assert.match(source,/id="commercial-merchant-pdf" class="primary"/);assert.match(source,/id="commercial-merchant-mail"/);assert.match(source,/a\.href=correoFicha\(\)/);assert.ok(!/fetch\(|localStorage/.test(source));
+});
+test('the proposal map: Web Mercator tiles of the portada imagery, one numbered marker per location, close-up for one point and fitted zoom for several',async()=>{
+ const {mapaPropuesta,mapaHtml,proposal,proposalHtml,TESELAS}=await import('../comercial-core.mjs');
+ assert.equal(mapaPropuesta([{id:'a',name:'A'}]),null,'sin coordenadas, sin mapa');
+ const uno=mapaPropuesta([{id:'pg103',coords:[2.1651,41.3932]}]);
+ assert.equal(uno.zoom,16);assert.equal(uno.marcadores.length,1);assert.equal(uno.marcadores[0].n,1);
+ assert.ok(Math.abs(uno.marcadores[0].left-uno.ancho/2)<=1&&Math.abs(uno.marcadores[0].top-uno.alto/2)<=1,'una ubicación, centrada');
+ assert.ok(uno.teselas.length>=6&&uno.teselas.every(t=>/^https:\/\/server\.arcgisonline\.com\/ArcGIS\/rest\/services\/World_Imagery\/MapServer\/tile\/16\/\d+\/\d+$/.test(t.url)),'teselas Esri del zoom 16');
+ assert.ok(uno.teselas.every(t=>t.left>-256&&t.left<uno.ancho&&t.top>-256&&t.top<uno.alto),'teselas dentro del hueco');
+ const varios=mapaPropuesta([{id:'bcn',coords:[2.17,41.39]},{id:'mad',coords:[-3.70,40.42]},{id:'bil',coords:[-2.93,43.26]}]);
+ assert.ok(varios.zoom<16&&varios.zoom>=5,'zoom ajustado: '+varios.zoom);assert.equal(varios.marcadores.length,3);
+ for(const m of varios.marcadores)assert.ok(m.left>=40&&m.left<=varios.ancho-40&&m.top>=40&&m.top<=varios.alto-40,'marcador con margen: '+JSON.stringify(m));
+ assert.ok(varios.marcadores[0].left>varios.marcadores[1].left,'Barcelona al este de Madrid');assert.ok(varios.marcadores[2].top<varios.marcadores[1].top,'Bilbao al norte de Madrid');
+ assert.equal(TESELAS,'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+ const planner={validSettings:()=>true,quote:items=>({estimatedImpr:100,price:10})};
+ const p=proposal({advertiser:'Café Rico',objective:'x',audience:'y',start:'2026-10-20',end:'2026-10-26',budget:2000,passesDay:1000,durationSec:15},{ready:true,circuit:'c',target:'t',items:[{id:'pg103',name:'Starbucks PG',impr:10,cpm:1,coords:[2.1651,41.3932],foto:'https://stock.admira.store/x.webp'},{id:'sin',name:'Sin foto',impr:10,cpm:1,coords:[2.17,41.40],foto:'javascript:alert(1)'}]},planner,'2026-10-20');
+ assert.deepEqual(p.locations[0].coords,[2.1651,41.3932]);assert.equal(p.locations[0].foto,'https://stock.admira.store/x.webp');assert.equal(p.locations[1].foto,undefined,'sólo fotos https');
+ const html=proposalHtml(p,{lang:'es'});assert.match(html,/<h2>Mapa de las ubicaciones<\/h2><div class="mapa"/);assert.match(html,/class="marca-mapa"[^>]*>1<\/span>/);assert.match(html,/<th>Foto<\/th>/);assert.match(html,/<img src="https:\/\/stock\.admira\.store\/x\.webp"/);assert.match(html,/Esri · Maxar/);
+ assert.ok(!/Mapa de las ubicaciones/.test(proposalHtml({...p,locations:p.locations.map(l=>({id:l.id,name:l.name,demo:false}))})),'sin coordenadas, sin mapa ni columna de foto');
+ assert.equal(mapaHtml({locations:[]}),'');
+ const source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8');assert.match(source,/await imagenes\(w\.document\)/);
+ const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');assert.match(app,/coords:Array\.isArray\(loc\.coords\)\?loc\.coords\.slice\(0,2\):null,foto,/);
 });
