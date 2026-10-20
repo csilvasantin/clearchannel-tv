@@ -14,7 +14,7 @@ test('commercial release is scoped to Biz, including its existing planner UI',()
 test('commercial has visible entry points: header button and «Anunciarme aquí» in the Xpacio card, hidden until the module loads',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8'),source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8'),app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  assert.match(html,/<button type="button" id="header-comercial-toggle" class="mode-toggle header-comercial" hidden/);assert.match(html,/<a href="#" id="p-comercial" class="p-comercial" hidden data-commercial="here">/);
- assert.match(html,/comercial\.mjs\?v=20261020-comercial-15/);assert.match(html,/app\.js\?v=20261020-comercial-9/);
+ assert.match(html,/comercial\.mjs\?v=20261020-comercial-16/);assert.match(html,/app\.js\?v=20261020-comercial-9/);
  assert.match(source,/entrada\.hidden=false/);assert.match(source,/aqui\.hidden=false/);assert.match(source,/function abrirConLocal\(id\)/);assert.match(source,/ctx\.seleccionar\(id\)/);
  assert.match(app,/seleccionar\(id\) \{/);assert.match(app,/selectedLocationIds=new Set\(\[loc\.id\]\);\n    try\{renderCircuitSelector\(\);\}/);assert.match(app,/comercialAqui\.dataset\.comercialLocal = loc\.id/);
 });
@@ -106,6 +106,7 @@ test('voice and ear: the Admirito cloud (personaje=comercial) speaks for Commerc
  assert.match(source,/NUBE_ORIGEN='https:\/\/digitalavatar\.ai'/);assert.match(source,/personaje=comercial&embed=0&dock=1&tier=good&lang=/);
  assert.match(source,/ev\.source!==nubeFrame\.contentWindow\|\|ev\.origin!==NUBE_ORIGEN/,'sólo mensajes de la nube');assert.match(source,/da-comercial-listo/);assert.match(source,/da-comercial-texto/);assert.match(source,/postMessage\(\{type:'da-comercial',estado,texto:texto\|\|'',silencio,lang:language\(\)\},NUBE_ORIGEN\)/);
  assert.match(source,/function aplicarDictado\(texto\)\{\n const r=briefDesdeTexto\(texto,\{hoy:today\(\),lang:language\(\)\}\);/);assert.match(source,/id="commercial-mic"/);assert.match(source,/webkitSpeechRecognition/);assert.match(source,/SpeechSynthesisUtterance/);assert.match(source,/NUBE_ORIGEN\);return;\}catch\{\}\}\n if\(silencio\|\|!texto\)return;\n if\(nubeFrame\)\{pendienteVoz=\{estado,texto\};/,'con la nube, la voz la pone la nube (ElevenLabs); mientras carga, la frase espera; sin ella, el navegador');assert.match(source,/if\(p&&!panel\.hidden\)decir\(p\.estado,p\.texto\)/,'al avisar la nube de que está lista, dice la frase que esperaba');
+ assert.match(source,/T\('Propuesta preparada para revisar\.','Proposal ready for review\.'\);const nf=.*decir\('entregando',labels\.propuestaVoz/,'las cifras se dicen al preparar la propuesta');assert.doesNotMatch(source,/commercial-adopt'\)\.onclick=\(\)=>\{try\{adoptar\(\);const nf/,'«Usar la selección» no lee la propuesta que acaba de invalidar');
  assert.match(source,/setAttribute\('allow','microphone; autoplay'\)/,'el iframe delega el autoplay: el clic del anfitrión vale como gesto para la voz');assert.ok(!/nubeFrame\.loading='lazy'/.test(source),'la nube carga aunque su hueco esté oculto');assert.ok(!/fetch\(|localStorage|sessionStorage/.test(source));
 });
 // 20-oct-2026: un comentario «//» pegado a una línea de una sola función se tragó su «}» y Comercial dejó de cargar en
