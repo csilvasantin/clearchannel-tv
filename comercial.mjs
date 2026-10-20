@@ -41,7 +41,7 @@ function selectionText(s){return s.circuit+' · '+s.items.length+' '+T('ubicacio
 
 // ── Voz: la nube de Admirito (digitalavatar.ai) o, si no carga, la voz del navegador ──
 const nubeCaja=document.getElementById('commercial-nube');let nubeFrame=null,nubeLista=false;
-function montarNube(){if(nubeFrame||!nubeCaja)return;nubeFrame=document.createElement('iframe');nubeFrame.src=nubeUrl(language());nubeFrame.title='Comercial · Admirito';nubeFrame.setAttribute('allow','microphone');nubeCaja.append(nubeFrame);   // sin loading=lazy: dentro de un hueco oculto no cargaba nunca y la nube no avisaba de que estaba lista}
+function montarNube(){if(nubeFrame||!nubeCaja)return;nubeFrame=document.createElement('iframe');nubeFrame.src=nubeUrl(language());nubeFrame.title='Comercial · Admirito';nubeFrame.setAttribute('allow','microphone');nubeCaja.append(nubeFrame);}   /* sin loading=lazy: dentro de un hueco oculto no cargaba nunca y la nube no avisaba de que estaba lista */
 function decir(estado,texto,silencio=false){
  if(nubeLista&&nubeFrame){try{nubeFrame.contentWindow.postMessage({type:'da-comercial',estado,texto:texto||'',silencio,lang:language()},NUBE_ORIGEN);return;}catch{}}
  if(silencio||!texto)return;
