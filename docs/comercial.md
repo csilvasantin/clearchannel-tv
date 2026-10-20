@@ -50,3 +50,10 @@ Commercial is Admirito with a tie and briefcase, focused on advertiser campaigns
 - **Fotos**: la selección del mapa (`AdmiraCommercialContext.snapshot()`) lleva ahora `coords` y `foto` (la fachada del previo del KV, si la hay); la propuesta las conserva (`foto` sólo si es `https:`) y la tabla de ubicaciones añade una columna con miniaturas cuando alguna tiene foto.
 - Antes de imprimir, `imprimir()` espera a que las imágenes del documento (teselas y fotos) hayan cargado, 4 s como mucho.
 - Sellos `?v=20261020-comercial-9` (comercial.css, comercial.mjs, comercial-core.mjs y app.js).
+
+## Voz y oído: la nube de Admirito (20-oct-2026, orden de Carlos)
+
+- **La cara y la voz** son la nube de digitalavatar.ai con la piel «comercial» (corbata y maletín): `nube.html?personaje=comercial&embed=0&dock=1&tier=good&lang=…`, en un iframe bajo la cabecera del panel, que aparece cuando la nube avisa de que está lista (`da-comercial-listo`). Comercial le cuenta en qué está con `{type:'da-comercial', estado, texto, silencio}` (estados: reposo, escuchando, apuntando, proponiendo, entregando, dudando) y la nube lo dice con la voz y el lip-sync de Admirito. Sólo se aceptan mensajes de ese iframe y de `https://digitalavatar.ai`.
+- **Lo que se le dice** (por el micro o el texto de la nube) llega como `{type:'da-comercial-texto', texto}` y `briefDesdeTexto` lo convierte en brief: anunciante, objetivo, audiencia, presupuesto, fechas, pases y duración, sin inventar nada; lo que falta se dice («Me falta el presupuesto»). Si la frase pide otra cosa («captar un comercio», «abre las ubicaciones», «elige audiencias», «prepara la propuesta»), Comercial cambia de paso.
+- **Micro propio** (🎙️ en la cabecera, Web Speech API) y **voz del navegador** (`speechSynthesis`) como respaldo si la nube no carga. Al preparar la propuesta, la nube la anuncia con las cifras; los errores los dice en «dudando».
+- `window.AdmiraComercial.dictado(texto)` aplica un dictado (pruebas). Sin `fetch` ni almacenamiento: el brief sigue en la pestaña. Sellos `?v=20261020-comercial-10`. La piel vive en el repo `digitalavatar.ai` (`tests/comercial.test.mjs` allí).

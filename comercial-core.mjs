@@ -220,3 +220,57 @@ export function mapaHtml(p, lang = 'es', opciones = {}) {
   const marcas = m.marcadores.map(x => `<span class="marca-mapa" style="left:${x.left}px;top:${x.top}px" title="${esc(x.id)}">${x.n}</span>`).join('');
   return `<h2>${t('Mapa de las ubicaciones', 'Location map')}</h2><div class="mapa" style="width:${m.ancho}px;height:${m.alto}px">${teselas}${marcas}</div><p class="atribucion">${esc(m.atribucion)} · ${t('zoom', 'zoom')} ${m.zoom}</p>`;
 }
+
+// ── Brief dictado (Carlos, 20-oct-2026: «que Comercial escuche el brief por el micro») ─────────────────────
+// Del texto dictado a los campos del brief, sin modelo ni API: reglas sobre lo que dice una persona en español o inglés.
+// Lo que no se entiende se deja vacío y se dice; nunca se inventa. Devuelve {campos, faltan, intencion, resumen}.
+const MESES = { enero:1, febrero:2, marzo:3, abril:4, mayo:5, junio:6, julio:7, agosto:8, septiembre:9, setiembre:9, octubre:10, noviembre:11, diciembre:12,
+  january:1, february:2, march:3, april:4, may:5, june:6, july:7, august:8, september:9, october:10, november:11, december:12 };
+const PALABRAS_NUM = { un:1, una:1, uno:1, dos:2, tres:3, cuatro:4, cinco:5, seis:6, siete:7, ocho:8, nueve:9, diez:10, quince:15, veinte:20, treinta:30, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, ten:10, fifteen:15, twenty:20, thirty:30 };
+const numero = s => { if (s == null) return NaN; const w = String(s).toLowerCase().trim(); if (PALABRAS_NUM[w] != null) return PALABRAS_NUM[w]; const m = w.replace(/\./g, '').replace(',', '.').match(/\d+(?:\.\d+)?/); let v = m ? Number(m[0]) : NaN; if (/\bmil\b|k\b/.test(w) && v < 1000) v *= 1000; return v; };
+const iso = d => d.toISOString().slice(0, 10);
+const fechaDe = (dia, mes, anio, hoy) => { const y = anio || hoy.getUTCFullYear(); let d = new Date(Date.UTC(y, mes - 1, dia)); if (!anio && d < hoy && (hoy - d) > 7 * 86400000) d = new Date(Date.UTC(y + 1, mes - 1, dia)); return d; };
+export function briefDesdeTexto(texto, { hoy = new Date().toISOString().slice(0, 10), lang = 'es' } = {}) {
+  const t = clean(texto).replace(/\s+/g, ' '), bajo = t.toLowerCase(), H = new Date(hoy + 'T00:00:00Z'), campos = {}, en = lang === 'en';
+  // Intención: cambiar de modo o pedir algo concreto.
+  let intencion = 'brief';
+  if (/\b(captar|comercio|tienda|incorporar pantallas|merchant|recruit|shop)\b/.test(bajo) && !/\b(anunciante|campaña|campaign|presupuesto|budget)\b/.test(bajo)) intencion = 'comercios';
+  else if (/\b(propuesta|proposal)\b/.test(bajo) && /\b(prepara|haz|genera|saca|dame|prepare|make|generate)\b/.test(bajo)) intencion = 'propuesta';
+  else if (/\b(ubicaciones|locations)\b/.test(bajo) && /\b(elige|elegir|abre|abrir|choose|open|pick)\b/.test(bajo)) intencion = 'ubicaciones';
+  else if (/\b(audiencias?|audiences?)\b/.test(bajo) && /\b(elige|elegir|abre|abrir|choose|open|pick)\b/.test(bajo)) intencion = 'audiencias';
+  // Anunciante: «para Café Rico», «el anunciante es…», «campaña de…», «for Café Rico».
+  const anun = t.match(/\b(?:[Aa]nunciante(?: es)?:?|[Pp]ara(?: la marca| el cliente)?|[Cc]ampaña (?:de|para)|[Cc]liente:?|[Aa]dvertiser(?: is)?:?|[Ff]or)\s+([A-ZÁÉÍÓÚÑ][^,.;:]{1,60}?)(?=\s+(?:que|con|del|desde|en|para|a |dirigid|hasta|durante|y |to |aimed|,|\.|;|:|$)|[,.;:]|$)/u);
+  if (anun) campos.advertiser = anun[1].trim();
+  // Presupuesto: «presupuesto 2000 euros», «2.000 €», «budget 2000».
+  const pres = bajo.match(/(?:presupuesto|budget)(?: de| of| es)?\s*(?:de\s*)?([\d.,]+\s*(?:mil|k)?)\s*(?:€|euros?|eur)?/) || bajo.match(/([\d.,]+)\s*(?:€|euros)\b/);
+  if (pres && Number.isFinite(numero(pres[1])) && numero(pres[1]) > 0) campos.budget = numero(pres[1]);
+  // Fechas: «del 20 al 26 de octubre», «desde el 1 de noviembre hasta el 15», «la primera semana de noviembre», «una semana desde el lunes/mañana», «two weeks from 3 November».
+  const rango = bajo.match(/del?\s+(\d{1,2})(?:\s+de\s+([a-z]+))?\s+(?:al|hasta el|hasta)\s+(\d{1,2})\s+de\s+([a-z]+)(?:\s+de\s+(\d{4}))?/) || bajo.match(/from\s+(\d{1,2})(?:\s+([a-z]+))?\s+(?:to|until)\s+(\d{1,2})\s+([a-z]+)(?:\s+(\d{4}))?/);
+  if (rango && MESES[rango[4]]) { const m2 = MESES[rango[4]], m1 = MESES[rango[2]] || m2, a = rango[5] ? Number(rango[5]) : 0; const d1 = fechaDe(+rango[1], m1, a, H), d2 = fechaDe(+rango[3], m2, a || d1.getUTCFullYear(), H); if (d2 >= d1) { campos.start = iso(d1); campos.end = iso(d2); } }
+  if (!campos.start) {
+    const dur = bajo.match(/(\d+|una?|dos|tres|cuatro|one|two|three|four)\s+(semanas?|weeks?|d[ií]as?|days?|mes(?:es)?|months?)/);
+    const desde = bajo.match(/(?:desde|a partir de|from|starting)\s+(?:el\s+)?(\d{1,2})\s+(?:de\s+)?([a-z]+)/) ;
+    let inicio = desde && MESES[desde[2]] ? fechaDe(+desde[1], MESES[desde[2]], 0, H) : /\bmañana\b|\btomorrow\b/.test(bajo) ? new Date(H.getTime() + 86400000) : /\bhoy\b|\btoday\b/.test(bajo) ? H : null;
+    if (dur) { const n = numero(dur[1]), dias = /sem|week/.test(dur[2]) ? 7 * n : /mes|month/.test(dur[2]) ? 30 * n : n; inicio = inicio || H; campos.start = iso(inicio); campos.end = iso(new Date(inicio.getTime() + (dias - 1) * 86400000)); }
+    else if (inicio) { campos.start = iso(inicio); campos.end = iso(new Date(inicio.getTime() + 6 * 86400000)); }
+  }
+  // Pases y duración: «1000 pases al día», «spots de 15 segundos».
+  const pases = bajo.match(/(\d[\d.]*|mil)\s*(?:pases|spots|plays|pasadas)/); if (pases) { const v = numero(pases[1]); if ([250, 500, 1000, 2500].includes(v)) campos.passesDay = v; }
+  const seg = bajo.match(/(\d{1,2})\s*(?:segundos|seg|s\b|seconds|sec)/); if (seg && [15, 30, 45, 60].includes(Number(seg[1]))) campos.durationSec = Number(seg[1]);
+  // Audiencia: «dirigida a…», «para llegar a…», «público…», «audiencia…», «aimed at…», «target…».
+  const aud = t.match(/\b(?:dirigid[ao]s? a|para llegar a|llegar a|p[úu]blico(?: objetivo)?(?: de| es)?:?|audiencia(?: de| es)?:?|aimed at|targeting|audience(?: is| of)?:?|reach)\s+([^.;]{3,120}?)(?=[.;]|$|\s+(?:con un presupuesto|presupuesto|budget|del \d|desde|from|durante|for \d|y la campaña))/iu);
+  const recorta = v => String(v).trim().replace(/[,.;:]+$/, '').trim();
+  if (aud) campos.audience = recorta(aud[1]);
+  // Objetivo: «objetivo: …», «quiere/queremos…», «para lanzar…», «to launch…»; si no, lo que queda sin usar.
+  const obj = t.match(/\b(?:objetivo(?: es| de la campaña)?:?|quiere(?:n)?|queremos|busca(?:n)?|para (?:lanzar|promocionar|dar a conocer|anunciar|vender)|to (?:launch|promote|announce|sell)|wants? to|goal(?: is)?:?)\s+([^.;]{3,160}?)(?=[.;]|$|\s+(?:dirigid|para llegar|p[úu]blico|audiencia|con un presupuesto|presupuesto|budget|del \d|desde|aimed|targeting|audience|from))/iu);
+  if (obj) campos.objective = recorta(/^(?:para |to )/i.test(t.slice(obj.index, obj.index + 5)) ? t.slice(obj.index, obj.index + obj[0].length) : obj[1]);
+  if (campos.advertiser) campos.advertiser = recorta(campos.advertiser);
+  const faltan = ['advertiser', 'objective', 'audience', 'budget'].filter(k => campos[k] == null || campos[k] === '');
+  const nombres = en ? { advertiser: 'the advertiser', objective: 'the objective', audience: 'the audience', budget: 'the budget' } : { advertiser: 'el anunciante', objective: 'el objetivo', audience: 'la audiencia', budget: 'el presupuesto' };
+  const dichos = Object.keys(campos).filter(k => campos[k] != null && campos[k] !== '');
+  const resumen = intencion !== 'brief' ? '' : dichos.length
+    ? (en ? `Noted: ${dichos.map(k => ({ advertiser: 'advertiser', objective: 'objective', audience: 'audience', budget: 'budget', start: 'dates', end: '', passesDay: 'daily plays', durationSec: 'duration' })[k]).filter(Boolean).join(', ')}.` : `Apuntado: ${dichos.map(k => ({ advertiser: 'el anunciante', objective: 'el objetivo', audience: 'la audiencia', budget: 'el presupuesto', start: 'las fechas', end: '', passesDay: 'los pases', durationSec: 'la duración' })[k]).filter(Boolean).join(', ')}.`)
+      + (faltan.length ? (en ? ` I still need ${faltan.map(k => nombres[k]).join(', ')}.` : ` Me falta ${faltan.map(k => nombres[k]).join(', ')}.`) : (en ? ' I have everything: choose the locations and I will prepare the proposal.' : ' Lo tengo todo: elige las ubicaciones y preparo la propuesta.'))
+    : (en ? 'I did not catch the brief. Tell me the advertiser, the objective, who to reach and the budget.' : 'No he entendido el brief. Dime el anunciante, el objetivo, a quién llegar y el presupuesto.');
+  return { campos, faltan, intencion, resumen };
+}
