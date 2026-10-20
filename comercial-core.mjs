@@ -2,7 +2,8 @@
 export const STEPS = Object.freeze(['brief', 'audiencias', 'ubicaciones', 'propuesta', 'comercios']);
 const clean = (v, max = 2000) => String(v ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, max);
 export function normalizeBrief(raw = {}) {
-  return {advertiser:clean(raw.advertiser,160),objective:clean(raw.objective),audience:clean(raw.audience),
+  const email=clean(raw.email,254);
+  return {advertiser:clean(raw.advertiser,160),email:/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?email:'',objective:clean(raw.objective),audience:clean(raw.audience),
     start:clean(raw.start,10),end:clean(raw.end,10),budget:Number(raw.budget),passesDay:Number(raw.passesDay),durationSec:Number(raw.durationSec)};
 }
 export function proposal(raw, snapshot, planner, today) {
@@ -96,4 +97,26 @@ footer{margin-top:22px;padding-top:8px;border-top:1px solid #dfe3ea;display:flex
 <ul class="avisos">${avisos}</ul>
 <footer><span>${t('Contacto comercial','Commercial contact')}: ${esc(contact)}</span><span>${t('Preparado por Comercial (Admirito) en ','Prepared by Commercial (Admirito) at ')}${dominio}</span></footer>
 </body></html>`;
+}
+
+// ── Enviar por correo (Carlos, 20-oct-2026) ──────────────────────────────────────────────────────────────────
+// Un enlace mailto: con el anunciante de destinatario (si dio su correo), el contacto comercial en copia, el asunto y
+// el texto de la propuesta. El PDF se adjunta a mano (un mailto: no puede adjuntar). Los clientes de correo recortan los
+// enlaces largos: el cuerpo se limita a unos 1.800 caracteres y, si hay muchas ubicaciones, se resumen.
+export const CORREO_MAX = 1800;
+export function proposalMailto(p, {lang='es', contact='info@admira.com', maxBody=CORREO_MAX} = {}) {
+  const en=lang==='en',t=(a,b)=>en?b:a;
+  const asunto=`${t('Propuesta de campaña','Campaign proposal')} · ${p.brief.advertiser} · ${p.createdOn}`;
+  const saludo=t('Hola,\n\nTe envío la propuesta de campaña que hemos preparado. El detalle va en el PDF adjunto; este es el resumen:\n\n','Hello,\n\nPlease find the campaign proposal we prepared. The details are in the attached PDF; here is the summary:\n\n');
+  const firma=`\n\n${t('Un saludo,\nComercial · ','Best regards,\nCommercial · ')}${contact}`;
+  let resumen=proposalText(p,lang);
+  if((saludo+resumen+firma).length>maxBody){
+    const lineas=resumen.split('\n'),ubic=lineas.filter(l=>l.startsWith('• ')),resto=lineas.filter(l=>!l.startsWith('• '));
+    const quedan=Math.max(0,ubic.length-5);
+    resumen=[...resto.slice(0,resto.findIndex(l=>/^(Ubicaciones seleccionadas|Selected locations)/.test(l))+1),...ubic.slice(0,5),quedan?t(`… y ${quedan} ubicaciones más (en el PDF).`,`… and ${quedan} more locations (in the PDF).`):'',...resto.slice(resto.findIndex(l=>/^(Ubicaciones seleccionadas|Selected locations)/.test(l))+1)].filter(Boolean).join('\n');
+    if((saludo+resumen+firma).length>maxBody) resumen=resumen.slice(0,maxBody-saludo.length-firma.length-1)+'…';
+  }
+  const para=p.brief.email||'';
+  const q=new URLSearchParams();if(contact)q.set('cc',contact);q.set('subject',asunto);q.set('body',saludo+resumen+firma);
+  return `mailto:${encodeURIComponent(para)}?${q.toString().replace(/\+/g,'%20')}`;
 }
