@@ -174,10 +174,27 @@ function agentUpstream(hostname) {
   return null;
 }
 
+// Comprobar la sesión del navegador (20-10-2026): la cookie __Host-yk_session la pone el POST a /auth/agente de este
+// mismo origen, así que la página pregunta aquí (GET /auth/sesion) y el worker reenvía la cookie al API. Un visitante
+// sin sesión recibe 200 {ok:false}, no un 401: la consola de la portada queda limpia (antes la página llamaba a
+// api.admira.biz directamente y Chrome anotaba el 401 como error). Sólo GET.
+const SESSION_PATH = '/auth/sesion', SESSION_UPSTREAM = '/auth/session';
 async function agentLogin(request, url) {
-  if (url.pathname !== '/auth/agente') return null;
+  if (url.pathname !== '/auth/agente' && url.pathname !== SESSION_PATH) return null;
   var target = agentUpstream(url.hostname);
   if (!target) return null;
+  if (url.pathname === SESSION_PATH) {
+    if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('{"ok":false,"error":"method_not_allowed"}', { status: 405, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'Allow': 'GET, HEAD' } });
+    var sh = new Headers();
+    ['cookie', 'user-agent', 'cf-connecting-ip', 'accept-language'].forEach(function (name) { var v = request.headers.get(name); if (v) sh.set(name, v); });
+    sh.set('Origin', target.origin); sh.set('Accept', 'application/json');
+    var sr;
+    try { sr = await fetch(new URL(SESSION_UPSTREAM, target.api), { method: 'GET', headers: sh, redirect: 'manual' }); }
+    catch (e) { return new Response('{"ok":false,"error":"upstream_unreachable"}', { status: 200, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } }); }
+    var sinSesion = sr.status === 401 || sr.status === 403;
+    var body = sinSesion ? '{"ok":false,"sesion":false}' : await sr.text();
+    return new Response(body, { status: sinSesion ? 200 : sr.status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer', 'X-Content-Type-Options': 'nosniff' } });
+  }
   var headers = new Headers();
   AGENT_LOGIN_PASS.forEach(function (name) {
     var value = request.headers.get(name);

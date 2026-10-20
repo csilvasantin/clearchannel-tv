@@ -210,3 +210,25 @@ console.log('brand worker · admira.biz (marca, canónica, Yokup movido, /auth/*
   } finally { globalThis.fetch = realFetch; }
   console.log('brand worker · /auth/agente proxy: ok');
 }
+
+// Sesión del navegador por el mismo origen (20-10-2026): GET /auth/sesion reenvía la cookie a api.admira.biz/auth/session;
+// sin sesión (401/403 arriba) responde 200 {ok:false}, con sesión devuelve lo del API; otros métodos, 405; clearchannel.tv no.
+{
+  const realFetch = globalThis.fetch;
+  const seen = [];
+  let upstream = () => new Response('{"ok":false}', { status: 401, headers: { 'content-type': 'application/json' } });
+  globalThis.fetch = async (u, init) => { seen.push({ url: String(u), method: init.method, cookie: init.headers.get('cookie'), origin: init.headers.get('origin') }); return upstream(); };
+  try {
+    const assets = { ASSETS: { fetch() { return new Response('page', { headers: { 'content-type': 'text/plain' } }); } } };
+    const anon = await worker.fetch(new Request('https://www.admira.biz/auth/sesion', { headers: { Cookie: '__Host-yk_session=abc' } }), assets);
+    assert.equal(anon.status, 200); assert.deepEqual(await anon.json(), { ok: false, sesion: false }); assert.equal(anon.headers.get('cache-control'), 'no-store');
+    assert.deepEqual(seen[0], { url: 'https://api.admira.biz/auth/session', method: 'GET', cookie: '__Host-yk_session=abc', origin: 'https://www.admira.biz' });
+    upstream = () => Response.json({ ok: true, email: 'agentes@silicio.admiranext.com' });
+    const con = await worker.fetch(new Request('https://admira.biz/auth/sesion'), assets);
+    assert.equal(con.status, 200); assert.deepEqual(await con.json(), { ok: true, email: 'agentes@silicio.admiranext.com' });
+    assert.equal((await worker.fetch(new Request('https://www.admira.biz/auth/sesion', { method: 'POST' }), assets)).status, 405);
+    assert.equal(seen.length, 2);
+    assert.equal(await (await worker.fetch(new Request('https://www.clearchannel.tv/auth/sesion'), assets)).text(), 'page');
+  } finally { globalThis.fetch = realFetch; }
+  console.log('brand worker · /auth/sesion: ok');
+}
