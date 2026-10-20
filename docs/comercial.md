@@ -31,3 +31,10 @@ Commercial is Admirito with a tie and briefcase, focused on advertiser campaigns
 - `proposalHtml(p, {lang, brand, contact, colors})` en `comercial-core.mjs` maqueta un documento A4: banda con la marca de la página (`window.ADMIRA_SITE_BRAND`, colores `--card` y `--brand`), anunciante y objetivo, brief (audiencia, segmentación, circuito, fechas, emisión), tres cifras clave (ubicaciones, oportunidades estimadas, importe orientativo con el presupuesto), tabla de ubicaciones y los avisos de siempre (estimación, disponibilidad sin confirmar, demostraciones, presupuesto superado, datos pendientes). Pie con el contacto comercial (`info@admira.com`) y «Preparado por Comercial (Admirito)». Todo el texto del brief va escapado.
 - Lo imprime el navegador desde un iframe oculto (`srcdoc` + `print()`): en el diálogo, «Guardar como PDF»; el nombre sugerido es el `<title>` («Propuesta de campaña · anunciante · fecha»). Sin librerías ni API: el brief sigue sin salir de la pestaña.
 - `window.AdmiraComercial.propuestaHtml()` devuelve el documento (pruebas y depuración). Prueba: «the branded proposal document…» en `tests/comercial.test.mjs`. Sellos `?v=20261020-comercial-6`.
+
+## Enviar por correo (20-oct-2026, orden de Carlos)
+
+- El brief admite un **correo del anunciante** opcional (`email`, sólo si es un correo válido; sigue en memoria de la pestaña).
+- Botón **«Enviar por correo»** junto a «Propuesta en PDF»: `proposalMailto(p, {lang, contact})` abre el correo del propio equipo (`mailto:`) con el anunciante de destinatario (si dio su correo), `info@admira.com` en copia, el asunto «Propuesta de campaña · anunciante · fecha» y un cuerpo con saludo, el resumen de la propuesta y la firma de Comercial. El PDF se adjunta a mano (un `mailto:` no adjunta): el aviso lo dice.
+- Los clientes de correo recortan los enlaces largos: el cuerpo se limita a 1.800 caracteres y, si hay muchas ubicaciones, se listan 5 y «… y N más (en el PDF)».
+- `window.AdmiraComercial.correoPropuesta()` devuelve el enlace (pruebas). Sellos `?v=20261020-comercial-7`.
