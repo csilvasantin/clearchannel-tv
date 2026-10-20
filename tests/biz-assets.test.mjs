@@ -18,6 +18,9 @@ test('only admira.biz and its Pages verification host select the corrected asset
     assert.equal(bizAssetPath(new URL('https://' + host + '/players')), '/__admira_biz/players/');
     assert.equal(bizAssetPath(new URL('https://' + host + '/tutorial')), '/__admira_biz/tutorial/');
     assert.equal(bizAssetPath(new URL('https://' + host + '/demo/')), '/__admira_biz/demo/');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/laboratorio/?lang=en')), '/__admira_biz/laboratorio/');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/laboratorio')), '/__admira_biz/laboratorio/');
+    assert.equal(bizAssetPath(new URL('https://' + host + '/docs/laboratorio-admiranext.md')), '/__admira_biz/docs/laboratorio-admiranext.md');
     assert.equal(bizAssetPath(new URL('https://' + host + '/demo/demo.mjs?v=lang')), '/__admira_biz/demo/demo.mjs');
     assert.equal(bizAssetPath(new URL('https://' + host + '/about.html')), '/__admira_biz/about');
     assert.equal(bizAssetPath(new URL('https://' + host + '/marketplace')), '/__admira_biz/marketplace');
