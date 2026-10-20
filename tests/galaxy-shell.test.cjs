@@ -237,7 +237,7 @@ test('every page loads the four-band shell, is the portada, or is a listed excep
   for (const page of ['backoffice/index.html', 'presentation/cc/index.html']) assert.match(read(page), /location\.replace\(/, page);
   for (const id of S.PANEL_IDS) assert.ok(index.includes(`id="${id}"`), 'the portada carries the shell in line: ' + id);
   // The pages Carlos named, plus the ones discovered around them.
-  for (const page of ['about.html', 'backoffice.html', 'detail.html', 'marketplace.html', 'store-3d.html', 'walk.html', 'documentacion/index.html',
+  for (const page of ['about.html', 'backoffice.html', 'detail.html', 'marketplace.html', 'store-3d.html', 'walk.html',
     'help/index.html', 'mcp/index.html', 'parrilla/index.html', 'presentacion/index.html', 'presentation/index.html', 'target/index.html',
     'tutorial/index.html', 'players/index.html']) assert.ok(adopted.includes(page), page);
   for (const page of adopted) {
@@ -271,7 +271,6 @@ test('pages hand their own navigation to ☰ Opciones and their work to ▤ Avan
   slot('detail.html', 'data-admira-contact', 'options');
   slot('marketplace.html', 'data-admira-contact', 'options');
   slot('store-3d.html', 'id="back-detail"', 'options');
-  slot('documentacion/index.html', 'href="/presentation/"', 'options');
   slot('mcp/index.html', 'href="llms\\.txt"', 'advanced');
   slot('parrilla/index.html', 'id="emitBtn"', 'advanced');
   slot('parrilla/index.html', 'id="autoBtn"', 'advanced');

@@ -77,7 +77,6 @@ Guardián: `tests/galaxy-shell.test.cjs` recorre todos los `.html` del repo. Cad
 | `store-3d.html` | `/ mapa 3D` | ← Detalle Xpace (con `?loc=`), PixerIA ↗, XpaceOS ↗, Contacto | — (los controles 3D siguen sobre la escena) |
 | `walk.html` | `/ recorre tu campaña` | — | — (el aviso «sin emisión» pasa al contenido) |
 | `players/` | `/ player virtual` | — | — |
-| `documentacion/` | `/ documentación` | ← Presentación | Resúmenes, Diapositivas, Documentos, Infografía, Interactivo |
 | `help/` | `/ ayuda` | — | 3 pasos, Piezas, Bucle, Ventajas, Pruébalo, Enlaces, Navegación ☰ ▤ ⌘, Modo experto |
 | `mcp/` | `/ MCP` | — | API, Informe, Privacidad, Conectar, llms.txt |
 | `parrilla/` | `/ parrilla` | — | ▶ Emitir auto, Emitir ahora, Target Model (Xpacio · Pantalla · Día quedan en el contenido) |
