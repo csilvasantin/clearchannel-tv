@@ -100,12 +100,12 @@ $('commercial-target').onclick=()=>select(true);$('commercial-locations').onclic
 function adoptar(){const s=ctx.snapshot();if(!s.ready)throw Error('catalogue_loading');if(!s.items.length)throw Error('locations_required');selected=s;invalidate();$('commercial-selection').textContent=selectionText(s);}
 // «Usar la selección»: adoptar() borra la propuesta anterior (invalidate), así que aquí no hay cifras que decir; la voz
 // con las cifras va al preparar la propuesta (form.onsubmit). Antes se leía result tras invalidar y saltaba el error.
-$('commercial-adopt').onclick=()=>{try{adoptar();decir('apuntando',T('Incorporado: ','Added: ')+$('commercial-selection').textContent+T('. Cuando quieras, preparo la propuesta.','. Whenever you like, I will prepare the proposal.'));}catch(e){error(e);}};
+$('commercial-adopt').onclick=()=>{try{adoptar();const n=selected.items.length;decir('apuntando',(n===1?(selected.items[0].name||T('1 ubicación','1 location')):n+T(' ubicaciones',' locations'))+T(' en la propuesta. Cuando quieras, la preparo.',' in the proposal. Whenever you like, I will prepare it.'));}catch(e){error(e);}};
 // «Anunciarme aquí»: la selección del mapa pasa a ser ese local y Comercial lo incorpora al abrirse.
 // Si el catálogo aún carga, la selección se vuelve a fijar cuando esté listo (al cargar, el mapa reponía «todos los puntos»
 // y la propuesta salía con miles de ubicaciones): se espera hasta 20 s y entonces se incorpora el local.
 let pendiente=null,esperas=0;
-function incorporarPendiente(){if(!pendiente)return;const s=ctx.snapshot();if(!s.ready){if(esperas++<40)setTimeout(incorporarPendiente,500);return;}const id=pendiente;pendiente=null;if(ctx.seleccionar(id)){try{adoptar();decir('apuntando',T('Incorporado: ','Added: ')+$('commercial-selection').textContent+T('. Cuéntame la campaña o pulsa el micro.','. Tell me about the campaign or press the mic.'));}catch(e){error(e);}}}
+function incorporarPendiente(){if(!pendiente)return;const s=ctx.snapshot();if(!s.ready){if(esperas++<40)setTimeout(incorporarPendiente,500);return;}const id=pendiente;pendiente=null;if(ctx.seleccionar(id)){try{adoptar();const it=(selected.items||[]).find(i=>i.id===id)||selected.items[0]||{};decir('apuntando',T('Incorporado ','Added ')+(it.name||T('el local','the venue'))+T('. Cuéntame la campaña o pulsa el micro.','. Tell me about the campaign or press the mic.'));}catch(e){error(e);}}}
 function abrirConLocal(id){open('brief');if(!id||typeof ctx.seleccionar!=='function')return;pendiente=id;esperas=0;incorporarPendiente();}
 const entrada=document.getElementById('header-comercial-toggle'),aqui=document.getElementById('p-comercial');
 if(entrada){entrada.hidden=false;entrada.onclick=()=>{if(panel.hidden)open('brief');else close();};}
