@@ -162,3 +162,15 @@ test('ClearChannel native overlay is limited to authorized hosts, methods and fi
  }
  for(const host of ['admira.biz','admira.app','fakeclearchannel.tv.example','xpaceos.com'])assert.equal(clearChannelNativePath(new URL('https://'+host+'/')),'');
 });
+
+// Todo módulo de ./server/ que importe _worker.js tiene que copiarlo el empaquetado de la release (20-10-2026: el #120
+// importó server/detalle-proyecto.mjs sin copiarlo y «Publicar admira.biz» cayó en el build).
+test('every ./server module the worker imports is copied by the release build', async () => {
+  const { readFileSync } = await import('node:fs');
+  const worker = readFileSync(new URL('../_worker.js', import.meta.url), 'utf8'), build = readFileSync(new URL('../scripts/build-biz-release.mjs', import.meta.url), 'utf8');
+  const modulos = [...worker.matchAll(/from '\.\/server\/([a-z-]+\.mjs)'/g)].map(m => m[1]);
+  assert.ok(modulos.length >= 8, 'imports del worker: ' + modulos.join(', '));
+  // orders.mjs y global-demo.mjs vienen en la revisión preservada de clearchannel.tv (deployment-biz.json); el resto lo copia el empaquetado.
+  const enLaBase = new Set(['orders.mjs', 'global-demo.mjs']);
+  for (const m of modulos) if (!enLaBase.has(m)) assert.ok(build.includes(`server/${m}`), `el empaquetado no copia server/${m}`);
+});
