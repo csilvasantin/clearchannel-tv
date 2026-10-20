@@ -35,9 +35,11 @@
     } catch (_) { return null; }
   }
 
+  // Por el mismo origen (/auth/sesion → el worker pregunta al API con la cookie de este sitio, 20-10-2026): un visitante
+  // sin sesión recibe 200 {ok:false} y la consola queda limpia. Antes iba a api.admira.biz y el 401 salía como error.
   async function serverSession(fetcher) {
     try {
-      const r = await fetcher('https://api.admira.biz/auth/session', {credentials:'include',cache:'no-store',signal:AbortSignal.timeout(5000)});
+      const r = await fetcher('/auth/sesion', {credentials:'same-origin',cache:'no-store',signal:AbortSignal.timeout(5000)});
       if (!r.ok) return null;
       const s = await r.json();
       return s.ok === true && typeof s.email === 'string' && s.email.trim() ? {email:s.email,source:'server'} : null;
@@ -151,6 +153,9 @@
     host.className = 'header-login-gis';
     host.hidden = true;
     link.after(host);
+    // Google pinta el botón de forma asíncrona: si dos pintados se solapan (cambio de idioma al arrancar), quedaban
+    // dos botones «Iniciar sesión» (visto en producción el 19-oct-2026). Se conserva sólo el último pintado.
+    new MutationObserver(() => { while (host.children.length > 1) host.firstElementChild.remove(); }).observe(host, {childList: true});
     if (/^(www\.)?admira\.biz$/i.test(root.location.hostname)) serverSession(root.fetch.bind(root)).then(s => { if (s) signedIn(s); });
     loadGsi().then(google => {
       if (verifiedSession) return;

@@ -59,7 +59,7 @@ test('con sesión, ⌘ vuelve a la portada y la pastilla de idioma se va (el idi
   assert.doesNotMatch(portada, /\n\s*#header-expert-toggle\{display:none!important\}/, 'ya no se oculta ⌘ siempre');
   assert.match(portada, /id="lang-switch"[^>]*>[\s\S]{0,200}id="lang-toggle"/, 'el idioma sigue en ☰ Opciones');
   assert.match(galaxia, /regla\.textContent = 'html\.admira-con-sesion #header-lang-toggle\{display:none!important\}'/, 'páginas interiores: la misma barra');
-  assert.match(portada, /login-google\.js\?v=20261018-agent-session-1/);   // Comercial (8045f2b) subió el sello sin tocar esta prueba
+  assert.match(portada, /login-google\.js\?v=20261020-sesion-1/);   // 20-oct: la sesión se comprueba por /auth/sesion y el botón de Google no se duplica
 });
 
 test('la portada, login-google.js y la cabecera común deciden igual si hay sesión, antes de pintar', () => {
