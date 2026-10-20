@@ -3871,13 +3871,19 @@ function renderPanel(loc) {
   if (evidenceStatus) evidenceStatus.innerHTML = inventoryBadgeHTML(loc);
   const projectNote = document.getElementById('p-project-note');
   if (projectNote) {
-    projectNote.hidden = !isCafebreriaLocation(loc);
+    const lab = loc.id === 'lab-gran-de-gracia-51';
+    projectNote.hidden = !lab && !isCafebreriaLocation(loc);
     projectNote.textContent = '';
     if (!projectNote.hidden) {
-      projectNote.append(document.createTextNode(LANG === 'en' ? 'Independent project · reference address. ' : 'Proyecto independiente · dirección de referencia. '));
+      // handON: guía pública del proyecto (Cafebrería) o del laboratorio AdmiraNeXT de Gran de Gràcia 51.
+      projectNote.append(document.createTextNode(lab
+        ? (LANG === 'en' ? 'AdmiraNeXT R&D lab · not for sale. ' : 'Laboratorio de I+D de AdmiraNeXT · no se comercializa. ')
+        : (LANG === 'en' ? 'Independent project · reference address. ' : 'Proyecto independiente · dirección de referencia. ')));
       const guide = document.createElement('a');
-      guide.href = '/cafebreria/?lang=' + LANG;
-      guide.textContent = LANG === 'en' ? 'Project handON ↗' : 'handON del proyecto ↗';
+      guide.href = (lab ? '/laboratorio/' : '/cafebreria/') + '?lang=' + LANG;
+      guide.textContent = lab
+        ? (LANG === 'en' ? 'Lab handON ↗' : 'handON del laboratorio ↗')
+        : (LANG === 'en' ? 'Project handON ↗' : 'handON del proyecto ↗');
       projectNote.append(guide);
     }
   }
