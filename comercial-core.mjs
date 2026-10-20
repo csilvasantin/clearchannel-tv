@@ -120,3 +120,57 @@ export function proposalMailto(p, {lang='es', contact='info@admira.com', maxBody
   const q=new URLSearchParams();if(contact)q.set('cc',contact);q.set('subject',asunto);q.set('body',saludo+resumen+firma);
   return `mailto:${encodeURIComponent(para)}?${q.toString().replace(/\+/g,'%20')}`;
 }
+
+// ── Ficha de captación de comercios: PDF con marca y correo (Carlos, 20-oct-2026) ──────────────────────────
+// Mismo molde que la propuesta: documento A4 con la marca de la página y un mailto con el resumen. Si el contacto del
+// comercio es un correo, va de destinatario; el contacto comercial, en copia. El PDF se adjunta a mano.
+const esCorreo = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || '').trim());
+export function merchantHtml(m, {lang='es', brand={}, contact='info@admira.com', colors={}, today=''} = {}) {
+  const en=lang==='en',t=(a,b)=>en?b:a,n=v=>new Intl.NumberFormat(en?'en-GB':'es-ES').format(v);
+  const fecha=d=>{const x=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d||''));return x?(en?`${x[3]}/${x[2]}/${x[1]}`:`${x[3]}-${x[2]}-${x[1]}`):esc(d||'');};
+  const marca=esc(brand.wordmark||brand.name||'ADMIRA·BIZ'),dominio=esc(brand.domain||'www.admira.biz'),banda=esc(colors.band||'#100c20'),acento=esc(colors.accent||'#7dffd0'),tinta='#111318',azul='#2f6db5';
+  const titulo=`${t('Ficha de captación','Recruitment brief')} · ${esc(m.name)}${today?' · '+fecha(today):''}`;
+  const pasos=[t('Entrar en el portal de comercios y añadir o elegir el establecimiento.','Sign in to the merchant portal and add or choose the location.'),
+    t('Registrar sus pantallas (número, sitio y orientación).','Register its screens (number, placement and orientation).'),
+    t('Revisar permisos, ubicación y condiciones de incorporación.','Review permissions, location and onboarding terms.')].map(x=>`<li>${x}</li>`).join('');
+  return `<!doctype html><html lang="${en?'en':'es'}"><head><meta charset="utf-8"><title>${titulo}</title>
+<style>
+@page{size:A4;margin:16mm 14mm 18mm}
+*{box-sizing:border-box}body{margin:0;font:11.5pt/1.45 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif;color:${tinta};background:#fff}
+.banda{display:flex;align-items:center;justify-content:space-between;gap:12px;background:${banda};color:#fff;padding:14px 18px;border-radius:10px}
+.banda .marca{font:700 13pt/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;color:${acento}}
+.banda .que{text-align:right}.banda .que b{display:block;font-size:13pt}.banda .que span{font-size:9pt;opacity:.8}
+.borrador{display:inline-block;margin-top:4px;padding:2px 8px;border:1px solid rgba(255,255,255,.5);border-radius:999px;font:700 8pt/1.4 ui-monospace,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase}
+h1{font-size:19pt;margin:20px 0 2px}.para{color:#555;margin:0 0 14px}
+h2{font-size:10pt;letter-spacing:.12em;text-transform:uppercase;color:${azul};margin:18px 0 6px;border-bottom:1px solid #dfe3ea;padding-bottom:3px}
+dl{display:grid;grid-template-columns:150px 1fr;gap:4px 12px;margin:0}dt{color:#555}dd{margin:0;white-space:pre-wrap}
+.cifras{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0 0}.cifra{border:1px solid #dfe3ea;border-left:4px solid ${azul};border-radius:8px;padding:10px 12px}
+.cifra .k{display:block;font-size:8.5pt;letter-spacing:.08em;text-transform:uppercase;color:#555}.cifra strong{display:block;font-size:16pt;margin-top:2px}
+ol.pasos{margin:6px 0 0;padding-left:22px}ol.pasos li{margin:3px 0}
+.avisos{margin:14px 0 0;padding:10px 14px 10px 28px;background:#f6f7fa;border-radius:8px;font-size:9.5pt;color:#333}
+footer{margin-top:22px;padding-top:8px;border-top:1px solid #dfe3ea;display:flex;justify-content:space-between;font-size:8.5pt;color:#666}
+@media print{.banda{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<div class="banda"><div><div class="marca">${marca}</div><span class="borrador">${t('borrador','draft')}${today?' · '+fecha(today):''}</span></div><div class="que"><b>${t('Ficha de captación','Recruitment brief')}</b><span>${t('comercios y pantallas · ','merchants and screens · ')}${dominio}</span></div></div>
+<h1>${esc(m.name)}</h1><p class="para">${esc(m.address)} · ${esc(m.city)}</p>
+<h2>${t('Datos','Details')}</h2>
+<dl><dt>${t('Ciudad','City')}</dt><dd>${esc(m.city)}</dd><dt>${t('Dirección','Address')}</dt><dd>${esc(m.address)}</dd><dt>${t('Contacto','Contact')}</dt><dd>${esc(m.contact||'—')}</dd>
+<dt>${t('Pantallas y necesidades','Screens and requirements')}</dt><dd>${esc(m.notes||'—')}</dd></dl>
+<h2>${t('Cifras clave','Key figures')}</h2>
+<div class="cifras"><div class="cifra"><span class="k">${t('Pantallas','Screens')}</span><strong>${n(m.screens)}</strong></div><div class="cifra"><span class="k">${t('Estado','Status')}</span><strong>${t('Por incorporar','To onboard')}</strong></div><div class="cifra"><span class="k">${t('Portal','Portal')}</span><strong style="font-size:11pt">admira.app/retailer</strong></div></div>
+<h2>${t('Siguientes pasos','Next steps')}</h2><ol class="pasos">${pasos}</ol>
+<ul class="avisos"><li>${t('Ficha preparatoria: no crea una cuenta, no incorpora el comercio ni publica nada. El alta se completa en el portal de comercios.','Preparatory brief: it does not create an account, onboard the merchant or publish anything. Onboarding is completed in the merchant portal.')}</li></ul>
+<footer><span>${t('Contacto comercial','Commercial contact')}: ${esc(contact)}</span><span>${t('Preparado por Comercial (Admirito) en ','Prepared by Commercial (Admirito) at ')}${dominio}</span></footer>
+</body></html>`;
+}
+export function merchantMailto(m, {lang='es', contact='info@admira.com', maxBody=CORREO_MAX} = {}) {
+  const en=lang==='en',t=(a,b)=>en?b:a;
+  const asunto=`${t('Incorporación de pantallas','Screen onboarding')} · ${m.name} · ${m.city}`;
+  const saludo=t('Hola,\n\nTe envío la ficha para incorporar vuestro comercio y sus pantallas a la red. El detalle va en el PDF adjunto; este es el resumen:\n\n','Hello,\n\nPlease find the brief to onboard your business and its screens to the network. The details are in the attached PDF; here is the summary:\n\n');
+  const firma=`\n\n${t('Un saludo,\nComercial · ','Best regards,\nCommercial · ')}${contact}`;
+  let resumen=merchantText(m,lang);
+  if((saludo+resumen+firma).length>maxBody) resumen=resumen.slice(0,maxBody-saludo.length-firma.length-1)+'…';
+  const para=esCorreo(m.contact)?String(m.contact).trim():'';
+  const q=new URLSearchParams();if(contact)q.set('cc',contact);q.set('subject',asunto);q.set('body',saludo+resumen+firma);
+  return `mailto:${encodeURIComponent(para)}?${q.toString().replace(/\+/g,'%20')}`;
+}

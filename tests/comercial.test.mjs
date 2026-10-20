@@ -14,7 +14,7 @@ test('commercial release is scoped to Biz, including its existing planner UI',()
 test('commercial has visible entry points: header button and «Anunciarme aquí» in the Xpacio card, hidden until the module loads',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8'),source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8'),app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  assert.match(html,/<button type="button" id="header-comercial-toggle" class="mode-toggle header-comercial" hidden/);assert.match(html,/<a href="#" id="p-comercial" class="p-comercial" hidden data-commercial="here">/);
- assert.match(html,/comercial\.mjs\?v=20261020-comercial-7/);assert.match(html,/app\.js\?v=20261020-zona-protegida-1/);
+ assert.match(html,/comercial\.mjs\?v=20261020-comercial-8/);assert.match(html,/app\.js\?v=20261020-zona-protegida-1/);
  assert.match(source,/entrada\.hidden=false/);assert.match(source,/aqui\.hidden=false/);assert.match(source,/function abrirConLocal\(id\)/);assert.match(source,/ctx\.seleccionar\(id\)/);
  assert.match(app,/seleccionar\(id\) \{/);assert.match(app,/selectedLocationIds=new Set\(\[loc\.id\]\);\n    try\{renderCircuitSelector\(\);\}/);assert.match(app,/comercialAqui\.dataset\.comercialLocal = loc\.id/);
 });
@@ -48,4 +48,15 @@ test('send by email: mailto with the advertiser as recipient when given, the com
  const body=q.get('body');assert.ok(body.length<=1800,'cuerpo acotado: '+body.length);assert.match(body,/^Hola,/);assert.match(body,/PDF adjunto/);assert.match(body,/… y 35 ubicaciones más \(en el PDF\)\./);assert.match(body,/Comercial · info@admira\.com$/);assert.ok(!/\+/.test(url.split('body=')[0]),'sin signos más en el asunto');
  const sin=proposalMailto({...p,brief:{...p.brief,email:''}},{lang:'en'});assert.match(sin,/^mailto:\?cc=/);assert.match(decodeURIComponent(sin),/Campaign proposal · Café Rico/);
  const source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8');assert.match(source,/id="commercial-mail"/);assert.match(source,/name="email" type="email"/);assert.match(source,/a\.href=correoPropuesta\(\)/);assert.ok(!/fetch\(|localStorage/.test(source));
+});
+test('merchant brief: branded A4 document and mailto with the merchant contact as recipient when it is an email',async()=>{
+ const {merchantBrief,merchantHtml,merchantMailto}=await import('../comercial-core.mjs');
+ const m=merchantBrief({name:'Panadería <La Espiga>',city:'Barcelona',address:'Carrer Gran de Gràcia 51',contact:'pepe@laespiga.cat',screens:'3',notes:'Dos en el mostrador\ny una en el escaparate'});
+ const html=merchantHtml(m,{lang:'es',brand:{wordmark:'ADMIRA·BIZ',domain:'www.admira.biz'},today:'2026-10-20'});
+ assert.match(html,/<title>Ficha de captación · Panadería &lt;La Espiga&gt; · 20-10-2026<\/title>/);assert.ok(!/<La Espiga>/.test(html));assert.match(html,/ADMIRA·BIZ/);assert.match(html,/Carrer Gran de Gràcia 51/);assert.match(html,/Dos en el mostrador y una en el escaparate/);   // clean() cambia los saltos de línea por espaciosassert.match(html,/admira\.app\/retailer/);assert.match(html,/no crea una cuenta/);assert.match(html,/info@admira\.com/);assert.match(html,/@page\{size:A4/);
+ assert.match(merchantHtml(m,{lang:'en'}),/<html lang="en">[\s\S]*Recruitment brief/);
+ const url=merchantMailto(m,{lang:'es'});assert.match(url,/^mailto:pepe%40laespiga\.cat\?cc=info%40admira\.com&subject=/);
+ const q=new URLSearchParams(url.slice(url.indexOf('?')+1));assert.equal(q.get('subject'),'Incorporación de pantallas · Panadería <La Espiga> · Barcelona');assert.match(q.get('body'),/^Hola,[\s\S]*PDF adjunto[\s\S]*Pantallas: 3[\s\S]*Comercial · info@admira\.com$/);assert.ok(q.get('body').length<=1800);
+ const tel=merchantMailto(merchantBrief({...m,contact:'600 000 000'}),{lang:'en'});assert.match(tel,/^mailto:\?cc=/);assert.match(decodeURIComponent(tel),/Screen onboarding · Panadería <La Espiga>/);
+ const source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8');assert.match(source,/id="commercial-merchant-pdf" class="primary"/);assert.match(source,/id="commercial-merchant-mail"/);assert.match(source,/a\.href=correoFicha\(\)/);assert.ok(!/fetch\(|localStorage/.test(source));
 });

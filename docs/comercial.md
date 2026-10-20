@@ -38,3 +38,8 @@ Commercial is Admirito with a tie and briefcase, focused on advertiser campaigns
 - Botón **«Enviar por correo»** junto a «Propuesta en PDF»: `proposalMailto(p, {lang, contact})` abre el correo del propio equipo (`mailto:`) con el anunciante de destinatario (si dio su correo), `info@admira.com` en copia, el asunto «Propuesta de campaña · anunciante · fecha» y un cuerpo con saludo, el resumen de la propuesta y la firma de Comercial. El PDF se adjunta a mano (un `mailto:` no adjunta): el aviso lo dice.
 - Los clientes de correo recortan los enlaces largos: el cuerpo se limita a 1.800 caracteres y, si hay muchas ubicaciones, se listan 5 y «… y N más (en el PDF)».
 - `window.AdmiraComercial.correoPropuesta()` devuelve el enlace (pruebas). Sellos `?v=20261020-comercial-7`.
+
+## Ficha de captación en PDF y por correo (20-oct-2026, orden de Carlos)
+
+- Mismo molde que la propuesta: `merchantHtml(m, {lang, brand, contact, colors, today})` maqueta la ficha A4 (banda de marca, comercio y dirección, datos, cifras clave con las pantallas, siguientes pasos en el portal de comercios, aviso de que no crea cuenta ni incorpora nada, pie con el contacto). `merchantMailto` abre el correo con el contacto del comercio de destinatario **si es un correo** (si es un teléfono, sin destinatario), `info@admira.com` en copia, asunto «Incorporación de pantallas · comercio · ciudad» y el resumen; cuerpo acotado a 1.800 caracteres.
+- Botones en el modo «Captar comercios»: **«Ficha en PDF»** (principal), «Enviar por correo» y «Descargar texto». `window.AdmiraComercial.fichaHtml()` y `correoFicha()` para pruebas. Sellos `?v=20261020-comercial-8`.
