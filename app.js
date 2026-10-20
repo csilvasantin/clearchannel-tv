@@ -3863,6 +3863,7 @@ for (const [button, param] of [['header-upload-plan-btn', 'subir'], ['header-cre
 }
 function renderPanel(loc) {
   activeLocation = loc;
+  const comercialAqui = document.getElementById('p-comercial'); if (comercialAqui) comercialAqui.dataset.comercialLocal = loc.id;
   document.getElementById('p-name').textContent = loc.name;
   document.getElementById('p-addr').textContent = loc.addr;
   document.getElementById('p-kind').textContent = inventoryKindLabel(loc);
@@ -5823,6 +5824,16 @@ window.AdmiraCommercialContext = {
           cpm:cpms.length?cpms.reduce((a,b)=>a+b,0)/cpms.length:null,surfaces:locationSurfaceCount(normalized)};
       })};
   },
+  // «Anunciarme aquí» (20-10-2026): la selección del mapa pasa a ser sólo ese local (como el borrador de Pixeria),
+  // para que Comercial lo incorpore sin pasar por el selector.
+  seleccionar(id) {
+    const loc=LOC_BY_ID.get(id);if(!loc)return false;
+    selectedCircuitScope='local';selectedCircuitId=CIRCUIT_IDS_BY_SCOPE.local[0]||'all';selectedMetroLine='all';
+    circuitAutoSelect=false;selectedLocationIds=new Set([loc.id]);
+    try{renderCircuitSelector();}catch(e){}
+    return true;
+  },
+  activo: () => activeLocation ? activeLocation.id : null,
   hideLocations() {
     const panel=document.getElementById('circuit-panel');if(panel)panel.hidden=true;
     document.getElementById('header-circuit-btn')?.classList.remove('active');

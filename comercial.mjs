@@ -1,5 +1,8 @@
 import {STEPS,proposal,proposalText,sameSelection,merchantBrief,merchantText} from './comercial-core.mjs?v=20261018-comercial-3';
 import {hacerMovible} from './movible.mjs?v=20261020-comercial-4';
+// Entradas visibles (Carlos, 20-oct-2026): botón en la cabecera de la portada y «Anunciarme aquí» en la ficha de cada
+// Xpacio, que abre Comercial con ese local ya incorporado. Ambos vienen ocultos en el HTML: sólo aparecen si este módulo
+// carga (en clearchannel.tv no hay Comercial).
 if(!/^(www\.)?admira\.biz$/.test(location.hostname)&&!['localhost','127.0.0.1'].includes(location.hostname)&&!/(?:^|\.)clearchannel-tv\.pages\.dev$/.test(location.hostname))throw Error('commercial_host_required');
 const ctx=window.AdmiraCommercialContext;
 const language=()=>ctx?.language()==='en'?'en':'es';
@@ -7,7 +10,7 @@ const T=(es,en)=>language()==='en'?en:es;
 const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Madrid'}).format(new Date());
 const labels={
  campaigns:['Vender campañas','Sell campaigns'],merchants:['Captar comercios','Recruit merchants'],shopName:['Nombre del comercio','Business name'],city:['Ciudad','City'],address:['Dirección','Address'],contact:['Contacto (opcional)','Contact (optional)'],screens:['Número de pantallas','Number of screens'],notes:['Ubicación de pantallas y necesidades','Screen placement and requirements'],prepareShop:['Preparar ficha de captación','Prepare recruitment brief'],portal:['Continuar en el portal de comercios','Continue in merchant portal'],downloadShop:['Descargar ficha','Download brief'],
- title:['Comercial','Commercial'],eyebrow:['Admirito · comercial','Admirito · commercial'],intro:['Soy Comercial. Vendemos campañas a anunciantes e incorporamos comercios y pantallas a la red.','I’m Commercial. We sell advertiser campaigns and recruit merchants and screens for the network.'],
+ title:['Comercial','Commercial'],eyebrow:['Admirito · comercial','Admirito · commercial'],here:['💼 Anunciarme aquí','💼 Advertise here'],entrada:['Comercial · campañas y comercios','Commercial · campaigns and merchants'],intro:['Soy Comercial. Vendemos campañas a anunciantes e incorporamos comercios y pantallas a la red.','I’m Commercial. We sell advertiser campaigns and recruit merchants and screens for the network.'],
  advertiser:['Anunciante','Advertiser'],objective:['Objetivo de la campaña','Campaign objective'],audience:['¿A quién quieres llegar?','Who do you want to reach?'],
  start:['Desde','From'],end:['Hasta','Until'],budget:['Presupuesto · EUR','Budget · EUR'],passesDay:['Pases diarios','Daily plays'],durationSec:['Duración · segundos','Duration · seconds'],
  targeting:['Elegir audiencias','Choose audiences'],locations:['Elegir ubicaciones','Choose locations'],adopt:['Usar la selección del mapa','Use the map selection'],generate:['Preparar propuesta','Prepare proposal'],
@@ -26,10 +29,10 @@ let selected=null,result=null,merchant=null;
 function translate(){for(const el of document.querySelectorAll('[data-commercial]')){const a=labels[el.dataset.commercial];if(a)el.textContent=a[language()==='en'?1:0];}panel.querySelector('[data-commercial-aria]').setAttribute('aria-label',T(...labels.close));if(merchant)$('commercial-merchant-output').textContent=merchantText(merchant,language());if(result)$('commercial-proposal').textContent=proposalText(result,language());if(selected)$('commercial-selection').textContent=selectionText(selected);}
 function selectionText(s){return s.circuit+' · '+s.items.length+' '+T('ubicaciones incorporadas','adopted locations')+' · '+s.target;}
 
-function close(){panel.hidden=true;back.hidden=true;}
+function close(){panel.hidden=true;back.hidden=true;vestirEntradas();}
 function open(step='brief'){
  if(!STEPS.includes(step))return {ok:false,error:'commercial_step_invalid'};
- $('commercial-campaign-section').hidden=step==='comercios';$('commercial-merchant-section').hidden=step!=='comercios';$('commercial-campaigns').setAttribute('aria-pressed',String(step!=='comercios'));$('commercial-merchants').setAttribute('aria-pressed',String(step==='comercios'));ctx.hideLocations();panel.hidden=false;back.hidden=true;panel.querySelector('.commercial-cuerpo').scrollTop=0;translate();if(ventana)ventana.restaurar();
+ $('commercial-campaign-section').hidden=step==='comercios';$('commercial-merchant-section').hidden=step!=='comercios';$('commercial-campaigns').setAttribute('aria-pressed',String(step!=='comercios'));$('commercial-merchants').setAttribute('aria-pressed',String(step==='comercios'));ctx.hideLocations();panel.hidden=false;back.hidden=true;panel.querySelector('.commercial-cuerpo').scrollTop=0;translate();vestirEntradas();if(ventana)ventana.restaurar();
  if(step==='audiencias')select(true);
  if(step==='ubicaciones')select(false);
  if(step==='propuesta')form.requestSubmit();
@@ -40,7 +43,15 @@ function invalidate(){result=null;$('commercial-proposal').hidden=true;$('commer
 function error(e){const a=errors[e.message];$('commercial-status').textContent=a?T(...a):T('No se ha podido preparar la propuesta.','The proposal could not be prepared.');}
 back.onclick=()=>open();panel.querySelector('.commercial-close').onclick=close;
 $('commercial-target').onclick=()=>select(true);$('commercial-locations').onclick=()=>select(false);
-$('commercial-adopt').onclick=()=>{try{const s=ctx.snapshot();if(!s.ready)throw Error('catalogue_loading');if(!s.items.length)throw Error('locations_required');selected=s;invalidate();$('commercial-selection').textContent=selectionText(s);}catch(e){error(e);}};
+function adoptar(){const s=ctx.snapshot();if(!s.ready)throw Error('catalogue_loading');if(!s.items.length)throw Error('locations_required');selected=s;invalidate();$('commercial-selection').textContent=selectionText(s);}
+$('commercial-adopt').onclick=()=>{try{adoptar();}catch(e){error(e);}};
+// «Anunciarme aquí»: la selección del mapa pasa a ser ese local y Comercial lo incorpora al abrirse.
+function abrirConLocal(id){if(!id||typeof ctx.seleccionar!=='function'||!ctx.seleccionar(id)){open('brief');return;}open('brief');try{adoptar();}catch(e){error(e);}}
+const entrada=document.getElementById('header-comercial-toggle'),aqui=document.getElementById('p-comercial');
+if(entrada){entrada.hidden=false;entrada.onclick=()=>{if(panel.hidden)open('brief');else close();};}
+if(aqui){aqui.hidden=false;aqui.onclick=e=>{e.preventDefault();abrirConLocal(aqui.dataset.comercialLocal||(typeof ctx.activo==='function'?ctx.activo():null));};}
+function vestirEntradas(){if(entrada){entrada.title=T(...labels.entrada);entrada.setAttribute('aria-label',T(...labels.entrada));entrada.setAttribute('aria-pressed',String(!panel.hidden));}}
+document.addEventListener('admira:lang',()=>{translate();vestirEntradas();});
 form.addEventListener('input',invalidate);
 form.onsubmit=e=>{e.preventDefault();try{if(selected&&!sameSelection(ctx.snapshot(),selected))throw Error('locations_required');result=proposal(Object.fromEntries(new FormData(form)),selected,window.CampaignPlanner,today());$('commercial-proposal').textContent=proposalText(result,language());$('commercial-proposal').hidden=false;$('commercial-result-actions').hidden=false;$('commercial-status').textContent=T('Propuesta preparada para revisar.','Proposal ready for review.');}catch(e){invalidate();error(e);}};
 $('commercial-plan').onclick=()=>{if(!result)return;try{const current=ctx.snapshot();if(!sameSelection(current,selected))throw Error('locations_required');ctx.planner(result.brief);close();}catch(e){error(e);}};
@@ -49,7 +60,7 @@ window.AdmiraComercial={lanzar:open,cerrar:close};
 window.addEventListener('admira:assistant-default',close);
 for(const event of ['admira:lang','admira:languagechange','admiranext:lang'])window.addEventListener(event,translate);
 new MutationObserver(()=>{if(selected){const current=ctx.snapshot();if(sameSelection(current,selected)){selected.circuit=current.circuit;selected.target=current.target;}}translate();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
-translate();
+translate();vestirEntradas();
 const query=new URLSearchParams(location.search);
 if(query.get('asistente')==='comercial')open(STEPS.includes(query.get('paso'))?query.get('paso'):'brief');
 
