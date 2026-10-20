@@ -40,18 +40,22 @@ function translate(){for(const el of document.querySelectorAll('[data-commercial
 function selectionText(s){return s.circuit+' · '+s.items.length+' '+T('ubicaciones incorporadas','adopted locations')+' · '+s.target;}
 
 // ── Voz: la nube de Admirito (digitalavatar.ai) o, si no carga, la voz del navegador ──
-const nubeCaja=document.getElementById('commercial-nube');let nubeFrame=null,nubeLista=false;
-function montarNube(){if(nubeFrame||!nubeCaja)return;nubeFrame=document.createElement('iframe');nubeFrame.src=nubeUrl(language());nubeFrame.title='Comercial · Admirito';nubeFrame.setAttribute('allow','microphone');nubeCaja.append(nubeFrame);}   /* sin loading=lazy: dentro de un hueco oculto no cargaba nunca y la nube no avisaba de que estaba lista */
+const nubeCaja=document.getElementById('commercial-nube');let nubeFrame=null,nubeLista=false,pendienteVoz=null,vozTimer=0;
+function montarNube(){if(nubeFrame||!nubeCaja)return;nubeFrame=document.createElement('iframe');nubeFrame.src=nubeUrl(language());nubeFrame.title='Comercial · Admirito';nubeFrame.setAttribute('allow','microphone; autoplay');nubeCaja.append(nubeFrame);}   /* sin loading=lazy: dentro de un hueco oculto no cargaba nunca y la nube no avisaba de que estaba lista */
 // La nube pone la cara, el gesto, el bocadillo, el lip-sync y, desde el 20-oct-2026, la voz de Admirito con audio
-// (ElevenLabs, por brain.digitalavatar.ai/tts, dentro de la propia nube). Sólo si la nube no está, la voz del navegador.
+// (ElevenLabs, por brain.digitalavatar.ai/tts, dentro de la propia nube). El iframe delega el autoplay (allow) para que el
+// clic en «Anunciarme aquí» valga como gesto. Mientras la nube carga, la frase espera a que avise de que está lista (8 s
+// como mucho); sólo si la nube no llega, la voz del navegador.
 function hablar(texto){try{if('speechSynthesis' in window&&texto){const u=new SpeechSynthesisUtterance(texto);u.lang=language()==='en'?'en-GB':'es-ES';u.rate=1.02;window.speechSynthesis.cancel();window.speechSynthesis.speak(u);}}catch{}}
 function decir(estado,texto,silencio=false){
  if(nubeLista&&nubeFrame){try{nubeFrame.contentWindow.postMessage({type:'da-comercial',estado,texto:texto||'',silencio,lang:language()},NUBE_ORIGEN);return;}catch{}}
- if(!silencio&&texto)hablar(texto);
+ if(silencio||!texto)return;
+ if(nubeFrame){pendienteVoz={estado,texto};clearTimeout(vozTimer);vozTimer=setTimeout(()=>{if(!nubeLista&&pendienteVoz){const p=pendienteVoz;pendienteVoz=null;hablar(p.texto);}},8000);return;}
+ hablar(texto);
 }
 window.addEventListener('message',ev=>{
  if(!nubeFrame||ev.source!==nubeFrame.contentWindow||ev.origin!==NUBE_ORIGEN||!ev.data||typeof ev.data!=='object')return;
- if(ev.data.type==='da-comercial-listo'){nubeLista=true;nubeCaja.hidden=false;decir(panel.hidden?'reposo':'escuchando','',true);return;}
+ if(ev.data.type==='da-comercial-listo'){nubeLista=true;nubeCaja.hidden=false;const p=pendienteVoz;pendienteVoz=null;clearTimeout(vozTimer);if(p&&!panel.hidden)decir(p.estado,p.texto);else decir(panel.hidden?'reposo':'escuchando','',true);return;}
  if(ev.data.type==='da-comercial-texto'&&typeof ev.data.texto==='string')aplicarDictado(ev.data.texto);
 });
 // ── Dictado: del texto (micro de la nube, micro propio o teclado) al brief ──
@@ -99,7 +103,7 @@ $('commercial-adopt').onclick=()=>{try{adoptar();const nf=v=>new Intl.NumberForm
 // Si el catálogo aún carga, la selección se vuelve a fijar cuando esté listo (al cargar, el mapa reponía «todos los puntos»
 // y la propuesta salía con miles de ubicaciones): se espera hasta 20 s y entonces se incorpora el local.
 let pendiente=null,esperas=0;
-function incorporarPendiente(){if(!pendiente)return;const s=ctx.snapshot();if(!s.ready){if(esperas++<40)setTimeout(incorporarPendiente,500);return;}const id=pendiente;pendiente=null;if(ctx.seleccionar(id)){try{adoptar();}catch(e){error(e);}}}
+function incorporarPendiente(){if(!pendiente)return;const s=ctx.snapshot();if(!s.ready){if(esperas++<40)setTimeout(incorporarPendiente,500);return;}const id=pendiente;pendiente=null;if(ctx.seleccionar(id)){try{adoptar();decir('apuntando',T('Incorporado: ','Added: ')+$('commercial-selection').textContent+T('. Cuéntame la campaña o pulsa el micro.','. Tell me about the campaign or press the mic.'));}catch(e){error(e);}}}
 function abrirConLocal(id){open('brief');if(!id||typeof ctx.seleccionar!=='function')return;pendiente=id;esperas=0;incorporarPendiente();}
 const entrada=document.getElementById('header-comercial-toggle'),aqui=document.getElementById('p-comercial');
 if(entrada){entrada.hidden=false;entrada.onclick=()=>{if(panel.hidden)open('brief');else close();};}
