@@ -3880,10 +3880,11 @@ function renderPanel(loc) {
         ? (LANG === 'en' ? 'AdmiraNeXT R&D lab · not for sale. ' : 'Laboratorio de I+D de AdmiraNeXT · no se comercializa. ')
         : (LANG === 'en' ? 'Independent project · reference address. ' : 'Proyecto independiente · dirección de referencia. ')));
       const guide = document.createElement('a');
-      guide.href = (lab ? '/laboratorio/' : '/cafebreria/') + '?lang=' + LANG;
+      // El detalle está en la zona protegida de admiranext.com (login de AdmiraNeXT).
+      guide.href = 'https://www.admiranext.com/proyectos/' + (lab ? 'laboratorio' : 'cafebreria') + '/?lang=' + LANG;
       guide.textContent = lab
-        ? (LANG === 'en' ? 'Lab handON ↗' : 'handON del laboratorio ↗')
-        : (LANG === 'en' ? 'Project handON ↗' : 'handON del proyecto ↗');
+        ? (LANG === 'en' ? 'Lab handON (sign-in) ↗' : 'handON del laboratorio (con acceso) ↗')
+        : (LANG === 'en' ? 'Project handON (sign-in) ↗' : 'handON del proyecto (con acceso) ↗');
       projectNote.append(guide);
     }
   }

@@ -145,7 +145,7 @@ assert.deepEqual(await ch.json(), { moved_to: 'https://www.admira.app' });
 
 // Las rutas propias de este sitio no se redirigen en admira.biz.
 for (const path of ['/', '/index.html', '/about.html', '/detail.html', '/app.js', '/brand.js', '/mcp/', '/mcp/index.html', '/walk.html',
-  '/backoffice.html', '/cafebreria/', '/laboratorio/', '/help/', '/version.json', '/data/projects/cafebreria.json', '/retailers', '/statusbar.js', '/equipos']) {
+  '/backoffice.html', '/help/', '/version.json', '/retailers', '/statusbar.js', '/equipos']) {
   assert.equal(isYokupPath(path), false, path);
 }
 
