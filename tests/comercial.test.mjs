@@ -14,7 +14,7 @@ test('commercial release is scoped to Biz, including its existing planner UI',()
 test('commercial has visible entry points: header button and «Anunciarme aquí» in the Xpacio card, hidden until the module loads',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8'),source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8'),app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  assert.match(html,/<button type="button" id="header-comercial-toggle" class="mode-toggle header-comercial" hidden/);assert.match(html,/<a href="#" id="p-comercial" class="p-comercial" hidden data-commercial="here">/);
- assert.match(html,/comercial\.mjs\?v=20261020-comercial-10/);assert.match(html,/app\.js\?v=20261020-comercial-9/);
+ assert.match(html,/comercial\.mjs\?v=20261020-comercial-11/);assert.match(html,/app\.js\?v=20261020-comercial-9/);
  assert.match(source,/entrada\.hidden=false/);assert.match(source,/aqui\.hidden=false/);assert.match(source,/function abrirConLocal\(id\)/);assert.match(source,/ctx\.seleccionar\(id\)/);
  assert.match(app,/seleccionar\(id\) \{/);assert.match(app,/selectedLocationIds=new Set\(\[loc\.id\]\);\n    try\{renderCircuitSelector\(\);\}/);assert.match(app,/comercialAqui\.dataset\.comercialLocal = loc\.id/);
 });
@@ -106,5 +106,5 @@ test('voice and ear: the Admirito cloud (personaje=comercial) speaks for Commerc
  assert.match(source,/NUBE_ORIGEN='https:\/\/digitalavatar\.ai'/);assert.match(source,/personaje=comercial&embed=0&dock=1&tier=good&lang=/);
  assert.match(source,/ev\.source!==nubeFrame\.contentWindow\|\|ev\.origin!==NUBE_ORIGEN/,'sólo mensajes de la nube');assert.match(source,/da-comercial-listo/);assert.match(source,/da-comercial-texto/);assert.match(source,/postMessage\(\{type:'da-comercial',estado,texto:texto\|\|'',silencio,lang:language\(\)\},NUBE_ORIGEN\)/);
  assert.match(source,/function aplicarDictado\(texto\)\{\n const r=briefDesdeTexto\(texto,\{hoy:today\(\),lang:language\(\)\}\);/);assert.match(source,/id="commercial-mic"/);assert.match(source,/webkitSpeechRecognition/);assert.match(source,/SpeechSynthesisUtterance/);
- assert.match(source,/setAttribute\('allow','microphone'\)/);assert.ok(!/fetch\(|localStorage|sessionStorage/.test(source));
+ assert.match(source,/setAttribute\('allow','microphone'\)/);assert.ok(!/nubeFrame\.loading='lazy'/.test(source),'la nube carga aunque su hueco esté oculto');assert.ok(!/fetch\(|localStorage|sessionStorage/.test(source));
 });
