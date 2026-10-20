@@ -14,7 +14,7 @@ test('commercial release is scoped to Biz, including its existing planner UI',()
 test('commercial has visible entry points: header button and «Anunciarme aquí» in the Xpacio card, hidden until the module loads',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8'),source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8'),app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  assert.match(html,/<button type="button" id="header-comercial-toggle" class="mode-toggle header-comercial" hidden/);assert.match(html,/<a href="#" id="p-comercial" class="p-comercial" hidden data-commercial="here">/);
- assert.match(html,/comercial\.mjs\?v=20261020-comercial-9/);assert.match(html,/app\.js\?v=20261020-comercial-9/);
+ assert.match(html,/comercial\.mjs\?v=20261020-comercial-10/);assert.match(html,/app\.js\?v=20261020-comercial-9/);
  assert.match(source,/entrada\.hidden=false/);assert.match(source,/aqui\.hidden=false/);assert.match(source,/function abrirConLocal\(id\)/);assert.match(source,/ctx\.seleccionar\(id\)/);
  assert.match(app,/seleccionar\(id\) \{/);assert.match(app,/selectedLocationIds=new Set\(\[loc\.id\]\);\n    try\{renderCircuitSelector\(\);\}/);assert.match(app,/comercialAqui\.dataset\.comercialLocal = loc\.id/);
 });
@@ -81,4 +81,30 @@ test('the proposal map: Web Mercator tiles of the portada imagery, one numbered 
  assert.equal(mapaHtml({locations:[]}),'');
  const source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8');assert.match(source,/await imagenes\(w\.document\)/);
  const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');assert.match(app,/coords:Array\.isArray\(loc\.coords\)\?loc\.coords\.slice\(0,2\):null,foto,/);
+});
+test('dictated brief: advertiser, objective, audience, budget, dates, plays and duration from plain Spanish or English; intents for the other steps; nothing invented',async()=>{
+ const {briefDesdeTexto}=await import('../comercial-core.mjs');
+ const a=briefDesdeTexto('Campaña para Café Rico que quiere lanzar el frappé de otoño, dirigida a jóvenes urbanos de 20 a 35 años, del 20 al 26 de octubre, con un presupuesto de 2.000 euros, 1000 pases al día y spots de 15 segundos',{hoy:'2026-10-20'});
+ assert.deepEqual(a.campos,{advertiser:'Café Rico',budget:2000,start:'2026-10-20',end:'2026-10-26',passesDay:1000,durationSec:15,audience:'jóvenes urbanos de 20 a 35 años',objective:'lanzar el frappé de otoño'});
+ assert.deepEqual(a.faltan,[]);assert.equal(a.intencion,'brief');assert.match(a.resumen,/^Apuntado: .*Lo tengo todo/);
+ const b=briefDesdeTexto('El anunciante es Panadería La Espiga. Objetivo: dar a conocer la nueva tienda. Público: familias del barrio. Presupuesto 500 euros. Dos semanas desde el 3 de noviembre',{hoy:'2026-10-20'});
+ assert.deepEqual(b.campos,{advertiser:'Panadería La Espiga',budget:500,start:'2026-11-03',end:'2026-11-16',audience:'familias del barrio',objective:'dar a conocer la nueva tienda'});
+ const c=briefDesdeTexto('For Nike, to launch the new trainers, aimed at runners in Barcelona, budget 3000, two weeks from 3 November',{hoy:'2026-10-20',lang:'en'});
+ assert.deepEqual(c.campos,{advertiser:'Nike',budget:3000,start:'2026-11-03',end:'2026-11-16',audience:'runners in Barcelona',objective:'to launch the new trainers'});assert.match(c.resumen,/^Noted: .*I have everything/);
+ const d=briefDesdeTexto('Queremos anunciar la terraza de verano',{hoy:'2026-10-20'});
+ assert.deepEqual(Object.keys(d.campos),['objective']);assert.deepEqual(d.faltan,['advertiser','audience','budget']);assert.match(d.resumen,/Me falta el anunciante, la audiencia, el presupuesto\./);
+ assert.equal(briefDesdeTexto('buenas tardes',{hoy:'2026-10-20'}).resumen,'No he entendido el brief. Dime el anunciante, el objetivo, a quién llegar y el presupuesto.');
+ assert.equal(briefDesdeTexto('Quiero captar un comercio nuevo').intencion,'comercios');assert.equal(briefDesdeTexto('prepara la propuesta').intencion,'propuesta');assert.equal(briefDesdeTexto('abre las ubicaciones').intencion,'ubicaciones');assert.equal(briefDesdeTexto('elige audiencias').intencion,'audiencias');
+ // Fechas: «una semana desde mañana»; un rango ya pasado salta al año siguiente.
+ const e=briefDesdeTexto('una semana desde mañana',{hoy:'2026-10-20'});assert.equal(e.campos.start,'2026-10-21');assert.equal(e.campos.end,'2026-10-27');
+ const f=briefDesdeTexto('del 2 al 8 de enero',{hoy:'2026-10-20'});assert.equal(f.campos.start,'2027-01-02');assert.equal(f.campos.end,'2027-01-08');
+ // Pases y duración sólo si son de la lista; presupuesto en miles.
+ const g=briefDesdeTexto('presupuesto 3 mil euros, 700 pases, 20 segundos',{hoy:'2026-10-20'});assert.equal(g.campos.budget,3000);assert.equal(g.campos.passesDay,undefined);assert.equal(g.campos.durationSec,undefined);
+});
+test('voice and ear: the Admirito cloud (personaje=comercial) speaks for Commercial and what it hears becomes the brief; own mic and browser voice as fallback; still no fetch',()=>{
+ const source=readFileSync(new URL('../comercial.mjs',import.meta.url),'utf8');
+ assert.match(source,/NUBE_ORIGEN='https:\/\/digitalavatar\.ai'/);assert.match(source,/personaje=comercial&embed=0&dock=1&tier=good&lang=/);
+ assert.match(source,/ev\.source!==nubeFrame\.contentWindow\|\|ev\.origin!==NUBE_ORIGEN/,'sólo mensajes de la nube');assert.match(source,/da-comercial-listo/);assert.match(source,/da-comercial-texto/);assert.match(source,/postMessage\(\{type:'da-comercial',estado,texto:texto\|\|'',silencio,lang:language\(\)\},NUBE_ORIGEN\)/);
+ assert.match(source,/function aplicarDictado\(texto\)\{\n const r=briefDesdeTexto\(texto,\{hoy:today\(\),lang:language\(\)\}\);/);assert.match(source,/id="commercial-mic"/);assert.match(source,/webkitSpeechRecognition/);assert.match(source,/SpeechSynthesisUtterance/);
+ assert.match(source,/setAttribute\('allow','microphone'\)/);assert.ok(!/fetch\(|localStorage|sessionStorage/.test(source));
 });

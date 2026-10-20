@@ -48,6 +48,14 @@
 #comercial-panel .vent-esquina{position:absolute;right:3px;bottom:3px;width:18px;height:18px;cursor:nwse-resize;touch-action:none;z-index:2;opacity:.7;border-radius:4px;
   background:linear-gradient(135deg,transparent 0 50%,var(--com) 50% 58%,transparent 58% 70%,var(--com) 70% 78%,transparent 78%)}
 #comercial-panel .vent-esquina:hover{opacity:1}
+/* Voz y oído (20-10-2026): la nube de Admirito (digitalavatar.ai, piel comercial) bajo la cabecera y el 🎙️ propio. */
+#comercial-panel .commercial-mic{align-self:flex-start;width:34px;height:34px;display:grid;place-items:center;font-size:17px;background:transparent;border:1px solid var(--line,rgba(184,156,255,.24));border-radius:10px;cursor:pointer;padding:0}
+#comercial-panel .commercial-mic.live{border-color:#5b9bff;box-shadow:0 0 0 3px rgba(91,155,255,.3);animation:comercial-pulso 1.2s ease-in-out infinite}
+@keyframes comercial-pulso{50%{box-shadow:0 0 0 6px rgba(91,155,255,.12)}}
+#comercial-panel .commercial-nube{flex:0 0 auto;height:230px;border-bottom:1px solid var(--line,rgba(184,156,255,.24));background:#0a1930}
+#comercial-panel .commercial-nube[hidden]{display:none}
+#comercial-panel .commercial-nube iframe{display:block;width:100%;height:100%;border:0}
+@media(max-width:600px){#comercial-panel .commercial-nube{height:190px}}
 /* Entradas visibles (20-10-2026): la nube en la cabecera y «Anunciarme aquí» en la ficha. */
 .header-comercial{padding:0;overflow:hidden}
 .header-comercial img{width:28px;height:24px;object-fit:contain;display:block}
