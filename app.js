@@ -5827,7 +5827,9 @@ window.AdmiraCommercialContext = {
       items:selectedLocations().filter(x=>circuitIds.has(x.id)).map(loc=>{
         const surfaces=Array.isArray(loc.surfaces)?loc.surfaces:[],normalized={...loc,surfaces};
         const cpms=locationCpmValues(normalized),known=surfaces.some(s=>finiteImpr(s.impr)!==null);
-        return {id:loc.id,name:loc.name||loc.nombre||loc.id,impr:known?locationDailyImpr(normalized):null,demo:inventorySummary(normalized).demo,
+        // Para el PDF de Comercial (20-10-2026): coordenadas y la foto de fachada del previo (KV), si la hay.
+        let foto=null;try{const v=previoViews(loc)[0];foto=v&&v.previo&&typeof v.previo.imagen==='string'?v.previo.imagen:null;}catch(e){}
+        return {id:loc.id,name:loc.name||loc.nombre||loc.id,impr:known?locationDailyImpr(normalized):null,demo:inventorySummary(normalized).demo,coords:Array.isArray(loc.coords)?loc.coords.slice(0,2):null,foto,
           cpm:cpms.length?cpms.reduce((a,b)=>a+b,0)/cpms.length:null,surfaces:locationSurfaceCount(normalized)};
       })};
   },

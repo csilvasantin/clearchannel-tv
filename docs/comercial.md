@@ -43,3 +43,10 @@ Commercial is Admirito with a tie and briefcase, focused on advertiser campaigns
 
 - Mismo molde que la propuesta: `merchantHtml(m, {lang, brand, contact, colors, today})` maqueta la ficha A4 (banda de marca, comercio y dirección, datos, cifras clave con las pantallas, siguientes pasos en el portal de comercios, aviso de que no crea cuenta ni incorpora nada, pie con el contacto). `merchantMailto` abre el correo con el contacto del comercio de destinatario **si es un correo** (si es un teléfono, sin destinatario), `info@admira.com` en copia, asunto «Incorporación de pantallas · comercio · ciudad» y el resumen; cuerpo acotado a 1.800 caracteres.
 - Botones en el modo «Captar comercios»: **«Ficha en PDF»** (principal), «Enviar por correo» y «Descargar texto». `window.AdmiraComercial.fichaHtml()` y `correoFicha()` para pruebas. Sellos `?v=20261020-comercial-8`.
+
+## Mapa y fotos en el PDF de la propuesta (20-oct-2026, orden de Carlos)
+
+- **Mapa**: `mapaPropuesta(locations)` monta un mosaico de teselas del mismo satélite de la portada (Esri World Imagery, Web Mercator, `tile/{z}/{y}/{x}`) recortado a 744 × 420 px, con un marcador numerado por ubicación (el número es el de la tabla). Zoom: el mayor en el que caben todas con 40 px de margen; una sola ubicación, zoom 16. Sin librerías: las teselas las carga el propio documento al imprimir, con su atribución. Sin coordenadas, no hay mapa.
+- **Fotos**: la selección del mapa (`AdmiraCommercialContext.snapshot()`) lleva ahora `coords` y `foto` (la fachada del previo del KV, si la hay); la propuesta las conserva (`foto` sólo si es `https:`) y la tabla de ubicaciones añade una columna con miniaturas cuando alguna tiene foto.
+- Antes de imprimir, `imprimir()` espera a que las imágenes del documento (teselas y fotos) hayan cargado, 4 s como mucho.
+- Sellos `?v=20261020-comercial-9` (comercial.css, comercial.mjs, comercial-core.mjs y app.js).
