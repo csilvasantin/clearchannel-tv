@@ -6,6 +6,7 @@ import { handleDemoSession } from './server/demo-session.mjs';
 import {handleGlobalDemo} from './server/global-demo.mjs';
 import {onRequest as avatarAsk} from './avatar-ask.js';
 import { bizAssetPath, BIZ_ASSET_PREFIX, suiteCanonicalURL } from './server/biz-assets.mjs';
+import { detalleProyectoURL } from './server/detalle-proyecto.mjs';
 
 // admira.app (hoy) y admira.biz (tras el intercambio de dominios con Yokup, oct-2026)
 // son la misma cara Admira de este proyecto: la marca sale del apex del Host.
@@ -264,6 +265,9 @@ export default {
     let publicPath=url.pathname;
     try {publicPath=decodeURIComponent(publicPath);} catch (_) {}
     if ([BIZ_ASSET_PREFIX,CC_NATIVE_PREFIX].some(prefix=>publicPath===prefix||publicPath.startsWith(prefix+'/'))) return new Response('Not found', {status:404});
+    // Detalle de proyecto: solo en la zona protegida de admiranext.com (server/detalle-proyecto.mjs).
+    var detalle = detalleProyectoURL(url.pathname);
+    if (detalle) return new Response(null, {status:302, headers:{location:detalle, 'cache-control':'private, no-store', 'x-robots-tag':'noindex'}});
     var plano = PLANO_JSON.test(url.pathname);
     if (plano && request.method === 'OPTIONS') return sharedPlanPreflight();
     var assetPath = bizAssetPath(url, request.method) || clearChannelNativePath(url, request.method);
