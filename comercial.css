@@ -48,6 +48,13 @@
 #comercial-panel .vent-esquina{position:absolute;right:3px;bottom:3px;width:18px;height:18px;cursor:nwse-resize;touch-action:none;z-index:2;opacity:.7;border-radius:4px;
   background:linear-gradient(135deg,transparent 0 50%,var(--com) 50% 58%,transparent 58% 70%,var(--com) 70% 78%,transparent 78%)}
 #comercial-panel .vent-esquina:hover{opacity:1}
+/* Entradas visibles (20-10-2026): la nube en la cabecera y «Anunciarme aquí» en la ficha. */
+.header-comercial{padding:0;overflow:hidden}
+.header-comercial img{width:28px;height:24px;object-fit:contain;display:block}
+.header-comercial[aria-pressed="true"]{border-color:#5b9bff;box-shadow:inset 0 0 0 1px rgba(91,155,255,.55)}
+.header-comercial[hidden]{display:none}
+#p-comercial{border-color:rgba(91,155,255,.6)!important;color:#d6e6ff!important}
+#p-comercial[hidden]{display:none!important}
 #commercial-return{position:fixed;right:18px;bottom:76px;z-index:7790;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:var(--brand,#7dffd0);color:#0b1a14;border:1px solid var(--brand,#7dffd0);border-radius:30px;font:700 14px/1.2 system-ui,-apple-system,sans-serif;cursor:pointer;box-shadow:0 10px 30px #0008}
 #commercial-return[hidden]{display:none}
 @keyframes comercial-float{50%{transform:translateY(-4px)}}

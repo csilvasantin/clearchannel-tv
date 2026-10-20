@@ -18,3 +18,9 @@ Commercial is Admirito with a tie and briefcase, focused on advertiser campaigns
 - **Los dos modos** («Vender campañas» y «Captar comercios») son un selector: el activo lleva el azul de la corbata (`aria-pressed`).
 - **Formulario y propuesta**: campos sobre `--card2` con borde `--line` y foco azul; la propuesta en una tarjeta con filete azul; el botón principal en el verde de marca (`--brand`); el cuerpo tiene su propio scroll bajo la cabecera.
 - Sellos `?v=20261020-comercial-4` en `index.html`; `movible.mjs` en `BIZ_ASSET_FILES`.
+
+## Entradas visibles (20-oct-2026, orden de Carlos)
+
+- **Botón en la cabecera de la portada** (`#header-comercial-toggle`, la nube de Comercial junto a «Iniciar sesión»): abre y cierra Comercial. Viene oculto en el HTML y lo enseña `comercial.mjs` al cargar, así en clearchannel.tv (donde el módulo no carga) no aparece.
+- **«Anunciarme aquí» en la ficha de cada Xpacio** (`#p-comercial`, en la fila de acciones junto a Tour DooH y gemelo): la selección del mapa pasa a ser sólo ese local (`AdmiraCommercialContext.seleccionar(id)`, como el borrador de Pixeria: ámbito local, circuito «all», sin autoselección) y Comercial se abre con él ya incorporado («1 ubicaciones incorporadas»). Si el catálogo aún no está listo, se abre igual y avisa.
+- Sellos `?v=20261020-comercial-5` (comercial.css, comercial.mjs y app.js). Prueba: «commercial has visible entry points…» en `tests/comercial.test.mjs`.
