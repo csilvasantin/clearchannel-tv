@@ -170,6 +170,9 @@ test('enlace profundo ?circuit=altadis_espana&loc=<id>: centra el estanco y abre
   assert.match(fn, /def\.items\.find\(l => l\.id === locId\)/);
   assert.match(fn, /circuitLocDone = true; flyToLocation\(target\);/);
   assert.match(fn, /else if \(!locId \|\| !circuitLocDone\) zoomToSelectedCircuit\(\);/);
+  // Primera visita (21-oct-2026): con el estilo cargado se va ya; si no, «load» o un plazo de respaldo, una sola vez.
+  assert.match(fn, /const mapaListo = map && \(\(map\.isStyleLoaded && map\.isStyleLoaded\(\)\) \|\| \(map\.loaded && map\.loaded\(\)\)\);/);
+  assert.match(fn, /map\.once\('load', unaVez\); setTimeout\(unaVez, 2500\);/);
   assert.match(app, /function circuitLocParam\(\) \{\s*try \{ return new URLSearchParams\(location\.search \|\| ''\)\.get\('loc'\) \|\| ''; \}/);
   // flyToLocation abre la ficha (renderPanel + panel abierto) al aterrizar.
   assert.match(app, /async function flyToLocation[\s\S]*?renderPanel\(loc\);\s*panel\.classList\.add\('open'\);/);
