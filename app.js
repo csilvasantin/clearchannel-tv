@@ -4505,8 +4505,14 @@ function applyCircuitDeepLink() {
       else if (!locId || !circuitLocDone) zoomToSelectedCircuit();
     } catch (_) {}
   };
-  if (map && map.loaded && map.loaded()) go();
-  else if (map && map.once) map.once('load', go);
+  // En la primera visita (sin teselas en caché) map.loaded() sigue siendo false después del evento «load» mientras
+  // llegan teselas, y ese evento ya no vuelve: la ficha no se abría nunca (21-oct-2026). Basta con el estilo cargado;
+  // si no lo está, se espera a «load» con un plazo de respaldo. go() sólo corre una vez.
+  let ido = false;
+  const unaVez = () => { if (ido) return; ido = true; go(); };
+  const mapaListo = map && ((map.isStyleLoaded && map.isStyleLoaded()) || (map.loaded && map.loaded()));
+  if (mapaListo) unaVez();
+  else if (map && map.once) { map.once('load', unaVez); setTimeout(unaVez, 2500); }
   return true;
 }
 var circuitLocDone = false;  // var: applyCircuitDeepLink puede llegar antes que esta línea
