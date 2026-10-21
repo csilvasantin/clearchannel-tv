@@ -1,4 +1,4 @@
-import {STEPS,proposal,proposalText,proposalHtml,proposalMailto,sameSelection,merchantBrief,merchantText,merchantHtml,merchantMailto,briefDesdeTexto,nombresDeUbicaciones}from'./comercial-core.mjs?v=20261021-core-2';
+import {STEPS,proposal,proposalText,proposalHtml,proposalMailto,sameSelection,merchantBrief,merchantText,merchantHtml,merchantMailto,briefDesdeTexto,nombresDeUbicaciones}from'./comercial-core.mjs?v=20261021-core-3';
 // La cara y la voz (Carlos, 20-oct-2026: «que Comercial escuche el brief por el micro y responda con la voz de Admirito,
 // como el Arquitecto»): la nube de digitalavatar.ai con la piel «comercial» (corbata y maletín). Lo que se le dice, por
 // texto o por su micro, llega aquí (da-comercial-texto) y se interpreta como brief; aquí se le cuenta en qué está

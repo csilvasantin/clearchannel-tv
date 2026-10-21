@@ -19,7 +19,8 @@ export function proposal(raw, snapshot, planner, today) {
   return {schema:'admira.comercial-propuesta/1',status:'draft',brief,circuit:clean(snapshot.circuit,200),target:clean(snapshot.target),
     locations:items.map(x=>({id:clean(x.id,160),name:clean(x.name,200),demo:x.demo===true,
       ...(Array.isArray(x.coords)&&Number.isFinite(x.coords[0])&&Number.isFinite(x.coords[1])?{coords:[x.coords[0],x.coords[1]]}:{}),
-      ...(/^https:\/\/[^\s"'<>]+$/.test(String(x.foto||''))?{foto:String(x.foto)}:{})})),estimate,
+      ...(/^https:\/\/[^\s"'<>]+$/.test(String(x.foto||''))?{foto:String(x.foto)}:{}),
+      ...(clean(x.addr,200)?{addr:clean(x.addr,200)}:{})})),estimate,
     hasDemonstration:items.some(x=>x.demo===true),createdOn:today,
     budgetExceeded:estimate?estimate.price>brief.budget:null,availability:'unconfirmed',audienceMetric:'estimated_opportunities_not_unique_people'};
 }
@@ -58,8 +59,8 @@ export function proposalHtml(p, {lang='es', brand={}, contact='info@admira.com',
   const marca=esc(brand.wordmark||brand.name||'ADMIRA·BIZ'),dominio=esc(brand.domain||'www.admira.biz'),banda=esc(colors.band||'#100c20'),acento=esc(colors.accent||'#7dffd0'),tinta='#111318',azul='#2f6db5';
   const titulo=`${t('Propuesta de campaña','Campaign proposal')} · ${esc(p.brief.advertiser)} · ${fecha(p.createdOn)}`;
   const cifra=(k,v,nota='')=>`<div class="cifra"><span class="k">${k}</span><strong>${v}</strong>${nota?`<small>${nota}</small>`:''}</div>`;
-  const conFoto=p.locations.some(x=>x.foto);
-  const filas=p.locations.map((x,i)=>`<tr><td>${i+1}</td>${conFoto?`<td class="foto">${x.foto?`<img src="${esc(x.foto)}" alt="" width="72" height="54">`:''}</td>`:''}<td>${esc(x.name)}</td><td class="mono">${esc(x.id)}</td><td>${x.demo?t('demostración','demonstration'):''}</td></tr>`).join('');
+  // Tabla de ubicaciones (Carlos, 21-oct-2026): foto, nombre (con su id debajo) y dirección de cada una, además del mapa.
+  const filas=p.locations.map((x,i)=>`<tr><td>${i+1}</td><td class="foto">${x.foto?`<img src="${esc(x.foto)}" alt="" width="72" height="54">`:`<span class="sinfoto">${t('sin foto','no photo')}</span>`}</td><td>${esc(x.name)}<br><small class="mono">${esc(x.id)}</small>${x.demo?`<br><small>${t('demostración','demonstration')}</small>`:''}</td><td>${x.addr?esc(x.addr):'—'}</td></tr>`).join('');
   const avisos=[
     t('Las oportunidades son una estimación de impactos, no personas únicas.','Opportunities are an estimate of impacts, not unique people.'),
     t('Disponibilidad y precio sujetos a confirmación. Este documento no reserva ni publica una campaña.','Availability and price require confirmation. This document does not book or publish a campaign.'),
@@ -84,7 +85,7 @@ table{width:100%;border-collapse:collapse;font-size:10pt}th{text-align:left;font
 .avisos{margin:14px 0 0;padding:10px 14px 10px 28px;background:#f6f7fa;border-radius:8px;font-size:9.5pt;color:#333}.avisos li{margin:2px 0}
 .mapa{position:relative;overflow:hidden;border-radius:10px;border:1px solid #dfe3ea;background:#0b1a25;break-inside:avoid}.mapa img{position:absolute;display:block}
 .marca-mapa{position:absolute;transform:translate(-50%,-50%);min-width:22px;height:22px;padding:0 5px;border-radius:999px;background:${azul};color:#fff;border:2px solid #fff;box-shadow:0 2px 6px #0008;font:700 11px/18px -apple-system,Helvetica,Arial,sans-serif;text-align:center;box-sizing:border-box}
-.atribucion{margin:4px 0 0;font-size:8pt;color:#777}td.foto{width:80px;padding:4px 6px}td.foto img{display:block;width:72px;height:54px;object-fit:cover;border-radius:6px;background:#eef0f4}
+.atribucion{margin:4px 0 0;font-size:8pt;color:#777}td.foto{width:80px;padding:4px 6px}td.foto img{display:block;width:72px;height:54px;object-fit:cover;border-radius:6px;background:#eef0f4}td.foto .sinfoto{display:flex;align-items:center;justify-content:center;width:72px;height:54px;border-radius:6px;background:#eef0f4;color:#8a94a6;font-size:8pt}
 footer{margin-top:22px;padding-top:8px;border-top:1px solid #dfe3ea;display:flex;justify-content:space-between;font-size:8.5pt;color:#666}
 @media print{.banda,.marca-mapa{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style></head><body>
@@ -100,7 +101,7 @@ footer{margin-top:22px;padding-top:8px;border-top:1px solid #dfe3ea;display:flex
 <div class="cifras">${cifra(t('Ubicaciones','Locations'),n(p.locations.length))}${cifra(t('Oportunidades estimadas','Estimated opportunities'),p.estimate?n(p.estimate.estimatedImpr):'—',t('impactos, no personas únicas','impacts, not unique people'))}${cifra(t('Importe orientativo','Indicative price'),p.estimate?money(p.estimate.price):'—',t('presupuesto: ','budget: ')+money(p.brief.budget))}</div>
 ${mapaHtml(p,lang)}
 <h2>${t('Ubicaciones','Locations')}</h2>
-<table><thead><tr><th>#</th>${conFoto?`<th>${t('Foto','Photo')}</th>`:''}<th>${t('Ubicación','Location')}</th><th>Id</th><th></th></tr></thead><tbody>${filas}</tbody></table>
+<table><thead><tr><th>#</th><th>${t('Foto','Photo')}</th><th>${t('Ubicación','Location')}</th><th>${t('Dirección','Address')}</th></tr></thead><tbody>${filas}</tbody></table>
 <ul class="avisos">${avisos}</ul>
 <footer><span>${t('Contacto comercial','Commercial contact')}: ${esc(contact)}</span><span>${t('Preparado por Comercial (Admirito) en ','Prepared by Commercial (Admirito) at ')}${dominio}</span></footer>
 </body></html>`;
