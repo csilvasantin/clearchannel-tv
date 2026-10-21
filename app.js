@@ -4410,14 +4410,20 @@ async function flyToLocation(loc, {automatic = false, bearing = -20, zoom} = {})
   if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
   const ac = document.getElementById('addr-card'); if (ac) ac.hidden = true;
   pushRecent(loc.id);
-  const result = await tourCamera.navigate(locationCamera(loc, bearing, zoom), phase => {
+  // La ficha se abre en cuanto la cámara aterriza en el destino final (última etapa del vuelo); las teselas del
+  // satélite siguen llegando detrás. Antes se esperaba a areTilesLoaded() y, sin caché (primera visita), la ficha
+  // tardaba hasta 40 s o salía «Mapa incompleto» (Carlos, 21-oct-2026).
+  const cam = locationCamera(loc, bearing, zoom);
+  let abierta = false;
+  const abrir = () => { if (abierta) return; abierta = true; renderPanel(loc); panel.classList.add('open'); };
+  const result = await tourCamera.navigate(cam, phase => {
     const key = phase === 'preparing' ? 'map_preparing' : phase === 'loading' ? 'map_loading' : 'status_landing';
     setStatus(t(key) + loc.name, true);
+    if (phase === 'loading' && Math.abs(map.getZoom() - cam.zoom) < 0.1) abrir();
   });
   if (result === 'cancelled') return false;
-  if (result !== 'ready') { setStatus(t('map_incomplete')); return false; }
-  renderPanel(loc);
-  panel.classList.add('open');
+  if (result !== 'ready') { setStatus(abierta ? loc.name : t('map_incomplete')); return abierta; }
+  abrir();
   setStatus(loc.name);
   return true;
 }

@@ -176,6 +176,9 @@ test('enlace profundo ?circuit=altadis_espana&loc=<id>: centra el estanco y abre
   assert.match(app, /function circuitLocParam\(\) \{\s*try \{ return new URLSearchParams\(location\.search \|\| ''\)\.get\('loc'\) \|\| ''; \}/);
   // flyToLocation abre la ficha (renderPanel + panel abierto) al aterrizar.
   assert.match(app, /async function flyToLocation[\s\S]*?renderPanel\(loc\);\s*panel\.classList\.add\('open'\);/);
+  // 21-oct-2026: la ficha se abre al aterrizar en el destino final, sin esperar a todas las teselas.
+  assert.match(app, /if \(phase === 'loading' && Math\.abs\(map\.getZoom\(\) - cam\.zoom\) < 0\.1\) abrir\(\);/);
+  assert.match(app, /if \(result !== 'ready'\) \{ setStatus\(abierta \? loc\.name : t\('map_incomplete'\)\); return abierta; \}/);
 });
 
 test('la ficha del estanco abre su plano compartido (plano.html?locationId=altadis-xtanco-NN) junto al gemelo', () => {
