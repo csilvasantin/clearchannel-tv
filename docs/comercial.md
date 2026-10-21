@@ -59,3 +59,4 @@ Commercial is Admirito with a tie and briefcase, focused on advertiser campaigns
 - `window.AdmiraComercial.dictado(texto)` aplica un dictado (pruebas). Sin `fetch` ni almacenamiento: el brief sigue en la pestaña. Sellos `?v=20261020-comercial-10`. La piel vive en el repo `digitalavatar.ai` (`tests/comercial.test.mjs` allí).
 
 - **Tabla de ubicaciones en el PDF (21-oct-2026):** foto de fachada (o «sin foto»), nombre con su id debajo y dirección (`addr` del catálogo, que viaja en el snapshot de `AdmiraCommercialContext` y en `proposal().locations`), además del mapa.
+- **Foto de fachada del Stock como respaldo (21-oct-2026):** si el local no tiene previo en el KV, la portada comprueba con HEAD `https://stock.admira.store/espacios/fachadas/<id>.webp` (o `.jpg`) al incorporar la selección (`AdmiraCommercialContext.prepararFotos`) y, si existe, el PDF la usa. Subir la foto a R2 `pixer-stock` con esa clave basta para que aparezca.

@@ -97,7 +97,10 @@ function invalidate(){result=null;$('commercial-proposal').hidden=true;$('commer
 function error(e){const a=errors[e.message];const m=a?T(...a):T('No se ha podido preparar la propuesta.','The proposal could not be prepared.');$('commercial-status').textContent=m;decir('dudando',m);}
 back.onclick=()=>open();panel.querySelector('.commercial-close').onclick=close;
 $('commercial-target').onclick=()=>select(true);$('commercial-locations').onclick=()=>select(false);
-function adoptar(){const s=ctx.snapshot();if(!s.ready)throw Error('catalogue_loading');if(!s.items.length)throw Error('locations_required');selected=s;invalidate();$('commercial-selection').textContent=selectionText(s);}
+function adoptar(){const s=ctx.snapshot();if(!s.ready)throw Error('catalogue_loading');if(!s.items.length)throw Error('locations_required');selected=s;invalidate();$('commercial-selection').textContent=selectionText(s);fotosDelStock(s);}
+// Fotos de fachada del Stock (21-10-2026): la portada las comprueba (HEAD) y, si aparecen, la selección se vuelve a tomar
+// para que el PDF las lleve; sólo si la selección sigue siendo la misma.
+function fotosDelStock(s){if(typeof ctx.prepararFotos!=='function')return;Promise.resolve(ctx.prepararFotos(s.items.map(i=>i.id))).then(n=>{if(!n||!selected||selected!==s)return;const t=ctx.snapshot();if(t.ready&&sameSelection(t,selected))selected=t;}).catch(()=>{});}
 // «Usar la selección»: adoptar() borra la propuesta anterior (invalidate), así que aquí no hay cifras que decir; la voz
 // con las cifras va al preparar la propuesta (form.onsubmit). Antes se leía result tras invalidar y saltaba el error.
 $('commercial-adopt').onclick=()=>{try{adoptar();decir('apuntando',nombresDeUbicaciones(selected.items,{lang:language()})+T(' en la propuesta. Cuando quieras, la preparo.',' in the proposal. Whenever you like, I will prepare it.'));}catch(e){error(e);}};

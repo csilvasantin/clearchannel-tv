@@ -5831,8 +5831,26 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
   if(document.readyState!=='loading') start(); else document.addEventListener('DOMContentLoaded', start);
 })();
 
+// Comercial (21-10-2026): si el local no tiene previo de fachada en el KV, el PDF usa la foto de fachada del Stock de
+// admira.studio, si existe: https://stock.admira.store/espacios/fachadas/<id>.webp (o .jpg). Se comprueba con HEAD una
+// vez por local (caché) cuando Comercial incorpora la selección; el snapshot sólo la da si la comprobación la encontró.
+const STOCK_FACHADAS = 'https://stock.admira.store/espacios/fachadas/';
+const stockFachadas = new Map();   // id → url | null
+function stockFachadaUrl(id) { const v = stockFachadas.get(id); return typeof v === 'string' ? v : null; }
+async function prepararFachadasStock(ids) {
+  const pendientes = (Array.isArray(ids) ? ids : []).filter(id => typeof id === 'string' && /^[a-z0-9-]+$/i.test(id) && !stockFachadas.has(id));
+  await Promise.all(pendientes.map(async id => {
+    let url = null;
+    for (const ext of ['webp', 'jpg']) {
+      try { const r = await fetch(STOCK_FACHADAS + id + '.' + ext, { method: 'HEAD', cache: 'force-cache' }); if (r.ok) { url = STOCK_FACHADAS + id + '.' + ext; break; } } catch (_) {}
+    }
+    stockFachadas.set(id, url);
+  }));
+  return pendientes.length;
+}
 // Commercial assistant: actions reuse the catalogue, targeting UI and planner.
 window.AdmiraCommercialContext = {
+  prepararFotos: prepararFachadasStock,
   language: () => LANG,
   snapshot() {
     const circuitIds=new Set(currentCircuitItems().map(x=>x.id));
@@ -5842,6 +5860,7 @@ window.AdmiraCommercialContext = {
         const cpms=locationCpmValues(normalized),known=surfaces.some(s=>finiteImpr(s.impr)!==null);
         // Para el PDF de Comercial (20-10-2026): coordenadas y la foto de fachada del previo (KV), si la hay.
         let foto=null;try{const v=previoViews(loc)[0];foto=v&&v.previo&&typeof v.previo.imagen==='string'?v.previo.imagen:null;}catch(e){}
+        if(!foto)foto=stockFachadaUrl(loc.id);
         return {id:loc.id,name:loc.name||loc.nombre||loc.id,impr:known?locationDailyImpr(normalized):null,demo:inventorySummary(normalized).demo,coords:Array.isArray(loc.coords)?loc.coords.slice(0,2):null,foto,addr:typeof loc.addr==='string'?loc.addr:'',
           cpm:cpms.length?cpms.reduce((a,b)=>a+b,0)/cpms.length:null,surfaces:locationSurfaceCount(normalized)};
       })};
