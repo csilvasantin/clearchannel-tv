@@ -167,6 +167,9 @@ test('enlace profundo ?circuit=altadis_espana&loc=<id>: centra el estanco y abre
   const app = read('app.js');
   const fn = app.slice(app.indexOf('function applyCircuitDeepLink'), app.indexOf('function watchCircuitDeepLink'));
   assert.match(fn, /const locId = circuitLocParam\(\);/);
+  // Con &loc= el selector de circuito queda plegado y manda la ficha (21-oct-2026).
+  assert.match(fn, /panelEl\.classList\.toggle\('collapsed', !!locId\)/);
+  assert.match(fn, /toggle\.textContent = locId \? '\+' : '−'/);
   assert.match(fn, /def\.items\.find\(l => l\.id === locId\)/);
   assert.match(fn, /circuitLocDone = true; flyToLocation\(target\);/);
   assert.match(fn, /else if \(!locId \|\| !circuitLocDone\) zoomToSelectedCircuit\(\);/);
