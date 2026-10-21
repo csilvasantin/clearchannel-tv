@@ -4496,14 +4496,15 @@ function applyCircuitDeepLink() {
   const panelEl = document.getElementById('circuit-panel');
   const headerBtn = document.getElementById('header-circuit-btn');
   const toggle = document.getElementById('circuit-toggle');
-  if (panelEl) { panelEl.hidden = false; panelEl.classList.remove('collapsed'); }
-  if (headerBtn) headerBtn.classList.add('active');
-  if (toggle) toggle.textContent = '−';
-  renderCircuitSelector();
   // &loc=<id> (DCL-a6cb621be0ce5932f50960de): enlace profundo a un Xpacio del circuito, p. ej.
   // /?circuit=altadis_espana&loc=altadis-es-05-madrid&marca=altadis. Centra el punto y abre su ficha una sola
   // vez; las llamadas siguientes (catálogo completo, cambio de marca) ya no alejan la cámara a todo el circuito.
+  // Con &loc= el selector de circuito queda plegado (el circuito sigue aplicado): manda la ficha (Carlos, 21-oct-2026).
   const locId = circuitLocParam();
+  if (panelEl) { panelEl.hidden = false; panelEl.classList.toggle('collapsed', !!locId); }
+  if (headerBtn) headerBtn.classList.add('active');
+  if (toggle) toggle.textContent = locId ? '+' : '−';
+  renderCircuitSelector();
   const target = locId && !circuitLocDone ? def.items.find(l => l.id === locId) : null;
   const go = () => {
     try {
