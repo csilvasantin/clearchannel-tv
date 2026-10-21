@@ -275,3 +275,17 @@ export function briefDesdeTexto(texto, { hoy = new Date().toISOString().slice(0,
     : (en ? 'I did not catch the brief. Tell me the advertiser, the objective, who to reach and the budget.' : 'No he entendido el brief. Dime el anunciante, el objetivo, a quién llegar y el presupuesto.');
   return { campos, faltan, intencion, resumen };
 }
+
+// Nombres de las ubicaciones para la voz de Comercial (Carlos, 21-oct-2026): hasta `max` nombres y «y N más»;
+// sin nombres, «N ubicaciones». Ej.: «Starbucks Paseo de Gracia, Starbucks Diagonal y Laboratorio AdmiraNeXT»,
+// «A, B, C y 2 más» / «A, B, C and 2 more».
+export function nombresDeUbicaciones(items, { lang = 'es', max = 3 } = {}) {
+  const en = lang === 'en', lista = Array.isArray(items) ? items : [];
+  const nombres = lista.map(i => String((i && i.name) || '').trim()).filter(Boolean);
+  if (!nombres.length) return `${lista.length} ${en ? (lista.length === 1 ? 'location' : 'locations') : (lista.length === 1 ? 'ubicación' : 'ubicaciones')}`;
+  const vistos = nombres.slice(0, max), resto = nombres.length - vistos.length;
+  const y = en ? ' and ' : ' y ';
+  if (resto > 0) return `${vistos.join(', ')}${y}${resto} ${en ? 'more' : 'más'}`;
+  if (vistos.length === 1) return vistos[0];
+  return `${vistos.slice(0, -1).join(', ')}${y}${vistos[vistos.length - 1]}`;
+}
