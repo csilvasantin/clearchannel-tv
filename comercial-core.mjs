@@ -227,7 +227,7 @@ export function mapaHtml(p, lang = 'es', opciones = {}) {
 const MESES = { enero:1, febrero:2, marzo:3, abril:4, mayo:5, junio:6, julio:7, agosto:8, septiembre:9, setiembre:9, octubre:10, noviembre:11, diciembre:12,
   january:1, february:2, march:3, april:4, may:5, june:6, july:7, august:8, september:9, october:10, november:11, december:12 };
 const PALABRAS_NUM = { un:1, una:1, uno:1, dos:2, tres:3, cuatro:4, cinco:5, seis:6, siete:7, ocho:8, nueve:9, diez:10, quince:15, veinte:20, treinta:30, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, ten:10, fifteen:15, twenty:20, thirty:30 };
-const numero = s => { if (s == null) return NaN; const w = String(s).toLowerCase().trim(); if (PALABRAS_NUM[w] != null) return PALABRAS_NUM[w]; const m = w.replace(/\./g, '').replace(',', '.').match(/\d+(?:\.\d+)?/); let v = m ? Number(m[0]) : NaN; if (/\bmil\b|k\b/.test(w) && v < 1000) v *= 1000; return v; };
+const numero = s => { if (s == null) return NaN; const w = String(s).toLowerCase().trim(); if (PALABRAS_NUM[w] != null) return PALABRAS_NUM[w]; const m = w.replace(/(\d),(\d{3})(?!\d)/g, '$1$2').replace(/\./g, '').replace(',', '.').match(/\d+(?:\.\d+)?/); let v = m ? Number(m[0]) : NaN; if (/\bmil\b|k\b/.test(w) && v < 1000) v *= 1000; return v; };
 const iso = d => d.toISOString().slice(0, 10);
 const fechaDe = (dia, mes, anio, hoy) => { const y = anio || hoy.getUTCFullYear(); let d = new Date(Date.UTC(y, mes - 1, dia)); if (!anio && d < hoy && (hoy - d) > 7 * 86400000) d = new Date(Date.UTC(y + 1, mes - 1, dia)); return d; };
 export function briefDesdeTexto(texto, { hoy = new Date().toISOString().slice(0, 10), lang = 'es' } = {}) {
@@ -239,7 +239,8 @@ export function briefDesdeTexto(texto, { hoy = new Date().toISOString().slice(0,
   else if (/\b(ubicaciones|locations)\b/.test(bajo) && /\b(elige|elegir|abre|abrir|choose|open|pick)\b/.test(bajo)) intencion = 'ubicaciones';
   else if (/\b(audiencias?|audiences?)\b/.test(bajo) && /\b(elige|elegir|abre|abrir|choose|open|pick)\b/.test(bajo)) intencion = 'audiencias';
   // Anunciante: «para Café Rico», «el anunciante es…», «campaña de…», «for Café Rico».
-  const anun = t.match(/\b(?:[Aa]nunciante(?: es)?:?|[Pp]ara(?: la marca| el cliente)?|[Cc]ampaña (?:de|para)|[Cc]liente:?|[Aa]dvertiser(?: is)?:?|[Ff]or)\s+([A-ZÁÉÍÓÚÑ][^,.;:]{1,60}?)(?=\s+(?:que|con|del|desde|en|para|a |dirigid|hasta|durante|y |to |aimed|,|\.|;|:|$)|[,.;:]|$)/u);
+  const anun = t.match(/\b(?:[Aa]nunciante(?: es)?:?|[Pp]ara(?: la marca| el cliente)?|[Cc]ampaña (?:de|para)|[Cc]liente:?|[Aa]dvertiser(?: is)?:?|[Ff]or)\s+([A-ZÁÉÍÓÚÑ][^,.;:]{1,60}?)(?=\s+(?:que|con|del|desde|en|para|a |dirigid|hasta|durante|y |to |aimed|launch|wants?|with |from |budget|whose|which|that|,|\.|;|:|$)|[,.;:]|$)/u)
+    || t.match(/^([A-ZÁÉÍÓÚÑ][^,.;:]{1,60}?)\s+(?:wants?|quiere(?:n)?|busca(?:n)?)\b/u);
   if (anun) campos.advertiser = anun[1].trim();
   // Presupuesto: «presupuesto 2000 euros», «2.000 €», «budget 2000».
   const pres = bajo.match(/(?:presupuesto|budget)(?: de| of| es)?\s*(?:de\s*)?([\d.,]+\s*(?:mil|k)?)\s*(?:€|euros?|eur)?/) || bajo.match(/([\d.,]+)\s*(?:€|euros)\b/);
@@ -262,8 +263,8 @@ export function briefDesdeTexto(texto, { hoy = new Date().toISOString().slice(0,
   const recorta = v => String(v).trim().replace(/[,.;:]+$/, '').trim();
   if (aud) campos.audience = recorta(aud[1]);
   // Objetivo: «objetivo: …», «quiere/queremos…», «para lanzar…», «to launch…»; si no, lo que queda sin usar.
-  const obj = t.match(/\b(?:objetivo(?: es| de la campaña)?:?|quiere(?:n)?|queremos|busca(?:n)?|para (?:lanzar|promocionar|dar a conocer|anunciar|vender)|to (?:launch|promote|announce|sell)|wants? to|goal(?: is)?:?)\s+([^.;]{3,160}?)(?=[.;]|$|\s+(?:dirigid|para llegar|p[úu]blico|audiencia|con un presupuesto|presupuesto|budget|del \d|desde|aimed|targeting|audience|from))/iu);
-  if (obj) campos.objective = recorta(/^(?:para |to )/i.test(t.slice(obj.index, obj.index + 5)) ? t.slice(obj.index, obj.index + obj[0].length) : obj[1]);
+  const obj = t.match(/\b(?:objetivo(?: es| de la campaña)?:?|quiere(?:n)?|queremos|busca(?:n)?|para (?:lanzar|promocionar|dar a conocer|anunciar|vender)|to (?:launch|promote|announce|sell)|launching|promoting|wants? to|goal(?: is)?:?|objective(?: is| of the campaign)?:?)\s+([^.;]{3,160}?)(?=[.;]|$|\s+(?:dirigid|para llegar|p[úu]blico|audiencia|con un presupuesto|presupuesto|budget|del \d|desde|aimed|targeting|audience|from))/iu);
+  if (obj) campos.objective = recorta(/^(?:para |to |launching|promoting)/i.test(t.slice(obj.index, obj.index + 9)) ? t.slice(obj.index, obj.index + obj[0].length) : obj[1]);
   if (campos.advertiser) campos.advertiser = recorta(campos.advertiser);
   const faltan = ['advertiser', 'objective', 'audience', 'budget'].filter(k => campos[k] == null || campos[k] === '');
   const nombres = en ? { advertiser: 'the advertiser', objective: 'the objective', audience: 'the audience', budget: 'the budget' } : { advertiser: 'el anunciante', objective: 'el objetivo', audience: 'la audiencia', budget: 'el presupuesto' };
