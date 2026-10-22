@@ -21,7 +21,7 @@ Commercial is Admirito with a tie and briefcase, focused on advertiser campaigns
 
 ## Entradas visibles (20-oct-2026, orden de Carlos)
 
-- **Botón en la cabecera de la portada** (`#header-comercial-toggle`, la nube de Comercial junto a «Iniciar sesión»): abre y cierra Comercial. Viene oculto en el HTML y lo enseña `comercial.mjs` al cargar, así en clearchannel.tv (donde el módulo no carga) no aparece.
+- ~~**Botón en la cabecera de la portada**~~ (`#header-comercial-toggle`): retirado el 22-oct-2026 por orden de Carlos («no sé qué hace Admirito en el menú superior, pero no toca»). Comercial entra por «Anunciarme aquí» y por `/comercial` o `/admirito comercial` en Experto; `comercial.mjs` sigue tolerando que el botón no exista.
 - **«Anunciarme aquí» en la ficha de cada Xpacio** (`#p-comercial`, en la fila de acciones junto a Tour DooH y gemelo): la selección del mapa pasa a ser sólo ese local (`AdmiraCommercialContext.seleccionar(id)`, como el borrador de Pixeria: ámbito local, circuito «all», sin autoselección) y Comercial se abre con él ya incorporado («1 ubicaciones incorporadas»). Si el catálogo aún no está listo, se abre igual y avisa.
 - Sellos `?v=20261020-comercial-5` (comercial.css, comercial.mjs y app.js). Prueba: «commercial has visible entry points…» en `tests/comercial.test.mjs`.
 

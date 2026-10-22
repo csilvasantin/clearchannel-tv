@@ -1006,11 +1006,15 @@ function alcampoTourOrder(items) {
 }
 
 // Etiqueta de circuito de un Xpacio (para el tooltip del globo y filtros).
-function isAdmiraXperienceLocation(loc) { return loc.experienceId === 'admiraxperience' || loc.external?.brand === 'AdmiraXperience'; }
+// AdmiraXperience es un proyecto publicitario de pantallas e hilo musical (Carlos, 22-oct-2026): sus Xpacios son los
+// puntos de su circuito (de momento sólo la Sneaker Store). Sus oficinas siguen en el mapa, fuera del proyecto.
+function isAdmiraXperienceLocation(loc) { return loc.circuit === 'admiraxperience'; }
+function isAdmiraXperienceOffice(loc) { return !isAdmiraXperienceLocation(loc) && (loc.experienceId === 'admiraxperience' || loc.external?.brand === 'AdmiraXperience'); }
 
 function circuitLabel(loc) {
   if (isCafebreriaLocation(loc)) return 'Cafebrería';
   if (isAdmiraXperienceLocation(loc)) return 'AdmiraXperience';
+  if (isAdmiraXperienceOffice(loc)) return LANG === 'en' ? 'AdmiraXperience office' : 'Oficina AdmiraXperience';
   if (isDesigualLocation(loc)) return 'Desigual';
   if (isAlcampoLocation(loc)) return 'Alcampo';
   if (isMetroBarcelonaLocation(loc)) {
@@ -1079,7 +1083,7 @@ function circuitDefinitions() {
   const elcorteinglesItems = LOCATIONS.filter(isElCorteInglesLocation);
   const correosItems = LOCATIONS.filter(isCorreosLocation);
   const multiopticasItems = LOCATIONS.filter(isMultiopticasLocation);
-  const retailItems = LOCATIONS.filter(l => !isCafebreriaLocation(l) && !isJtiXtancoLocation(l) && !isAltadisBcnLocation(l) && !isAltadisEspanaLocation(l) && !isAlseaStarbucksLocation(l) && !isAlseaMexicoLocation(l) && !isAdmiraXperienceLocation(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l)).filter(l => !isDemoCircuitLocation(l));
+  const retailItems = LOCATIONS.filter(l => !isCafebreriaLocation(l) && !isJtiXtancoLocation(l) && !isAltadisBcnLocation(l) && !isAltadisEspanaLocation(l) && !isAlseaStarbucksLocation(l) && !isAlseaMexicoLocation(l) && !isAdmiraXperienceLocation(l) && !isAdmiraXperienceOffice(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l)).filter(l => !isDemoCircuitLocation(l));
   const demoDefs = demoCircuitDefinitions();
   const defs = {
     ...demoDefs,
@@ -1262,7 +1266,7 @@ function locationMatchesTargetSoft(loc) {
 
 function mapScopeForLocation(loc) {
   if (isDesigualLocation(loc) || isMangoLocation(loc)) return 'global';
-  if (isAdmiraXperienceLocation(loc) || isMetroBarcelonaLocation(loc) || isKioskoLocation(loc)) return 'local';
+  if (isAdmiraXperienceLocation(loc) || isAdmiraXperienceOffice(loc) || isMetroBarcelonaLocation(loc) || isKioskoLocation(loc)) return 'local';
   return 'national';
 }
 
@@ -1327,7 +1331,7 @@ function locationCpmValues(loc) {
 }
 
 function locationSurfaceCount(loc) {
-  if (isAdmiraXperienceLocation(loc)) return loc.surfaces.length;
+  if (isAdmiraXperienceLocation(loc) || isAdmiraXperienceOffice(loc)) return loc.surfaces.length;
   return loc.surfaces.filter(s => s.status !== 'idle').length || loc.surfaces.length || 1;
 }
 
@@ -3941,7 +3945,7 @@ function renderPanel(loc) {
     </div>`;
   }).join('');
   if(loc.source==='yokup-retailer'&&!loc.surfaces.length)list.innerHTML='<p class="office-interior-note">'+(document.documentElement.lang==='en'?'Establishment registered from Yokup. Equipment and advertising availability have not been confirmed.':'Establecimiento registrado desde Yokup. Equipos y disponibilidad publicitaria pendientes de confirmar.')+'</p>';
-  if (isAdmiraXperienceLocation(loc) && !loc.surfaces.length) list.innerHTML = '<p class="office-interior-note">'+(loc.interiorStatus==='external-manual'?'Interior disponible en IEU, con selección manual de oficina y acceso mediante tu cuenta autorizada.':'Pantallas interiores pendientes de vincular.')+' Abre «Recorrer AdmiraXperience» para llegar al destino y acceder al interior.</p>';
+  if (isAdmiraXperienceOffice(loc) && !loc.surfaces.length) list.innerHTML = '<p class="office-interior-note">'+(loc.interiorStatus==='external-manual'?'Interior disponible en IEU, con selección manual de oficina y acceso mediante tu cuenta autorizada.':'Pantallas interiores pendientes de vincular.')+' Abre «Recorrer AdmiraXperience» para llegar al destino y acceder al interior.</p>';
   try{ startSurfMirrors(); }catch(_){}
   // El feed de pujas es REAL y global (poller RTB): al abrir un panel NO lo
   // vaciamos, solo re-pintamos las decisiones reales ya recibidas (o el estado
@@ -4869,7 +4873,7 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
     const cpms = LOCATIONS.flatMap(l => (Array.isArray(l.surfaces) ? l.surfaces : []).map(s => parseFloat(String(s.cpm).replace(/[^\d.]/g,'')))).filter(Boolean);
     if (cpms.length) {
       const lo = Math.min(...cpms), hi = Math.max(...cpms);
-      const el = document.getElementById('p-cpm'); if (el && activeLocation?.source!=='yokup-retailer' && !isAdmiraXperienceLocation(activeLocation || {})) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
+      const el = document.getElementById('p-cpm'); if (el && activeLocation?.source!=='yokup-retailer' && !isAdmiraXperienceLocation(activeLocation || {}) && !isAdmiraXperienceOffice(activeLocation || {})) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
     }
     renderCircuitSelector();
     if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();

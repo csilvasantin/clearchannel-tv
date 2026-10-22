@@ -297,11 +297,12 @@ test('las páginas piden la versión nueva de lo que cambia', () => {
   // con el asistente Comercial (18-oct, 20261018-comercial-2), con la captación de comercios (comercial-3),
   // con «Anunciarme aquí» en la ficha (20-oct, comercial-5), con el handON del laboratorio (laboratorio-1)
   // y con ese handON en la zona protegida de admiranext.com (zona-protegida-1).
-  assert.ok(html.includes('<script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261021-fachada-1"></script>'));   // zona-protegida-1: el handON de la ficha va a la zona protegida de admiranext.com
+  // Después, con AdmiraXperience como proyecto de pantallas e hilo musical (22-oct, admiraxperience-1).
+  assert.ok(html.includes('<script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261022-admiraxperience-1"></script>'));
   assert.match(html, /marca-blanca\.js\?v=20261016-starbucks-mx-2/);
   assert.match(html, /expert-commands\.js\?v=20261017-main-verde-1/);
-  // locations.js cambió por última vez con la recuperación de players: la portada y las fichas piden esa versión.
-  for (const page of ['index.html', 'detail.html', 'walk.html', 'backoffice.html']) assert.match(read(page), /locations\.js\?v=20261016-player-recovery-1/, page);
+  // locations.js cambió por última vez con la Sneaker Store en AdmiraXperience (22-oct): la portada y las fichas piden esa versión.
+  for (const page of ['index.html', 'detail.html', 'walk.html', 'backoffice.html']) assert.match(read(page), /locations\.js\?v=20261022-admiraxperience-1/, page);
 });
 
 test('los enlaces de la suite común del Experto abren México con la marca Starbucks', () => {
