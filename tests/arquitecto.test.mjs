@@ -108,7 +108,10 @@ test('reformar: mover, girar, cambiar de tamaño y retirar por pared, número o 
 test('topes: muchas órdenes o pantallas no cuelgan el navegador; lo que sobra se dice', () => {
   const plan = generarXpacio({ tipo: 'supermercado', total: true, semilla: 3, id: 'super-topes' });
   const largo = Array.from({ length: 40 }, (_, i) => `añade doce pantallas verticales de 85 pulgadas en la pared ${['del fondo', 'derecha', 'izquierda'][i % 3]}`).join(', ');
-  let t = Date.now();
+  // Se cuenta la CPU de este proceso, no el reloj: lo que cuelga el navegador es el trabajo en su hilo. En el runner
+  // compartido de GitHub el reloj sumaba esperas ajenas: 8,05 s el 22-oct-2026 con unos 2 s de CPU (M4) y el
+  // merge se quedaba sin publicar. El límite de 8 s es el mismo.
+  const cpu0 = process.cpuUsage();
   const r = interpretarReforma(largo, plan.pantallas);
   assert.equal(r.ops.length, MAX_ORDENES); assert.ok(r.demasiadas > 0, "las que sobran se cuentan");
   const ap = aplicarReforma(plan, plan.pantallas, r.ops);
@@ -116,7 +119,8 @@ test('topes: muchas órdenes o pantallas no cuelgan el navegador; lo que sobra s
   assert.ok(ap.hechos.some(h => h.motivo === 'demasiadas'));
   const d = planDesdeDescripcion({ descripcion: 'supermercado de 30 por 40 m con ' + largo, id: 'desc-topes', semilla: 1 });
   assert.ok(d.plan.pantallas.length <= MAX_PANTALLAS_NUEVAS);
-  assert.ok(Date.now() - t < 8000, 'en segundos, no en medio minuto: ' + (Date.now() - t) + ' ms');
+  const cpu = process.cpuUsage(cpu0), ms = Math.round((cpu.user + cpu.system) / 1000);
+  assert.ok(ms < 8000, 'en segundos, no en medio minuto: ' + ms + ' ms de CPU');
 });
 
 test('reformar desde fotos: las pantallas estimadas sin pareja son altas en su sitio; nada se retira por no verse', () => {
