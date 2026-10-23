@@ -4924,7 +4924,8 @@ setInterval(mergeSelfRegDevices, 60000);
 // Experto o el evento admira:marca. Re-segmenta globo, clusters, contadores, circuitos y buscador
 // sin recargar, y encuadra los puntos del cliente (Admira = todos, sin mover la cámara).
 function brandSegmentCount() { return { cliente: (window.AdmiraSegmento && window.AdmiraSegmento.actual()) || 'admira', puntos: LOCATIONS.length, total: LOCATIONS_ALL.length }; }
-window.AdmiraGlobo = Object.freeze({ segmento: brandSegmentCount, ids: () => LOCATIONS.map(l => l.id) });
+window.AdmiraGlobo = Object.freeze({ segmento: brandSegmentCount, ids: () => LOCATIONS.map(l => l.id), todos: () => LOCATIONS_ALL.slice() });
+document.dispatchEvent(new CustomEvent('admira:globo-listo'));
 function fitBrandSegment() {
   if (!window.AdmiraSegmento || !window.AdmiraSegmento.actual() || LOCATIONS.length === LOCATIONS_ALL.length) return;
   // Con un tour, la visión general o un vuelo en marcha, la cámara ya tiene dueño: encuadrar la marca encima
