@@ -134,7 +134,8 @@ $('commercial-pdf').onclick=async()=>{if(!result)return;try{await imprimir(propu
 function correoPropuesta(){return result?proposalMailto(result,{lang:language()}):'';}
 $('commercial-mail').onclick=()=>{if(!result)return;const a=document.createElement('a');a.href=correoPropuesta();a.rel='noopener';document.body.append(a);a.click();a.remove();$('commercial-status').textContent=T(...labels.mailListo);};
 $('commercial-download').onclick=()=>{if(!result)return;const url=URL.createObjectURL(new Blob([proposalText(result,language())],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='propuesta-comercial.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
-window.AdmiraComercial={lanzar:open,cerrar:close,propuestaHtml,correoPropuesta,fichaHtml,correoFicha,dictado:aplicarDictado};
+// anunciarAqui(id): lo mismo que «Anunciarme aquí» de la ficha, para ESE local; lo usan las tarjetas del mapa al hacer zoom (FLT-102666).
+window.AdmiraComercial={lanzar:open,cerrar:close,propuestaHtml,correoPropuesta,fichaHtml,correoFicha,dictado:aplicarDictado,anunciarAqui:id=>abrirConLocal(id)};
 window.addEventListener('admira:assistant-default',close);
 for(const event of ['admira:lang','admira:languagechange','admiranext:lang'])window.addEventListener(event,translate);
 new MutationObserver(()=>{if(selected){const current=ctx.snapshot();if(sameSelection(current,selected)){selected.circuit=current.circuit;selected.target=current.target;}}translate();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});

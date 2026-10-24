@@ -161,5 +161,7 @@ test('D · Comercial: cabecera y fondo opacos, nube con sitio para el bocadillo 
 });
 
 test('sellos: app.js, comercial.css y comercial.mjs piden la versión nueva',()=>{
- for(const f of ['app.js','/comercial.css','/comercial.mjs'])assert.ok(html.includes(f+'?v=20261024-ficha-comprador-1'),f);
+ // Los previos al hacer zoom (FLT-102666) vuelven a tocar app.js y comercial.mjs; comercial.css sigue igual.
+ for(const f of ['app.js','/comercial.mjs'])assert.ok(html.includes(f+'?v=20261024-previos-zoom-1'),f);
+ assert.ok(html.includes('/comercial.css?v=20261024-ficha-comprador-1'),'/comercial.css');
 });

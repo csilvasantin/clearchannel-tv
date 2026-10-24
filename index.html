@@ -488,6 +488,47 @@ addEventListener('resize',ccFitIntro);
   /* Con «Anunciarme aquí» a la vista, el Tour DooH pasa a secundario; sin él (no hay Comercial), vuelve a ser el principal. */
   aside.panel .actions.panel-navigation #p-comercial:not([hidden]) ~ #p-tour.primary{background:transparent;color:var(--brand)}
   aside.panel .actions.panel-navigation #p-comercial:not([hidden]) ~ #p-tour.primary:hover{background:var(--brand);color:#001620}
+  /* Previos de lo que emiten las pantallas (FLT-102666 · encargo #7145, 24-oct-2026). En la ficha, «Anunciarme aquí» a lo
+     ancho y, justo debajo, el previo grande (#p-emite, lo pinta previos-zoom.js); Tour DooH, Escena y Plano siguen en 2×2. */
+  aside.panel .actions.panel-navigation #p-comercial{grid-column:1/-1}
+  .p-emite{grid-column:1/-1;position:relative;margin:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card2)}
+  .p-emite[hidden]{display:none}
+  .p-emite .p-emite-media{display:block;width:100%}
+  .p-emite-pie{display:flex;align-items:center;gap:8px;min-width:0;padding:6px 8px;font-size:11px;line-height:1.3;color:var(--mut)}
+  .p-emite-pie .pz-etq{position:static;flex:none}
+  .p-emite-titulo{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .p-emite-accion{position:absolute;top:8px;right:8px;appearance:none;border:1px solid var(--accent);border-radius:999px;background:rgba(6,16,24,.86);color:var(--accent);font:700 11px/1.2 monospace;letter-spacing:.05em;padding:6px 10px;cursor:pointer}
+  .p-emite-accion:hover{background:var(--accent);color:#1a0e00}
+  .p-emite.p-emite-ninguno{border-style:dashed;background:transparent}
+  .p-emite-nada{display:block;padding:7px 9px}
+  /* Mapa: a zoom de calle, tarjeta flotante sobre cada Xpacio cercano con «Anunciarme aquí» ENCIMA del previo. El
+     elemento es el marcador de MapLibre (que lo coloca con transform): la entrada sólo anima la opacidad. */
+  .pz-tarjeta{display:flex;flex-direction:column;gap:4px;width:164px;padding:4px;background:rgba(6,16,24,.95);border:1px solid rgba(120,243,255,.34);border-radius:10px;box-shadow:0 10px 26px rgba(0,0,0,.5);color:var(--ink);z-index:2;animation:pzEntra .2s ease-out both}
+  .pz-tarjeta.pz-movil{width:128px}
+  .pz-tarjeta:hover,.pz-tarjeta:focus-within{z-index:3;border-color:var(--brand)}
+  @keyframes pzEntra{from{opacity:0}to{opacity:1}}
+  @media (prefers-reduced-motion:reduce){ .pz-tarjeta{animation:none} }
+  .pz-cta{appearance:none;display:block;width:100%;border:0;border-radius:7px;background:var(--brand);color:#001620;font-family:inherit;font-weight:700;font-size:11px;line-height:1.2;letter-spacing:.03em;padding:7px 4px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pz-movil .pz-cta{font-size:10px;padding:6px 3px}
+  .pz-cta:hover{filter:brightness(1.1)}
+  .pz-previo{appearance:none;position:relative;display:block;width:100%;margin:0;padding:0;border:0;border-radius:7px;overflow:hidden;background:var(--card2);color:inherit;font:inherit;text-align:left;cursor:pointer}
+  .pz-previo.pz-compacta{padding:5px 6px;background:transparent;border:1px dashed var(--line)}
+  .pz-media{position:relative;display:block;overflow:hidden;background:radial-gradient(120% 90% at 50% 30%,rgba(120,243,255,.22),rgba(10,22,32,.95) 70%)}
+  .pz-foto{position:absolute;display:block}
+  .pz-foto .pz-fachada{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+  .pz-pantalla{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden;background:linear-gradient(160deg,#0f3a4a,#06222c 55%,#2b2a12);border:3px solid rgba(255,255,255,.6);box-shadow:0 0 16px rgba(120,243,255,.5);border-radius:8px;margin:-3px 0 0 -3px;box-sizing:content-box}
+  .pz-pantalla.pz-vacia::after{content:'▶';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:150px;color:rgba(120,243,255,.55)}
+  .pz-pantalla img,.pz-pantalla .pz-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .pz-poster,.pz-media>.pz-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+  .pz-fondo{position:absolute;inset:-8%;width:116%;height:116%;object-fit:cover;filter:blur(10px) brightness(.55);display:block}
+  .pz-etq{position:absolute;left:4px;bottom:4px;display:inline-flex;align-items:center;gap:5px;max-width:calc(100% - 8px);box-sizing:border-box;padding:2px 7px;border-radius:9px;background:rgba(0,10,16,.86);color:var(--ink);font-family:inherit;font-size:10px;font-weight:600;line-height:1.25;letter-spacing:.01em;text-align:left}
+  .pz-compacta .pz-etq{position:static;background:transparent;padding:0;color:var(--mut)}
+  .pz-etq i{flex:none;width:6px;height:6px;border-radius:50%;background:var(--mut)}
+  .pz-etq-directo i{background:var(--good);box-shadow:0 0 6px var(--good);animation:pulseDot 1.4s ease-in-out infinite}
+  .pz-etq-dooh i{background:var(--accent)}
+  .pz-etq-circuito i{background:var(--brand)}
+  .pz-pico{position:absolute;left:50%;bottom:-6px;width:10px;height:10px;margin-left:-5px;transform:rotate(45deg);background:rgba(6,16,24,.95);border-right:1px solid rgba(120,243,255,.34);border-bottom:1px solid rgba(120,243,255,.34)}
+  .pz-cta:focus-visible,.pz-previo:focus-visible,.p-emite-accion:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   aside.panel.flying{opacity:0;transform:translateX(6%) scale(.99);transition:opacity .42s cubic-bezier(.4,0,.2,1),transform .42s cubic-bezier(.4,0,.2,1)}
   @media (prefers-reduced-motion:reduce){ aside.panel.flying{transition:none} }
 
@@ -1379,6 +1420,7 @@ addEventListener('resize',ccFitIntro);
   <div class="body">
     <div class="actions panel-navigation">
       <a href="#" id="p-comercial" class="p-comercial primary" hidden data-commercial="here">💼 Anunciarme aquí</a>
+      <figure class="p-emite" id="p-emite" hidden></figure>
       <a href="#" id="p-tour" class="primary" data-i18n="tour_start" data-i18n-title="tour_hint" title="Tour DooH: vuela de punto en punto por el circuito y el target seleccionados.">▶ Tour DooH</a>
       <a id="p-twin" hidden target="_blank" rel="noopener" data-i18n="view_twin">Ver Gemelo Digital ↗</a>
       <a id="p-twin-hd" href="#" target="_blank" rel="noopener" style="display:none" data-i18n="twin_hd">🎥 Gemelo Hiperrealista ↗</a>
@@ -1456,7 +1498,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="global-tour.js?v=20261016-total-tour-1"></script>
 <script defer src="login-google.js?v=20261024-incidencias-owner-1"></script>
 <script defer src="vision-general.js?v=20261016-starbucks-es-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=20261015-alsea-1"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20261007-calle-1"></script><script defer src="inventory-evidence.js?v=20261010-evidence-1"></script><script defer src="incident-map-tooltip.js?v=20261024-incidencias-owner-1"></script><script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261024-ficha-comprador-1"></script><script defer src="intro.js?v=20261016-altadis-es-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=20261015-alsea-1"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="previos-zoom.js?v=20261024-previos-zoom-1"></script><script defer src="xpace-link.js?v=20261007-calle-1"></script><script defer src="inventory-evidence.js?v=20261010-evidence-1"></script><script defer src="incident-map-tooltip.js?v=20261024-incidencias-owner-1"></script><script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261024-previos-zoom-1"></script><script defer src="intro.js?v=20261016-altadis-es-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
@@ -1465,7 +1507,7 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
 </script>
 <script defer src="planner-ui.js?v=20260905-1"></script>
 <link rel="stylesheet" href="/comercial.css?v=20261024-ficha-comprador-1">
-<script type="module" src="/comercial.mjs?v=20261024-ficha-comprador-1"></script>
+<script type="module" src="/comercial.mjs?v=20261024-previos-zoom-1"></script>
 <script type="module" src="walk-launch.mjs?v=20261010-evidence-1"></script>
 
 <!-- ═══ Neo · host MetaHuman en vivo (acceso desde Avanzado, panel opt-in) — digitalavatar.ai ═══ -->

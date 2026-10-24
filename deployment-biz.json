@@ -20,6 +20,7 @@
     ]
   },
   "novedades": [
+    "Al acercar el mapa a nivel de calle, cada Xpacio cercano enseña lo que emiten sus pantallas en una tarjeta con «Anunciarme aquí» encima: en directo, el Previo DooH sobre su fachada o la programación de su circuito, con la etiqueta que dice cuál es. En la ficha, bajo «Anunciarme aquí», el previo en grande. Al alejar, vuelven los puntos.",
     "La ficha de cada Xpacio, pensada para el comprador: «Anunciarme aquí» es el primer botón y el principal, y los botones van en dos columnas sin partir palabras. Con un enlace a un local (?circuit=…&loc=…), su ficha sale en menos de un segundo y la cámara vuela detrás; antes tardaba unos 15 s. La ventana de Comercial es opaca y su nube tiene sitio para Admirito y el bocadillo.",
     "El mapa de la portada vuelve a los colores por circuito para todo el público. El semáforo de incidencias (verde, amarillo, rojo) y su leyenda solo salen con una sesión de owner que verifica el servidor; sin ella, la página no consulta el estado de incidencias.",
     "AdmiraXperience pasa a ser un proyecto publicitario de pantallas e hilo musical. Su primer Xpacio es la Sneaker Store de Santa Rosa 19: LCD horizontal, pantalla vertical de entrada, videowall Jordan e hilo musical (dado de alta, aún sin pista).",

@@ -46,6 +46,8 @@ copyFileSync(join(root, 'server/native-clear-channel.mjs'), join(out, 'server/na
 copyFileSync(join(root, 'server/demo-session.mjs'), join(out, 'server/demo-session.mjs'));
 // Detalle de proyecto (#120, 20-10-2026): el worker lo importa; sin esta copia, esbuild no lo resuelve y la publicación falla.
 copyFileSync(join(root, 'server/detalle-proyecto.mjs'), join(out, 'server/detalle-proyecto.mjs'));
+// Previo del circuito (FLT-102666): /api/previo/circuito, con la Cache API de Cloudflare.
+copyFileSync(join(root, 'server/previo-circuito.mjs'), join(out, 'server/previo-circuito.mjs'));
 writeFileSync(join(out, 'server/bugito-xpacios.mjs'), readFileSync(join(root, 'server/bugito-xpacios.mjs'),'utf8').replace("'../bugito-xpacios-core.mjs'","'./bugito-xpacios-core.mjs'"));
 copyFileSync(join(root, 'bugito-xpacios-core.mjs'), join(out, 'server/bugito-xpacios-core.mjs'));
 writeFileSync(join(out,'server/bugito-command.mjs'),readFileSync(join(root,'server/bugito-command.mjs'),'utf8').replace("'../bugito-command-core.mjs'","'./bugito-command-core.mjs'"));
