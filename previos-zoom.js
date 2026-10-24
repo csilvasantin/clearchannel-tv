@@ -29,6 +29,9 @@
   const TARJETA_MOVIL = { w: 136, h: 120, base: 14 };
   const MEDIA = { w: 164, h: 100 }, MEDIA_MOVIL = { w: 128, h: 78 };
   const REFRESCO_MS = 180, OCUPADO_MS = 700, CIRCUITO_TTL_MS = 15 * 60 * 1000;
+  // Fuente sin puntos todavía (FLT-102666, fallo de producción del 24-oct): se reintenta cuando la fuente avisa de que ha
+  // cargado y, por si el aviso ya pasó, hasta ESPERA_MAX veces cada ESPERA_MS. Ver esperarFuente() en crear().
+  const ESPERA_MS = 700, ESPERA_MAX = 6;
   const ENDPOINT = '/api/previo/circuito';
   const STOCK_POSTER = 'https://api.admira.store/stock/poster/';
   const NIVELES = ['directo', 'dooh', 'circuito', 'ninguno'];
@@ -239,14 +242,17 @@
   // ── El controlador: tarjetas sobre el mapa y bloque de la ficha ──────────────────────────────────────
   // deps: map, maplibregl, document, fetch, loc(id), fuentes(loc) → {directo, dooh, orientacion, tag}, t, lang(),
   // ocupado() (tour, previo abierto, vuelo), activa() (id con la ficha abierta), tapas() → [{l,t,r,b}], margenes(),
-  // puedeAnunciar() (¿hay Comercial?), anunciar(loc), abrir(loc), verEmitiendo(loc), capa ('unclustered-point').
+  // puedeAnunciar() (¿hay Comercial?), anunciar(loc), abrir(loc), verEmitiendo(loc), capa ('unclustered-point'),
+  // fuente ('locs').
   function crear(deps) {
-    const d = Object.assign({ capa: 'unclustered-point', fetch: root.fetch && root.fetch.bind(root), document: root.document }, deps || {});
+    const d = Object.assign({ capa: 'unclustered-point', fuente: 'locs', fetch: root.fetch && root.fetch.bind(root), document: root.document }, deps || {});
     const map = d.map, doc = d.document;
     const tarjetas = new Map();          // id → {marker, el, firma, loc, nivel}
     const circuitos = new Map();         // tag → {estado:'pendiente'|'listo', datos, at, promesa}
     const fallidas = new Set();
     let timer = 0, reintento = 0, fichaEstado = null, videoActivo = null, peticiones = 0;
+    let espera = null, esperas = 0;      // aviso armado de «la fuente ya tiene sus puntos» y reintentos seguidos
+    const refrescoMs = d.refrescoMs || REFRESCO_MS, esperaMs = d.esperaMs || ESPERA_MS;   // los tests los acortan
     const movil = () => (root.innerWidth || 1440) <= MOVIL_PX;
     // Comercial carga después (módulo): se pregunta cada vez, no al crear.
     const puedeAnunciar = () => typeof d.anunciar === 'function' && (typeof d.puedeAnunciar !== 'function' || !!d.puedeAnunciar());
@@ -365,14 +371,46 @@
       [...tarjetas.keys()].forEach(quitar);
     }
     function zoomActual() { try { return map.getZoom(); } catch (_) { return 0; } }
+    // ── Fuente aún sin puntos ──
+    // Al llegar de golpe al zoom de calle (jumpTo, flyTo del buscador, clic en un cluster, enlace profundo), el moveend
+    // puede llegar antes de que la fuente `locs` tenga sus teselas de ese zoom, o mientras recarga datos (llega el
+    // catálogo, cambia la emisión): queryRenderedFeatures devuelve 0 y nadie volvía a calcular hasta el siguiente
+    // movimiento. Ahora se espera al aviso de la fuente (sourcedata con isSourceLoaded) y, por si ya pasó, se reintenta
+    // cada 700 ms hasta 6 veces. No vale `idle`: el latido de los puntos en vivo (animatePulse) repinta en cada fotograma
+    // y el mapa nunca llega a idle. Sin bucles: un solo aviso armado; se desarma al alejar o al cumplirse, y los
+    // reintentos seguidos se cuentan (vuelven a cero con cada programar() de fuera: moverse, abrir un panel…).
+    function fuenteCargada() { try { return typeof map.isSourceLoaded !== 'function' || !!map.isSourceLoaded(d.fuente); } catch (_) { return false; } }
+    function desarmarEspera() {
+      if (!espera) return;
+      clearTimeout(espera.timer);
+      try { if (typeof map.off === 'function') map.off('sourcedata', espera.alCargar); } catch (_) {}
+      espera = null;
+    }
+    function esperarFuente() {
+      if (espera || esperas >= ESPERA_MAX) return;
+      esperas++;
+      const yaEsta = () => { desarmarEspera(); clearTimeout(timer); timer = setTimeout(calcular, refrescoMs); };
+      espera = { alCargar: e => { if (e && e.sourceId === d.fuente && (e.isSourceLoaded || fuenteCargada())) yaEsta(); } };
+      try { if (typeof map.on === 'function') map.on('sourcedata', espera.alCargar); } catch (_) {}
+      espera.timer = setTimeout(yaEsta, esperaMs);
+    }
     function calcular() {
       timer = 0;
-      if (zoomActual() < ZOOM_MIN || !d.maplibregl || typeof d.maplibregl.Marker !== 'function' || !map.getLayer || !map.getLayer(d.capa)) { ocultar(); return; }
+      const lejos = zoomActual() < ZOOM_MIN;
+      if (lejos || !d.maplibregl || typeof d.maplibregl.Marker !== 'function' || !map.getLayer) { desarmarEspera(); ocultar(); return; }
+      // Sin la capa (cambio de estilo: satélite, mapa, relieve), el mismo aviso: la fuente vuelve con el estilo nuevo.
+      if (!map.getLayer(d.capa)) { ocultar(); esperarFuente(); return; }
       if (d.ocupado && d.ocupado()) { ocultar(); clearTimeout(reintento); reintento = setTimeout(programar, OCUPADO_MS); return; }
       const lienzo = map.getCanvas && map.getCanvas();
       const rect = lienzo && lienzo.getBoundingClientRect ? lienzo.getBoundingClientRect() : { left: 0, top: 0, width: root.innerWidth || 0, height: root.innerHeight || 0 };
       let feats = [];
       try { feats = map.queryRenderedFeatures({ layers: [d.capa] }) || []; } catch (_) { feats = []; }
+      const cargada = fuenteCargada();
+      if (!feats.length || !cargada) {
+        esperarFuente();
+        // Recargando y sin puntos que mirar: se dejan las tarjetas que haya hasta que la fuente termine.
+        if (!feats.length && !cargada) return;
+      } else { esperas = 0; desarmarEspera(); }
       const puntos = [], tags = new Set();
       for (const f of feats) {
         const id = f && f.properties && f.properties.id; if (id == null) continue;
@@ -401,8 +439,9 @@
     }
     // Tras moveend/zoomend: antirrebote. Con el zoom alejado y sin tarjetas no se hace nada (ni temporizador).
     function programar() {
-      if (zoomActual() < ZOOM_MIN) { clearTimeout(timer); timer = 0; clearTimeout(reintento); ocultar(); return; }
-      clearTimeout(timer); timer = setTimeout(calcular, REFRESCO_MS);
+      esperas = 0;
+      if (zoomActual() < ZOOM_MIN) { clearTimeout(timer); timer = 0; clearTimeout(reintento); desarmarEspera(); ocultar(); return; }
+      clearTimeout(timer); timer = setTimeout(calcular, refrescoMs);
     }
     // Durante el zoom: si se baja del umbral, fuera tarjetas al momento (sin esperar al moveend).
     function vigilarZoom() { if (tarjetas.size && zoomActual() < ZOOM_MIN) ocultar(); }
@@ -446,12 +485,12 @@
     if (root.addEventListener) root.addEventListener('resize', () => { clearTimeout(rTimer); rTimer = setTimeout(() => { programar(); if (fichaEstado) pintarFicha(); }, 200); });
     function idioma() { [...tarjetas.values()].forEach(t => { t.firma = ''; }); if (fichaEstado) fichaEstado.firma = ''; actualizar(); }
     function estado() {
-      return { tarjetas: [...tarjetas.entries()].map(([id, t]) => ({ id, nivel: t.nivel && t.nivel.nivel })), peticiones, circuitos: [...circuitos.entries()].map(([tag, c]) => ({ tag, estado: c.estado, poster: !!(c.datos && c.datos.poster) })), fallidas: fallidas.size, ficha: fichaEstado && fichaEstado.nivel ? fichaEstado.nivel.nivel : null };
+      return { tarjetas: [...tarjetas.entries()].map(([id, t]) => ({ id, nivel: t.nivel && t.nivel.nivel })), peticiones, circuitos: [...circuitos.entries()].map(([tag, c]) => ({ tag, estado: c.estado, poster: !!(c.datos && c.datos.poster) })), fallidas: fallidas.size, ficha: fichaEstado && fichaEstado.nivel ? fichaEstado.nivel.nivel : null, esperandoFuente: !!espera, esperas };
     }
     return { programar, calcular, ocultar, vigilarZoom, actualizar, idioma, ficha, circuito, nivelDe, estado };
   }
 
-  const api = { ZOOM_MIN, MAX_ESCRITORIO, MAX_MOVIL, MOVIL_PX, EN_DIRECTO_MS, SEPARACION, TARJETA, TARJETA_MOVIL, MEDIA, MEDIA_MOVIL, ENDPOINT, STOCK_POSTER, NIVELES, TEXTOS,
+  const api = { ZOOM_MIN, ESPERA_MS, ESPERA_MAX, MAX_ESCRITORIO, MAX_MOVIL, MOVIL_PX, EN_DIRECTO_MS, SEPARACION, TARJETA, TARJETA_MOVIL, MEDIA, MEDIA_MOVIL, ENDPOINT, STOCK_POSTER, NIVELES, TEXTOS,
     etiquetaStock, orientacionDe, itemEnDirecto, piezaCircuito, nivelPrevio, elegirTarjetas, cajaTarjeta, encuadreDooh, mediaHtml, etiquetaHtml, tarjetaHtml, fichaHtml, firma, crear };
   root.AdmiraPreviosZoom = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
