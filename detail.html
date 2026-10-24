@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/tokens.css">
   <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/contact-panel.css">
   <script defer src="https://csilvasantin.github.io/admira-design/contact-panel.js"></script>
-<script src="locations.js?v=20261022-admiraxperience-1"></script>
+<script src="locations.js?v=20261024-catalogo-ligero-1"></script>
 <script src="xpace-link.js?v=20261010-evidence-1"></script>
 <script src="inventory-evidence.js?v=20261010-evidence-1"></script>
 <style>
@@ -162,7 +162,8 @@
 <script>
 const params = new URLSearchParams(location.search);
 const locId = params.get('loc') || 'admira-bcn';
-const locations = window.loadOmnipLocations();
+// Bundle sin leer la caché vieja de localStorage (FLT-102675); si el local no está, se pide por id (startDetail).
+const locations = window.loadOmnipLocations({cache: false});
 let loc = locations.find(item => item.id === locId) || null;
 let catalogueOrigin = 'local';
 let locationState = loc ? 'ready' : 'loading';

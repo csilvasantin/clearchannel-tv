@@ -1,5 +1,6 @@
 // Clear Channel — catálogo por defecto de tiendas (gemelos digitales).
-// Orden de carga: worker omnipublicity-api (KV) → localStorage → bundled default.
+// Orden de carga: bundled default al instante → slim (puntos del mapa) → catálogo completo del worker
+// omnipublicity-api (KV) en segundo plano, en un Web Worker (catalogo-worker.js). Ya no hay caché en localStorage.
 //
 // Schema: { id, name, kind, addr, coords:[lng,lat], surfaces:[
 //   { name, desc, status:'live'|'sched'|'idle', impr:Number, cpm:String,
@@ -1477,43 +1478,106 @@ window.mergeOmnipLocations = function(base, extra) {
   return out;
 };
 
-// Sync: localStorage → bundled default. Sin red. Para arranque inmediato.
-window.loadOmnipLocations = function() {
-  try {
-    const raw = localStorage.getItem(window.OMNIP_STORE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length) return window.mergeOmnipLocations(parsed);
-    }
-  } catch (e) {}
+// Sync: (localStorage →) bundled default. Sin red. Para arranque inmediato.
+// Catálogo ligero (FLT-102675 · encargo #7158): el catálogo ya no se guarda en localStorage (ver
+// purgeOmnipLocationsCache). La clave sólo queda como borrador local del backoffice (saveOmnipLocations), que
+// sigue leyéndola; la portada, el walk y la ficha piden {cache:false} para no parsear una copia vieja al arrancar.
+window.loadOmnipLocations = function(opts) {
+  if (!(opts && opts.cache === false)) {
+    try {
+      const raw = localStorage.getItem(window.OMNIP_STORE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length) return window.mergeOmnipLocations(parsed);
+      }
+    } catch (e) {}
+  }
   return window.mergeOmnipLocations(window.OMNIP_LOCATIONS_DEFAULT);
 };
 
-// Async: worker KV → cachea en localStorage → fallback a sync. Devuelve
-// también un flag `source` para que la UI pueda mostrar de dónde viene.
+// La caché del catálogo en localStorage («omnip-locations») era de cuando cabía. Con ~9.000 Xpacios el JSON pasa de
+// 10 M de caracteres: setItem lanzaba QuotaExceededError en silencio, la caché no funcionó nunca y el JSON.stringify
+// de 10 MB se pagaba igual en cada carga. Ya no se escribe; al llegar el catálogo autoritativo del KV, la copia vieja
+// que hubiera quedado de entonces es basura y se borra (el backoffice, que es quien la usa como borrador, también
+// se queda con el KV al arrancar: bootBackoffice).
+window.purgeOmnipLocationsCache = function() {
+  try { localStorage.removeItem(window.OMNIP_STORE_KEY); return true; } catch (e) { return false; }
+};
+
+// Async: worker KV → fallback a sync. Devuelve también un flag `source` para que la UI pueda mostrar de dónde viene.
+// Lo usan el backoffice y la parrilla (necesitan el catálogo entero en el hilo principal); la portada usa
+// loadOmnipLocationsInWorker y las páginas de un solo local, loadOmnipLocationById.
+// cache:'no-cache' (antes 'no-store'): hoy el KV responde no-store y es lo mismo; cuando /locations dé ETag (encargo
+// #7156 de Neo), el navegador revalida con If-None-Match y un catálogo sin cambios llega como 304, sin los 494 KB.
 window.loadOmnipLocationsAsync = async function(timeoutMs = 4000) {
   try {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), timeoutMs);
-    const r = await fetch(window.OMNIP_API + '/locations', {signal: ctrl.signal, cache: 'no-store'});
+    const r = await fetch(window.OMNIP_API + '/locations', {signal: ctrl.signal, cache: 'no-cache'});
     clearTimeout(t);
     if (!r.ok) throw new Error('http ' + r.status);
     const d = await r.json();
     if (d && Array.isArray(d.locations) && d.locations.length) {
       const merged = window.mergeOmnipLocations(d.locations);
-      try { localStorage.setItem(window.OMNIP_STORE_KEY, JSON.stringify(merged)); } catch {}
+      window.purgeOmnipLocationsCache();
       return { locations: merged, source: d.source || 'kv', updatedAt: d.updatedAt || null };
     }
   } catch (e) { /* offline / worker dormido / timeout */ }
   return { locations: window.loadOmnipLocations(), source: 'local', updatedAt: null };
 };
 
+// ── Catálogo completo en un Web Worker (FLT-102675 · encargo #7158) ──
+// En la portada, al llegar el catálogo completo el hilo principal se bloqueaba 1,1 s (4,4 s con la CPU ×4): bajar
+// ~10 MB de JSON, JSON.parse, coserlo con el bundle y, sobre todo, clasificar 9.000 Xpacios por circuito. Ahora la
+// descarga, el JSON.parse y el cosido (mergeOmnipLocations: segmentación, fichas que mandan, fly/xpaceUrl) se hacen en
+// catalogo-worker.js, que importa este mismo fichero. Al hilo principal llegan trozos de `chunk` Xpacios ya cosidos
+// (cada uno es una tarea corta: ~2-6 ms con la CPU ×4) y una firma (updatedAt|n|primero|último|tamaño del JSON) para
+// saber si el catálogo cambió sin volver a serializar 10 MB. Sin Worker, o si el Worker no arranca, la carga de siempre
+// en el hilo principal. Devuelve null si el catálogo no llega (la portada se queda con lo que ya pinta: bundle + slim).
+window.OMNIP_LOCATIONS_SRC = (typeof document !== 'undefined' && document.currentScript && document.currentScript.src) || window.OMNIP_LOCATIONS_SRC || '/locations.js';
+window.OMNIP_CATALOG_WORKER = '/catalogo-worker.js?v=20261024-catalogo-ligero-1';
+window.loadOmnipLocationsInWorker = function(opts) {
+  const o = opts || {};
+  const timeoutMs = o.timeoutMs || 20000;
+  const chunk = o.chunk || 500;
+  const enHiloPrincipal = () => window.loadOmnipLocationsAsync(o.fallbackTimeoutMs || 8000)
+    .then(res => res && res.source !== 'local' ? Object.assign(res, {signature: '', via: 'main'}) : null)
+    .catch(() => null);
+  if (typeof Worker !== 'function') return enHiloPrincipal();
+  return new Promise(resolve => {
+    const items = [];
+    let w = null, fin = false, timer = null;
+    const cerrar = () => { fin = true; if (timer) clearTimeout(timer); try { if (w) w.terminate(); } catch (_) {} };
+    const acabar = res => { if (fin) return; cerrar(); resolve(res); };
+    const respaldo = () => { if (fin) return; cerrar(); enHiloPrincipal().then(resolve); };
+    try { w = new Worker(window.OMNIP_CATALOG_WORKER); } catch (e) { respaldo(); return; }
+    timer = setTimeout(() => acabar(null), timeoutMs + 3000);
+    w.onmessage = e => {
+      const m = e.data || {};
+      if (m.type === 'chunk' && Array.isArray(m.items)) {
+        for (let i = 0; i < m.items.length; i++) items.push(m.items[i]);
+        if (typeof o.onChunk === 'function') { try { o.onChunk(items.length, m.total || 0); } catch (_) {} }
+      } else if (m.type === 'done') {
+        if (!items.length) { acabar(null); return; }
+        window.purgeOmnipLocationsCache();
+        acabar({ locations: items, source: m.source || 'kv', updatedAt: m.updatedAt || null, signature: m.signature || '', via: 'worker' });
+      } else if (m.type === 'error') {
+        // Si el Worker no pudo cargar locations.js, el cosido no es posible ahí: se hace en el hilo principal. Si lo que
+        // falló es la red o el JSON, el hilo principal no lo haría mejor: null.
+        if (m.stage === 'import') respaldo(); else acabar(null);
+      }
+    };
+    w.onerror = ev => { try { ev.preventDefault(); } catch (_) {} if (!items.length) respaldo(); else acabar(null); };
+    w.postMessage({ api: window.OMNIP_API, locationsSrc: window.OMNIP_LOCATIONS_SRC, timeoutMs, chunk });
+  });
+};
+
 // ── Catálogo SLIM y detalle por id (P0 CARGA · Wozniak CTO #3236 · Jobs FLT-100377, 14-sep-2026) ──
 // El worker sirve GET /locations?slim=1 (alias /locations/slim): {count, locations:[{id,name,coords,kind,n}]}
-// sin addr/surfaces/twin/fly, ~156 KB gzip frente a 362 KB del catálogo completo, cacheable 120 s;
-// y GET /locations/:id con la localización entera (max-age=60). Son AYUDAS ADITIVAS: el pintado
-// actual sigue usando el catálogo completo porque app.js lee l.surfaces en contadores, ticker y
-// panel; adoptar slim en el primer pintado (puntos del mapa) e hidratar al clic es el paso siguiente.
+// sin addr/surfaces/twin/fly, ~143 KB gzip frente a 494 KB del catálogo completo, cacheable 120 s;
+// y GET /locations/:id con la localización entera (max-age=60). Desde FLT-102675 el primer pintado de la portada
+// (puntos, grupos y colores) sale del bundle + slim; la ficha de un punto que sólo conoce el slim se pide por id
+// (hidratarXpacio en app.js) y el catálogo completo llega después, en segundo plano (loadOmnipLocationsInWorker).
 window.loadOmnipLocationsSlimAsync = async function(timeoutMs = 3000) {
   try {
     const ctrl = new AbortController();
@@ -1537,6 +1601,21 @@ window.loadOmnipLocationDetail = async function(id, timeoutMs = 3000) {
     const d = await r.json();
     return d && d.location ? window.normalizeOmnipLocations([d.location])[0] || null : null;
   } catch (e) { return null; }
+};
+// Un solo local, para las páginas que enseñan uno (walk; FLT-102675): GET /locations/:id (~0,7 KB) en vez del catálogo
+// entero (~10 MB de JSON), con el mismo cosido que el catálogo completo (mergeOmnipLocations: fichas del bundle que
+// mandan, fly/xpaceUrl, superficies del laboratorio) para que salga igual que antes. Si el KV no lo tiene o no
+// responde, el del bundle. Devuelve {location, source:'api'|'local'}; location es null si no existe (o está retirado).
+window.loadOmnipLocationById = async function(id, timeoutMs = 4500) {
+  const key = String(id == null ? '' : id);
+  if (!key) return { location: null, source: 'local' };
+  const det = await window.loadOmnipLocationDetail(key, timeoutMs);
+  if (det && String(det.id) === key) {
+    const cosidas = window.mergeOmnipLocations([det]);
+    return { location: cosidas.find(l => l && String(l.id) === key) || null, source: 'api' };
+  }
+  const local = window.loadOmnipLocations({ cache: false }).find(l => l && String(l.id) === key) || null;
+  return { location: local, source: 'local' };
 };
 
 // Guarda en localStorage (cache local del backoffice). NO publica.

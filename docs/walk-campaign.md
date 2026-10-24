@@ -14,6 +14,7 @@ Inglés en Clear Channel y castellano por defecto en una sesión nueva de Admira
 ## Datos y continuidad
 
 - `walk-core.mjs`: contrato puro de idioma, URLs HTTPS, identidad de superficies, formato, normalización de assets y restauración de campañas.
+- Catálogo ligero (24-oct-2026, FLT-102675): `walk.mjs` pide su local con `GET /locations/:id` (`loadOmnipLocationById` de `locations.js`, con el mismo cosido que el catálogo completo) y ya no baja el catálogo entero (~10 MB de JSON). Si el local no llega, usa el del bundle y lo dice (`catalogFallback`). English: the walk page fetches its single venue by id instead of the whole catalogue.
 - `walk-launch.mjs`: recoge la superficie exacta del mapa y entrega una instantánea mínima de la ubicación. Esto conserva las identidades de pantallas enriquecidas localmente por el mapa que pueden faltar en el catálogo base del servidor.
 - `walk.mjs`: usa `GET https://api.admira.store/stock/list?limit=160`; solo imágenes y vídeos, sin escrituras a campañas, pagos o signage. La biblioteca informa de errores y permite reintentar.
 - Campaña y asignaciones en `sessionStorage`, separadas por `campaignId` y por `[locationId, surfaceId]`. La instantánea se etiqueta como selección guardada; se actualiza entrando nuevamente desde el mapa. No se presenta como disponibilidad en tiempo real.

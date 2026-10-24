@@ -144,7 +144,7 @@ test('app.js pinta por modo, repinta en caliente y solo enseña la incidencia de
  const ui=read('bugito-xpacios-ui.mjs');assert.doesNotMatch(ui,/OWNERS|csilva/,'el navegador no decide quién es owner');
  const html=read('index.html');
  for(const f of ['bugito-xpacios-ui.mjs','login-google.js','incident-map-tooltip.js'])assert.match(html,new RegExp(f.replace('.','\\.')+'\\?v=20261024-incidencias-owner-1'),f);
- assert.match(html,/app\.js\?v=20261024-mismo-punto-1/,'app.js: el sello del selector del mismo punto (FLT-102672) ya lleva el modo de incidencias');
+ assert.match(html,/app\.js\?v=20261024-catalogo-ligero-1/,'app.js: el sello del catálogo ligero (FLT-102675) ya lleva el modo de incidencias');
  assert.ok(html.indexOf('bugito-super.js?v=')<html.indexOf('bugito-xpacios-ui.mjs?v='),'BugitoSuper existe antes que el módulo');
  assert.ok(html.indexOf('incident-map-tooltip.js?v=')<html.indexOf('app.js?v='),'paint() existe antes que app.js');
 });

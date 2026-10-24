@@ -151,7 +151,7 @@ test('las 10 fichas viajan en locations.js y mandan sobre las de septiembre del 
 test('app.js: sin el gemelo compartido, el catálogo slim no pisa las fichas curadas y la ficha enseña el gemelo secundario', () => {
   const app = read('app.js');
   assert.doesNotMatch(app, /stampAlseaMexicoTwin|ALSEA_MEXICO_TWIN/);
-  assert.match(app, /if \(cur && cur\.bundleWins\) return;/);
+  assert.match(app, /if \(cur && cur\.bundleWins\) continue;/);   // el bucle del slim cede el hilo por tramos (FLT-102675)
   const src = app.slice(app.indexOf('function twinAltLink'), app.indexOf('\n}', app.indexOf('function twinAltLink')) + 2);
   const ctx = vm.createContext({ LANG: 'es' });
   vm.runInContext(src, ctx);
@@ -297,12 +297,13 @@ test('las páginas piden la versión nueva de lo que cambia', () => {
   // con el asistente Comercial (18-oct, 20261018-comercial-2), con la captación de comercios (comercial-3),
   // con «Anunciarme aquí» en la ficha (20-oct, comercial-5), con el handON del laboratorio (laboratorio-1)
   // y con ese handON en la zona protegida de admiranext.com (zona-protegida-1).
-  // Después, con AdmiraXperience como proyecto de pantallas e hilo musical (22-oct, admiraxperience-1).
-  assert.ok(html.includes('<script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261024-mismo-punto-1"></script>'));
+  // Después, con AdmiraXperience como proyecto de pantallas e hilo musical (22-oct, admiraxperience-1), y con el
+  // catálogo ligero (24-oct, FLT-102675: primer pintado con slim, ficha por id y el completo en un Web Worker).
+  assert.ok(html.includes('<script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261024-catalogo-ligero-1"></script>'));
   assert.match(html, /marca-blanca\.js\?v=20261016-starbucks-mx-2/);
   assert.match(html, /expert-commands\.js\?v=20261017-main-verde-1/);
-  // locations.js cambió por última vez con la Sneaker Store en AdmiraXperience (22-oct): la portada y las fichas piden esa versión.
-  for (const page of ['index.html', 'detail.html', 'walk.html', 'backoffice.html']) assert.match(read(page), /locations\.js\?v=20261022-admiraxperience-1/, page);
+  // locations.js cambió por última vez con el catálogo ligero (24-oct, FLT-102675): la portada y las fichas piden esa versión.
+  for (const page of ['index.html', 'detail.html', 'walk.html', 'backoffice.html']) assert.match(read(page), /locations\.js\?v=20261024-catalogo-ligero-1/, page);
 });
 
 test('los enlaces de la suite común del Experto abren México con la marca Starbucks', () => {
