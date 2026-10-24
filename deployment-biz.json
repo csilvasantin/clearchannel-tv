@@ -20,6 +20,7 @@
     ]
   },
   "novedades": [
+    "Al volar a un Xpacio (buscador, enlace, clic en un punto o en una tarjeta), su punto late unos segundos con un anillo blanco y magenta y luego queda marcado mientras su ficha siga abierta: se ve al momento cuál es el destino aunque haya otros puntos al lado. En el móvil, el destino queda a la vista por encima de la ficha.",
     "Las tarjetas con el previo de cada Xpacio salen también al llegar de golpe al zoom de calle (buscador, enlace a un local, clic en un grupo de puntos), sin tener que mover el mapa.",
     "Al acercar el mapa a nivel de calle, cada Xpacio cercano enseña lo que emiten sus pantallas en una tarjeta con «Anunciarme aquí» encima: en directo, el Previo DooH sobre su fachada o la programación de su circuito, con la etiqueta que dice cuál es. En la ficha, bajo «Anunciarme aquí», el previo en grande. Al alejar, vuelven los puntos.",
     "La ficha de cada Xpacio, pensada para el comprador: «Anunciarme aquí» es el primer botón y el principal, y los botones van en dos columnas sin partir palabras. Con un enlace a un local (?circuit=…&loc=…), su ficha sale en menos de un segundo y la cámara vuela detrás; antes tardaba unos 15 s. La ventana de Comercial es opaca y su nube tiene sitio para Admirito y el bocadillo.",

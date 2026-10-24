@@ -530,6 +530,19 @@ addEventListener('resize',ccFitIntro);
   .pz-etq-circuito i{background:var(--brand)}
   .pz-pico{position:absolute;left:50%;bottom:-6px;width:10px;height:10px;margin-left:-5px;transform:rotate(45deg);background:rgba(6,16,24,.95);border-right:1px solid rgba(120,243,255,.34);border-bottom:1px solid rgba(120,243,255,.34)}
   .pz-cta:focus-visible,.pz-previo:focus-visible,.p-emite-accion:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  /* El Xpacio destino (FLT-102668 · encargo #7151): al aterrizar, su punto late 5 s (anillo blanco/magenta que parpadea y
+     onda que se agranda, 10 y 5 vueltas: la animación se acaba sola); después, anillo blanco fijo mientras su ficha siga
+     abierta. Marcador HTML de destino-mapa.js; no es la selección (selected-ring, cian). */
+  .destino-mapa{width:0;height:0;pointer-events:none;z-index:1}
+  .destino-mapa i{position:absolute;left:0;top:0;border-radius:50%;box-sizing:border-box;pointer-events:none}
+  .destino-mapa .destino-anillo{width:30px;height:30px;margin:-15px 0 0 -15px;border:2px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.7),0 0 10px rgba(255,255,255,.45)}
+  .destino-mapa .destino-onda{display:none;width:34px;height:34px;margin:-17px 0 0 -17px;border:4px solid #ff2bd6}
+  .destino-mapa.parpadeo .destino-anillo{width:38px;height:38px;margin:-19px 0 0 -19px;border-width:4px;animation:destinoParpadeo .5s steps(1,end) 10}
+  .destino-mapa.parpadeo .destino-onda{display:block;animation:destinoOnda 1s ease-out 5 both}
+  .destino-mapa.reducido .destino-anillo{border-width:3px}
+  @keyframes destinoParpadeo{0%{border-color:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.8),0 0 18px #fff}50%{border-color:#ff2bd6;box-shadow:0 0 0 2px rgba(0,0,0,.8),0 0 18px #ff2bd6}}
+  @keyframes destinoOnda{0%{transform:scale(1);opacity:1}100%{transform:scale(2.8);opacity:0}}
+  @media (prefers-reduced-motion:reduce){ .destino-mapa.parpadeo .destino-anillo{animation:none} .destino-mapa.parpadeo .destino-onda{display:none;animation:none} }
   aside.panel.flying{opacity:0;transform:translateX(6%) scale(.99);transition:opacity .42s cubic-bezier(.4,0,.2,1),transform .42s cubic-bezier(.4,0,.2,1)}
   @media (prefers-reduced-motion:reduce){ aside.panel.flying{transition:none} }
 
@@ -1499,7 +1512,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="global-tour.js?v=20261016-total-tour-1"></script>
 <script defer src="login-google.js?v=20261024-incidencias-owner-1"></script>
 <script defer src="vision-general.js?v=20261016-starbucks-es-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=20261015-alsea-1"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="previos-zoom.js?v=20261024-previos-zoom-idle-1"></script><script defer src="xpace-link.js?v=20261007-calle-1"></script><script defer src="inventory-evidence.js?v=20261010-evidence-1"></script><script defer src="incident-map-tooltip.js?v=20261024-incidencias-owner-1"></script><script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261024-previos-zoom-1"></script><script defer src="intro.js?v=20261016-altadis-es-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=20261015-alsea-1"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="previos-zoom.js?v=20261024-previos-zoom-idle-1"></script><script defer src="destino-mapa.js?v=20261024-destino-1"></script><script defer src="xpace-link.js?v=20261007-calle-1"></script><script defer src="inventory-evidence.js?v=20261010-evidence-1"></script><script defer src="incident-map-tooltip.js?v=20261024-incidencias-owner-1"></script><script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261024-destino-1"></script><script defer src="intro.js?v=20261016-altadis-es-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
