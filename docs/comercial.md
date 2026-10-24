@@ -105,6 +105,43 @@ En Plaça de la Vila de Gràcia, `ipad-luna` y `canalkiosk-gracia` comparten coo
 - A preview card on a shared dot shows its venue’s name and a “+N” button that opens the same chooser. Other venues’ cards no longer cover a shared dot.
 - Clicking a cluster zooms in again. MapLibre 5 returns a promise from `getClusterExpansionZoom`, so the old callback never ran.
 
+## Catálogo ligero: primer pintado con slim, ficha por id y el completo en segundo plano (24-oct-2026 · misión FLT-102675 · encargo #7158)
+
+Al llegar el catálogo completo (`GET https://brain.digitalavatar.ai/locations`: 9.140 Xpacios, ~10 MB de JSON, 494 KB comprimidos, `no-store`), la portada se quedaba bloqueada 1,1 s en un M4 y 4,4 s con la CPU ×4 (TBT de 11 s en un móvil simulado). Además, el walk bajaba el catálogo entero para enseñar un solo local, y cada carga intentaba guardar los 10 MB en `localStorage`. No cabían: daba `QuotaExceededError` en silencio y el `JSON.stringify` se pagaba igual.
+
+- **Primer pintado con bundle + slim.** Los puntos, los grupos y los colores por circuito salen de `locations.js` y de `GET /locations?slim=1` (id, nombre, tipo, coordenadas y nº de superficies; 143 KB, cacheable 120 s). Unir los ~9.000 puntos y clasificarlos por circuito se hace en tramos de ~10 ms (`cederHilo`, `precalcularXpacios`).
+  - El slim no trae `circuit`, la marca (`external.brand`/`osm.brand`) ni `screen`. Por eso unos 240 puntos (Xtanco, Starbucks, Admira…) salen con el color de «Retail» y sin el anillo de emisión hasta que llega el completo. Ver «Pendiente en brain».
+- **Ficha por id.** Si se abre la ficha de un punto que sólo conoce el slim (`_slim`), se pide ese Xpacio con `GET /locations/:id` (`hidratarXpacio`, el mismo cosido que la ficha por enlace) y la ficha se repinta al llegar. Así nunca espera al completo.
+- **Catálogo completo en un Web Worker.** `loadOmnipLocationsInWorker` (`locations.js`) arranca `catalogo-worker.js` cuando la página está ociosa (`requestIdleCallback`, tope 8 s). El Worker hace en segundo plano la descarga, el `JSON.parse` y el cosido con el bundle (`mergeOmnipLocations`, importando el mismo `locations.js`).
+  - Devuelve trozos de 500 Xpacios y una firma: `updatedAt|n|primero|último|tamaño del JSON`. La firma sustituye a `locationsSignature`, que hacía dos `JSON.stringify` de 10 MB.
+  - La portada lo aplica paso a paso, cediendo el hilo entre pasos.
+  - Sin Worker, o si no puede cargar `locations.js`, se carga como antes en el hilo principal.
+  - Si el catálogo no llega, la portada se queda con bundle + slim. Antes volvía al bundle y perdía los ~9.000 puntos.
+  - Hasta que llega, los contadores, el ticker, el buscador, la marca blanca, los previos y el semáforo funcionan con bundle + slim. Comercial espera a `plannerCatalogReady`, como siempre.
+- **Clasificar una vez.** El texto normalizado de cada Xpacio, su etiqueta de circuito, la pertenencia a las ~22 reglas de circuito y su segmentación se calculan una vez y se guardan por objeto (`locTexto`, `circuitLabel`, `reglasDelXpacio`, `locationSegmentation`). Se rehacen si cambian los campos de los que salen.
+  - `circuitDefinitions()` se guarda mientras no cambien el catálogo, el idioma o el ámbito.
+  - Antes, cada render del selector filtraba los 9.000 Xpacios por 25 reglas, varias veces. El reparto da los mismos circuitos, con los mismos puntos y en el mismo orden: comprobado en ES y EN con el catálogo del 24-oct.
+- **Sin repintar de más.** Los comercios importados (`mergeRetailerLocations`, cada minuto) no repintan si no han cambiado. Si `renderCircuitSelector` ya repintó la fuente del mapa, no se repinta otra vez.
+- **Fuera la escritura en `localStorage`.** `loadOmnipLocationsAsync` ya no guarda el catálogo. Pide con `cache:'no-cache'`: cuando `/locations` dé ETag (encargo #7156 de Neo), un catálogo sin cambios llegará como 304.
+  - No hay caché persistente propia (Cache API o IndexedDB). Sin ETag no se puede revalidar: habría que bajarlo igual y procesarlo dos veces, o enseñar datos viejos.
+  - La clave vieja `omnip-locations` se borra al llegar el catálogo del KV (`purgeOmnipLocationsCache`). La portada, la ficha y el walk ya no la leen (`loadOmnipLocations({cache:false})`).
+  - El backoffice sigue igual: la usa como borrador local (`saveOmnipLocations`) y se queda con el KV al arrancar.
+- **Una página, un local.** El walk pide `GET /locations/:id` (`loadOmnipLocationById`, con el mismo cosido) en vez del catálogo entero, y si no llega usa el del bundle. `detail.html` ya pedía por id; ahora tampoco lee la caché vieja.
+- **Sellos.** `?v=20261024-catalogo-ligero-1` en `app.js` y `locations.js` (portada, ficha, walk, backoffice, store-3d y parrilla). `catalogo-worker.js` entra en la lista cerrada de admira.biz. En `walk.html`, `&catalogo=20261024-1`.
+- **Pendiente en brain (Neo).** Para que el primer pintado sea idéntico al final, el slim debería traer `circuit`, `brand` (`external.brand || osm.brand`), `screen` (el de la ficha o el de su primera superficie) y `experienceId`. Y `/locations` necesita ETag (encargo #7156).
+
+### English
+
+- First paint comes from the bundled catalogue plus `/locations?slim=1` (ids, names, types, coordinates and surface counts). Merging and classifying the ~9,000 points runs in ~10 ms slices.
+- Opening the card of a point that only the slim feed knows fetches that venue with `GET /locations/:id` and repaints the card. It never waits for the full catalogue.
+- The full catalogue (~10 MB of JSON) is downloaded, parsed and merged with the bundle in a Web Worker (`catalogo-worker.js`), after first paint, when the page is idle.
+  - It reaches the page in chunks with a signature. The page applies it step by step, yielding between steps.
+  - Without Worker support it loads as before.
+  - If it never arrives, the map keeps the slim points.
+- Per-venue text, circuit label, circuit membership and segmentation are computed once and cached per object. Circuit definitions are cached until the catalogue, language or scope change. Results are identical to before.
+- The catalogue is no longer written to `localStorage`: it never fitted, and serialising 10 MB was paid on every load. The old key is removed, and the backoffice keeps its local draft.
+- The walk page fetches its single venue by id instead of the whole catalogue.
+
 ## Propuesta en PDF con marca (20-oct-2026, orden de Carlos)
 
 - Botón **«Propuesta en PDF»** (principal) junto a «Revisar en el planificador» y «Descargar texto», en cuanto hay propuesta.

@@ -28,7 +28,9 @@ test('app.js define circuitos demo genéricos y los saca de retail', () => {
   assert.match(src, /function applyCircuitDeepLink\(/);
   assert.match(src, /maxZoom:14/);
   assert.match(src, /\.\.\.demoDefs,/);
-  assert.match(src, /\.filter\(l => !isDemoCircuitLocation\(l\)\)/);
+  // Retail deja fuera los puntos demo (desde FLT-102675 la condición es una regla con nombre, repartida en un solo pase).
+  assert.match(src, /function isRetailCircuitLocation\(l\) \{ return [^}]*&& !isDemoCircuitLocation\(l\); \}/);
+  assert.match(src, /const retailItems = porRegla\(isRetailCircuitLocation\);/);
 });
 
 test('app.js stamps demo twin xpaceUrl from loc.twin (admira.store)', () => {

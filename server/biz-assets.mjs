@@ -52,6 +52,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   ...['xtanco', 'cafe'].flatMap(tipo => Array.from({ length: 18 }, (_, i) => `data/xpacios/altadis-${tipo}-${String(i + 1).padStart(2, '0')}.json`)),
   // El laboratorio también como ficha del mapa (OMNIP_LOCATIONS_EXTRA): sin tocar el catálogo KV.
   'locations.js',
+  // Catálogo ligero (FLT-102675): el catálogo completo se baja, se parsea y se cose en un Web Worker.
+  'catalogo-worker.js',
   'comercial.mjs', 'comercial-core.mjs', 'comercial.css', 'assets/comercial.svg', 'planner-ui.js',
   // Ventana movible de Comercial (20-10-2026), copia de movible.mjs de xpaceos.
   'movible.mjs',

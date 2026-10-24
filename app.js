@@ -1,9 +1,8 @@
 /* app.js — extraído de index.html para lazy-load (defer). Lógica idéntica. */
-// Catálogo: arrancamos sincrónicamente con localStorage o el bundled default
-// para no bloquear el render. En paralelo, refrescamos desde el worker
-// omnipublicity-api (KV) y, si trae algo distinto, re-renderizamos sources +
-// counters. Primer load = instantáneo; segundo paint = autoritativo.
-let LOCATIONS = window.loadOmnipLocations();
+// Catálogo: arrancamos sincrónicamente con el bundled default para no bloquear el render. Después, el slim pinta los
+// ~9.000 puntos y el catálogo completo del worker omnipublicity-api (KV) llega en segundo plano, en un Web Worker, y se
+// aplica por pasos (FLT-102675, ver «Refresh asincrónico»). Ya no se lee ni se escribe una caché en localStorage.
+let LOCATIONS = window.loadOmnipLocations({ cache: false });
 // Catálogo completo; LOCATIONS es la vista segmentada por el cliente activo (cliente-segmento.js).
 let LOCATIONS_ALL = LOCATIONS;
 let plannerCatalogReady = false;
@@ -802,6 +801,34 @@ try { const _navRed = document.getElementById('nav-red'); if (_navRed) _navRed.h
 function normText(s) {
   return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
+// Texto normalizado de cada Xpacio, calculado una vez (catálogo ligero, FLT-102675 · encargo #7158). Las ~20 reglas de
+// circuito de abajo (isDesigualLocation, isCorreosLocation…) se preguntan por los 9.000 Xpacios varias veces en cada
+// repintado del mapa y del selector de circuitos, y cada pregunta rehacía el join y el normalize('NFD'): al llegar el
+// catálogo completo eran ~1 s de hilo principal en un M4. Se guarda por objeto (WeakMap: se va con él) y se rehace si
+// cambia algo de lo que sale: el slim corrige name/kind/coords en el sitio, por eso se comparan los campos.
+function locTexto(loc) {
+  const memo = locTexto.memo || (locTexto.memo = new WeakMap());   // sin TDZ: vale aunque se llame antes de esta línea
+  let r = memo.get(loc);
+  if (r && r.id === loc.id && r.name === loc.name && r.kind === loc.kind && r.addr === loc.addr && r.osm === loc.osm && r.external === loc.external) return r;
+  const osm = loc.osm, ext = loc.external;
+  // Las tres variantes son trozos de la misma cadena (normalizar no cruza el espacio que las separa): un solo texto
+  // en memoria por Xpacio, y las otras dos son vistas sobre él.
+  const nId = normText([loc.id].join('')), nNameKind = normText([loc.name, loc.kind].join(' '));
+  const todo = nId + ' ' + nNameKind + ' ' + normText([loc.addr].join(''));
+  const finNameKind = nId.length + 1 + nNameKind.length;
+  r = {
+    id: loc.id, name: loc.name, kind: loc.kind, addr: loc.addr, osm, external: ext,
+    idNameKind: todo.slice(0, finNameKind),
+    idNameKindAddr: todo,
+    nameKind: todo.slice(nId.length + 1, finNameKind),
+    // Como antes con «loc.osm && normText(loc.osm.brand)»: sin osm (o sin external) no hay marca que comparar.
+    osmBrand: osm ? normText(osm.brand) : null,
+    extBrand: ext ? normText(ext.brand) : null,
+    extNetwork: ext ? normText(ext.network) : null,
+  };
+  memo.set(loc, r);
+  return r;
+}
 
 // Los 10 Starbucks de Alsea México ya no comparten el gemelo de Paseo de Gràcia 103 (FLT-101244): desde
 // DCL-97f84ae3e5b2cb2311c55101 cada uno abre el gemelo de su formato (twin/xpaceUrl de su ficha en locations.js,
@@ -859,7 +886,11 @@ function invalidateLocationsGeoJSON() {
   locationsGeoJSONCacheKey = '';
 }
 
+// Cuántas veces se ha repintado la fuente del mapa: quien encadena renderCircuitSelector (que ya la repinta) y
+// updateLocationsSource sólo repite el segundo si el primero no lo hizo (FLT-102675: cada repintado son ~9.000 puntos).
+let fuenteMapaRepintes = 0;
 function updateLocationsSource() {
+  fuenteMapaRepintes++;
   invalidateLocationsGeoJSON();
   const src = map && map.getSource && map.getSource('locs');
   if (src) src.setData(locationsGeoJSON());
@@ -867,82 +898,84 @@ function updateLocationsSource() {
 
 if (typeof window !== 'undefined') window.addEventListener('bugito:map-status', () => updateLocationsSource());
 
-function locationsSignature(list, updatedAt = '') {
+// Firma del último catálogo completo aplicado (FLT-102675): la calcula catalogo-worker.js con updatedAt, la cuenta, los
+// extremos y el tamaño del JSON recibido. Sustituye a locationsSignature, que serializaba los ~10 MB del catálogo y
+// lo ya pintado (dos JSON.stringify en el hilo principal) para ver si había cambiado.
+let catalogoCompletoFirma = '';
+
+// Cede el hilo principal entre pasos (FLT-102675): scheduler.yield donde exista; si no, una tarea nueva. Así cada paso
+// del catálogo es una tarea corta y el mapa, el scroll y los clics no esperan al bloque entero.
+function cederHilo() {
+  try { if (window.scheduler && typeof window.scheduler.yield === 'function') return window.scheduler.yield(); } catch (_) {}
+  return new Promise(resolve => setTimeout(resolve, 0));
+}
+// Precalcula por tramos de ~10 ms lo que el selector de circuitos y el GeoJSON del mapa piden de golpe para cada Xpacio
+// (texto normalizado, etiqueta de circuito y segmentación; se guardan por objeto, ver locTexto y locationSegmentation).
+async function precalcularXpacios(list) {
   const items = Array.isArray(list) ? list : [];
-  // El KV puede cambiar por dentro (p.ej. `previo` en una tienda) sin variar
-  // cuenta ni extremos ni updatedAt: el tamaño serializado lo delata.
-  let size = 0; try { size = JSON.stringify(items).length; } catch (_) {}
-  return [updatedAt || '', items.length, items[0] && items[0].id, items[items.length - 1] && items[items.length - 1].id, size].join('|');
+  let t0 = performance.now();
+  for (let i = 0; i < items.length; i++) {
+    const l = items[i];
+    if (l && typeof l === 'object') { try { circuitLabel(l); reglasDelXpacio(l); locationSegmentation(l); } catch (_) {} }
+    if ((i & 63) === 63 && performance.now() - t0 > 10) { await cederHilo(); t0 = performance.now(); }
+  }
 }
 
 function isKioskoLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind, loc.addr].join(' '));
+  const hay = locTexto(loc).idNameKindAddr;
   return hay.includes('kiosko') || hay.includes('quiosco') || hay.includes('prensa');
 }
 
 function isEstancoLocation(loc) {
   if (isJtiXtancoLocation(loc) || isAltadisBcnLocation(loc) || isAltadisEspanaLocation(loc)) return false;
-  const hay = normText([loc.id, loc.name, loc.kind].join(' '));
+  const hay = locTexto(loc).idNameKind;
   return hay.includes('estanco') || hay.includes('xtanco');
 }
 
 function isMetroBarcelonaLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind, loc.addr].join(' '));
+  const hay = locTexto(loc).idNameKindAddr;
   return hay.includes('metro-barcelona') || (hay.includes('metro') && hay.includes('barcelona'));
 }
 
 function isDesigualLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind, loc.addr].join(' '));
-  return hay.includes('desigual') || (loc.external && normText(loc.external.brand) === 'desigual');
+  const x = locTexto(loc);
+  return x.idNameKindAddr.includes('desigual') || x.extBrand === 'desigual';
 }
 function isMangoLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind].join(' '));
-  return hay.includes('mango') || (loc.osm && normText(loc.osm.brand) === 'mango');
+  const x = locTexto(loc);
+  return x.idNameKind.includes('mango') || x.osmBrand === 'mango';
 }
 function isDecathlonLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind].join(' '));
-  return hay.includes('decathlon') || (loc.osm && normText(loc.osm.brand) === 'decathlon');
+  const x = locTexto(loc);
+  return x.idNameKind.includes('decathlon') || x.osmBrand === 'decathlon';
 }
 function isPalacioLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind].join(' '));
-  return hay.includes('palacio de hierro') || (loc.osm && normText(loc.osm.brand).includes('palacio de hierro'));
+  const x = locTexto(loc);
+  return x.idNameKind.includes('palacio de hierro') || (x.osmBrand != null && x.osmBrand.includes('palacio de hierro'));
 }
 function isLiverpoolLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind].join(' '));
-  const brand = loc.osm && normText(loc.osm.brand);
-  const extBrand = loc.external && normText(loc.external.brand);
-  const network = loc.external && normText(loc.external.network);
-  return brand === 'liverpool' || extBrand === 'liverpool' || network === 'liverpool mexico' || hay.includes('liverpool');
+  const x = locTexto(loc);
+  return x.osmBrand === 'liverpool' || x.extBrand === 'liverpool' || x.extNetwork === 'liverpool mexico' || x.idNameKind.includes('liverpool');
 }
 function isBBVALocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind].join(' '));
-  return (loc.osm && normText(loc.osm.brand) === 'bbva') || /\bbbva\b/.test(hay);
+  const x = locTexto(loc);
+  return x.osmBrand === 'bbva' || /\bbbva\b/.test(x.idNameKind);
 }
 function isBanorteLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind].join(' '));
-  const brand = loc.osm && normText(loc.osm.brand);
-  const extBrand = loc.external && normText(loc.external.brand);
-  const network = loc.external && normText(loc.external.network);
-  return brand === 'banorte' || extBrand === 'banorte' || network === 'banorte mexico' || hay.includes('banorte') || hay.includes('bannorte');
+  const x = locTexto(loc), hay = x.idNameKind;
+  return x.osmBrand === 'banorte' || x.extBrand === 'banorte' || x.extNetwork === 'banorte mexico' || hay.includes('banorte') || hay.includes('bannorte');
 }
 function isCaixaBankLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind].join(' '));
-  const brand = loc.osm && normText(loc.osm.brand);
-  const extBrand = loc.external && normText(loc.external.brand);
-  return brand === 'caixabank' || extBrand === 'caixabank' || hay.includes('caixabank') || hay.includes('la caixa');
+  const x = locTexto(loc), hay = x.idNameKind;
+  return x.osmBrand === 'caixabank' || x.extBrand === 'caixabank' || hay.includes('caixabank') || hay.includes('la caixa');
 }
 function isElCorteInglesLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind].join(' '));
-  const brand = loc.osm && normText(loc.osm.brand);
-  const extBrand = loc.external && normText(loc.external.brand);
-  return brand === 'el corte ingles' || extBrand === 'el corte ingles' || hay.includes('el corte ingles');
+  const x = locTexto(loc);
+  return x.osmBrand === 'el corte ingles' || x.extBrand === 'el corte ingles' || x.idNameKind.includes('el corte ingles');
 }
 function isCorreosLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind].join(' '));
-  const brand = loc.osm && normText(loc.osm.brand);
-  const extBrand = loc.external && normText(loc.external.brand);
-  const network = loc.external && normText(loc.external.network);
-  return brand === 'correos' || extBrand === 'correos' || network === 'correos espana' || hay.includes('correos');
+  const x = locTexto(loc);
+  return x.osmBrand === 'correos' || x.extBrand === 'correos' || x.extNetwork === 'correos espana' || x.idNameKind.includes('correos');
 }
 // Circuitos de DEMO generados por «créame demo de <cliente>» (tools/crear-demo): cualquier punto
 // con circuit "demo_<cliente>" forma su propio circuito sin tocar este fichero. Etiqueta en
@@ -974,10 +1007,8 @@ function demoCircuitDefinitions() {
 }
 
 function isMultiopticasLocation(loc) {
-  const hay = normText([loc.id, loc.name, loc.kind].join(' '));
-  const brand = loc.osm && normText(loc.osm.brand);
-  const extBrand = loc.external && normText(loc.external.brand);
-  return brand === 'multiopticas' || extBrand === 'multiopticas' || hay.includes('multiopticas');
+  const x = locTexto(loc);
+  return x.osmBrand === 'multiopticas' || x.extBrand === 'multiopticas' || x.idNameKind.includes('multiopticas');
 }
 
 // JTI · Xtanco (FLT-100992): 100 estancos reales (OSM shop=tobacco). Semilla: jti-alsea/circuito-jti-xtanco-100.seed.json
@@ -995,13 +1026,13 @@ function isJtiXtancoLocation(loc) { return /^jti-xtanco-/i.test(String(loc.id ||
 // repartidos por el país para la demo de la bola (Tijuana → … → Cancún, orden en tourOrder). Semilla: data/circuitos/circuito-alsea-mexico-10.seed.json
 function isAlseaMexicoLocation(loc) { return /^alsea-mx-/i.test(String(loc.id || '')) || loc.circuit === 'alsea_mexico'; }
 function isCafebreriaLocation(loc) { return loc.id === 'cafebreria-barcelona' || loc.circuit === 'cafebreria'; }
-function isAlseaStarbucksLocation(loc) { if (isCafebreriaLocation(loc) || isAlseaMexicoLocation(loc)) return false; return /^alsea-sbux-/i.test(String(loc.id || '')) || loc.circuit === 'alsea_starbucks' || (loc.external && normText(loc.external.brand) === 'starbucks'); }
+function isAlseaStarbucksLocation(loc) { if (isCafebreriaLocation(loc) || isAlseaMexicoLocation(loc)) return false; return /^alsea-sbux-/i.test(String(loc.id || '')) || loc.circuit === 'alsea_starbucks' || locTexto(loc).extBrand === 'starbucks'; }
 
 // Alcampo (FLT-100351): 36 supermercados + 3 hipermercados. Semilla: tools/import-alcampo-circuit.mjs.
 function isAlcampoLocation(loc) {
   if (/^alcampo-/i.test(String(loc.id || ''))) return true;
-  const hay = normText([loc.name, loc.kind].join(' '));
-  return hay.includes('alcampo') || (loc.external && normText(loc.external.brand) === 'alcampo');
+  const x = locTexto(loc);
+  return x.nameKind.includes('alcampo') || x.extBrand === 'alcampo';
 }
 // Recorrido DOOH coherente: Zaragoza → Logroño → Burgos → Madrid → resto (por ciudad y nombre).
 const ALCAMPO_TOUR_CITIES = ['zaragoza', 'logrono', 'burgos', 'madrid'];
@@ -1024,7 +1055,17 @@ function alcampoTourOrder(items) {
 function isAdmiraXperienceLocation(loc) { return loc.circuit === 'admiraxperience'; }
 function isAdmiraXperienceOffice(loc) { return !isAdmiraXperienceLocation(loc) && (loc.experienceId === 'admiraxperience' || loc.external?.brand === 'AdmiraXperience'); }
 
+// La etiqueta también se guarda por Xpacio (FLT-102675): el GeoJSON del mapa la pide en cada repintado (cada 12 s con el
+// sondeo de emisión) y recorría ~20 reglas por punto. Se rehace si cambian el idioma o los campos de los que sale.
 function circuitLabel(loc) {
+  const x = locTexto(loc);
+  if (x.label !== undefined && x.labelLang === LANG && x.circuit === loc.circuit && x.network === loc.network && x.brand === loc.brand
+    && x.experienceId === loc.experienceId) return x.label;
+  x.label = circuitLabelCalculada(loc);
+  x.labelLang = LANG; x.circuit = loc.circuit; x.network = loc.network; x.brand = loc.brand; x.experienceId = loc.experienceId;
+  return x.label;
+}
+function circuitLabelCalculada(loc) {
   if (isCafebreriaLocation(loc)) return 'Cafebrería';
   if (isAdmiraXperienceLocation(loc)) return 'AdmiraXperience';
   if (isAdmiraXperienceOffice(loc)) return LANG === 'en' ? 'AdmiraXperience office' : 'Oficina AdmiraXperience';
@@ -1073,34 +1114,84 @@ function metroLineOptions(items) {
   return [...lines].sort(metroLineSort);
 }
 
+// Retail: lo que no es de ningún otro circuito (la misma condición de siempre, ahora con nombre para guardarla).
+function isRetailCircuitLocation(l) { return !isCafebreriaLocation(l) && !isJtiXtancoLocation(l) && !isAltadisBcnLocation(l) && !isAltadisEspanaLocation(l) && !isAlseaStarbucksLocation(l) && !isAlseaMexicoLocation(l) && !isAdmiraXperienceLocation(l) && !isAdmiraXperienceOffice(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l) && !isDemoCircuitLocation(l); }
+// Pertenencia de cada Xpacio a las reglas de circuito, calculada en un solo pase y guardada por Xpacio (FLT-102675):
+// antes eran ~25 filtros de los 9.000 Xpacios, uno por regla, cada vez que se calculaban los circuitos.
+// precalcularXpacios la calienta por tramos al llegar el catálogo; aquí sólo se reparte (el orden de LOCATIONS se
+// mantiene, como con filter). Se rehace si cambian los campos de los que salen las reglas.
+function reglasDeCircuito() {
+  return reglasDeCircuito.lista || (reglasDeCircuito.lista = [isMetroBarcelonaLocation, isDesigualLocation, isKioskoLocation,
+    isEstancoLocation, isMangoLocation, isAlcampoLocation, isJtiXtancoLocation, isAltadisBcnLocation, isCafebreriaLocation,
+    isAlseaMexicoLocation, isAltadisEspanaLocation, isDecathlonLocation, isPalacioLocation, isLiverpoolLocation, isBBVALocation,
+    isBanorteLocation, isCaixaBankLocation, isElCorteInglesLocation, isCorreosLocation, isMultiopticasLocation,
+    isAdmiraXperienceLocation, isRetailCircuitLocation]);
+}
+function reglasDelXpacio(loc) {
+  const x = locTexto(loc);
+  if (x.reglas !== undefined && x.rCircuit === loc.circuit && x.rNetwork === loc.network && x.rBrand === loc.brand
+    && x.rExperienceId === loc.experienceId && x.rCircuitLabel === loc.circuitLabel) return x.reglas;
+  const lista = reglasDeCircuito();
+  let bits = 0;
+  for (let i = 0; i < lista.length; i++) if (lista[i](loc)) bits |= (1 << i);
+  x.reglas = bits; x.rCircuit = loc.circuit; x.rNetwork = loc.network; x.rBrand = loc.brand;
+  x.rExperienceId = loc.experienceId; x.rCircuitLabel = loc.circuitLabel;
+  return bits;
+}
+function repartirPorReglas(list) {
+  const lista = reglasDeCircuito(), out = lista.map(() => []);
+  for (const l of list) {
+    const bits = reglasDelXpacio(l);
+    if (bits) for (let i = 0; i < lista.length; i++) if (bits & (1 << i)) out[i].push(l);
+  }
+  return regla => { const i = lista.indexOf(regla); return i >= 0 ? out[i] : list.filter(regla); };
+}
+// circuitDefinitions() se pide varias veces en cada render del selector (currentCircuit, currentCircuitItems,
+// currentCircuitLabel, circuitDemoItems, el mapa…) y cada vez filtraba los 9.000 Xpacios por ~25 reglas: ~600 ms al
+// llegar el catálogo completo (FLT-102675). Se guarda mientras no cambien el catálogo (setLocations crea un LOCATIONS
+// nuevo), el idioma, el ámbito (va en la segmentación de cada circuito) ni la presencia de GlobalTour (dooh_total).
+let circuitDefsCache = null, circuitDefsKey = null, circuitDefsExperto = null;
 function circuitDefinitions() {
-  const metroItems = LOCATIONS.filter(isMetroBarcelonaLocation);
-  const desigualItems = LOCATIONS.filter(isDesigualLocation);
-  const kioskoItems = LOCATIONS.filter(isKioskoLocation);
+  const key = [LOCATIONS, LANG, sanitizeCircuitScope(selectedCircuitScope), !!window.GlobalTour];
+  if (circuitDefsCache && circuitDefsKey && key.every((v, i) => v === circuitDefsKey[i])) {
+    // Si el ⌘ Experto cargó después del último cálculo, recibe los circuitos igual que antes.
+    if (window.AdmiraExpertCommands && circuitDefsExperto !== circuitDefsCache) { circuitDefsExperto = circuitDefsCache; window.AdmiraExpertCommands.setCircuits(circuitDefsCache); }
+    return circuitDefsCache;
+  }
+  circuitDefsCache = circuitDefinitionsCalculadas();
+  circuitDefsKey = key;
+  circuitDefsExperto = window.AdmiraExpertCommands ? circuitDefsCache : null;
+  return circuitDefsCache;
+}
+function circuitDefinitionsCalculadas() {
+  const porRegla = repartirPorReglas(LOCATIONS);
+  const metroItems = porRegla(isMetroBarcelonaLocation);
+  const desigualItems = porRegla(isDesigualLocation);
+  const kioskoItems = porRegla(isKioskoLocation);
   const allItems = LOCATIONS.slice();
-  const estancoItems = LOCATIONS.filter(isEstancoLocation);
-  const mangoItems = LOCATIONS.filter(isMangoLocation);
-  const alcampoItems = alcampoTourOrder(LOCATIONS.filter(isAlcampoLocation));
-  const jtiXtancoItems = LOCATIONS.filter(isJtiXtancoLocation);
-  const altadisBcnItems = LOCATIONS.filter(isAltadisBcnLocation).sort((x, y) => (x.tourOrder || 99) - (y.tourOrder || 99));
-  const cafebreriaItems = LOCATIONS.filter(isCafebreriaLocation);
+  const estancoItems = porRegla(isEstancoLocation);
+  const mangoItems = porRegla(isMangoLocation);
+  const alcampoItems = alcampoTourOrder(porRegla(isAlcampoLocation));
+  const jtiXtancoItems = porRegla(isJtiXtancoLocation);
+  const altadisBcnItems = porRegla(isAltadisBcnLocation).slice().sort((x, y) => (x.tourOrder || 99) - (y.tourOrder || 99));
+  const cafebreriaItems = porRegla(isCafebreriaLocation);
   const alseaStarbucksItems = ['lab-gran-de-gracia-51', 'alsea-sbux-021', 'alsea-sbux-014'].map(id => LOCATIONS.find(l => l.id === id)).filter(Boolean);
-  const alseaMexicoItems = LOCATIONS.filter(isAlseaMexicoLocation).sort((x, y) => (x.tourOrder || 99) - (y.tourOrder || 99));
-  const altadisEspanaItems = LOCATIONS.filter(isAltadisEspanaLocation).sort((x, y) => (x.tourOrder || 99) - (y.tourOrder || 99));
-  const decathlonItems = LOCATIONS.filter(isDecathlonLocation);
-  const palacioItems = LOCATIONS.filter(isPalacioLocation);
-  const liverpoolItems = LOCATIONS.filter(isLiverpoolLocation);
-  const bbvaItems = LOCATIONS.filter(isBBVALocation);
-  const banorteItems = LOCATIONS.filter(isBanorteLocation);
-  const caixabankItems = LOCATIONS.filter(isCaixaBankLocation);
-  const elcorteinglesItems = LOCATIONS.filter(isElCorteInglesLocation);
-  const correosItems = LOCATIONS.filter(isCorreosLocation);
-  const multiopticasItems = LOCATIONS.filter(isMultiopticasLocation);
-  const retailItems = LOCATIONS.filter(l => !isCafebreriaLocation(l) && !isJtiXtancoLocation(l) && !isAltadisBcnLocation(l) && !isAltadisEspanaLocation(l) && !isAlseaStarbucksLocation(l) && !isAlseaMexicoLocation(l) && !isAdmiraXperienceLocation(l) && !isAdmiraXperienceOffice(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l)).filter(l => !isDemoCircuitLocation(l));
+  const alseaMexicoItems = porRegla(isAlseaMexicoLocation).slice().sort((x, y) => (x.tourOrder || 99) - (y.tourOrder || 99));
+  const altadisEspanaItems = porRegla(isAltadisEspanaLocation).slice().sort((x, y) => (x.tourOrder || 99) - (y.tourOrder || 99));
+  const decathlonItems = porRegla(isDecathlonLocation);
+  const palacioItems = porRegla(isPalacioLocation);
+  const liverpoolItems = porRegla(isLiverpoolLocation);
+  const bbvaItems = porRegla(isBBVALocation);
+  const banorteItems = porRegla(isBanorteLocation);
+  const caixabankItems = porRegla(isCaixaBankLocation);
+  const elcorteinglesItems = porRegla(isElCorteInglesLocation);
+  const correosItems = porRegla(isCorreosLocation);
+  const multiopticasItems = porRegla(isMultiopticasLocation);
+  const retailItems = porRegla(isRetailCircuitLocation);
   const demoDefs = demoCircuitDefinitions();
   const defs = {
     ...demoDefs,
-    admiraxperience: {label:'AdmiraXperience',items:LOCATIONS.filter(isAdmiraXperienceLocation),segmentation:circuitSegmentationForItems(LOCATIONS.filter(isAdmiraXperienceLocation))},
+    admiraxperience: {label:'AdmiraXperience',items:porRegla(isAdmiraXperienceLocation),segmentation:circuitSegmentationForItems(porRegla(isAdmiraXperienceLocation))},
     metro_bcn: {
       label: t('circuit_metro_bcn'),
       items: metroItems,
@@ -1348,10 +1439,28 @@ function locationSurfaceCount(loc) {
   return loc.surfaces.filter(s => s.status !== 'idle').length || loc.surfaces.length || 1;
 }
 
+// Segmentación normalizada por Xpacio, guardada mientras no cambien los campos de los que sale (FLT-102675): la piden
+// los ~25 circuitos y el filtro de criterios para cada uno de los 9.000 Xpacios, y normalizar cada vez costaba cientos
+// de ms al llegar el catálogo completo. Quien la usa sólo la lee.
 function locationSegmentation(loc) {
-  return typeof window.normalizeOmnipSegmentation === 'function'
-    ? window.normalizeOmnipSegmentation(loc).segmentation
-    : (loc && loc.segmentation) || {};
+  if (typeof window.normalizeOmnipSegmentation !== 'function') return (loc && loc.segmentation) || {};
+  if (!loc || typeof loc !== 'object') return window.normalizeOmnipSegmentation(loc).segmentation;
+  const memo = locationSegmentation.memo || (locationSegmentation.memo = new WeakMap());
+  const r = memo.get(loc);
+  if (r && r.segmentation === loc.segmentation && r.metadata === loc.metadata && r.surfaces === loc.surfaces) return r.seg;
+  const nueva = window.normalizeOmnipSegmentation(loc).segmentation;
+  // El catálogo ya llega normalizado (mergeOmnipLocations): si sale igual, se guarda la suya y no una copia por Xpacio.
+  const seg = mismaSegmentacion(nueva, loc.segmentation) ? loc.segmentation : nueva;
+  memo.set(loc, {segmentation: loc.segmentation, metadata: loc.metadata, surfaces: loc.surfaces, seg});
+  return seg;
+}
+function mismaSegmentacion(a, b) {
+  if (!a || !b || typeof b !== 'object' || a.required !== b.required) return false;
+  if (!a.schedule || !b.schedule || a.schedule.start !== b.schedule.start || a.schedule.end !== b.schedule.end) return false;
+  const lista = (x, y) => Array.isArray(x) && Array.isArray(y) && x.length === y.length && x.every((v, i) => v === y[i]);
+  if (!['typologies', 'genders', 'ages', 'timeSlots'].every(k => lista(a[k], b[k]))) return false;
+  const ma = a.metadata || [], mb = b.metadata;
+  return Array.isArray(mb) && ma.length === mb.length && ma.every((m, i) => mb[i] && m.key === mb[i].key && m.label === mb[i].label && m.value === mb[i].value && m.type === mb[i].type);
 }
 
 function circuitSegmentationForItems(items) {
@@ -2944,18 +3053,19 @@ function locationsGeoJSON() {
     features: visible.map(l => {
       const surfaces = Array.isArray(l.surfaces) ? l.surfaces : [];
       const scope = mapScopeForLocation(l);
+      const circuit = circuitLabel(l), circuitIdx = circuitColorIdx(circuit);
       return {
         type:'Feature',
         geometry:{type:'Point', coordinates: l.coords},
         properties:{
           id: l.id, name: l.name, kind: l.kind, addr: l.addr,
-          circuit: circuitLabel(l),
-          circuitIdx: circuitColorIdx(circuitLabel(l)),
-          color: circuitColorHex(circuitLabel(l)),
+          circuit,
+          circuitIdx,
+          color: circuitColorHex(circuit),
           scope,
           selected: selectedLocationIds && selectedLocationIds.has(l.id) ? 1 : 0,
           live: surfaces.filter(s=>inventorySurfaceState(l, s).connection === 'online').length,
-          total: surfaces.length,
+          total: surfaces.length || l._n || 0,   // _n: superficies que dice el slim mientras llega la ficha entera
           screen: emitScreenOf(l),
           emit: emitStatusOf(l),
           incidentLevel: window.BugitoIncidentMap?.level(l.id) ?? -1,
@@ -4010,6 +4120,7 @@ for (const [button, param] of [['header-upload-plan-btn', 'subir'], ['header-cre
 }
 function renderPanel(loc) {
   activeLocation = loc;
+  if (loc && loc._slim) hidratarXpacio(loc.id);   // FLT-102675: la ficha entera, por id, sin esperar al catálogo
   const comercialAqui = document.getElementById('p-comercial'); if (comercialAqui) comercialAqui.dataset.comercialLocal = loc.id;
   // Bajo «Anunciarme aquí», el previo grande de lo que emiten sus pantallas (FLT-102666, previos-zoom.js).
   try { if (window.__previosZoom) window.__previosZoom.ficha(loc, document.getElementById('p-emite')); } catch (_) {}
@@ -4873,6 +4984,38 @@ function refrescarFichaPorEnlace() {
   if (igual) activeLocation = fresca; else renderPanel(fresca);
 }
 abrirFichaPorEnlace();
+// Ficha de un punto que sólo conoce el slim (catálogo ligero, FLT-102675 · encargo #7158): al abrirla se pide ESE Xpacio
+// por id (GET /locations/:id, ~0,7 KB; fichaEnlaceDatos, con el mismo cosido que el catálogo completo) y la ficha se
+// repinta al llegar, sin esperar a los ~10 MB del catálogo. Una petición por Xpacio; si el catálogo completo llega
+// antes, manda él. El punto conserva su sitio en la lista (orden del mapa y del selector).
+function hidratarXpacio(id) {
+  if (!id) return Promise.resolve(null);
+  const ya = LOC_BY_ID.get(id);
+  if (ya && !ya._slim) return Promise.resolve(ya);                                   // ya está entero
+  const enCurso = hidratarXpacio.enCurso || (hidratarXpacio.enCurso = new Map());   // sin TDZ: renderPanel va antes
+  if (enCurso.has(id)) return enCurso.get(id);
+  const pedida = fichaEnlaceDatos(id).then(full => {
+    enCurso.delete(id);
+    const ahora = LOC_BY_ID.get(id);
+    if (ahora && !ahora._slim) return ahora;                 // ya llegó por otro camino (catálogo completo, enlace)
+    if (!full || full._slim || !Array.isArray(full.coords)) return null;
+    const next = LOCATIONS_ALL.slice(), i = next.findIndex(l => l && l.id === id);
+    if (i >= 0) next[i] = full; else next.push(full);
+    setLocations(next);
+    setTimeout(() => { try { updateLocationsSource(); } catch (_) {} }, 0);
+    const enMapa = LOC_BY_ID.get(id) || full;
+    if (activeLocation && activeLocation.id === id && activeLocation._slim && panel.classList.contains('open')) renderPanel(enMapa);
+    return enMapa;
+  }, () => { enCurso.delete(id); return null; });
+  enCurso.set(id, pedida);
+  return pedida;
+}
+// Al llegar el catálogo completo, una ficha abierta que aún era la del slim (su detalle por id no llegó) se repinta.
+function refrescarFichaSlim() {
+  if (!activeLocation || !activeLocation._slim || !panel.classList.contains('open')) return;
+  const fresca = LOC_BY_ID.get(activeLocation.id);
+  if (fresca && !fresca._slim) renderPanel(fresca);
+}
 // ?circuit=alsea_mexico&tour=1: el catálogo del KV llega unos segundos después del arranque;
 // se espera a que el circuito tenga sus puntos y el globo esté pintado antes de despegar.
 function watchGlobalTourDeepLink(c) {
@@ -5157,9 +5300,15 @@ function restoreWalkReturn() {
 restoreWalkReturn();
 
 // Newly imported establishments must appear even if the large legacy catalogue times out.
+// Si los comercios importados no han cambiado desde la última vez y siguen en el catálogo, no se repinta nada: cada
+// minuto se volvían a clasificar y a pintar los ~9.000 puntos para lo mismo (FLT-102675).
+let retailerFirma = '';
 async function mergeRetailerLocations(){
   try {
     const incoming=await window.loadYokupLocationsAsync();if(!incoming.length)return;
+    let firma='';try{firma=JSON.stringify(incoming);}catch(_){}
+    if(firma&&firma===retailerFirma&&incoming.every(l=>LOCATIONS_ALL.some(x=>x&&x.id===l.id&&x.source==='yokup-retailer')))return;
+    retailerFirma=firma;
     const ids=new Set(incoming.map(l=>l.id));
     setLocations([...LOCATIONS_ALL.filter(l=>!ids.has(l.id)),...incoming]);
     updateLocationsSource();renderCircuitSelector();restoreWalkReturn();
@@ -5169,47 +5318,68 @@ mergeRetailerLocations();
 setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
 
 // ─── Refresh asincrónico desde el worker (KV) ─────────────────────
-// El sync arrancó con localStorage/default. Dos fases (Jobs #3238 · Woz #3236 · FLT-100442, 14-sep-2026):
-// FASE 1 · pins rápidos: /locations?slim=1 (markers: id, nombre, tipo, coords, ~136-156 KB gzip)
-//   refresca los puntos del mapa nada más pintar, sin tocar contadores ni panel.
-// FASE 2 · catálogo completo (9,9 MB de JSON, 362 KB gzip, surfaces y segmentación) DIFERIDO a
-//   requestIdleCallback (tope 8 s): ya no compite con el first paint ni con el LCP en móvil.
-//   Antes se lanzaba en el arranque y en 4G frenaba la portada de admira.app y clearchannel.tv.
+// El sync arrancó con el bundle. Dos fases (Jobs #3238 · Woz #3236 · FLT-100442, 14-sep-2026; catálogo ligero FLT-102675):
+// FASE 1 · primer pintado con /locations?slim=1 (id, nombre, tipo, coords y nº de superficies; 143 KB gzip, cacheable
+//   120 s): los puntos, los grupos y los colores por circuito salen del bundle + slim. Fundir ~9.000 puntos y
+//   clasificarlos por circuito se hace por tramos cortos, cediendo el hilo entre ellos.
+// FASE 2 · catálogo completo (~10 MB de JSON, 494 KB gzip: superficies, segmentación, marcas) DIFERIDO a
+//   requestIdleCallback (tope 8 s) y en un Web Worker (loadOmnipLocationsInWorker, catalogo-worker.js): descarga,
+//   JSON.parse y cosido con el bundle fuera del hilo principal. Llega en trozos y aquí se aplica paso a paso. Hasta
+//   entonces, lo que lo necesita (contadores, ticker, Comercial, buscador, segmentación por marca) trabaja con bundle +
+//   slim, y la ficha de un punto que sólo conoce el slim se pide por id (hidratarXpacio).
 (async () => {
   try {
     const slim = await window.loadOmnipLocationsSlimAsync(3500);
     if (slim && Array.isArray(slim.locations) && slim.locations.length) {
       let changed = false;
-      const next = LOCATIONS_ALL.slice();
-      const byId = new Map(next.map(l => [l && l.id, l]));
-      slim.locations.forEach(m => {
-        if (!m || !m.id) return;
+      const byId = new Map(LOCATIONS_ALL.map(l => [l && l.id, l]));
+      const nuevos = [];
+      let t0 = performance.now();
+      for (let i = 0; i < slim.locations.length; i++) {
+        if ((i & 255) === 255 && performance.now() - t0 > 10) { await cederHilo(); t0 = performance.now(); }
+        const m = slim.locations[i];
+        if (!m || !m.id) continue;
         const cur = byId.get(m.id);
         // Una ficha curada del bundle (bundleWins: Starbucks México) no la pisa el catálogo slim del KV.
-        if (cur && cur.bundleWins) return;
+        if (cur && cur.bundleWins) continue;
         if (cur) {
           if (Array.isArray(m.coords) && m.coords.length === 2 && (!Array.isArray(cur.coords) || cur.coords[0] !== m.coords[0] || cur.coords[1] !== m.coords[1])) { cur.coords = m.coords.slice(0, 2); changed = true; }
           if (m.name && cur.name !== m.name) { cur.name = m.name; changed = true; }
           if (m.kind && cur.kind !== m.kind) { cur.kind = m.kind; changed = true; }
         } else {
-          const fresh = window.normalizeOmnipLocations([{ id: m.id, name: m.name || m.id, kind: m.kind || '', addr: '', coords: Array.isArray(m.coords) ? m.coords.slice(0, 2) : null, surfaces: [] }])[0];
-          if (fresh) { if (!Array.isArray(fresh.surfaces)) fresh.surfaces = []; fresh._slim = true; next.push(fresh); byId.set(m.id, fresh); changed = true; }
+          // _n: superficies que dice el slim (la ficha entera llega por id al abrirla o con el catálogo completo).
+          const fresh = window.normalizeOmnipLocations([{ id: m.id, name: m.name || m.id, kind: m.kind || '', addr: '', coords: Array.isArray(m.coords) ? m.coords.slice(0, 2) : null, surfaces: [], _n: Number(m.n) || 0 }])[0];
+          if (fresh) { if (!Array.isArray(fresh.surfaces)) fresh.surfaces = []; fresh._slim = true; nuevos.push(fresh); byId.set(m.id, fresh); changed = true; }
         }
-      });
-      if (changed) { setLocations(next); updateLocationsSource(); if (brandSegmentActive()) { try { renderCircuitSelector(); } catch (_) {} } }
+      }
+      if (changed) {
+        await precalcularXpacios(nuevos);
+        // Sobre el catálogo de AHORA: mientras se cedía el hilo pudo entrar un local por id (ficha por enlace) o un alta.
+        const ya = new Set(LOCATIONS_ALL.map(l => l && l.id));
+        setLocations(LOCATIONS_ALL.concat(nuevos.filter(l => !ya.has(l.id))));
+        updateLocationsSource();
+        if (brandSegmentActive()) { try { renderCircuitSelector(); } catch (_) {} }
+      }
     }
   } catch {}
   const circuitAsked = circuitParam();
   const whenIdle = (cb) => circuitAsked ? setTimeout(cb, 0) : (typeof window.requestIdleCallback === 'function' ? window.requestIdleCallback(cb, { timeout: 8000 }) : setTimeout(cb, 3000));
   whenIdle(async () => {
   try {
-    const res = await window.loadOmnipLocationsAsync(4500);
-    if (!res || !Array.isArray(res.locations) || !res.locations.length) return;
-    if (locationsSignature(res.locations, res.updatedAt) === locationsSignature(LOCATIONS_ALL, res.updatedAt)) return;
+    const res = typeof window.loadOmnipLocationsInWorker === 'function'
+      ? await window.loadOmnipLocationsInWorker({ timeoutMs: 20000 })
+      : await window.loadOmnipLocationsAsync(4500);
+    // Sin catálogo (red, timeout) la portada se queda con lo que ya pinta (bundle + slim). Antes volvía al bundle y el
+    // mapa perdía los ~9.000 puntos del slim.
+    if (!res || res.source === 'local' || !Array.isArray(res.locations) || !res.locations.length) return;
+    if (res.signature && res.signature === catalogoCompletoFirma) return;
+    catalogoCompletoFirma = res.signature || '';
+    await precalcularXpacios(res.locations);
     const freshIds=new Set(res.locations.map(l=>l.id));
     setLocations([...res.locations,...LOCATIONS_ALL.filter(l=>l.source==='yokup-retailer'&&!freshIds.has(l.id))]);
     restoreWalkReturn();
     updateBiddingLiveCounters();
+    await cederHilo();
     const cpms = LOCATIONS.flatMap(l => (Array.isArray(l.surfaces) ? l.surfaces : []).map(s => parseFloat(String(s.cpm).replace(/[^\d.]/g,'')))).filter(Boolean);
     if (cpms.length) {
       const lo = Math.min(...cpms), hi = Math.max(...cpms);
@@ -5217,14 +5387,19 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
       // enlace (FLT-102664) la ficha ya está pintada cuando llega el catálogo, y salía «€1-€16» en vez de su «€8».
       const el = document.getElementById('p-cpm'); if (el && !activeLocation) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
     }
+    await cederHilo();
+    circuitDefinitions();   // los circuitos del catálogo nuevo, en su propia tarea: el selector los encuentra hechos
+    await cederHilo();
+    const repintes = fuenteMapaRepintes;
     renderCircuitSelector();
     if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();
-    updateLocationsSource();
+    if (fuenteMapaRepintes === repintes) { await cederHilo(); updateLocationsSource(); }
   } catch {}
   finally {
     plannerCatalogReady = true;
     try { applyCircuitDeepLink(); } catch (_) {}
     try { refrescarFichaPorEnlace(); } catch (_) {}
+    try { refrescarFichaSlim(); } catch (_) {}
     if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();
     if (!document.getElementById('buy-modal').hidden) updateBuyQuote();
   }
@@ -5303,8 +5478,10 @@ if (window.AdmiraSegmento && window.AdmiraSegmento.actual() && !brandDeepLinked(
 (async () => {
   const refresh = async () => {
     await loadLiveScreens();
-    try { updateLocationsSource(); } catch {}
+    // renderCircuitSelector ya repinta la fuente del mapa (refreshSelectedMapSource): una vez, no dos (FLT-102675).
+    const repintes = fuenteMapaRepintes;
     try { renderCircuitSelector(); } catch {}
+    if (fuenteMapaRepintes === repintes) { try { updateLocationsSource(); } catch {} }
     try { if (activeLocation) renderPanel(activeLocation); } catch {}
     try { if (!suggest.hidden) renderSuggest(searchInput.value); } catch {}
   };
@@ -5745,7 +5922,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
   // INFORME POR CIRCUITO: agrega el consumo de HOY de todos los Xpacios, agrupado por
   // circuito (marca / tipo). Lee /day/range hoy por loc (paralelo, cap 30).
   async function circuitReport(){
-    const all=(typeof window.loadOmnipLocations==='function')?segmentLocations(window.loadOmnipLocations()):[];
+    const all=(typeof window.loadOmnipLocations==='function')?segmentLocations(window.loadOmnipLocations({cache:false})):[];
     const locs=all.slice(0,60), t=todayStr();
     const ck=l=>{ try{ return (l.external&&l.external.brand)||((l.kind||'').split(/[·|]/)[0].trim())||'Otros'; }catch(_){ return 'Otros'; } };
     document.getElementById('circuit-report')?.remove();
@@ -5804,7 +5981,7 @@ setLang(LANG); // aplica el idioma guardado (o ES por defecto) al cargar
   // explícitamente para que la Sala refleje la emisión real del directo. Aditivo.
   const ED_DEMO_LOCS=[{id:'kiosko',kind:'Kioskos de prensa'}];
   async function fetchEmissionData(){
-    const all=(typeof window.loadOmnipLocations==='function')?segmentLocations(window.loadOmnipLocations()):[];
+    const all=(typeof window.loadOmnipLocations==='function')?segmentLocations(window.loadOmnipLocations({cache:false})):[];
     const _seen=new Set(), locs=[];
     for(const l of ED_DEMO_LOCS.concat(all.slice(0,60))){ if(l&&l.id&&!_seen.has(l.id)){ _seen.add(l.id); locs.push(l); } }
     const t=todayStr(), from=edDaysAgoStr(30), d7=edDaysAgoStr(6);

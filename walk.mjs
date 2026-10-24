@@ -199,9 +199,10 @@ async function start() {
   try { snapshot = selectionSnapshot(JSON.parse(sessionStorage.getItem(STORAGE_PREFIX + campaignId + ':selection'))); } catch {}
   if (snapshot?.id === state.locationId) { place = snapshot; catalogueSource = 'selection'; }
   else {
-    const result = await window.loadOmnipLocationsAsync(4500);
+    // Un solo local: GET /locations/:id, no el catálogo entero de ~10 MB (FLT-102675); si no llega, el del bundle.
+    const result = await window.loadOmnipLocationById(state.locationId, 4500);
     catalogueSource = result.source;
-    place = result.locations.find(loc => String(loc.id) === state.locationId) || null;
+    place = result.location || null;
   }
   if (!place) { setPageStatus('missingLocation'); save(); return; }
   if (!place.surfaces?.length) { setPageStatus('noSurfaces'); save(); return; }
