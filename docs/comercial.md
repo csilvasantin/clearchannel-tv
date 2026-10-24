@@ -22,8 +22,25 @@ Commercial is Admirito with a tie and briefcase, focused on advertiser campaigns
 ## Entradas visibles (20-oct-2026, orden de Carlos)
 
 - ~~**Botón en la cabecera de la portada**~~ (`#header-comercial-toggle`): retirado el 22-oct-2026 por orden de Carlos («no sé qué hace Admirito en el menú superior, pero no toca»). Comercial entra por «Anunciarme aquí» y por `/comercial` o `/admirito comercial` en Experto; `comercial.mjs` sigue tolerando que el botón no exista.
-- **«Anunciarme aquí» en la ficha de cada Xpacio** (`#p-comercial`, en la fila de acciones junto a Tour DooH y gemelo): la selección del mapa pasa a ser sólo ese local (`AdmiraCommercialContext.seleccionar(id)`, como el borrador de Pixeria: ámbito local, circuito «all», sin autoselección) y Comercial se abre con él ya incorporado («1 ubicaciones incorporadas»). Si el catálogo aún no está listo, se abre igual y avisa.
+- **«Anunciarme aquí» en la ficha de cada Xpacio** (`#p-comercial`, en la botonera de la ficha; desde el 24-oct-2026, la primera y principal: ver más abajo): la selección del mapa pasa a ser sólo ese local (`AdmiraCommercialContext.seleccionar(id)`, como el borrador de Pixeria: ámbito local, circuito «all», sin autoselección) y Comercial se abre con él ya incorporado («1 ubicaciones incorporadas»). Si el catálogo aún no está listo, se abre igual y avisa.
 - Sellos `?v=20261020-comercial-5` (comercial.css, comercial.mjs y app.js). Prueba: «commercial has visible entry points…» en `tests/comercial.test.mjs`.
+
+## La ficha pensada para el comprador (24-oct-2026 · misión FLT-102664 · encargo #7138)
+
+- **«Anunciarme aquí» es la acción principal de la ficha**: va la primera de la botonera y con el estilo primario de la página (`class="p-comercial primary"`). El Tour DooH pasa a secundario mientras «Anunciarme aquí» está a la vista (`#p-comercial:not([hidden]) ~ #p-tour.primary` en `index.html`). Si el botón está oculto (sin Comercial: el módulo no carga fuera de admira.biz), el Tour DooH vuelve a ser el principal. Se conservan los ids, `data-commercial="here"`, el texto ES/EN y la lógica que lo muestra.
+- **Botonera 2×2**: rejilla de dos columnas (`grid-template-columns:repeat(2,minmax(0,1fr))`). Los botones ocultos no ocupan celda y los rótulos se parten por palabras (`word-break`, `overflow-wrap` normales y `hyphens:manual`): antes salían «EXPLORA/R ESCENA VINCULA/DA» y «ANUNCIA/RME AQUÍ».
+- **Ficha por enlace rápida**: con `/?circuit=…&loc=<id>`, la portada pide ese local con `GET https://brain.digitalavatar.ai/locations/:id` (`loadOmnipLocationDetail`) en cuanto arranca. Lo cose como el catálogo (`mergeOmnipLocations`), pinta la ficha y deja que la cámara vuele detrás (`flyToLocation(loc, {fichaAbierta:true})`, que no la cierra). Antes esperaba al catálogo completo, al estilo del mapa y al aterrizaje, y salía a los ~15 s. El circuito se sigue aplicando al llegar el catálogo, con el selector plegado. Si el local no llega, manda el camino de antes (`applyCircuitDeepLink`). «Anunciarme aquí» sigue esperando al catálogo (hasta 3 minutos) antes de incorporar el local.
+- **Comercial opaco**: la ventana y su cabecera ya no son translúcidas. Al abrir Comercial desde la ficha ya no se lee el nombre del local debajo de «Comercial». La nube pasa de 230 a 350-370 px: en modo dock su consola ocupa 148 px, y con 230 px quedaban 82 px para Admirito y el bocadillo, que salía cortado por arriba. En el móvil (≤ 600 px) toda la ventana hace scroll bajo la cabecera fija, y la nube tiene 360-400 px (caben tres líneas de bocadillo).
+- **Pendiente fuera de este repo**: los atajos de la nube («Vender una campaña», «Captar un comercio», «Prepara la propuesta», «¿Quién eres?») viven dentro del iframe de digitalavatar.ai, en una fila con `flex-wrap:nowrap` y `overflow-x:auto` (se desplazan, pero sin barra visible). Para que pasen a varias líneas hay que cambiarlo en ese repo.
+- Sellos `?v=20261024-ficha-comprador-1` (app.js, comercial.css y comercial.mjs). Pruebas: `tests/ficha-comprador.test.mjs`.
+
+### English
+
+- **“Advertise here” is the card’s main action.** It comes first and uses the page’s primary style. The DooH Tour becomes secondary while “Advertise here” is visible. When the button is hidden (no Commercial module outside admira.biz), the Tour is the main action again.
+- **2×2 action grid.** Hidden buttons take no cell. Labels wrap between words, never inside one.
+- **Fast deep-linked card.** With `/?circuit=…&loc=<id>`, the page fetches that single venue (`GET /locations/:id`) at start-up and paints its card straight away. The camera flies in behind it. The full 10 MB catalogue still applies the circuit when it arrives. If the venue cannot be fetched, the previous path takes over.
+- **Opaque Commercial window.** The venue card no longer shows through the header. The cloud is 350-370 px tall (360-400 px on phones), so Admirito and the speech bubble fit. On phones the whole window scrolls under a sticky header.
+- **Pending elsewhere:** the cloud’s shortcut chips sit inside the digitalavatar.ai iframe on a single scrolling row. Wrapping them needs a change in that repository.
 
 ## Propuesta en PDF con marca (20-oct-2026, orden de Carlos)
 

@@ -4429,9 +4429,11 @@ function stopMapNavigation() {
   document.getElementById('status')?.classList.remove('show');
 }
 
-async function flyToLocation(loc, {automatic = false, bearing = -20, zoom} = {}) {
+async function flyToLocation(loc, {automatic = false, bearing = -20, zoom, fichaAbierta = false} = {}) {
   if (!automatic) stopMapNavigation();
-  panel.classList.remove('open');
+  // Ficha por enlace (FLT-102664): si la ficha de este local ya está pintada, la cámara vuela detrás sin cerrarla.
+  const yaAbierta = !!(fichaAbierta && activeLocation && activeLocation.id === loc.id && panel.classList.contains('open'));
+  if (!yaAbierta) panel.classList.remove('open');
   splash.classList.add('hidden');
   rotating = false;
   if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
@@ -4441,7 +4443,7 @@ async function flyToLocation(loc, {automatic = false, bearing = -20, zoom} = {})
   // satélite siguen llegando detrás. Antes se esperaba a areTilesLoaded() y, sin caché (primera visita), la ficha
   // tardaba hasta 40 s o salía «Mapa incompleto» (Carlos, 21-oct-2026).
   const cam = locationCamera(loc, bearing, zoom);
-  let abierta = false;
+  let abierta = yaAbierta;
   const abrir = () => { if (abierta) return; abierta = true; renderPanel(loc); panel.classList.add('open'); };
   const result = await tourCamera.navigate(cam, phase => {
     const key = phase === 'preparing' ? 'map_preparing' : phase === 'loading' ? 'map_loading' : 'status_landing';
@@ -4559,6 +4561,73 @@ function watchCircuitDeepLink() {
   const tick = () => { if (applyCircuitDeepLink() || ++tries > 24) return; setTimeout(tick, 500); };
   setTimeout(tick, 400);
 }
+// Ficha por enlace (FLT-102664 · encargo #7138, 24-oct-2026). Con ?circuit=…&loc=<id> la ficha esperaba al catálogo
+// completo (10 MB de JSON: ~1 s de descarga y ~2,5 s de proceso) para encontrar el local en su circuito, después al
+// estilo del mapa y, por último, a que la cámara aterrizara (~8 s de vuelo con teselas): salía a los ~15 s. Ahora se
+// pide ESE local por id (GET /locations/:id, ~0,3 s) en cuanto arranca la página, la ficha se pinta al llegar y la
+// cámara vuela detrás, sin bloquearla. El circuito se sigue aplicando cuando llega el catálogo (applyCircuitDeepLink,
+// que ya no vuelve a volar). Si el local no llega (red, 404) o la marca activa lo deja fuera, manda el camino de siempre.
+var fichaEnlaceTourListo = false, fichaEnlaceVuelo = null;  // var: wireTour puede llegar antes que esta línea
+function fichaEnlaceDatos(id) {
+  const ya = LOC_BY_ID.get(id);
+  if (ya && !ya._slim) return Promise.resolve(ya);   // catálogo en caché (segunda visita) o ficha del bundle
+  const porId = () => typeof window.loadOmnipLocationDetail === 'function' ? window.loadOmnipLocationDetail(id, 8000) : Promise.resolve(null);
+  // La petición temprana del <head> de index.html (la misma URL que loadOmnipLocationDetail); si no llegó, se repite.
+  const temprana = window.__fichaEnlaceTemprana && window.__fichaEnlaceTemprana.id === id ? window.__fichaEnlaceTemprana.datos : null;
+  const pedida = temprana
+    ? temprana.then(d => d && d.location && typeof window.normalizeOmnipLocations === 'function' ? window.normalizeOmnipLocations([d.location])[0] || null : null).then(det => det || porId())
+    : porId();
+  return pedida.then(det => {
+    if (!det) return null;
+    // El mismo cosido que el catálogo completo (fly, xpaceUrl, fichas del bundle que mandan): la ficha sale igual.
+    const cosidas = typeof window.mergeOmnipLocations === 'function' ? window.mergeOmnipLocations([det]) : [det];
+    return cosidas.find(l => l && l.id === id) || det;
+  }).catch(() => null);
+}
+function abrirFichaPorEnlace() {
+  const id = circuitParam() && circuitLocParam();
+  if (!id) return Promise.resolve(false);
+  return fichaEnlaceDatos(id).then(loc => {
+    // Otro camino ya la abrió, o la persona ya mira otro punto: no se le quita.
+    if (!loc || circuitLocDone || (activeLocation && activeLocation.id !== id)) return false;
+    // Al catálogo, como restoreWalkReturn: LOC_BY_ID lo conoce (sellos de gemelo, segmentación por marca) y
+    // applyBrandSegment no cierra la ficha por no encontrarlo.
+    if (LOC_BY_ID.get(id) !== loc) setLocations([...LOCATIONS_ALL.filter(l => l.id !== id), loc]);
+    const enMapa = LOC_BY_ID.get(id);
+    if (!enMapa || !Array.isArray(enMapa.coords)) return false;
+    circuitLocDone = true;
+    splash.classList.add('hidden');
+    rotating = false;
+    renderPanel(enMapa);
+    panel.classList.add('open');
+    setTimeout(() => { try { updateLocationsSource(); } catch (_) {} }, 0);
+    fichaEnlaceVuelo = enMapa;
+    volarFichaPorEnlace();
+    return true;
+  }).catch(() => false);
+}
+// La cámara sale con el estilo del mapa cargado (o a los 2,5 s, como en applyCircuitDeepLink) y con el circuito ya
+// fijado por wireTour: el «change» de su selector para cualquier vuelo en marcha (stopMapNavigation).
+function volarFichaPorEnlace() {
+  const loc = fichaEnlaceVuelo;
+  if (!loc || !fichaEnlaceTourListo) return;
+  fichaEnlaceVuelo = null;
+  let ido = false;
+  const volar = () => { if (ido) return; ido = true; if (activeLocation && activeLocation.id === loc.id && panel.classList.contains('open')) flyToLocation(loc, {fichaAbierta: true}); };
+  if (map && ((map.isStyleLoaded && map.isStyleLoaded()) || (map.loaded && map.loaded()))) volar();
+  else if (map && map.once) { map.once('load', volar); setTimeout(volar, 2500); }
+}
+// Al llegar el catálogo completo, la ficha por enlace se queda con su versión (como antes, que se pintaba con ella): si
+// trae otros datos que los pintados (bundle o caché del navegador más viejos), se repinta; si son iguales, no se toca.
+function refrescarFichaPorEnlace() {
+  const id = circuitParam() && circuitLocParam();
+  const fresca = id && LOC_BY_ID.get(id);
+  if (!fresca || !activeLocation || activeLocation.id !== id || activeLocation === fresca || !panel.classList.contains('open')) return;
+  let igual = false;
+  try { igual = JSON.stringify(fresca) === JSON.stringify(activeLocation); } catch (_) {}
+  if (igual) activeLocation = fresca; else renderPanel(fresca);
+}
+abrirFichaPorEnlace();
 // ?circuit=alsea_mexico&tour=1: el catálogo del KV llega unos segundos después del arranque;
 // se espera a que el circuito tenga sus puntos y el globo esté pintado antes de despegar.
 function watchGlobalTourDeepLink(c) {
@@ -4603,6 +4672,9 @@ function wireTour() {
       setTimeout(tryOpen, 600);
     }
   } catch (_) {}
+  // Ficha por enlace: el circuito ya está fijado; la cámara puede salir hacia el local (si su ficha ya está abierta).
+  fichaEnlaceTourListo = true;
+  volarFichaPorEnlace();
 }
 if (document.readyState !== 'loading') setTimeout(wireTour, 600);
 else document.addEventListener('DOMContentLoaded', () => setTimeout(wireTour, 600));
@@ -4896,7 +4968,9 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
     const cpms = LOCATIONS.flatMap(l => (Array.isArray(l.surfaces) ? l.surfaces : []).map(s => parseFloat(String(s.cpm).replace(/[^\d.]/g,'')))).filter(Boolean);
     if (cpms.length) {
       const lo = Math.min(...cpms), hi = Math.max(...cpms);
-      const el = document.getElementById('p-cpm'); if (el && activeLocation?.source!=='yokup-retailer' && !isAdmiraXperienceLocation(activeLocation || {}) && !isAdmiraXperienceOffice(activeLocation || {})) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
+      // Con una ficha abierta, su CPM es el de ese local (renderPanel), no el rango de todo el catálogo: con la ficha por
+      // enlace (FLT-102664) la ficha ya está pintada cuando llega el catálogo, y salía «€1-€16» en vez de su «€8».
+      const el = document.getElementById('p-cpm'); if (el && !activeLocation) el.textContent = lo === hi ? `€${lo}` : `€${lo}-€${hi}`;
     }
     renderCircuitSelector();
     if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();
@@ -4905,6 +4979,7 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
   finally {
     plannerCatalogReady = true;
     try { applyCircuitDeepLink(); } catch (_) {}
+    try { refrescarFichaPorEnlace(); } catch (_) {}
     if (typeof renderPlanner === 'function' && !document.getElementById('planner-modal').hidden) renderPlanner();
     if (!document.getElementById('buy-modal').hidden) updateBuyQuote();
   }

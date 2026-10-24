@@ -85,7 +85,7 @@ mic.onclick=()=>{
 function close(){panel.hidden=true;back.hidden=true;vestirEntradas();decir('reposo','',true);}
 function open(step='brief'){
  if(!STEPS.includes(step))return {ok:false,error:'commercial_step_invalid'};
- $('commercial-campaign-section').hidden=step==='comercios';$('commercial-merchant-section').hidden=step!=='comercios';$('commercial-campaigns').setAttribute('aria-pressed',String(step!=='comercios'));$('commercial-merchants').setAttribute('aria-pressed',String(step==='comercios'));ctx.hideLocations();panel.hidden=false;back.hidden=true;panel.querySelector('.commercial-cuerpo').scrollTop=0;translate();vestirEntradas();if(ventana)ventana.restaurar();
+ $('commercial-campaign-section').hidden=step==='comercios';$('commercial-merchant-section').hidden=step!=='comercios';$('commercial-campaigns').setAttribute('aria-pressed',String(step!=='comercios'));$('commercial-merchants').setAttribute('aria-pressed',String(step==='comercios'));ctx.hideLocations();panel.hidden=false;back.hidden=true;panel.querySelector('.commercial-cuerpo').scrollTop=0;panel.scrollTop=0;translate();vestirEntradas();if(ventana)ventana.restaurar();
  montarNube();
  if(step==='audiencias')select(true);
  if(step==='ubicaciones')select(false);

@@ -3,6 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script>
+// Ficha por enlace (FLT-102664): con ?circuit=…&loc=<id>, ESE local se pide ya (GET /locations/:id, el de
+// loadOmnipLocationDetail en locations.js), antes que el mapa y los catálogos. app.js lo recoge y pinta la ficha en
+// cuanto arranca, sin hacer cola detrás del catálogo ligero (~9.000 puntos) que ocupa el hilo principal al principio.
+(function(){try{var q=new URLSearchParams(location.search),id=q.get('loc');if(!id||!q.get('circuit')||!window.fetch)return;
+var c=window.AbortController?new AbortController():null,t=c&&setTimeout(function(){c.abort();},8000);
+window.__fichaEnlaceTemprana={id:id,datos:fetch('https://brain.digitalavatar.ai/locations/'+encodeURIComponent(id),c?{signal:c.signal}:{})
+.then(function(r){clearTimeout(t);return r.ok?r.json():null;}).catch(function(){return null;})};}catch(_){}})();
+</script>
 <script src="/brand.js?v=20260930-identity-1"></script>
 <link rel="stylesheet" href="/brand.css?v=20260930-identity-1">
 <link rel="preconnect" href="https://unpkg.com">
@@ -470,6 +479,15 @@ addEventListener('resize',ccFitIntro);
   /* "Despegue" del panel al pulsar AI HARNESS (vuelo al gemelo/harness) */
   aside.panel .actions a[hidden]{display:none}
   aside.panel .actions a#p-twin.launch{background:var(--brand);color:#001620;transform:translateY(-4px) scale(1.02)}
+  /* Ficha pensada para el comprador (FLT-102664 · encargo #7138, 24-oct-2026): «Anunciarme aquí» va primero y es la
+     acción principal. La botonera es una rejilla de dos columnas (los botones ocultos no ocupan celda) y los rótulos se
+     parten por palabras, nunca a mitad («EXPLORA/R», «ANUNCIA/RME»): responsive-shell.css pone overflow-wrap:anywhere. */
+  aside.panel .actions.panel-navigation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  aside.panel .actions.panel-navigation a{display:flex;align-items:center;justify-content:center;min-width:0;min-height:44px;box-sizing:border-box;padding:10px 8px;line-height:1.35;letter-spacing:.05em;word-break:normal;overflow-wrap:normal;hyphens:manual}
+  aside.panel .actions.panel-navigation a[hidden]{display:none}
+  /* Con «Anunciarme aquí» a la vista, el Tour DooH pasa a secundario; sin él (no hay Comercial), vuelve a ser el principal. */
+  aside.panel .actions.panel-navigation #p-comercial:not([hidden]) ~ #p-tour.primary{background:transparent;color:var(--brand)}
+  aside.panel .actions.panel-navigation #p-comercial:not([hidden]) ~ #p-tour.primary:hover{background:var(--brand);color:#001620}
   aside.panel.flying{opacity:0;transform:translateX(6%) scale(.99);transition:opacity .42s cubic-bezier(.4,0,.2,1),transform .42s cubic-bezier(.4,0,.2,1)}
   @media (prefers-reduced-motion:reduce){ aside.panel.flying{transition:none} }
 
@@ -1360,11 +1378,11 @@ addEventListener('resize',ccFitIntro);
   </div>
   <div class="body">
     <div class="actions panel-navigation">
+      <a href="#" id="p-comercial" class="p-comercial primary" hidden data-commercial="here">💼 Anunciarme aquí</a>
       <a href="#" id="p-tour" class="primary" data-i18n="tour_start" data-i18n-title="tour_hint" title="Tour DooH: vuela de punto en punto por el circuito y el target seleccionados.">▶ Tour DooH</a>
       <a id="p-twin" hidden target="_blank" rel="noopener" data-i18n="view_twin">Ver Gemelo Digital ↗</a>
       <a id="p-twin-hd" href="#" target="_blank" rel="noopener" style="display:none" data-i18n="twin_hd">🎥 Gemelo Hiperrealista ↗</a>
       <a id="p-plano" hidden target="_blank" rel="noopener" data-i18n="view_plano">▤ Plano del Xpacio ↗</a>
-      <a href="#" id="p-comercial" class="p-comercial" hidden data-commercial="here">💼 Anunciarme aquí</a>
     </div>
     <div class="actions twin-alt-row" id="p-twin-alt-row" hidden><a id="p-twin-alt" hidden target="_blank" rel="noopener"></a></div>
     <h3 data-i18n="surfaces_available">Dispositivos disponibles</h3>
@@ -1438,7 +1456,7 @@ addEventListener('resize',ccFitIntro);
 <script defer src="global-tour.js?v=20261016-total-tour-1"></script>
 <script defer src="login-google.js?v=20261024-incidencias-owner-1"></script>
 <script defer src="vision-general.js?v=20261016-starbucks-es-1"></script>
-<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=20261015-alsea-1"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20261007-calle-1"></script><script defer src="inventory-evidence.js?v=20261010-evidence-1"></script><script defer src="incident-map-tooltip.js?v=20261024-incidencias-owner-1"></script><script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261024-incidencias-owner-1"></script><script defer src="intro.js?v=20261016-altadis-es-1"></script>
+<script defer src="cenital-panel.js?v=destinations-2"></script><script defer src="circuit-overview.js?v=20261015-alsea-1"></script><script defer src="previo.js?v=20260912-3"></script><script defer src="xpace-link.js?v=20261007-calle-1"></script><script defer src="inventory-evidence.js?v=20261010-evidence-1"></script><script defer src="incident-map-tooltip.js?v=20261024-incidencias-owner-1"></script><script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261024-ficha-comprador-1"></script><script defer src="intro.js?v=20261016-altadis-es-1"></script>
 <script>
 // Caché de la bola (#4566): la segunda visita abre desde el navegador.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
@@ -1446,8 +1464,8 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
 }
 </script>
 <script defer src="planner-ui.js?v=20260905-1"></script>
-<link rel="stylesheet" href="/comercial.css?v=20261021-comercial-23">
-<script type="module" src="/comercial.mjs?v=20261021-comercial-23"></script>
+<link rel="stylesheet" href="/comercial.css?v=20261024-ficha-comprador-1">
+<script type="module" src="/comercial.mjs?v=20261024-ficha-comprador-1"></script>
 <script type="module" src="walk-launch.mjs?v=20261010-evidence-1"></script>
 
 <!-- ═══ Neo · host MetaHuman en vivo (acceso desde Avanzado, panel opt-in) — digitalavatar.ai ═══ -->

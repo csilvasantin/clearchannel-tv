@@ -298,7 +298,7 @@ test('las páginas piden la versión nueva de lo que cambia', () => {
   // con «Anunciarme aquí» en la ficha (20-oct, comercial-5), con el handON del laboratorio (laboratorio-1)
   // y con ese handON en la zona protegida de admiranext.com (zona-protegida-1).
   // Después, con AdmiraXperience como proyecto de pantallas e hilo musical (22-oct, admiraxperience-1).
-  assert.ok(html.includes('<script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261024-incidencias-owner-1"></script>'));
+  assert.ok(html.includes('<script defer src="mapa-sin-webgl.js?v=20261017-sin-webgl-1"></script><script defer src="app.js?v=20261024-ficha-comprador-1"></script>'));
   assert.match(html, /marca-blanca\.js\?v=20261016-starbucks-mx-2/);
   assert.match(html, /expert-commands\.js\?v=20261017-main-verde-1/);
   // locations.js cambió por última vez con la Sneaker Store en AdmiraXperience (22-oct): la portada y las fichas piden esa versión.
