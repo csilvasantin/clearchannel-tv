@@ -586,6 +586,10 @@ Object.assign(I18N.es, {
   pv_saved:'Ajuste guardado en este navegador', pv_copied:'JSON copiado · pásaselo a Neo para subirlo al KV', pv_copy_fail:'No se pudo copiar · el JSON está en la consola',
   pv_reset_done:'Ajuste local eliminado · vuelve el del KV',
   pv_tab_fachada:'Fachada', pv_tab_detalle:'Detalle', pv_tab_interior:'Interior {n}',
+  // Previos al hacer zoom y en la ficha (FLT-102666): la etiqueta dice de dónde sale lo que se ve.
+  pz_cta:'💼 Anunciarme aquí', pz_cta_aria:'Anunciarme aquí: {name}', pz_open_aria:'Abrir la ficha de {name} · {nivel}',
+  pz_directo:'En directo', pz_dooh:'Previo DooH', pz_circuito:'Programación del circuito', pz_ninguno:'Sin previo todavía',
+  pz_cargando:'Cargando la programación…', pz_ver:'▶ Ver emitiendo', pz_pieza:'▶ Ver la pieza', pz_parar:'⏸ Parar',
 });
 Object.assign(I18N.en, {
   previo_circuit:'DooH Preview', previo_stop:'Stop DooH preview', previo_tour_toggle:'Tour with DooH preview',
@@ -601,6 +605,9 @@ Object.assign(I18N.en, {
   pv_saved:'Adjustment saved in this browser', pv_copied:'JSON copied · hand it to Neo to upload it to the KV', pv_copy_fail:'Could not copy · the JSON is in the console',
   pv_reset_done:'Local adjustment removed · back to the KV one',
   pv_tab_fachada:'Storefront', pv_tab_detalle:'Close-up', pv_tab_interior:'Interior {n}',
+  pz_cta:'💼 Advertise here', pz_cta_aria:'Advertise here: {name}', pz_open_aria:'Open {name} · {nivel}',
+  pz_directo:'Live', pz_dooh:'DooH preview', pz_circuito:'Circuit programme', pz_ninguno:'No preview yet',
+  pz_cargando:'Loading the programme…', pz_ver:'▶ Watch it playing', pz_pieza:'▶ Play the spot', pz_parar:'⏸ Stop',
 });
 function t(key){ return (I18N[LANG] && I18N[LANG][key] != null) ? I18N[LANG][key] : (I18N.es[key] != null ? I18N.es[key] : key); }
 function tf(key, vars = {}) {
@@ -650,6 +657,7 @@ function setLang(lang){
   try { updateBuyQuote(); } catch(_){}
   try { const title = document.getElementById('buy-title'); if (title && !document.getElementById('buy-modal')?.hidden) title.textContent = `${t('buy_title_base')} · ${currentCircuit().label}`; } catch(_){}
   try { if (typeof activeLocation !== 'undefined' && activeLocation) renderPanel(activeLocation); } catch(_){}
+  try { if (window.__previosZoom) window.__previosZoom.idioma(); } catch(_){}
   try { if (typeof searchInput !== 'undefined' && searchInput && searchInput.value) renderSuggest(searchInput.value); } catch(_){}
 }
 
@@ -2873,6 +2881,7 @@ if (planetModal) planetModal.addEventListener('click', e => { if (e.target === p
 // Verde = la pantalla está publicando en /signage/now (conectada, emitiendo).
 // Rojo = sin señal fresca (apagada/sin conexión). Lo sondea pollEmissionStatus.
 const EMIT_STATUS = {};            // screenId -> 1 online | -1 offline
+const EMIT_NOW = {};               // screenId -> {item, standby}: lo último que dijo /signage/now (lo usan los previos, sin pedir nada más)
 const EMIT_FRESH_MS = 170000;      // item más viejo que esto = sin conexión
 const EMIT_NOW_API = 'https://api.admira.store/signage/now';
 function emitScreenOf(l){
@@ -2898,11 +2907,13 @@ async function pollEmissionStatus(){
     try{
       const r = await fetch(EMIT_NOW_API+'?screen='+encodeURIComponent(sc), {cache:'no-store'});
       const j = await r.json(); const it = j && j.item;
+      EMIT_NOW[sc] = { item: it || null, standby: !!(j && j.standby) };
       st = (it && it.ts && (Date.now()-it.ts) < EMIT_FRESH_MS) ? 1 : -1;
     }catch(_){ st = EMIT_STATUS[sc] || -1; }
     if(EMIT_STATUS[sc] !== st){ EMIT_STATUS[sc] = st; changed = true; }
   }));
   if(changed){ try{ updateLocationsSource(); }catch(_){} }
+  try{ if(window.__previosZoom) window.__previosZoom.actualizar(); }catch(_){}
 }
 function startEmissionStatusPolling(){
   if(_emitPollTimer) return;
@@ -3126,12 +3137,7 @@ function addLocationsLayer() {
     const id = feature.properties.id;
     const loc = LOC_BY_ID.get(id);
     if (!loc) return;
-    // An explicit association (including removal) also controls automatic opening.
-    // Preserve independent legacy tours such as Matterport when not migrated.
-    const twinTarget = Object.prototype.hasOwnProperty.call(loc, 'xpaceUrl')
-      ? window.XpaceLinks?.associationUrl(loc) : (loc.fly || loc.twin);
-    if (loc.twinOnClick && twinTarget) { window.open(twinTarget, '_blank', 'noopener'); }
-    flyToLocation(loc);
+    abrirXpacioDelMapa(loc);
     if (+feature.properties.incidentLevel > 0) showXpacioTip(e);
   });
   // Cursor
@@ -3179,6 +3185,18 @@ function addLocationsLayer() {
   map.on('mouseenter', 'clusters', showClusterTip);
   map.on('mousemove', 'clusters', showClusterTip);
   map.on('mouseleave', 'clusters', () => tipHover.hide());
+}
+
+// Clic en un punto (y en el previo de su tarjeta al hacer zoom): vuela y abre su ficha. Si el punto define twinOnClick,
+// además abre su gemelo (p.ej. tour Matterport) en una pestaña nueva.
+function abrirXpacioDelMapa(loc) {
+  if (!loc) return;
+  // An explicit association (including removal) also controls automatic opening.
+  // Preserve independent legacy tours such as Matterport when not migrated.
+  const twinTarget = Object.prototype.hasOwnProperty.call(loc, 'xpaceUrl')
+    ? window.XpaceLinks?.associationUrl(loc) : (loc.fly || loc.twin);
+  if (loc.twinOnClick && twinTarget) { window.open(twinTarget, '_blank', 'noopener'); }
+  flyToLocation(loc);
 }
 
 function setLayer(name) {
@@ -3417,11 +3435,17 @@ function previoCircuitOf(loc) {
 // Póster de la primera pieza del hashtag (se pide una vez por circuito; CORS * en el Stock).
 const previoPosterCache = new Map();
 let previoRevealTimer = 0;
-function previoPoster(circuit) {
+// Desde FLT-102666 sale de /api/previo/circuito (el borde guarda la respuesta del Stock, que tarda ~22 s), el mismo
+// póster que las tarjetas del mapa y la ficha, y de la orientación de la pantalla si el circuito la tiene.
+function previoPoster(circuit, orientacion = '') {
   const P = PV(); if (!P) return Promise.resolve('');
-  if (previoPosterCache.has(circuit)) return previoPosterCache.get(circuit);
-  const p = fetch(P.stockPosterUrl(circuit), {headers:{accept:'application/json'}}).then(r => r.ok ? r.json() : null).then(d => P.firstPoster(d)).catch(() => '');
-  previoPosterCache.set(circuit, p);
+  const key = circuit + '|' + orientacion;
+  if (previoPosterCache.has(key)) return previoPosterCache.get(key);
+  const Z = window.__previosZoom, entrada = Z && Z.circuito(circuit);
+  const p = entrada
+    ? entrada.promesa.then(d => { const pieza = window.AdmiraPreviosZoom.piezaCircuito(d, orientacion); return pieza ? pieza.poster : ''; }).catch(() => '')
+    : fetch(P.stockPosterUrl(circuit), {headers:{accept:'application/json'}}).then(r => r.ok ? r.json() : null).then(d => P.firstPoster(d)).catch(() => '');
+  previoPosterCache.set(key, p);
   return p;
 }
 // El canal avisa al padre cuando emite una pieza (media-state): entonces se destapa el iframe.
@@ -3469,7 +3493,7 @@ function openPrevio(loc, {fromTour = false, view = null} = {}) {
       clearTimeout(previoRevealTimer);
       previoRevealTimer = setTimeout(() => screen.classList.remove('loading'), 12000);
     }
-    void previoPoster(previoCircuitOf(loc)).then(u => { if (previoState.loc === loc && u) screen.style.backgroundImage = 'url("' + u + '")'; });
+    void previoPoster(previoCircuitOf(loc), (views[0] && views[0].previo && views[0].previo.orientacion) || '').then(u => { if (previoState.loc === loc && u) screen.style.backgroundImage = 'url("' + u + '")'; });
     const wanted = view && views.some(v => v.key === view) ? view : views[0].key;
     selectPrevioView(wanted);
     if (fromTour) schedulePrevioTourViews();
@@ -3891,6 +3915,8 @@ for (const [button, param] of [['header-upload-plan-btn', 'subir'], ['header-cre
 function renderPanel(loc) {
   activeLocation = loc;
   const comercialAqui = document.getElementById('p-comercial'); if (comercialAqui) comercialAqui.dataset.comercialLocal = loc.id;
+  // Bajo «Anunciarme aquí», el previo grande de lo que emiten sus pantallas (FLT-102666, previos-zoom.js).
+  try { if (window.__previosZoom) window.__previosZoom.ficha(loc, document.getElementById('p-emite')); } catch (_) {}
   document.getElementById('p-name').textContent = loc.name;
   document.getElementById('p-addr').textContent = loc.addr;
   document.getElementById('p-kind').textContent = inventoryKindLabel(loc);
@@ -4057,6 +4083,73 @@ function twinAltLink(loc) {
 function planoPageUrl(loc) {
   const m = String((loc && loc.plano) || '').match(/^https:\/\/(?:www\.)?admira\.biz\/data\/xpacios\/([a-z0-9][a-z0-9-]{0,79})\.json$/);
   return m ? '/plano.html?locationId=' + encodeURIComponent(m[1]) + '&lang=' + LANG : '';
+}
+
+// ─── Previos al hacer zoom y en la ficha (FLT-102666 · encargo #7145, 24-oct-2026) ──────────────────
+// Carlos: «cuando hagamos zoom poder ver previos de lo que emiten las pantallas … y pon encima anunciarme aquí».
+// previos-zoom.js elige el nivel de cada Xpacio (En directo · Previo DooH · Programación del circuito · nada) y monta
+// las tarjetas; aquí se le dan los datos que ya tiene la portada (sin peticiones nuevas): la emisión que sondea
+// pollEmissionStatus (EMIT_NOW), el previo de fachada (previoViews) y el estado del mapa y de los paneles.
+function previosTapas() {
+  const out = [];
+  const caja = (l, arriba, w, h) => { if (w > 0 && h > 0) out.push({l, t: arriba, r: l + w, b: arriba + h}); };
+  // La ficha se mide sin su transform (la transición de apertura la lleva fuera de pantalla un instante).
+  const ficha = document.getElementById('panel');
+  if (ficha && ficha.classList.contains('open')) caja(ficha.offsetLeft, ficha.offsetTop, ficha.offsetWidth, ficha.offsetHeight);
+  for (const id of ['comercial-panel', 'circuit-panel', 'target-panel', 'addr-card', 'commercial-return']) {
+    const el = document.getElementById(id);
+    if (!el || el.hidden || el.classList.contains('collapsed')) continue;
+    const r = el.getBoundingClientRect();
+    caja(r.left, r.top, r.width, r.height);
+  }
+  return out;
+}
+function previosMargenes() {
+  // La cabecera (en el móvil, con el buscador debajo) tapa la parte de arriba del mapa; abajo, el sello y la atribución.
+  const lienzo = map.getCanvas().getBoundingClientRect();
+  const cab = document.querySelector('body > header, header.galaxy-header, header');
+  const bajo = cab ? cab.getBoundingClientRect().bottom - lienzo.top : 0;
+  const cabecera = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-height')) || 64;
+  return {top: Math.max(cabecera, bajo) + 8, right: 8, bottom: 64, left: 8};
+}
+function previosFuentes(loc) {
+  const Z = window.AdmiraPreviosZoom, sc = emitScreenOf(loc);
+  const fachada = previoViews(loc).find(v => v.key === 'fachada');
+  return {directo: sc ? Z.itemEnDirecto(EMIT_NOW[sc], Date.now(), EMIT_FRESH_MS) : null, dooh: fachada ? fachada.previo : null,
+    orientacion: Z.orientacionDe(loc), tag: Z.etiquetaStock(loc)};
+}
+const previosZoom = window.AdmiraPreviosZoom && !map.sinWebGL ? window.AdmiraPreviosZoom.crear({
+  map, maplibregl: window.maplibregl, t, lang: () => LANG,
+  loc: id => LOC_BY_ID.get(id),
+  fuentes: previosFuentes,
+  enDirecto: loc => { const sc = emitScreenOf(loc); return !!(sc && window.AdmiraPreviosZoom.itemEnDirecto(EMIT_NOW[sc], Date.now(), EMIT_FRESH_MS)); },
+  ocupado: () => !!(tourRun || circuitDemo.running || tourCamera.isNavigating() || previoState.open),
+  activa: () => (activeLocation && panel.classList.contains('open')) ? activeLocation.id : null,
+  tapas: previosTapas, margenes: previosMargenes,
+  // «Anunciarme aquí» de la tarjeta = el de la ficha para ESE Xpacio (comercial.mjs: la selección pasa a ser ese local
+  // y se abre Comercial). Sin Comercial (#p-comercial oculto), la tarjeta no lo lleva.
+  puedeAnunciar: () => { const b = document.getElementById('p-comercial'); return !!(b && !b.hidden && window.AdmiraComercial && typeof window.AdmiraComercial.anunciarAqui === 'function'); },
+  anunciar: loc => window.AdmiraComercial.anunciarAqui(loc.id),
+  abrir: abrirXpacioDelMapa,
+  verEmitiendo: loc => openPrevio(loc),
+}) : null;
+window.__previosZoom = previosZoom;
+if (previosZoom) {
+  map.on('moveend', () => previosZoom.programar());
+  // Vuelo de cámara (flyTo/easeTo del tour, del buscador o de un clic): fuera tarjetas hasta que aterrice. El arrastre
+  // y la rueda (con originalEvent) las dejan donde están, ancladas a su punto. El giro del globo (zoom < 6) también
+  // lanza movestart en cada fotograma: sin tarjetas, ocultar() vuelve al instante.
+  map.on('movestart', e => { if (!e || !e.originalEvent) previosZoom.ocultar(); });
+  map.on('zoom', () => previosZoom.vigilarZoom());
+  // Abrir o cerrar la ficha, Comercial, el selector de circuitos o el previo grande cambia lo que tapa el mapa.
+  const vigia = new MutationObserver(() => previosZoom.programar());
+  for (const id of ['panel', 'comercial-panel', 'circuit-panel', 'p-comercial', 'previo-dooh']) {
+    const el = document.getElementById(id);
+    if (el) vigia.observe(el, {attributes: true, attributeFilter: ['class', 'hidden']});
+  }
+  // Comercial (módulo) se monta después: su panel aparece entonces en el DOM.
+  setTimeout(() => { const el = document.getElementById('comercial-panel'); if (el) vigia.observe(el, {attributes: true, attributeFilter: ['class', 'hidden']}); previosZoom.actualizar(); }, 1500);
+  if (activeLocation) previosZoom.ficha(activeLocation, document.getElementById('p-emite'));
 }
 
 function renderBidFeedEmpty() {

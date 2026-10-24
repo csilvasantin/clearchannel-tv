@@ -7,6 +7,7 @@ import {handleGlobalDemo} from './server/global-demo.mjs';
 import {onRequest as avatarAsk} from './avatar-ask.js';
 import { bizAssetPath, BIZ_ASSET_PREFIX, suiteCanonicalURL } from './server/biz-assets.mjs';
 import { detalleProyectoURL } from './server/detalle-proyecto.mjs';
+import { esPrevioCircuito, handlePrevioCircuito } from './server/previo-circuito.mjs';
 
 // admira.app (hoy) y admira.biz (tras el intercambio de dominios con Yokup, oct-2026)
 // son la misma cara Admira de este proyecto: la marca sale del apex del Host.
@@ -243,7 +244,9 @@ function sharedPlan(response, pathname) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
+    // Previo del circuito para el mapa y la ficha (FLT-102666): sólo en admira.biz, su vista previa y local.
+    if (esPrevioCircuito(new URL(request.url))) return handlePrevioCircuito(request, { waitUntil: ctx && typeof ctx.waitUntil === 'function' ? p => ctx.waitUntil(p) : null });
     if (['/api/bugito/commands','/api/bugito/status','/api/bugito/launch'].includes(new URL(request.url).pathname)) return handleBugitoCommand(request,env);
     if (['/api/bugito/targets','/api/bugito/incidents','/api/bugito/owner'].includes(new URL(request.url).pathname)) return handleBugitoXpacios(request,env);
     if (new URL(request.url).pathname === '/avatar-ask') return avatarAsk({request});

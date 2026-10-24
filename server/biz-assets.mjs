@@ -17,6 +17,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'marca-blanca.js',
   // Portada sin WebGL (17-oct-2026): mapa mudo y aviso si maplibre no puede crear el mapa.
   'mapa-sin-webgl.js',
+  // Previos de lo que emiten las pantallas al hacer zoom y en la ficha (FLT-102666).
+  'previos-zoom.js',
   'index.html', 'app.js', 'incident-map-tooltip.js', 'planner-core.js', 'inventory-evidence.js', 'expert-commands.js', 'intro.js', 'detail.html',
   'walk.html', 'walk.mjs', 'walk-launch.mjs', 'walk-core.mjs', 'walk.css', 'help/index.html',
   // /redistribucion (FLT-102063): plano y obras del Xpacio; ▤ Subir plano (DCL-58288891486617b36ed8777d);
