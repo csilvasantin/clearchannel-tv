@@ -24,7 +24,9 @@ async function detail(location, decisions = [], lang = 'es', fail = false, scena
   const translated = [...html.matchAll(/data-detail-es="([^"]+)" data-detail-en="([^"]+)"/g)].map(([, es, en]) => Object.assign(new Node(), {dataset:{detailEs:es, detailEn:en}}));
   const requests = [], lookups = [], events = new Map();
   const document = {
-    documentElement: {lang}, title:'',
+    documentElement: {lang}, title: scenario.title || '',
+    // El worker de admira.biz marca el título del Xpacio con <meta name="admira:xpacio"> (FLT-102678).
+    querySelector: selector => selector === 'meta[name="admira:xpacio"]' && scenario.seo ? {content: scenario.seo} : null,
     getElementById: id => { assert.ok(nodes.has(id), `missing element ${id}`); return nodes.get(id); },
     createElement: tag => new Node(tag), createTextNode: text => ({textContent:text}),
     querySelectorAll: () => translated,
@@ -147,4 +149,21 @@ test('an uncached exact location resolves via API and never borrows the first ca
     missing.events.get('admira:lang')({detail:{lang:'es'}});
     assert.ok(missing.translated.every(node => node.textContent === node.dataset.detailEs), 'static page labels still follow ENG/ESP while the location is unavailable');
   }
+});
+
+// SEO y compartir (FLT-102678): si el worker ya puso el título del Xpacio, la ficha no lo pisa; si es de otro Xpacio
+// (o no hay marca), la ficha pone el suyo como siempre.
+test('the server-side Xpacio title stays when it belongs to this location', async () => {
+  const servidor = 'Test shop · Test address | admira.biz';
+  assert.equal((await detail(fixture, [], 'es', false, {title: servidor, seo: 'test-shop'})).document.title, servidor);
+  assert.equal((await detail(fixture, [], 'en', false, {title: servidor, seo: 'test-shop'})).document.title, servidor, 'también en inglés');
+  assert.equal((await detail(fixture, [], 'es', false, {title: servidor, seo: 'otro-xpacio'})).document.title, 'Test shop | admira.biz');
+  assert.equal((await detail(fixture, [], 'es', false, {title: servidor})).document.title, 'Test shop | admira.biz');
+  // Un Xpacio que no está en el bundle: mientras se consulta y después, el título del servidor (antes salía
+  // «Ubicación no disponible» y, sin marca del servidor, sigue saliendo así mientras carga).
+  const remoto = {...fixture, id: 'remote-shop', name: 'Remote shop'};
+  const conSeo = await detail(fixture, [], 'es', false, {title: 'Remote shop · Calle | admira.biz', seo: 'remote-shop', requestedId: 'remote-shop', remote: remoto});
+  assert.equal(conSeo.document.title, 'Remote shop · Calle | admira.biz');
+  const sinSeo = await detail(fixture, [], 'es', false, {requestedId: 'remote-shop', remote: remoto});
+  assert.equal(sinSeo.document.title, 'Remote shop | admira.biz');
 });

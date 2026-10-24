@@ -48,6 +48,8 @@ copyFileSync(join(root, 'server/demo-session.mjs'), join(out, 'server/demo-sessi
 copyFileSync(join(root, 'server/detalle-proyecto.mjs'), join(out, 'server/detalle-proyecto.mjs'));
 // Previo del circuito (FLT-102666): /api/previo/circuito, con la Cache API de Cloudflare.
 copyFileSync(join(root, 'server/previo-circuito.mjs'), join(out, 'server/previo-circuito.mjs'));
+// SEO y compartir de admira.biz (FLT-102678): robots.txt, sitemaps y metadatos por Xpacio.
+copyFileSync(join(root, 'server/biz-seo.mjs'), join(out, 'server/biz-seo.mjs'));
 writeFileSync(join(out, 'server/bugito-xpacios.mjs'), readFileSync(join(root, 'server/bugito-xpacios.mjs'),'utf8').replace("'../bugito-xpacios-core.mjs'","'./bugito-xpacios-core.mjs'"));
 copyFileSync(join(root, 'bugito-xpacios-core.mjs'), join(out, 'server/bugito-xpacios-core.mjs'));
 writeFileSync(join(out,'server/bugito-command.mjs'),readFileSync(join(root,'server/bugito-command.mjs'),'utf8').replace("'../bugito-command-core.mjs'","'./bugito-command-core.mjs'"));

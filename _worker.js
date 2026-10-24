@@ -8,6 +8,7 @@ import {onRequest as avatarAsk} from './avatar-ask.js';
 import { bizAssetPath, BIZ_ASSET_PREFIX, suiteCanonicalURL } from './server/biz-assets.mjs';
 import { detalleProyectoURL } from './server/detalle-proyecto.mjs';
 import { esPrevioCircuito, handlePrevioCircuito } from './server/previo-circuito.mjs';
+import { esFicheroSeo, handleBizSeo, xpacioDeUrl, prepararXpacio, JSONLD_ORGANIZACION } from './server/biz-seo.mjs';
 
 // admira.app (hoy) y admira.biz (tras el intercambio de dominios con Yokup, oct-2026)
 // son la misma cara Admira de este proyecto: la marca sale del apex del Host.
@@ -93,11 +94,15 @@ function avatarRewriter() {
   return new HTMLRewriter().on('head', {element(el) {el.append(AVATAR_TAG + SELLO_TAG, {html:true});}});
 }
 
-function admiraRewriter(pathname, apex, avatar) {
+// SEO y compartir de admira.biz (FLT-102678): la cara Admira habla español, así que una página que declare
+// og:locale en_GB con alternate es_ES sale al revés (es_ES con alternate en_GB). En admira.biz, la imagen de compartir
+// es la suya, sin cifras (assets/og-admira-biz.jpg), en vez del cockpit ilustrativo de clearchannel.tv.
+var OG_COVER = /\/assets\/og-cover\.jpg$/;
+function admiraRewriter(pathname, apex, avatar, organizacion) {
   apex = apex || 'admira.app';
   var homeTitle = 'Mapa de espacios comerciales | ' + apex;
   var rewriter = new HTMLRewriter()
-    .on('head', {element(el) {el.append('<script defer src="https://www.admiranext.com/assets/live-presence.js?v=2"></script>' + (avatar ? AVATAR_TAG + SELLO_TAG : ''), {html:true});}})
+    .on('head', {element(el) {el.append('<script defer src="https://www.admiranext.com/assets/live-presence.js?v=2"></script>' + (avatar ? AVATAR_TAG + SELLO_TAG : '') + (organizacion ? JSONLD_ORGANIZACION : ''), {html:true});}})
     .on('html', {
       element(element) {
         element.setAttribute('data-brand', 'admira');
@@ -120,8 +125,11 @@ function admiraRewriter(pathname, apex, avatar) {
       element(element) {
         var content = element.getAttribute('content');
         var branded = replaceBrand(content, apex);
+        var name = element.getAttribute('name') || element.getAttribute('property');
+        if (name === 'og:locale' && /^en[_-]/i.test(branded)) branded = 'es_ES';
+        if (name === 'og:locale:alternate' && /^es[_-]/i.test(branded)) branded = 'en_GB';
+        if (apex === 'admira.biz' && OG_COVER.test(branded)) branded = branded.replace(OG_COVER, '/assets/og-admira-biz.jpg');
         if (pathname === '/' || pathname === '/index.html') {
-          var name = element.getAttribute('name') || element.getAttribute('property');
           if (name === 'description' || name === 'og:description' || name === 'twitter:description') branded = 'Mapa de espacios comerciales de ' + apex + '. Busca un punto, consulta sus pantallas y planifica campañas.';
           if (name === 'og:title' || name === 'twitter:title') branded = homeTitle;
         }
@@ -254,6 +262,8 @@ export default {
     if (new URL(request.url).pathname === '/api/demo-session') return handleDemoSession(request);
     if (new URL(request.url).pathname.startsWith('/api/orders')) return handleOrders(request, env);
     var url = new URL(request.url);
+    // robots.txt y sitemaps propios de admira.biz (FLT-102678); clearchannel.tv sigue con los suyos.
+    if (esFicheroSeo(url)) return handleBizSeo(request, { waitUntil: ctx && typeof ctx.waitUntil === 'function' ? p => ctx.waitUntil(p) : null });
     var agent = await agentLogin(request, url);
     if (agent) return agent;
     var moved = yokupMoved(request, url);
@@ -283,13 +293,21 @@ export default {
       assetUrl.pathname = assetPath;
       assetRequest = new Request(assetUrl, request);
     }
+    // Metadatos de un Xpacio (/detail?loc=<id> y la portada con ?loc=<id>, sólo en admira.biz): el catálogo se pide a la
+    // vez que el HTML; si no llega a tiempo o falla, la página sale con los metadatos genéricos (server/biz-seo.mjs).
+    var xpacio = request.method === 'GET' || request.method === 'HEAD' ? xpacioDeUrl(url) : null;
+    var xpacioListo = xpacio ? prepararXpacio(xpacio, url, { waitUntil: ctx && typeof ctx.waitUntil === 'function' ? p => ctx.waitUntil(p) : null }) : null;
     var response = await env.ASSETS.fetch(assetRequest);
     if (plano && (request.method === 'GET' || request.method === 'HEAD')) return sharedPlan(response, url.pathname);
     var contentType = response.headers.get('content-type') || '';
     if (!contentType.includes('text/html')) return response;
     var avatar = wantsAvatar(url, response);
     if (!ADMIRA_HOST.test(url.hostname)) return avatar ? avatarRewriter().transform(response) : response;
-    return admiraRewriter(url.pathname, admiraApex(url.hostname), avatar).transform(response);
+    var apex = admiraApex(url.hostname);
+    var portada = url.pathname === '/' || url.pathname === '/index.html';
+    var marcada = admiraRewriter(url.pathname, apex, avatar, apex === 'admira.biz' && portada && !xpacio && response.status === 200).transform(response);
+    var seo = xpacioListo && response.status === 200 ? await xpacioListo : null;
+    return seo ? seo.rewriter().transform(marcada) : marcada;
   }
 };
 

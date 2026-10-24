@@ -54,6 +54,9 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'locations.js',
   // Catálogo ligero (FLT-102675): el catálogo completo se baja, se parsea y se cose en un Web Worker.
   'catalogo-worker.js',
+  // SEO y compartir (FLT-102678): imagen de compartir sin cifras, la ilustración de la ficha sin cifras y brand.js, que ya
+  // no le quita la query a una canónica propia (/detail?loc=<id>). robots.txt y los sitemaps los sirve el worker.
+  'assets/og-admira-biz.jpg', 'assets/xpacio-ilustrativo.webp', 'brand.js',
   'comercial.mjs', 'comercial-core.mjs', 'comercial.css', 'assets/comercial.svg', 'planner-ui.js',
   // Ventana movible de Comercial (20-10-2026), copia de movible.mjs de xpaceos.
   'movible.mjs',
