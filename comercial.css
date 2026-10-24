@@ -3,15 +3,17 @@
    acento, el azul de la corbata y el oro del cierre del maletín (los del SVG), como el Arquitecto tiene su amarillo de
    obra y Bugito su rojo. La ventana se mueve por la cabecera, cambia de tamaño por la esquina y se cierra con ✕
    (movible.mjs); en móvil ocupa el ancho y no se mueve. */
+/* Opaca (FLT-102664, 24-oct-2026): con la ventana translúcida, al abrir Comercial desde la ficha se leía el título del local
+   («Estanco Exp. nº 167 · Fuencarral») encima de «Comercial». El panel y su cabecera tapan del todo lo que hay debajo. */
 #comercial-panel{--com:#5b9bff;--com-ink:#d6e6ff;--com-deep:#132f4d;--com-oro:#e8cd7b;
   position:fixed;inset:76px 18px auto auto;width:min(455px,calc(100vw - 28px));max-height:calc(100vh - 141px);z-index:7800;
-  display:flex;flex-direction:column;background:linear-gradient(180deg,rgba(19,47,77,.55),var(--card,#100c20) 38%);color:var(--ink,#f2efff);
+  display:flex;flex-direction:column;background:var(--card,#100c20) linear-gradient(180deg,var(--com-deep),var(--card,#100c20) 38%);color:var(--ink,#f2efff);
   border:1px solid var(--line,rgba(184,156,255,.24));border-radius:18px;box-shadow:0 24px 70px #0009,inset 0 1px 0 rgba(255,255,255,.06);
   padding:0;font:15px/1.5 system-ui,-apple-system,sans-serif;box-sizing:border-box;overflow:hidden}
 #comercial-panel[hidden]{display:none}
 #comercial-panel>header{position:static;inset:auto;width:auto;height:auto;margin:0;z-index:auto;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;
   display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;flex-wrap:nowrap;padding:14px 16px 12px 18px;
-  border:0;border-bottom:1px solid var(--line,rgba(184,156,255,.24));background:rgba(19,47,77,.35);cursor:grab;touch-action:none;user-select:none}
+  border:0;border-bottom:1px solid var(--line,rgba(184,156,255,.24));background:var(--com-deep);cursor:grab;touch-action:none;user-select:none}
 #comercial-panel>header:active{cursor:grabbing}
 #comercial-panel .commercial-face{flex:0 0 84px;width:84px;height:74px;object-fit:contain;animation:comercial-float 5s ease-in-out infinite;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
 #comercial-panel .commercial-titulo{display:grid;gap:2px;min-width:0}
@@ -52,16 +54,26 @@
 #comercial-panel .commercial-mic{align-self:flex-start;width:34px;height:34px;display:grid;place-items:center;font-size:17px;background:transparent;border:1px solid var(--line,rgba(184,156,255,.24));border-radius:10px;cursor:pointer;padding:0}
 #comercial-panel .commercial-mic.live{border-color:#5b9bff;box-shadow:0 0 0 3px rgba(91,155,255,.3);animation:comercial-pulso 1.2s ease-in-out infinite}
 @keyframes comercial-pulso{50%{box-shadow:0 0 0 6px rgba(91,155,255,.12)}}
-#comercial-panel .commercial-nube{flex:0 0 auto;height:230px;border-bottom:1px solid var(--line,rgba(184,156,255,.24));background:#0a1930}
+/* La nube con sitio (FLT-102664): en modo dock la consola de la nube ocupa 148 px abajo y el escenario es el resto; con
+   230 px quedaban 82 px para Admirito y el bocadillo (34 % del escenario), así que el bocadillo salía cortado por arriba
+   y Admirito no se veía. Con 350-370 px caben dos líneas de bocadillo (unos 57 px) y la cara, como en el Arquitecto
+   y Bugito (medido con la nube a 453 px de ancho). */
+#comercial-panel .commercial-nube{flex:0 0 auto;height:clamp(350px,40vh,370px);border-bottom:1px solid var(--line,rgba(184,156,255,.24));background:#0a1930}
 #comercial-panel .commercial-nube[hidden]{display:none}
 #comercial-panel .commercial-nube iframe{display:block;width:100%;height:100%;border:0}
-@media(max-width:600px){#comercial-panel .commercial-nube{height:190px}}
+/* En el móvil la ventana entera hace scroll bajo la cabecera fija: la nube conserva su alto y el formulario sigue debajo,
+   en vez de quedarse con 190 px (escenario de 42 px: sin cara y con el bocadillo cortado). Con 400 px caben las tres
+   líneas de «Incorporado <local>. Cuéntame la campaña o pulsa el micro» a 364 px de ancho. */
+@media(max-width:600px){#comercial-panel{overflow-y:auto;overscroll-behavior:contain}#comercial-panel>header{position:sticky;top:0;z-index:3}#comercial-panel .commercial-nube{height:clamp(360px,48vh,400px)}#comercial-panel .commercial-cuerpo{flex:0 0 auto;overflow:visible}}
 /* Entradas visibles (20-10-2026): la nube en la cabecera y «Anunciarme aquí» en la ficha. */
 .header-comercial{padding:0;overflow:hidden}
 .header-comercial img{width:28px;height:24px;object-fit:contain;display:block}
 .header-comercial[aria-pressed="true"]{border-color:#5b9bff;box-shadow:inset 0 0 0 1px rgba(91,155,255,.55)}
 .header-comercial[hidden]{display:none}
-#p-comercial{border-color:rgba(91,155,255,.6)!important;color:#d6e6ff!important}
+/* «Anunciarme aquí» es la acción principal de la ficha (FLT-102664, 24-oct-2026): primero y con el estilo primario de la
+   página (class="primary" en index.html). Ya no lleva el azul de Comercial con !important, que sobre el fondo de marca no se
+   leía. Oculto (sin Comercial), el Tour DooH vuelve a ser el principal (regla en index.html). */
+#p-comercial{font-weight:700}
 #p-comercial[hidden]{display:none!important}
 #commercial-return{position:fixed;right:18px;bottom:76px;z-index:7790;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:var(--brand,#7dffd0);color:#0b1a14;border:1px solid var(--brand,#7dffd0);border-radius:30px;font:700 14px/1.2 system-ui,-apple-system,sans-serif;cursor:pointer;box-shadow:0 10px 30px #0008}
 #commercial-return[hidden]{display:none}
