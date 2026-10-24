@@ -590,6 +590,9 @@ Object.assign(I18N.es, {
   pz_cta:'💼 Anunciarme aquí', pz_cta_aria:'Anunciarme aquí: {name}', pz_open_aria:'Abrir la ficha de {name} · {nivel}',
   pz_directo:'En directo', pz_dooh:'Previo DooH', pz_circuito:'Programación del circuito', pz_ninguno:'Sin previo todavía',
   pz_cargando:'Cargando la programación…', pz_ver:'▶ Ver emitiendo', pz_pieza:'▶ Ver la pieza', pz_parar:'⏸ Parar',
+  // Elegir entre Xpacios del mismo punto (FLT-102672).
+  mp_titulo:'{n} Xpacios en este punto', mp_aria:'Elige un Xpacio: {n} en este punto', mp_cerrar:'Cerrar',
+  mp_mas:'+{n}', mp_mas_aria:'Hay {n} Xpacios más en este punto: elegir', mp_pista:'y {n} más en este punto · clic para elegir',
 });
 Object.assign(I18N.en, {
   previo_circuit:'DooH Preview', previo_stop:'Stop DooH preview', previo_tour_toggle:'Tour with DooH preview',
@@ -608,6 +611,8 @@ Object.assign(I18N.en, {
   pz_cta:'💼 Advertise here', pz_cta_aria:'Advertise here: {name}', pz_open_aria:'Open {name} · {nivel}',
   pz_directo:'Live', pz_dooh:'DooH preview', pz_circuito:'Circuit programme', pz_ninguno:'No preview yet',
   pz_cargando:'Loading the programme…', pz_ver:'▶ Watch it playing', pz_pieza:'▶ Play the spot', pz_parar:'⏸ Stop',
+  mp_titulo:'{n} venues at this spot', mp_aria:'Choose a venue: {n} at this spot', mp_cerrar:'Close',
+  mp_mas:'+{n}', mp_mas_aria:'{n} more venues at this spot: choose', mp_pista:'and {n} more at this spot · click to choose',
 });
 function t(key){ return (I18N[LANG] && I18N[LANG][key] != null) ? I18N[LANG][key] : (I18N.es[key] != null ? I18N.es[key] : key); }
 function tf(key, vars = {}) {
@@ -3124,10 +3129,12 @@ function addLocationsLayer() {
     const f = map.queryRenderedFeatures(e.point, {layers:['clusters']})[0];
     if (!f) return;
     const clusterId = f.properties.cluster_id;
-    map.getSource('locs').getClusterExpansionZoom(clusterId, (err, z) => {
-      if (err) return;
-      map.easeTo({center: f.geometry.coordinates, zoom: z, duration: 800});
-    });
+    // MapLibre 5 devuelve una promesa y ya no llama a la función (err, z): desde la subida de versión, el clic en un grupo
+    // no acercaba (visto al verificar FLT-102672). Vale para las dos firmas.
+    const acercar = z => { if (Number.isFinite(z)) map.easeTo({center: f.geometry.coordinates, zoom: z, duration: 800}); };
+    let r;
+    try { r = map.getSource('locs').getClusterExpansionZoom(clusterId, (err, z) => { if (!err) acercar(z); }); } catch (_) { r = null; }
+    if (r && typeof r.then === 'function') r.then(acercar).catch(() => {});
   });
   // Click en punto → flyToLocation. Si el punto define twinOnClick, además abre
   // su gemelo (p.ej. tour Matterport) en una pestaña nueva.
@@ -3137,6 +3144,9 @@ function addLocationsLayer() {
     const id = feature.properties.id;
     const loc = LOC_BY_ID.get(id);
     if (!loc) return;
+    // Varios Xpacios en el mismo punto (misma coordenada o a 8 px o menos): se elige en un selector (FLT-102672).
+    const grupo = xpaciosEnElPunto(e.point, loc, (e.features || []).map(f => f.properties && f.properties.id));
+    if (grupo.length > 1) { tipHover.reset(); abrirSelectorMismoPunto(grupo, loc.coords); return; }
     abrirXpacioDelMapa(loc);
     if (+feature.properties.incidentLevel > 0) showXpacioTip(e);
   });
@@ -3156,13 +3166,15 @@ function addLocationsLayer() {
     const live = +p.live || 0, total = +p.total || 0;
     const loc = LOC_BY_ID.get(p.id);
     const estado = loc ? inventoryBadgeHTML(loc) : '<span class="xp-idle">' + escHtml(t('evidence_unknown')) + '</span>';
-    const key = p.id+'|'+(incidentModeOn() ? 'on:'+(window.BugitoIncidentMap.version||0) : 'off')+'|'+LANG;
+    const otrosAqui = loc ? xpaciosEnElPunto(e.point, loc, (e.features || []).map(x => x.properties && x.properties.id)).length - 1 : 0;   // FLT-102672: «y N más en este punto»
+    const key = p.id+'|'+otrosAqui+'|'+(incidentModeOn() ? 'on:'+(window.BugitoIncidentMap.version||0) : 'off')+'|'+LANG;
     if (key===tipKey && xpPopup.isOpen()) return;
     tipKey = key;
     const html = '<div class="xp-name">' + escHtml(p.name || 'Xpacio') + '</div>'
       + '<div class="xp-circuit">' + escHtml(p.circuit || 'Retail') + '</div>'
       + (p.addr ? '<div class="xp-addr">' + escHtml(p.addr) + '</div>' : '')
       + '<div class="xp-meta">' + estado + ' · ' + total + ' ' + (total === 1 ? 'superficie' : 'superficies') + '</div>'
+      + (otrosAqui > 0 ? '<div class="xp-mas-aqui">' + escHtml(tf('mp_pista', {n: otrosAqui})) + '</div>' : '')
       + (incidentModeOn() ? window.IncidentMapTooltip.html(window.BugitoIncidentMap.states.get(String(p.id)), LANG) : '');
     xpPopup.setLngLat(f.geometry.coordinates).setHTML(html).addTo(map);
     // Keep the interactive tooltip above the independent inventory side panel.
@@ -3198,6 +3210,90 @@ function abrirXpacioDelMapa(loc) {
   if (loc.twinOnClick && twinTarget) { window.open(twinTarget, '_blank', 'noopener'); }
   flyToLocation(loc);
 }
+
+// ─── Elegir entre Xpacios del mismo punto (FLT-102672 · encargo #7155, 24-oct-2026) ─────────────────
+// En Plaça de la Vila de Gràcia, ipad-luna y canalkiosk-gracia comparten coordenada (y bcn-kiosk-016 está a ~7 m): el
+// clic abría el primero. mismo-punto.js agrupa y ordena; aquí, el popup de MapLibre anclado al punto, con teclado.
+// bajo: los ids cuyo punto pintado contiene el clic (e.features).
+function xpaciosEnElPunto(punto, ancla, bajo = null) {
+  const MP = window.AdmiraMismoPunto;
+  if (!MP || !ancla || !Array.isArray(ancla.coords) || !punto) return ancla ? [ancla] : [];
+  const r = MP.UMBRAL_PX + 10;
+  let feats = [];
+  try { feats = map.queryRenderedFeatures([[punto.x - r, punto.y - r], [punto.x + r, punto.y + r]], {layers: ['unclustered-point']}) || []; } catch (_) { feats = []; }
+  const a = map.project(ancla.coords);
+  const candidatos = feats.map(f => {
+    const l = f && f.properties && LOC_BY_ID.get(f.properties.id);
+    if (!l || !Array.isArray(l.coords)) return null;
+    const q = map.project(l.coords);
+    return {id: l.id, x: q.x, y: q.y, coords: l.coords, incidente: +f.properties.incidentLevel, nombre: l.name};
+  }).filter(Boolean);
+  const grupo = MP.agrupar(candidatos, {x: a.x, y: a.y, coords: ancla.coords}, {clic: punto, bajoClic: bajo}).map(c => LOC_BY_ID.get(c.id)).filter(Boolean);
+  return grupo.length ? grupo : [ancla];
+}
+let selectorPunto = null;
+function cerrarSelectorMismoPunto(devolverFoco = false) {
+  const s = selectorPunto; selectorPunto = null;
+  if (!s) return;
+  try { s.popup.remove(); } catch (_) {}
+  if (devolverFoco) { try { (s.origen && document.contains(s.origen) ? s.origen : map.getCanvas()).focus({preventScroll: true}); } catch (_) {} }
+}
+// locs: los Xpacios del punto, ya ordenados; coords: dónde se ancla; origen: el botón que lo abrió (para devolverle el foco).
+function abrirSelectorMismoPunto(locs, coords, origen = null) {
+  const MP = window.AdmiraMismoPunto, lista = (locs || []).filter(Boolean);
+  if (!lista.length) return;
+  if (!MP || !window.maplibregl || lista.length === 1) { abrirXpacioDelMapa(lista[0]); return; }
+  cerrarSelectorMismoPunto();
+  const Z = window.__previosZoom;
+  const items = lista.map(l => {
+    let n = null; try { n = Z && Z.nivelSiSeSabe ? Z.nivelSiSeSabe(l) : null; } catch (_) {}
+    return {id: l.id, nombre: l.name || l.id, tipo: inventoryKindLabel(l) || l.kind || '', nivel: n ? t('pz_' + n.nivel) : '', nivelClave: n ? n.nivel : ''};
+  });
+  const el = document.createElement('div');
+  el.className = 'xp-selector-caja';
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-label', tf('mp_aria', {n: items.length}));
+  el.innerHTML = MP.selectorHtml(items, {t, lang: LANG});
+  // El mapa no arrastra ni cierra el popup desde dentro.
+  ['mousedown', 'touchstart', 'pointerdown', 'dblclick', 'wheel'].forEach(ev => el.addEventListener(ev, e => e.stopPropagation(), {passive: true}));
+  // Que quepa: a lo ancho en el móvil, y arriba o abajo del punto según dónde haya más sitio libre (MapLibre no sabe que
+  // la cabecera y el selector de circuitos tapan la parte de arriba del mapa). Si son muchos, la lista hace scroll.
+  const ancho = Math.max(220, Math.min(320, (window.innerWidth || 1440) - 32));
+  const lienzo = map.getCanvas().getBoundingClientRect(), q = map.project(coords);
+  let techo = 0;
+  for (const sel of ['body > header', 'header', '#circuit-panel', '#target-panel']) {
+    const tapa = document.querySelector(sel);
+    if (!tapa || tapa.hidden || tapa.classList.contains('collapsed')) continue;
+    const r = tapa.getBoundingClientRect();
+    if (r.height > 0 && r.top < lienzo.top + lienzo.height / 2) techo = Math.max(techo, r.bottom - lienzo.top);
+  }
+  const arriba = q.y - techo - 24, abajo = lienzo.height - q.y - 72;
+  const anchor = arriba >= abajo ? 'bottom' : 'top';
+  const caja = el.querySelector('.xp-selector-lista');
+  if (caja) caja.style.maxHeight = Math.max(140, Math.min(360, (anchor === 'bottom' ? arriba : abajo) - 60)) + 'px';
+  const popup = new maplibregl.Popup({closeButton: false, closeOnClick: true, offset: 14, anchor, maxWidth: ancho + 'px', className: 'xp-selector', focusAfterOpen: false})
+    .setLngLat(coords).setDOMContent(el).addTo(map);
+  selectorPunto = {popup, el, origen};
+  popup.on('close', () => { if (selectorPunto && selectorPunto.popup === popup) selectorPunto = null; });
+  const botones = [...el.querySelectorAll('[data-xp-elegir]')];
+  let foco = 0;
+  const enfocar = i => { foco = i; botones.forEach((b, j) => { b.tabIndex = j === i ? 0 : -1; }); try { botones[i].focus({preventScroll: true}); } catch (_) {} };
+  el.addEventListener('keydown', ev => {
+    if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); cerrarSelectorMismoPunto(true); return; }
+    if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(ev.key)) { ev.preventDefault(); enfocar(MP.mover(foco, ev.key, botones.length)); }
+  });
+  el.addEventListener('click', ev => {
+    ev.stopPropagation();
+    if (ev.target.closest('[data-xp-cerrar]')) { cerrarSelectorMismoPunto(true); return; }
+    const b = ev.target.closest('[data-xp-elegir]'); if (!b) return;
+    const loc = LOC_BY_ID.get(b.dataset.xpElegir);
+    cerrarSelectorMismoPunto();
+    if (loc) abrirXpacioDelMapa(loc);   // flyToLocation: vuela, abre su ficha y marca el destino
+  });
+  enfocar(0);
+}
+// Un vuelo de cámara (o el giro del globo) cierra el selector; arrastrar con el ratón, no.
+map.on('movestart', e => { if (selectorPunto && (!e || !e.originalEvent)) cerrarSelectorMismoPunto(); });
 
 function setLayer(name) {
   if (name === currentLayer) return;
@@ -4155,6 +4251,13 @@ const previosZoom = window.AdmiraPreviosZoom && !map.sinWebGL ? window.AdmiraPre
   anunciar: loc => window.AdmiraComercial.anunciarAqui(loc.id),
   abrir: abrirXpacioDelMapa,
   verEmitiendo: loc => openPrevio(loc),
+  // «+N» de una tarjeta de punto compartido: el mismo selector que el clic en el punto (FLT-102672).
+  elegirEnPunto: (loc, ids, boton) => {
+    const MP = window.AdmiraMismoPunto, a = map.project(loc.coords);
+    const cand = ids.map(id => LOC_BY_ID.get(id)).filter(l => l && Array.isArray(l.coords)).map(l => { const q = map.project(l.coords); return {id: l.id, x: q.x, y: q.y, coords: l.coords, nombre: l.name}; });
+    const orden = MP ? MP.ordenar(cand, {x: a.x, y: a.y}) : cand;
+    abrirSelectorMismoPunto(orden.map(c => LOC_BY_ID.get(c.id)), loc.coords, boton);
+  },
 }) : null;
 window.__previosZoom = previosZoom;
 if (previosZoom) {

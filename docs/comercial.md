@@ -82,6 +82,29 @@ Carlos: «haz que la pantalla destino (en este caso era CanalKiosk Gràcia) parp
 - Tours and reduced-motion get the steady ring only. It is an HTML marker: no new layer, and the selection ring and the incident colours are untouched.
 - On phones the flight now pads for the bottom sheet, so the destination stays visible above the card.
 
+## Elegir entre Xpacios del mismo punto (24-oct-2026 · misión FLT-102672 · encargo #7155)
+
+En Plaça de la Vila de Gràcia, `ipad-luna` y `canalkiosk-gracia` comparten coordenada, y `bcn-kiosk-016` está a ~7 m. El clic en ese punto abría el primero sin dejar elegir.
+
+- **Clic en un punto** (`unclustered-point`): sale un selector anclado al punto (popup de MapLibre) si bajo el clic hay más de un Xpacio. Cuentan los de la misma coordenada, los que están a 8 px o menos y los que se solapan justo bajo el clic. Muestra el nombre, el tipo y, si ya se sabe sin pedir nada, el nivel de previo.
+  - Al elegir, `flyToLocation` abre la ficha y marca el destino.
+  - Con un solo Xpacio, abre directo, como antes.
+  - El selector se abre arriba o abajo del punto, según dónde haya sitio libre bajo la cabecera y el selector de circuitos. Si hay muchos Xpacios, la lista hace scroll.
+- **Clic en un grupo (cluster)**: vuelve a acercar el mapa. MapLibre 5 devuelve una promesa en `getClusterExpansionZoom` y la función `(err, z)` ya no se llamaba, así que el clic no hacía nada en main. Se vio al verificar este cambio.
+- **Orden**: primero la incidencia más grave (el semáforo de los owners, como el clic de siempre), luego lo más cercano al clic y luego por nombre.
+- **Accesible**: es un menú de botones. Flechas, Inicio y Fin mueven el foco, Intro elige y Escape cierra y devuelve el foco. Los botones miden al menos 44 px. Un vuelo de cámara lo cierra.
+- **Tarjetas de previo**: en un punto compartido, la tarjeta es de un Xpacio. Debajo del previo lleva su nombre y «+N», que abre el mismo selector. El clic en el previo abre el Xpacio de la tarjeta.
+- Una tarjeta ajena ya no tapa un punto compartido: hay que poder hacer clic en él para elegir. En Gràcia, la tarjeta de `altadis-bcn-002` tapaba el punto de CanalKiosk e `ipad-luna`.
+- Al pasar el ratón por un punto compartido, el tooltip añade «y N más en este punto · clic para elegir».
+- La parte pura (agrupar, ordenar, vecinos con rejilla, teclado y el HTML del selector) está en `mismo-punto.js`. Sellos `?v=20261024-mismo-punto-1` (app.js, previos-zoom.js, mismo-punto.js). Pruebas: `tests/mismo-punto.test.cjs`.
+
+### English
+
+- Clicking a dot shared by several venues (same coordinates, within 8 px, or overlapping right under the click) opens a small chooser anchored to the dot, with each venue’s name, type and, when already known, its preview level. Choosing one flies there, opens its card and marks the destination. A single venue opens straight away, and clusters still zoom in.
+- Keyboard: arrows, Home and End move between options, Enter chooses, Escape closes. Buttons are at least 44 px tall.
+- A preview card on a shared dot shows its venue’s name and a “+N” button that opens the same chooser. Other venues’ cards no longer cover a shared dot.
+- Clicking a cluster zooms in again. MapLibre 5 returns a promise from `getClusterExpansionZoom`, so the old callback never ran.
+
 ## Propuesta en PDF con marca (20-oct-2026, orden de Carlos)
 
 - Botón **«Propuesta en PDF»** (principal) junto a «Revisar en el planificador» y «Descargar texto», en cuanto hay propuesta.

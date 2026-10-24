@@ -185,12 +185,12 @@ test('app.js: sin peticiones nuevas para el directo (EMIT_NOW sale del sondeo de
   assert.match(app, /puedeAnunciar: \(\) => \{ const b = document\.getElementById\('p-comercial'\); return !!\(b && !b\.hidden && window\.AdmiraComercial/);
   assert.match(app, /anunciar: loc => window\.AdmiraComercial\.anunciarAqui\(loc\.id\)/);
   assert.match(app, /abrir: abrirXpacioDelMapa,/);
-  assert.match(app, /map\.on\('click', 'unclustered-point'[\s\S]{0,300}abrirXpacioDelMapa\(loc\);/, 'el clic en el punto y en el previo hacen lo mismo');
+  assert.match(app, /map\.on\('click', 'unclustered-point'[\s\S]{0,700}abrirXpacioDelMapa\(loc\);/, 'el clic en el punto y en el previo hacen lo mismo (con un solo Xpacio en el punto; con varios, el selector de FLT-102672)');
   // «Anunciarme aquí» de la tarjeta = el de la ficha (comercial.mjs).
   assert.match(read('comercial.mjs'), /anunciarAqui:id=>abrirConLocal\(id\)\};/);
   // Sólo admira.biz: el release lo publica en su lista cerrada, y el worker copia el módulo del endpoint.
   const html = read('index.html');
-  assert.ok(html.indexOf('previo.js?v=') < html.indexOf('previos-zoom.js?v=20261024-previos-zoom-idle-1') && html.indexOf('previos-zoom.js?v=') < html.indexOf('app.js?v='));
+  assert.ok(html.indexOf('previo.js?v=') < html.indexOf('previos-zoom.js?v=20261024-mismo-punto-1') && html.indexOf('previos-zoom.js?v=') < html.indexOf('app.js?v='));
   assert.match(read('server/biz-assets.mjs'), /'previos-zoom\.js',/);
   assert.match(read('scripts/build-biz-release.mjs'), /copyFileSync\(join\(root, 'server\/previo-circuito\.mjs'\), join\(out, 'server\/previo-circuito\.mjs'\)\);/);
 });
