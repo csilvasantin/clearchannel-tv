@@ -20,6 +20,7 @@
     ]
   },
   "novedades": [
+    "Compartir un Xpacio por WhatsApp, LinkedIn o Slack ya enseña su tarjeta: nombre y ciudad, tipo, pantallas, impresiones y CPM orientativos, y la foto de su fachada (Previo DooH) o lo que emite su circuito. admira.biz tiene su propio robots.txt y su sitemap con las páginas y los Xpacios, la portada se declara en español y su imagen para compartir ya no lleva cifras inventadas; la ilustración de la ficha, tampoco.",
     "La portada va más fluida: los puntos del mapa salen con el catálogo ligero y el catálogo completo (unos 10 MB) se baja y se prepara en segundo plano, sin congelar el mapa: en un portátil, de 1,4 s de bloqueo a ninguno; en un móvil lento simulado, de 10,5 s a 0,4 s. Abrir la ficha de un punto pide solo ese Xpacio, y el recorrido de campaña ya no descarga el catálogo entero para un local.",
     "Si en un mismo punto del mapa hay varios Xpacios (como CanalKiosk Gràcia y el iPad de su quiosco), el clic ya no abre el primero: sale un selector con sus nombres y tipos para elegir, también con el teclado. Las tarjetas de previo de un punto compartido dicen de qué Xpacio son y ofrecen «+N» para elegir.",
     "Al volar a un Xpacio (buscador, enlace, clic en un punto o en una tarjeta), su punto late unos segundos con un anillo blanco y magenta y luego queda marcado mientras su ficha siga abierta: se ve al momento cuál es el destino aunque haya otros puntos al lado. En el móvil, el destino queda a la vista por encima de la ficha.",

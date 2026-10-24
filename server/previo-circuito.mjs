@@ -88,6 +88,18 @@ function generar(tag, d, { conservarBuena = false } = {}) {
   return p;
 }
 
+// El póster del circuito si ya está en la Cache API (SEO y compartir, FLT-102678): sólo lee, nunca pregunta al Stock
+// (tarda ~22 s). Prefiere la pieza horizontal, que encaja mejor en una tarjeta de 1,91:1. → URL https o ''.
+export async function posterCircuitoEnCache(origen, tag, cache) {
+  if (!cache || !PREVIO_TAG.test(tag || '')) return '';
+  try {
+    const r = await cache.match(new Request(origen + PREVIO_CIRCUITO_PATH + '?tag=' + tag, { method: 'GET' }));
+    if (!r || r.headers.get(OK) === '0') return '';
+    const b = await r.json();
+    return https(b && b.horizontal && b.horizontal.poster) || https(b && b.poster);
+  } catch (_) { return ''; }
+}
+
 export function esPrevioCircuito(url) {
   return url.pathname === PREVIO_CIRCUITO_PATH && PREVIO_CIRCUITO_HOST.test(url.hostname);
 }

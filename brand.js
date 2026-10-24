@@ -51,7 +51,10 @@
       var next = replaceBrand(current);
       if (next !== current) element.setAttribute(attribute, next);
     });
-    if (element.tagName === 'LINK' && element.getAttribute('rel') === 'canonical') {
+    // Una canónica que ya es de esta marca se respeta: la de un Xpacio (/detail?loc=<id>, la pone el worker de admira.biz)
+    // lleva query y quitársela convertía los ~9.000 Xpacios en duplicados de /detail (FLT-102678).
+    if (element.tagName === 'LINK' && element.getAttribute('rel') === 'canonical'
+        && String(element.getAttribute('href') || '').indexOf(brand.origin + '/') !== 0) {
       element.setAttribute('href', brand.origin + window.location.pathname);
     }
     if (element.matches('[data-brand-name]')) element.textContent = brand.name;

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<script src="/brand.js?v=20260805-2"></script>
+<script src="/brand.js?v=20261024-seo-1"></script>
 <link rel="stylesheet" href="/brand.css?v=20260805-2">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Clear Channel | Detalle de Xpace</title>
@@ -39,7 +39,7 @@
   .metric span{display:block;margin-top:6px;color:var(--mut);font-family:monospace;font-size:11px;text-transform:uppercase;letter-spacing:.12em}
   .cockpit{position:relative;display:block;margin:0 22px 22px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#02080d}
   .cockpit:hover{border-color:var(--brand)}
-  .cockpit img{width:100%;display:block;aspect-ratio:16/7.7;object-fit:cover;opacity:.9}
+  .cockpit img{width:100%;height:auto;display:block;aspect-ratio:16/7.7;object-fit:cover;opacity:.9}
   .cockpit .badge{position:absolute;right:18px;top:18px;border:1px solid rgba(98,242,155,.45);background:rgba(5,22,15,.82);color:var(--good);border-radius:999px;padding:5px 10px;font-family:monospace;font-size:12px;font-weight:800;letter-spacing:.1em}
   .cockpit .enter{position:absolute;left:18px;bottom:18px;border:1px solid rgba(40,215,239,.45);background:rgba(4,16,23,.82);color:var(--ink);border-radius:8px;padding:9px 12px;font-size:13px;font-weight:800}
   .live-card{padding:20px}
@@ -110,7 +110,7 @@
         </div>
         <p class="evidence-note" id="catalogue-source"></p>
         <a class="cockpit" id="store-3d-link" href="store-3d.html?loc=admira-bcn" aria-label="Entrar en el mapa 3D del Xpace">
-          <img src="assets/admira-app-cockpit.webp" width="1672" height="941" loading="lazy" decoding="async" alt="Cockpit de retail media con Xpace, pantallas y pujas">
+          <img src="assets/xpacio-ilustrativo.webp" width="1600" height="770" loading="lazy" decoding="async" alt="Plano 3D ilustrativo de un Xpacio con sus pantallas">
           <span class="badge" id="scene-kind">Vista ilustrativa</span>
           <span class="enter" id="scene-open">Abrir vista ilustrativa</span>
         </a>
@@ -176,6 +176,10 @@ if (!['es','en'].includes(detailLang)) {
 if (!['es','en'].includes(detailLang)) detailLang = siteBrand.defaultLanguage === 'en' ? 'en' : 'es';
 document.documentElement.lang = detailLang;
 const T = (es, en) => detailLang === 'en' ? en : es;
+// Si el worker ya puso el título de este Xpacio («Nombre · ciudad | admira.biz», FLT-102678), la ficha lo conserva: es el
+// mismo para las personas, los buscadores y las tarjetas de compartir. Mientras se consulta el Xpacio, también.
+const xpacioSeo = document.querySelector('meta[name="admira:xpacio"]');
+const tituloSeo = xpacioSeo && xpacioSeo.content === locId ? document.title : '';
 let biddingState = 'loading';
 let biddingCount = 0;
 
@@ -213,14 +217,14 @@ function renderDetail() {
   setText('location-status', loc ? '' : locationState === 'loading'
     ? T('Consultando la ubicación solicitada…', 'Looking up the requested location…')
     : T('La ubicación solicitada no está disponible. Vuelve al mapa para elegir un espacio actual.', 'The requested location is unavailable. Return to the map to choose a current space.'));
-  if (!loc) { document.title = T('Ubicación no disponible', 'Location unavailable') + ' | ' + siteBrand.name; return; }
+  if (!loc) { document.title = tituloSeo && locationState === 'loading' ? tituloSeo : T('Ubicación no disponible', 'Location unavailable') + ' | ' + siteBrand.name; return; }
   const mapHref = 'index.html?locationId=' + encodeURIComponent(loc.id) + '&lang=' + detailLang;
   const store3dHref = 'store-3d.html?loc=' + encodeURIComponent(loc.id);
   const scene = evidence.scene(loc);
   document.getElementById('back-map').href = mapHref;
   document.getElementById('store-3d-link').href = store3dHref;
   document.getElementById('advanced-store-3d').href = store3dHref;
-  document.title = loc.name + ' | ' + siteBrand.name;
+  document.title = tituloSeo && loc.id === locId ? tituloSeo : loc.name + ' | ' + siteBrand.name;
 
   setText('kind', evidence.kindLabel(loc, detailLang));
   setText('name', loc.name);
