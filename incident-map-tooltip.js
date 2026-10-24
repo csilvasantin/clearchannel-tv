@@ -17,5 +17,16 @@
   const bind=node=>{element=node;if(!node||node.dataset.xpHoverBound)return;node.dataset.xpHoverBound='1';for(const e of ['mouseenter','focusin'])node.addEventListener(e,hold);for(const e of ['mouseleave','focusout'])node.addEventListener(e,hide)};
   return {hold,hide,bind,reset(){hold();element=null;remove()}};
  }
- const api={html,choose,hover};root.IncidentMapTooltip=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+ // Map colours by mode (FLT-102662). Off (public): circuit colours and emission ring exactly as before 857a8cf.
+ // On (owner verified by the server): the incident semaphore. Pure, so app.js and the tests share it.
+ const semaphore=key=>['match',['get',key],0,'#39d98a',1,'#ffd23f',2,'#ff4d4d','#80909c'];
+ function paint(enabled,palette=[]){
+  if(enabled){const point=semaphore('incidentLevel');return {point,cluster:semaphore('incidentMax'),pulseStroke:point,pulseWidth:2};}
+  const point=['coalesce',['get','color'],'#78f3ff'];
+  const cluster=['match',['get','circIdx']];(Array.isArray(palette)?palette:[]).forEach((c,i)=>cluster.push(i,c));cluster.push('#78f3ff');
+  return {point,cluster:cluster.length>3?cluster:'#78f3ff',
+   pulseStroke:['case',['==',['get','emit'],1],'#88ffaa',['==',['get','emit'],-1],'#ff4d4d',point],
+   pulseWidth:['case',['!=',['get','emit'],0],3,2]};
+ }
+ const api={html,choose,hover,paint};root.IncidentMapTooltip=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

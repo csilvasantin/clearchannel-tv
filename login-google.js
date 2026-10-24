@@ -134,6 +134,9 @@
       const session = await verify(token);
       try { root.localStorage.setItem(KEY, JSON.stringify({token, email: session.email})); } catch (_) {}
       signedIn({email: session.email});
+      // Aviso a quien dependa de la sesión (el semáforo de incidencias del mapa, FLT-102662). No lleva
+      // rol ni email: quien escuche vuelve a preguntar al servidor con el token guardado.
+      try { root.dispatchEvent(new CustomEvent('admira:session', {detail: {source: 'google'}})); } catch (_) {}
       toast(T('Sesión iniciada · ', 'Signed in · ') + session.email);
     } catch (e) {
       try { root.google.accounts.id.disableAutoSelect(); } catch (_) {}
