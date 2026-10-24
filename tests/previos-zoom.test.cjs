@@ -158,6 +158,8 @@ test('ficha: «Anunciarme aquí» a lo ancho y, justo DEBAJO, el previo grande; 
   assert.ok(reglas('aside.panel .actions.panel-navigation #p-comercial').some(d => /grid-column:1\/-1/.test(d)), 'CTA a lo ancho');
   assert.ok(reglas('.p-emite').some(d => /grid-column:1\/-1/.test(d)), 'previo a lo ancho');
   assert.ok(reglas('.p-emite[hidden]').some(d => /display:none/.test(d)));
+  // «Sin previo todavía» en la ficha: la etiqueta va en su línea, no flotando sobre «Anunciarme aquí».
+  assert.ok(reglas('.p-emite-nada .pz-etq').some(d => /position:static/.test(d)));
   // El bloque que pinta: previo, etiqueta y, en Previo DooH, «▶ Ver emitiendo» (abre openPrevio).
   const dooh = Z.fichaHtml(Z.nivelPrevio({ dooh: FACHADA, circuito: CIRCUITO }), { lang: 'es', ancho: 352 });
   assert.match(dooh, /^<span class="p-emite-media pz-media pz-media-dooh" style="height:198px">/);
