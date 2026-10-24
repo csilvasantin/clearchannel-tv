@@ -1,4 +1,4 @@
-import {parseIncidentOrder,incidentLevel,INCIDENT_COLORS} from './bugito-xpacios-core.mjs?v=20261015-xpacios-1';
+import {parseIncidentOrder,incidentLevel,ownerToken} from './bugito-xpacios-core.mjs?v=20261024-incidencias-owner-1';
 import {isPhysicalOrder} from './bugito-command-core.mjs?v=20261015-command-1';
 import {runPhysicalOrder} from './bugito-command-ui.mjs?v=20261015-command-1';
 const en=()=>document.documentElement.lang==='en';
@@ -62,21 +62,57 @@ if(form){
  order.value=order.value||new URLSearchParams(location.search).get('orden')||'';
  populate();
 }
+// Incident map mode (FLT-102662): OFF by default. The public map keeps circuit colours, shows no legend
+// and never reads the incident state. It turns ON only when GET /api/bugito/owner confirms an owner
+// session (Bugito login or the header «Iniciar sesión»); the browser holds no role of its own.
 // Canonical snapshot, shared by every marker and cluster. Preserve the last snapshot on errors.
 const mapPage=document.querySelector('#map');
 if(mapPage){
- const state={ready:false,stale:false,states:new Map(),version:0,level(id){return this.ready?incidentLevel(this.states.get(String(id))):-1;},poll:null};window.BugitoIncidentMap=state;
- const legend=document.createElement('aside');legend.id='incident-legend';legend.setAttribute('aria-live','polite');
- legend.innerHTML='<b data-bx-es="Incidencias" data-bx-en="Incidents">Incidencias</b><span><i style="background:#39d98a"></i><span data-bx-es="Sin incidencias" data-bx-en="No incidents">Sin incidencias</span></span><span><i style="background:#ffd23f"></i><span data-bx-es="Incidencia abierta" data-bx-en="Open incident">Incidencia abierta</span></span><span><i style="background:#ff4d4d"></i><span data-bx-es="Grave o total" data-bx-en="Severe or total">Grave o total</span></span><small></small>';
- document.body.append(legend);
- let running=false;
- state.poll=async()=>{if(running||document.hidden)return;running=true;try{
+ const state={enabled:false,ready:false,stale:false,states:new Map(),version:0,level(id){return this.enabled&&this.ready?incidentLevel(this.states.get(String(id))):-1;},poll:null};window.BugitoIncidentMap=state;
+ let legend=null,timer=null,running=false,verified='',checked='',sequence=0,hooked=false;
+ const emit=()=>window.dispatchEvent(new CustomEvent('bugito:incident-mode',{detail:{enabled:state.enabled}}));
+ const tokens=()=>{const list=[];
+  try{const t=window.BugitoSuper?.token();if(t)list.push(t);}catch{}
+  try{const s=window.AdmiraLoginGoogle?.stored(window.localStorage);if(s?.token)list.push(s.token);}catch{}
+  return list;};
+ state.poll=async()=>{if(!state.enabled||running||document.hidden)return;running=true;try{
   const r=await fetch('https://api.yokup.com/incident/map?t='+Date.now(),{cache:'no-store',signal:AbortSignal.timeout(12000)});const d=await r.json();
   if(!r.ok||d.ok!==true||!Array.isArray(d.locations)||!Number.isFinite(d.generated_at)||Date.now()-d.generated_at>60000)throw Error('unavailable');
   const next=new Map();for(const row of d.locations){if(typeof row.id!=='string'||!Number.isFinite(row.active)||!Number.isFinite(row.severe))throw Error('invalid');next.set(row.id,row);}
-  state.states=next;state.ready=true;state.stale=false;state.version++;legend.querySelector('small').textContent='';
- }catch{state.stale=true;legend.querySelector('small').textContent=T('Estado sin actualizar','Status not refreshed');}
- finally{running=false;window.dispatchEvent(new Event('bugito:map-status'));}};
- state.poll();setInterval(state.poll,15000);window.addEventListener('bugito:incident-created',()=>state.poll());window.addEventListener('focus',()=>state.poll());
+  if(!state.enabled)return;state.states=next;state.ready=true;state.stale=false;state.version++;const note=legend?.querySelector('small');if(note)note.textContent='';
+ }catch{if(state.enabled){state.stale=true;const note=legend?.querySelector('small');if(note)note.textContent=T('Estado sin actualizar','Status not refreshed');}}
+ finally{running=false;if(state.enabled)window.dispatchEvent(new Event('bugito:map-status'));}};
+ function enable(token){
+  verified=token;if(state.enabled)return;state.enabled=true;
+  legend=document.createElement('aside');legend.id='incident-legend';legend.setAttribute('aria-live','polite');
+  legend.innerHTML='<b data-bx-es="Incidencias" data-bx-en="Incidents">Incidencias</b><span><i style="background:#39d98a"></i><span data-bx-es="Sin incidencias" data-bx-en="No incidents">Sin incidencias</span></span><span><i style="background:#ffd23f"></i><span data-bx-es="Incidencia abierta" data-bx-en="Open incident">Incidencia abierta</span></span><span><i style="background:#ff4d4d"></i><span data-bx-es="Grave o total" data-bx-en="Severe or total">Grave o total</span></span><small></small>';
+  document.body.append(legend);translate();
+  emit();state.poll();timer=setInterval(state.poll,15000);
+ }
+ function disable(){
+  verified='';if(!state.enabled)return;state.enabled=false;
+  clearInterval(timer);timer=null;legend?.remove();legend=null;
+  state.ready=false;state.stale=false;state.states=new Map();state.version++;
+  emit();
+ }
+ async function refresh(){
+  const list=tokens(),key=list.join(' ');
+  if(!list.length){checked='';sequence++;disable();return;}
+  if(state.enabled&&list.includes(verified))return;
+  if(key===checked)return;
+  checked=key;const mine=++sequence;
+  const token=await ownerToken(list,(url,init)=>fetch(url,init));
+  if(mine!==sequence)return;
+  if(token)enable(token);else disable();
+ }
+ function hook(){
+  if(!hooked&&window.BugitoSuper?.onChange){hooked=true;window.BugitoSuper.onChange(()=>{checked='';refresh();});}
+  refresh();
+ }
+ window.addEventListener('admira:session',()=>{checked='';refresh();});
+ window.addEventListener('storage',e=>{if(e.key===null||e.key==='omnip-bo-gtoken'||e.key==='bugito-super-gtoken'){checked='';refresh();}});
+ window.addEventListener('bugito:incident-created',()=>state.poll());window.addEventListener('focus',()=>state.poll());
+ // bugito-super.js (defer) runs before this module; login-google.js runs after it, so the first check waits for the parsed document.
+ if(document.readyState==='complete')hook();else{window.addEventListener('DOMContentLoaded',hook,{once:true});window.addEventListener('load',hook,{once:true});}
 }
 translate();window.addEventListener('admira:lang',translate);

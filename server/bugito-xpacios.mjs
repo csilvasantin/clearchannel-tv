@@ -35,6 +35,12 @@ export async function handleBugitoXpacios(req,env,fetcher=fetch) {
  const url=new URL(req.url);
  if(!/^(?:www\.)?admira\.biz$|(?:^|\.)clearchannel-tv\.pages\.dev$|^localhost$|^127\.0\.0\.1$/.test(url.hostname))return reply({ok:false,error:'not_found'},404);
  try {
+  // Incident map mode (FLT-102662): the map semaphore is for verified owners only. Same authority as
+  // POST /incidents; the answer carries no identity and is never cached.
+  if(url.pathname.endsWith('/owner')){
+   if(req.method!=='GET')return reply({ok:false,error:'method_not_allowed'},405);
+   await authorized(req,fetcher);return reply({ok:true,owner:true});
+  }
   if((url.pathname.endsWith('/targets')&&req.method!=='GET')||(url.pathname.endsWith('/incidents')&&req.method!=='POST'))return reply({ok:false,error:'method_not_allowed'},405);
   if(!['GET','POST'].includes(req.method))return reply({ok:false,error:'method_not_allowed'},405);
   let b={};let actor='';

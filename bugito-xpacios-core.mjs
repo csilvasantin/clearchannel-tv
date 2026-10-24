@@ -35,3 +35,17 @@ export function equipmentKey(screen) {
  if(/^\d+$/.test(screen.number||''))return 'pantalla-'+screen.number;
  return normalize(screen.name).replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60);
 }
+
+// Incident map mode (FLT-102662). The page never decides who is an owner: it offers the Google ID
+// tokens it holds (Bugito, header login) to GET /api/bugito/owner and the server answers. Returns the
+// token the server accepted, or '' — any error, non-200 or unexpected body keeps the mode off.
+export async function ownerToken(tokens,fetcher,endpoint='/api/bugito/owner') {
+ for(const token of [...new Set((tokens||[]).filter(t=>typeof t==='string'&&t))]){
+  try{
+   const r=await fetcher(endpoint,{headers:{Authorization:'Bearer '+token},cache:'no-store'});
+   if(r.status!==200)continue;
+   const d=await r.json();if(d&&d.ok===true&&d.owner===true)return token;
+  }catch{}
+ }
+ return '';
+}

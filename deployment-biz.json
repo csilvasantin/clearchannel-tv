@@ -20,6 +20,7 @@
     ]
   },
   "novedades": [
+    "El mapa de la portada vuelve a los colores por circuito para todo el público. El semáforo de incidencias (verde, amarillo, rojo) y su leyenda solo salen con una sesión de owner que verifica el servidor; sin ella, la página no consulta el estado de incidencias.",
     "AdmiraXperience pasa a ser un proyecto publicitario de pantallas e hilo musical. Su primer Xpacio es la Sneaker Store de Santa Rosa 19: LCD horizontal, pantalla vertical de entrada, videowall Jordan e hilo musical (dado de alta, aún sin pista).",
     "Las oficinas de AdmiraXperience siguen en el mapa fuera del proyecto, y Admirito (Comercial) sale del menú superior: se abre desde «Anunciarme aquí» en cada Xpacio o con /comercial.",
     "Biz reconoce también la sesión oficial de agentes validada por el servidor y muestra el botón Experto; Comercial disponible para campañas y captación desde las cinco verticales.",

@@ -245,7 +245,7 @@ function sharedPlan(response, pathname) {
 export default {
   async fetch(request, env) {
     if (['/api/bugito/commands','/api/bugito/status','/api/bugito/launch'].includes(new URL(request.url).pathname)) return handleBugitoCommand(request,env);
-    if (['/api/bugito/targets','/api/bugito/incidents'].includes(new URL(request.url).pathname)) return handleBugitoXpacios(request,env);
+    if (['/api/bugito/targets','/api/bugito/incidents','/api/bugito/owner'].includes(new URL(request.url).pathname)) return handleBugitoXpacios(request,env);
     if (new URL(request.url).pathname === '/avatar-ask') return avatarAsk({request});
     if (new URL(request.url).pathname === '/api/demo-global') return handleGlobalDemo(request, env);
     if (new URL(request.url).pathname === '/api/demo-session') return handleDemoSession(request);

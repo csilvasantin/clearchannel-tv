@@ -2968,14 +2968,36 @@ function circuitColorIdx(label) {
 }
 function circuitColorHex(label) { return CIRCUIT_PALETTE[circuitColorIdx(label)]; }
 
+// Colores del mapa según el modo (FLT-102662). El público ve los colores por circuito, como antes de 857a8cf;
+// el semáforo de incidencias solo se enciende cuando el servidor confirma una sesión de owner
+// (bugito-xpacios-ui.mjs → /api/bugito/owner). Las expresiones salen de IncidentMapTooltip.paint.
+function incidentModeOn() { return !!(window.BugitoIncidentMap && window.BugitoIncidentMap.enabled === true); }
+function mapPaintByMode() { return window.IncidentMapTooltip.paint(incidentModeOn(), CIRCUIT_PALETTE); }
+
 function mapScopeColorExpression() {
-  // Estado canónico del establecimiento: verde, amarillo o rojo.
-  return ['match', ['get', 'incidentLevel'], 0, '#39d98a', 1, '#ffd23f', 2, '#ff4d4d', '#80909c'];
+  // Público: el color de su circuito. Owner: verde, amarillo o rojo según sus incidencias.
+  return mapPaintByMode().point;
 }
 
 function mapClusterColorExpression() {
-  return ['match', ['get', 'incidentMax'], 0, '#39d98a', 1, '#ffd23f', 2, '#ff4d4d', '#80909c'];
+  // Público: el color del circuito representativo (índice mínimo). Owner: la gravedad máxima del grupo.
+  return mapPaintByMode().cluster;
 }
+
+// Al encenderse o apagarse el modo, se repintan las capas en caliente y se regeneran los niveles.
+function applyIncidentMode() {
+  try {
+    const p = mapPaintByMode();
+    const set = (layer, prop, value) => { if (map.getLayer(layer)) map.setPaintProperty(layer, prop, value); };
+    set('clusters', 'circle-color', p.cluster);
+    set('locs-glow', 'circle-color', p.point);
+    set('unclustered-pulse', 'circle-stroke-color', p.pulseStroke);
+    set('unclustered-pulse', 'circle-stroke-width', p.pulseWidth);
+    set('unclustered-point', 'circle-color', p.point);
+  } catch (_) {}
+  try { updateLocationsSource(); } catch (_) {}
+}
+if (typeof window !== 'undefined') window.addEventListener('bugito:incident-mode', () => applyIncidentMode());
 
 /*
 function locationsGeoJSON_old() {
@@ -3053,9 +3075,10 @@ function addLocationsLayer() {
     paint:{
       'circle-color':'rgba(136,255,170,0)',
       'circle-radius':12,
-      // El anillo usa el mismo semáforo de incidencias que el punto.
-      'circle-stroke-color': mapScopeColorExpression(),
-      'circle-stroke-width':2,
+      // Público: verde=emitiendo, rojo=sin conexión y, si no, el color del circuito (como antes de 857a8cf).
+      // Owner: el mismo semáforo de incidencias que el punto.
+      'circle-stroke-color': mapPaintByMode().pulseStroke,
+      'circle-stroke-width': mapPaintByMode().pulseWidth,
       'circle-stroke-opacity':0.6,
       'circle-blur':0.25,
     },
@@ -3127,14 +3150,14 @@ function addLocationsLayer() {
     const live = +p.live || 0, total = +p.total || 0;
     const loc = LOC_BY_ID.get(p.id);
     const estado = loc ? inventoryBadgeHTML(loc) : '<span class="xp-idle">' + escHtml(t('evidence_unknown')) + '</span>';
-    const key = p.id+'|'+(window.BugitoIncidentMap?.version||0)+'|'+LANG;
+    const key = p.id+'|'+(incidentModeOn() ? 'on:'+(window.BugitoIncidentMap.version||0) : 'off')+'|'+LANG;
     if (key===tipKey && xpPopup.isOpen()) return;
     tipKey = key;
     const html = '<div class="xp-name">' + escHtml(p.name || 'Xpacio') + '</div>'
       + '<div class="xp-circuit">' + escHtml(p.circuit || 'Retail') + '</div>'
       + (p.addr ? '<div class="xp-addr">' + escHtml(p.addr) + '</div>' : '')
       + '<div class="xp-meta">' + estado + ' · ' + total + ' ' + (total === 1 ? 'superficie' : 'superficies') + '</div>'
-      + window.IncidentMapTooltip.html(window.BugitoIncidentMap?.states.get(String(p.id)), LANG);
+      + (incidentModeOn() ? window.IncidentMapTooltip.html(window.BugitoIncidentMap.states.get(String(p.id)), LANG) : '');
     xpPopup.setLngLat(f.geometry.coordinates).setHTML(html).addTo(map);
     // Keep the interactive tooltip above the independent inventory side panel.
     document.body.appendChild(xpPopup.getElement());
