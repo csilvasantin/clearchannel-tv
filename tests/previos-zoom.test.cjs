@@ -158,6 +158,8 @@ test('ficha: «Anunciarme aquí» a lo ancho y, justo DEBAJO, el previo grande; 
   assert.ok(reglas('aside.panel .actions.panel-navigation #p-comercial').some(d => /grid-column:1\/-1/.test(d)), 'CTA a lo ancho');
   assert.ok(reglas('.p-emite').some(d => /grid-column:1\/-1/.test(d)), 'previo a lo ancho');
   assert.ok(reglas('.p-emite[hidden]').some(d => /display:none/.test(d)));
+  // «Sin previo todavía» en la ficha: la etiqueta va en su línea, no flotando sobre «Anunciarme aquí».
+  assert.ok(reglas('.p-emite-nada .pz-etq').some(d => /position:static/.test(d)));
   // El bloque que pinta: previo, etiqueta y, en Previo DooH, «▶ Ver emitiendo» (abre openPrevio).
   const dooh = Z.fichaHtml(Z.nivelPrevio({ dooh: FACHADA, circuito: CIRCUITO }), { lang: 'es', ancho: 352 });
   assert.match(dooh, /^<span class="p-emite-media pz-media pz-media-dooh" style="height:198px">/);
@@ -188,23 +190,30 @@ test('app.js: sin peticiones nuevas para el directo (EMIT_NOW sale del sondeo de
   assert.match(read('comercial.mjs'), /anunciarAqui:id=>abrirConLocal\(id\)\};/);
   // Sólo admira.biz: el release lo publica en su lista cerrada, y el worker copia el módulo del endpoint.
   const html = read('index.html');
-  assert.ok(html.indexOf('previo.js?v=') < html.indexOf('previos-zoom.js?v=20261024-previos-zoom-1') && html.indexOf('previos-zoom.js?v=') < html.indexOf('app.js?v='));
+  assert.ok(html.indexOf('previo.js?v=') < html.indexOf('previos-zoom.js?v=20261024-previos-zoom-idle-1') && html.indexOf('previos-zoom.js?v=') < html.indexOf('app.js?v='));
   assert.match(read('server/biz-assets.mjs'), /'previos-zoom\.js',/);
   assert.match(read('scripts/build-biz-release.mjs'), /copyFileSync\(join\(root, 'server\/previo-circuito\.mjs'\), join\(out, 'server\/previo-circuito\.mjs'\)\);/);
 });
 
 // ── El controlador sobre un mapa y un DOM de mentira ──
-function montaje({ zoom = 15, puntos = [], locs = {}, cta = true } = {}) {
-  const pedidos = [], markers = [], consultas = { n: 0 };
+function montaje({ zoom = 15, puntos = [], locs = {}, cta = true, fuente = null, rapido = false } = {}) {
+  const pedidos = [], markers = [], consultas = { n: 0 }, oyentes = { sourcedata: new Set() };
   class El {
     constructor() { this.dataset = {}; this.className = ''; this.innerHTML = ''; this.classList = { toggle() {}, add() {}, remove() {} }; }
     addEventListener() {} querySelectorAll() { return []; } querySelector() { return null; } contains() { return false; }
   }
   const map = {
     z: zoom, getZoom() { return this.z; }, getLayer: () => ({}), getCanvas: () => ({ getBoundingClientRect: () => ({ left: 0, top: 0, width: 1440, height: 900 }) }),
-    queryRenderedFeatures() { consultas.n++; return puntos.map(p => ({ properties: { id: p.id } })); },
+    queryRenderedFeatures() { consultas.n++; return (fuente ? fuente.puntos : puntos).map(p => ({ properties: { id: p.id } })); },
     project: c => ({ x: c[0], y: c[1] }),
   };
+  // Fuente con estado (cargada o no, y sus puntos) y avisos `sourcedata`, como la de MapLibre.
+  if (fuente) {
+    map.isSourceLoaded = id => id === 'locs' && fuente.cargada;
+    map.on = (ev, fn) => { (oyentes[ev] || (oyentes[ev] = new Set())).add(fn); };
+    map.off = (ev, fn) => { oyentes[ev] && oyentes[ev].delete(fn); };
+  }
+  const avisar = ev => [...oyentes.sourcedata].forEach(fn => fn(ev));
   class Marker { constructor(o) { this.el = o.element; markers.push(this); } setLngLat(c) { this.c = c; return this; } addTo() { this.on = true; return this; } remove() { this.on = false; } }
   const c = Z.crear({
     map, maplibregl: { Marker }, document: { createElement: () => new El() },
@@ -212,8 +221,9 @@ function montaje({ zoom = 15, puntos = [], locs = {}, cta = true } = {}) {
     loc: id => locs[id], fuentes: l => ({ directo: null, dooh: l.previo || null, orientacion: '', tag: Z.etiquetaStock(l) }), t: null, lang: () => 'es',
     ocupado: () => false, activa: () => null, tapas: () => [], margenes: () => ({ top: 72, right: 8, bottom: 64, left: 8 }),
     puedeAnunciar: () => cta, anunciar: () => {}, abrir: () => {}, verEmitiendo: () => {},
+    ...(rapido ? { refrescoMs: 5, esperaMs: 20 } : {}),
   });
-  return { c, map, pedidos, markers, consultas };
+  return { c, map, pedidos, markers, consultas, oyentes, avisar };
 }
 const locs = {
   'alcampo-a': { id: 'alcampo-a', name: 'Alcampo A', coords: [700, 450], previo: FACHADA },
@@ -246,4 +256,66 @@ test('zoom de calle: un póster por hashtag (una vez), tarjetas con previo prime
   const sin = montaje({ zoom: 15, puntos: Object.values(locs), locs, cta: false });
   sin.c.calcular(); await new Promise(r => setTimeout(r, 0)); sin.c.calcular();
   assert.deepEqual(sin.c.estado().tarjetas.map(t => t.id), ['alcampo-a']);
+});
+
+// Fallo de producción del 24-oct (v.24.10.2026.r3.15:58): tras un jumpTo a zoom 14,2 no salía ninguna tarjeta hasta mover
+// el mapa. El moveend llegaba antes de que la fuente `locs` tuviera sus teselas: 0 puntos y nadie volvía a calcular.
+const espera = ms => new Promise(r => setTimeout(r, ms));
+test('primer cálculo sin puntos (fuente sin cargar): se reintenta al aviso de la fuente y salen las tarjetas', async () => {
+  const fuente = { cargada: false, puntos: [] };
+  const m = montaje({ zoom: 14.2, locs, fuente, rapido: true });
+  m.c.calcular();
+  assert.equal(m.c.estado().tarjetas.length, 0);
+  assert.equal(m.c.estado().esperandoFuente, true, 'queda esperando a la fuente');
+  assert.equal(m.oyentes.sourcedata.size, 1, 'un solo aviso armado');
+  m.c.calcular(); assert.equal(m.oyentes.sourcedata.size, 1, 'no se arma dos veces');
+  // Llegan las teselas: MapLibre avisa con sourcedata (isSourceLoaded) de la fuente locs.
+  fuente.cargada = true; fuente.puntos = Object.values(locs);
+  m.avisar({ sourceId: 'otra', isSourceLoaded: true });
+  assert.equal(m.c.estado().esperandoFuente, true, 'el aviso de otra fuente no cuenta');
+  m.avisar({ sourceId: 'locs', isSourceLoaded: true });
+  assert.equal(m.oyentes.sourcedata.size, 0, 'se desarma al cumplirse');
+  await espera(15);
+  assert.equal(m.c.estado().tarjetas.length, 3, 'sin mover el mapa');
+  assert.equal(m.c.estado().esperandoFuente, false);
+});
+
+test('si el aviso de la fuente ya pasó, el reintento por tiempo las saca igual', async () => {
+  const fuente = { cargada: true, puntos: [] };   // «cargada» pero aún sin pintar los puntos de este zoom
+  const m = montaje({ zoom: 14.2, locs, fuente, rapido: true });
+  m.c.calcular();
+  assert.equal(m.c.estado().tarjetas.length, 0); assert.equal(m.c.estado().esperandoFuente, true);
+  fuente.puntos = Object.values(locs);
+  await espera(60);
+  assert.equal(m.c.estado().tarjetas.length, 3);
+  assert.equal(m.c.estado().esperas, 0, 'con puntos, la cuenta vuelve a cero');
+});
+
+test('sin bucles: una zona sin puntos de verdad deja de reintentar a las ESPERA_MAX veces; alejar desarma', async () => {
+  const fuente = { cargada: true, puntos: [] };
+  const m = montaje({ zoom: 15, locs, fuente, rapido: true });
+  m.c.calcular();
+  await espera(400);
+  assert.equal(m.consultas.n, 1 + Z.ESPERA_MAX, 'una consulta y ' + Z.ESPERA_MAX + ' reintentos');
+  assert.equal(m.c.estado().esperandoFuente, false); assert.equal(m.oyentes.sourcedata.size, 0);
+  await espera(100); assert.equal(m.consultas.n, 1 + Z.ESPERA_MAX, 'y ahí se queda');
+  // Moverse (programar) vuelve a dar margen; alejar desarma el aviso pendiente.
+  const n = montaje({ zoom: 15, locs, fuente: { cargada: false, puntos: [] }, rapido: true });
+  n.c.calcular(); assert.equal(n.oyentes.sourcedata.size, 1);
+  n.map.z = 10; n.c.programar();
+  assert.equal(n.oyentes.sourcedata.size, 0); assert.equal(n.c.estado().esperandoFuente, false);
+});
+
+test('mientras la fuente recarga (catálogo, emisión) sin puntos a la vista, las tarjetas que hay se quedan', async () => {
+  const fuente = { cargada: true, puntos: Object.values(locs) };
+  const m = montaje({ zoom: 15, locs, fuente, rapido: true });
+  m.c.calcular(); await espera(0); m.c.calcular();
+  assert.equal(m.c.estado().tarjetas.length, 3);
+  fuente.cargada = false; fuente.puntos = [];
+  m.c.calcular();
+  assert.equal(m.c.estado().tarjetas.length, 3, 'no se borran por una recarga');
+  fuente.cargada = true; fuente.puntos = Object.values(locs);
+  m.avisar({ sourceId: 'locs', isSourceLoaded: true }); await espera(15);
+  assert.equal(m.c.estado().tarjetas.length, 3);
+  assert.equal(m.markers.filter(k => k.on).length, 3, 'las mismas, sin parpadeo');
 });

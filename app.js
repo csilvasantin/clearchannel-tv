@@ -3917,6 +3917,8 @@ function renderPanel(loc) {
   const comercialAqui = document.getElementById('p-comercial'); if (comercialAqui) comercialAqui.dataset.comercialLocal = loc.id;
   // Bajo «Anunciarme aquí», el previo grande de lo que emiten sus pantallas (FLT-102666, previos-zoom.js).
   try { if (window.__previosZoom) window.__previosZoom.ficha(loc, document.getElementById('p-emite')); } catch (_) {}
+  // La ficha de otro Xpacio quita el destino marcado (FLT-102668); la del mismo lo deja.
+  revisarDestino();
   document.getElementById('p-name').textContent = loc.name;
   document.getElementById('p-addr').textContent = loc.addr;
   document.getElementById('p-kind').textContent = inventoryKindLabel(loc);
@@ -4084,6 +4086,27 @@ function planoPageUrl(loc) {
   const m = String((loc && loc.plano) || '').match(/^https:\/\/(?:www\.)?admira\.biz\/data\/xpacios\/([a-z0-9][a-z0-9-]{0,79})\.json$/);
   return m ? '/plano.html?locationId=' + encodeURIComponent(m[1]) + '&lang=' + LANG : '';
 }
+
+// ─── El Xpacio destino parpadea en el mapa (FLT-102668 · encargo #7151, 24-oct-2026) ────────────────
+// Carlos: «haz que la pantalla destino (en este caso era CanalKiosk Gràcia) parpadee para que sepas cuál es
+// rápidamente». flyToLocation lo marca (buscador, enlace ?loc=, clic en un punto o en una tarjeta de previo, tours) y
+// destino-mapa.js pinta el anillo; aquí se quita al cerrar la ficha o al abrir la de otro Xpacio.
+const destinoMapa = window.AdmiraDestinoMapa && !map.sinWebGL ? window.AdmiraDestinoMapa.crear({map, maplibregl: window.maplibregl}) : null;
+window.__destinoMapa = destinoMapa;
+// window.__destinoMapa y no la constante: renderPanel puede llamarla antes de que esta línea se ejecute.
+function revisarDestino() {
+  const destino = window.__destinoMapa;
+  if (!destino) return;
+  destino.revisar({fichaAbierta: panel.classList.contains('open'), activa: activeLocation ? activeLocation.id : null});
+  // Ficha cerrada (y no en pleno vuelo a otro Xpacio): el mapa recupera todo su alto en el móvil.
+  try {
+    if (!panel.classList.contains('open') && !destino.volando() && typeof map.getPadding === 'function') {
+      const p = map.getPadding();
+      if (p && (p.top || p.bottom || p.left || p.right)) map.easeTo({padding: {...SIN_RELLENO}, duration: 350});
+    }
+  } catch (_) {}
+}
+if (destinoMapa) new MutationObserver(revisarDestino).observe(panel, {attributes: true, attributeFilter: ['class']});
 
 // ─── Previos al hacer zoom y en la ficha (FLT-102666 · encargo #7145, 24-oct-2026) ──────────────────
 // Carlos: «cuando hagamos zoom poder ver previos de lo que emiten las pantallas … y pon encima anunciarme aquí».
@@ -4498,7 +4521,20 @@ setInterval(pollPixerFeed, 5000);
 
 // ─── Destinations: prepare, approach, render, then open the panel ──
 function locationCamera(loc, bearing = -20, zoom) {
-  return {center:loc.coords, zoom:Number.isFinite(zoom) ? zoom : 16.8, pitch:currentView === '3d' ? 45 : 0, bearing};
+  return {center:loc.coords, zoom:Number.isFinite(zoom) ? zoom : 16.8, pitch:currentView === '3d' ? 45 : 0, bearing, padding:fichaPadding()};
+}
+// En el móvil la ficha es una hoja que tapa los dos tercios de abajo y el destino aterrizaba debajo, invisible: el
+// vuelo lleva un relleno abajo (la hoja) y arriba (la cabecera) para que el punto quede a la vista y se vea latir
+// (FLT-102668). En escritorio la ficha va a la derecha y el centro ya se ve: relleno cero. El relleno se queda en el
+// mapa mientras la ficha está abierta (los vuelos siguientes lo mantienen) y se quita al cerrarla (revisarDestino).
+const SIN_RELLENO = {top:0, bottom:0, left:0, right:0};
+function fichaPadding() {
+  if ((window.innerWidth || 1440) > 720) return {...SIN_RELLENO};
+  const alto = window.innerHeight || 800;
+  const hoja = Math.min(panel.offsetHeight || alto * .65, alto * .7);
+  const cab = document.querySelector('body > header, header');
+  const arriba = cab ? Math.max(0, cab.getBoundingClientRect().bottom) : 64;
+  return {top: Math.round(arriba), bottom: Math.round(hoja), left: 0, right: 0};
 }
 
 function syncCircuitOverview(){
@@ -4524,6 +4560,12 @@ function stopMapNavigation() {
 
 async function flyToLocation(loc, {automatic = false, bearing = -20, zoom, fichaAbierta = false} = {}) {
   if (!automatic) stopMapNavigation();
+  // El destino se marca en el mapa (FLT-102668, destino-mapa.js): late ~5 s al aterrizar y queda un anillo fijo mientras
+  // su ficha siga abierta; en los tours (automatic), sólo el anillo fijo. Cada vuelo lleva su ficha para que uno
+  // cancelado no quite el destino del vuelo que lo sustituye.
+  const vuelo = flyToLocation.vuelo = {};
+  try { window.__destinoMapa?.marcar(loc, {parpadeo: !automatic}); } catch (_) {}
+  const aterrizar = () => { try { window.__destinoMapa?.llegar(loc.id); revisarDestino(); } catch (_) {} };
   // Ficha por enlace (FLT-102664): si la ficha de este local ya está pintada, la cámara vuela detrás sin cerrarla.
   const yaAbierta = !!(fichaAbierta && activeLocation && activeLocation.id === loc.id && panel.classList.contains('open'));
   if (!yaAbierta) panel.classList.remove('open');
@@ -4537,15 +4579,22 @@ async function flyToLocation(loc, {automatic = false, bearing = -20, zoom, ficha
   // tardaba hasta 40 s o salía «Mapa incompleto» (Carlos, 21-oct-2026).
   const cam = locationCamera(loc, bearing, zoom);
   let abierta = yaAbierta;
-  const abrir = () => { if (abierta) return; abierta = true; renderPanel(loc); panel.classList.add('open'); };
+  const abrir = () => { if (abierta) return; abierta = true; renderPanel(loc); panel.classList.add('open'); aterrizar(); };
   const result = await tourCamera.navigate(cam, phase => {
     const key = phase === 'preparing' ? 'map_preparing' : phase === 'loading' ? 'map_loading' : 'status_landing';
     setStatus(t(key) + loc.name, true);
     if (phase === 'loading' && Math.abs(map.getZoom() - cam.zoom) < 0.1) abrir();
   });
-  if (result === 'cancelled') return false;
+  if (result === 'cancelled') {
+    // Vuelo cortado (la persona movió el mapa): si su ficha no llegó a abrirse, fuera el destino.
+    if (flyToLocation.vuelo === vuelo) { if (abierta) aterrizar(); else { try { window.__destinoMapa?.quitar(); } catch (_) {} } }
+    return false;
+  }
+  // Mapa incompleto: el destino se queda si su ficha se abrió y se quita si no (aterrizar → revisarDestino).
+  if (result !== 'ready') aterrizar();
   if (result !== 'ready') { setStatus(abierta ? loc.name : t('map_incomplete')); return abierta; }
   abrir();
+  aterrizar();
   setStatus(loc.name);
   return true;
 }

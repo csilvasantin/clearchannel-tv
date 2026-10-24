@@ -52,7 +52,8 @@ Carlos: «cuando hagamos zoom poder ver previos de lo que emiten las pantallas e
 - **Niveles, con la etiqueta que dice de dónde sale lo que se ve**: 1 «En directo» (la pantalla publica en `/signage/now` una pieza de menos de 170 s; se reutiliza el sondeo de `pollEmissionStatus`, sin peticiones nuevas); 2 «Previo DooH» (la foto de fachada ampliada alrededor de la pantalla, con el póster del circuito encajado en el `quad`); 3 «Programación del circuito» (el póster de la primera pieza del Stock con el hashtag del circuito); 4 nada: tarjeta compacta con «Sin previo todavía». Si una imagen falla, el Xpacio baja al nivel siguiente; la pantalla del Previo DooH tiene fondo de marca mientras llega el póster. Reparto el 24-oct-2026: 0 en directo (las 61 pantallas vinculadas daban `item:null`), 102 Previo DooH (Alcampo), 229 de programación (100 JTI, 110 Starbucks, 19 Altadis) y 8.809 sin previo.
 - **`GET /api/previo/circuito?tag=<hashtag>`** (`server/previo-circuito.mjs`, sólo en admira.biz, su vista previa y local): pregunta a `api.admira.store/stock/list?tag=…&type=video` (unos 22 s) y guarda la respuesta en la Cache API. Pasados 15 min se sirve al instante y se renueva por detrás; a las 24 h caduca; un fallo del Stock se recuerda 1 min y no pisa una copia buena. Tags `[a-z0-9_-]{1,40}` (si no, 400). Devuelve `{ok, tag, poster, video, title, vertical, horizontal}` o `{ok:true, poster:null}`. El previo grande de siempre (`previoPoster`) también lo usa ahora.
 - **Rendimiento**: con el zoom alejado, ninguna petición nueva (sólo el propio `previos-zoom.js`); en el mapa, ni iframes ni vídeo en autoplay (el vídeo, mudo, sólo en la tarjeta que se mira). Antirrebote de 180 ms tras `moveend`. Las tarjetas se ocultan durante los vuelos de cámara, el Tour DooH y el previo abierto. Elegir y montar las tarjetas cuesta ~1 ms con 263 puntos visibles (Barcelona, zoom 14).
-- Sellos `?v=20261024-previos-zoom-1` (app.js, comercial.mjs, previos-zoom.js). Pruebas: `tests/previos-zoom.test.cjs` y `tests/previo-circuito.test.mjs`.
+- **Llegar de golpe al zoom de calle (arreglo del 24-oct, v.24.10.2026.r3.15:58):** tras un `jumpTo`, un `flyTo` del buscador, el clic en un grupo o un enlace profundo, el `moveend` podía llegar antes de que la fuente `locs` tuviera sus teselas de ese zoom: `calcular()` veía 0 puntos y no salía ninguna tarjeta hasta mover el mapa. Ahora, si no hay puntos o la fuente no ha terminado de cargar, se espera al aviso `sourcedata` de `locs` (con `isSourceLoaded`) y, por si ya pasó, se reintenta cada 700 ms hasta 6 veces. No sirve `idle`: el latido de los puntos en vivo (`animatePulse`) repinta en cada fotograma y el mapa nunca llega a `idle`. Mientras la fuente recarga (llega el catálogo, cambia la emisión), las tarjetas que haya se quedan.
+- Sellos `?v=20261024-previos-zoom-1` (app.js, comercial.mjs) y `?v=20261024-previos-zoom-idle-1` (previos-zoom.js). Pruebas: `tests/previos-zoom.test.cjs` y `tests/previo-circuito.test.mjs`.
 
 ### English
 
@@ -62,6 +63,24 @@ Carlos: «cuando hagamos zoom poder ver previos de lo que emiten las pantallas e
 - **Levels, each labelled honestly:** “Live” (a fresh item on `/signage/now`), “DooH preview” (storefront photo with the circuit’s poster fitted to the screen), “Circuit programme” (poster of the first Stock item with the circuit hashtag) or a compact “No preview yet”. A failing image drops the venue to the next level.
 - **`GET /api/previo/circuito?tag=…`** caches the slow Stock answer (~22 s) at the edge for 15 minutes, then serves it instantly while refreshing in the background.
 - Zoomed out, the page makes no new requests. There are no iframes or autoplaying videos on the map.
+- **Arriving straight at street level** (jump, search, cluster click, deep link): if the dots are not loaded yet, the cards wait for the `locs` source to finish loading (or retry every 700 ms, up to 6 times) instead of staying hidden until the map moves.
+
+## El Xpacio destino parpadea en el mapa (24-oct-2026 · misión FLT-102668 · encargo #7151)
+
+Carlos: «haz que la pantalla destino (en este caso era CanalKiosk Gràcia) parpadee para que sepas cuál es rápidamente». Eligió «El punto en el mapa». CanalKiosk Gràcia está a ~200 m del MUPI «gracia» y en su mismo punto hay otros dos Xpacios (`ipad-luna`, `bcn-kiosk-016`): al aterrizar no se sabía cuál era el destino.
+
+- `flyToLocation` marca el destino (`destino-mapa.js`). Pasan por ahí el buscador, el enlace `?circuit=…&loc=…`, el clic en un punto o en el previo de una tarjeta y los tours.
+- Al aterrizar, el punto late 5 s: anillo blanco y magenta que parpadea y una onda que se agranda. Después queda un anillo blanco fijo mientras su ficha siga abierta. Al cerrar la ficha o abrir la de otro Xpacio, se quita.
+- En los tours, sólo el anillo fijo. Con «reducir movimiento» (`prefers-reduced-motion`), también.
+- Es un marcador HTML, no una capa: no toca la fuente `locs`, ni la selección (`selected-ring`, cian), ni el semáforo de incidencias. A zoom bajo queda sobre el grupo que contiene el punto. Sin bucles: animaciones CSS con vueltas contadas y un temporizador que lo pasa a fijo.
+- En el móvil la ficha tapaba el destino (aterrizaba en el centro, bajo la hoja). El vuelo lleva ahora un relleno abajo (la hoja) y arriba (la cabecera), y el punto queda a la vista. Al cerrar la ficha, el mapa recupera todo su alto. En escritorio, relleno cero.
+- Sellos `?v=20261024-destino-1` (app.js y destino-mapa.js). Pruebas: `tests/destino-mapa.test.cjs`.
+
+### English
+
+- When the map flies to a venue (search, `?loc=` link, clicking a dot or a preview card), its dot pulses for 5 seconds on arrival: a white and magenta ring plus an expanding wave. It then keeps a steady white ring while the venue card is open. Closing the card or opening another venue removes it.
+- Tours and reduced-motion get the steady ring only. It is an HTML marker: no new layer, and the selection ring and the incident colours are untouched.
+- On phones the flight now pads for the bottom sheet, so the destination stays visible above the card.
 
 ## Propuesta en PDF con marca (20-oct-2026, orden de Carlos)
 
