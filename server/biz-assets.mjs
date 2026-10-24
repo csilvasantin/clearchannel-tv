@@ -21,6 +21,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'previos-zoom.js',
   // El Xpacio destino parpadea en el mapa (FLT-102668).
   'destino-mapa.js',
+  // Elegir entre Xpacios del mismo punto (FLT-102672).
+  'mismo-punto.js',
   'index.html', 'app.js', 'incident-map-tooltip.js', 'planner-core.js', 'inventory-evidence.js', 'expert-commands.js', 'intro.js', 'detail.html',
   'walk.html', 'walk.mjs', 'walk-launch.mjs', 'walk-core.mjs', 'walk.css', 'help/index.html',
   // /redistribucion (FLT-102063): plano y obras del Xpacio; ▤ Subir plano (DCL-58288891486617b36ed8777d);

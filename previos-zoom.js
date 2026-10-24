@@ -17,6 +17,9 @@
 (function (root) {
   'use strict';
   const P = root.AdmiraPrevio || (typeof require === 'function' ? require('./previo.js') : null);
+  // Elegir entre Xpacios del mismo punto (FLT-102672): quién comparte sitio con la tarjeta (mismo-punto.js).
+  const MP = () => root.AdmiraMismoPunto || (typeof require === 'function' ? require('./mismo-punto.js') : null);
+  const PIE_ALTO = 24;                           // la fila «nombre · +N» de una tarjeta de punto compartido
 
   // Zoom de calle (MapLibre, teselas de 512 px): a 14 caben unos 5 km de ancho en 1440 px y ya se leen las calles; a
   // 15, unos 2,5 km. Con 14 se ven a la vez varios Alcampo de Zaragoza o los 9 Altadis de l'Eixample, y la tarjeta sigue
@@ -38,10 +41,12 @@
   const TEXTOS = {
     es: { pz_cta: '💼 Anunciarme aquí', pz_cta_aria: 'Anunciarme aquí: {name}', pz_open_aria: 'Abrir la ficha de {name} · {nivel}',
       pz_directo: 'En directo', pz_dooh: 'Previo DooH', pz_circuito: 'Programación del circuito', pz_ninguno: 'Sin previo todavía',
-      pz_cargando: 'Cargando la programación…', pz_ver: '▶ Ver emitiendo', pz_pieza: '▶ Ver la pieza', pz_parar: '⏸ Parar' },
+      pz_cargando: 'Cargando la programación…', pz_ver: '▶ Ver emitiendo', pz_pieza: '▶ Ver la pieza', pz_parar: '⏸ Parar',
+      mp_mas: '+{n}', mp_mas_aria: 'Hay {n} Xpacios más en este punto: elegir' },
     en: { pz_cta: '💼 Advertise here', pz_cta_aria: 'Advertise here: {name}', pz_open_aria: 'Open {name} · {nivel}',
       pz_directo: 'Live', pz_dooh: 'DooH preview', pz_circuito: 'Circuit programme', pz_ninguno: 'No preview yet',
-      pz_cargando: 'Loading the programme…', pz_ver: '▶ Watch it playing', pz_pieza: '▶ Play the spot', pz_parar: '⏸ Stop' },
+      pz_cargando: 'Loading the programme…', pz_ver: '▶ Watch it playing', pz_pieza: '▶ Play the spot', pz_parar: '⏸ Stop',
+      mp_mas: '+{n}', mp_mas_aria: '{n} more venues at this spot: choose' },
   };
 
   const https = u => (typeof u === 'string' && /^https:\/\/[^\s"'<>`]+$/.test(u)) ? u : '';
@@ -137,7 +142,8 @@
   // centro; con `prioridad` (0 antes que 1 y que 2), primero los que tienen previo y, entre ellos, los más cercanos: en el
   // centro de Zaragoza a zoom 14, los 3 más cercanos del móvil eran Correos y BBVA sin previo, con 30 Alcampo alrededor.
   function cruza(a, b, sep = 0) { return a.l < b.r + sep && b.l < a.r + sep && a.t < b.b + sep && b.t < a.b + sep; }
-  function cajaTarjeta(p, tarjeta) { return { l: p.x - tarjeta.w / 2, r: p.x + tarjeta.w / 2, t: p.y - tarjeta.base - tarjeta.h, b: p.y + 6 }; }
+  // p.extraAlto: la fila «nombre · +N» de un punto compartido hace la tarjeta más alta.
+  function cajaTarjeta(p, tarjeta) { return { l: p.x - tarjeta.w / 2, r: p.x + tarjeta.w / 2, t: p.y - tarjeta.base - tarjeta.h - (+p.extraAlto || 0), b: p.y + 6 }; }
   function elegirTarjetas(puntos, opciones = {}) {
     const ancho = +opciones.ancho || 0, alto = +opciones.alto || 0;
     const max = Math.max(0, opciones.max == null ? MAX_ESCRITORIO : +opciones.max);
@@ -146,6 +152,9 @@
     const tapas = Array.isArray(opciones.tapas) ? opciones.tapas.filter(Boolean) : [];
     const cx = opciones.centro ? opciones.centro[0] : ancho / 2, cy = opciones.centro ? opciones.centro[1] : alto / 2;
     const excluir = opciones.excluir ? new Set([].concat(opciones.excluir)) : null;
+    // evitar = [{id, x, y, r}]: puntos que una tarjeta ajena no debe tapar (los compartidos, FLT-102672: hay que poder
+    // hacer clic en ellos para elegir). La tarjeta de ese mismo punto sí puede estar encima de él.
+    const evitar = Array.isArray(opciones.evitar) ? opciones.evitar.filter(e => e && Number.isFinite(e.x) && Number.isFinite(e.y)) : [];
     const vistos = new Set(), candidatos = [];
     for (const p of puntos || []) {
       if (!p || p.id == null || vistos.has(p.id) || (excluir && excluir.has(p.id)) || !Number.isFinite(p.x) || !Number.isFinite(p.y)) continue;
@@ -153,6 +162,8 @@
       const r = cajaTarjeta(p, tarjeta);
       if (r.l < m.left || r.r > ancho - m.right || r.t < m.top || r.b > alto - m.bottom) continue;
       if (tapas.some(t => cruza(r, t))) continue;
+      const propios = new Set([String(p.id)].concat((p.compartidos || []).map(String)));
+      if (evitar.some(e => !propios.has(String(e.id)) && cruza(r, { l: e.x - (e.r || 10), r: e.x + (e.r || 10), t: e.y - (e.r || 10), b: e.y + (e.r || 10) }))) continue;
       candidatos.push({ p, r, d: Math.hypot(p.x - cx, p.y - cy), pr: Number.isFinite(+p.prioridad) ? +p.prioridad : 0 });
     }
     candidatos.sort((a, b) => a.pr - b.pr || a.d - b.d || String(a.p.id).localeCompare(String(b.p.id)));
@@ -210,17 +221,21 @@
     return '<span class="pz-etq pz-etq-' + nivel + '"><i aria-hidden="true"></i>' + esc(texto) + '</span>';
   }
   // Tarjeta del mapa: «Anunciarme aquí» ENCIMA del previo (si hay Comercial) y, debajo, el previo, que abre la ficha.
-  function tarjetaHtml(loc, n, { t, lang, cta = true, movil = false } = {}) {
+  // compartidos = cuántos Xpacios más hay en el mismo punto (FLT-102672): entonces, bajo el previo, el nombre del Xpacio de
+  // la tarjeta (para saber de cuál es) y «+N», que abre el selector del punto.
+  function tarjetaHtml(loc, n, { t, lang, cta = true, movil = false, compartidos = 0 } = {}) {
     const tx = textoPor(t, lang), name = (loc && (loc.name || loc.id)) || 'Xpacio', nivel = n && n.nivel || 'ninguno';
     const boton = cta ? '<button type="button" class="pz-cta" data-pz="cta" aria-label="' + esc(tx('pz_cta_aria', { name })) + '">' + esc(tx('pz_cta')) + '</button>' : '';
     const abrir = esc(tx('pz_open_aria', { name, nivel: tx(nivel === 'ninguno' && n && n.pendiente ? 'pz_cargando' : 'pz_' + nivel) }));
+    const pie = compartidos > 0 ? '<span class="pz-pie"><span class="pz-nombre" title="' + esc(name) + '">' + esc(name) + '</span>'
+      + '<button type="button" class="pz-mas" data-pz="mas" aria-label="' + esc(tx('mp_mas_aria', { n: compartidos })) + '">' + esc(tx('mp_mas', { n: compartidos })) + '</button></span>' : '';
     if (nivel === 'ninguno') {
-      return boton + '<button type="button" class="pz-previo pz-compacta" data-pz="abrir" aria-label="' + abrir + '">' + etiquetaHtml(n, tx) + '</button><span class="pz-pico" aria-hidden="true"></span>';
+      return boton + '<button type="button" class="pz-previo pz-compacta" data-pz="abrir" aria-label="' + abrir + '">' + etiquetaHtml(n, tx) + '</button>' + pie + '<span class="pz-pico" aria-hidden="true"></span>';
     }
     const caja = movil ? MEDIA_MOVIL : MEDIA;
     return boton + '<button type="button" class="pz-previo" data-pz="abrir" aria-label="' + abrir + '"' + (n.title ? ' title="' + esc(n.title) + '"' : '') + '>'
       + '<span class="pz-media pz-media-' + nivel + '" style="width:' + caja.w + 'px;height:' + caja.h + 'px">' + mediaHtml(n, caja) + '</span>'
-      + etiquetaHtml(n, tx) + '</button><span class="pz-pico" aria-hidden="true"></span>';
+      + etiquetaHtml(n, tx) + '</button>' + pie + '<span class="pz-pico" aria-hidden="true"></span>';
   }
   // Bloque de la ficha (va justo debajo de #p-comercial): el previo grande, su etiqueta y, si hay qué ver, un botón.
   // En Previo DooH, «▶ Ver emitiendo» abre el previo de siempre (openPrevio, con el canal deformado sobre la fachada).
@@ -243,7 +258,7 @@
   // deps: map, maplibregl, document, fetch, loc(id), fuentes(loc) → {directo, dooh, orientacion, tag}, t, lang(),
   // ocupado() (tour, previo abierto, vuelo), activa() (id con la ficha abierta), tapas() → [{l,t,r,b}], margenes(),
   // puedeAnunciar() (¿hay Comercial?), anunciar(loc), abrir(loc), verEmitiendo(loc), capa ('unclustered-point'),
-  // fuente ('locs').
+  // fuente ('locs'), elegirEnPunto(loc, ids, boton) (selector de Xpacios del mismo punto, FLT-102672).
   function crear(deps) {
     const d = Object.assign({ capa: 'unclustered-point', fuente: 'locs', fetch: root.fetch && root.fetch.bind(root), document: root.document }, deps || {});
     const map = d.map, doc = d.document;
@@ -283,6 +298,13 @@
       return f;
     }
     function nivelDe(loc, pedir) { return nivelPrevio(fuentesDe(loc, pedir), fallidas); }
+    // Sin pedir nada: el nivel si ya se sabe; null si depende de un circuito que aún no se ha consultado (selector).
+    function nivelSiSeSabe(loc) {
+      const f = fuentesDe(loc, false), n = nivelPrevio(f, fallidas);
+      if (n.nivel !== 'ninguno') return n;
+      const tag = f.tag != null ? f.tag : etiquetaStock(loc), c = tag ? circuitos.get(tag) : null;
+      return !tag || (c && c.estado === 'listo') ? n : null;
+    }
     // Barata (sin leer localStorage), para ordenar miles de puntos: 0 = tiene previo; 1 = aún no se sabe; 2 = no tiene.
     function prioridadDe(loc, tag) {
       if ((loc.previo && https(loc.previo.imagen) && !fallidas.has(loc.previo.imagen)) || (typeof d.enDirecto === 'function' && d.enDirecto(loc))) return 0;
@@ -314,10 +336,12 @@
       const p = v.play && v.play(); if (p && p.catch) p.catch(() => {});
     }
 
-    function montarTarjeta(id, loc, n, sitio) {
+    function montarTarjeta(id, loc, n, sitio, compartidos) {
       let t = tarjetas.get(id);
+      if (t && compartidos === undefined) compartidos = t.compartidos;   // repintado sin recalcular: los de antes
+      compartidos = Array.isArray(compartidos) ? compartidos : [];
       const cta = puedeAnunciar();
-      const f = firma(n, lang() + '|' + (movil() ? 'm' : 'd') + '|' + (cta ? 1 : 0) + '|' + (loc.name || ''));
+      const f = firma(n, lang() + '|' + (movil() ? 'm' : 'd') + '|' + (cta ? 1 : 0) + '|' + (loc.name || '') + '|' + compartidos.join(','));
       if (!t) {
         const el = doc.createElement('div');
         el.className = 'pz-tarjeta';
@@ -330,6 +354,7 @@
           const actual = tarjetas.get(id); const l = actual && actual.loc; if (!l) return;
           if (b.dataset.pz === 'cta' && puedeAnunciar()) { pararVideo(); d.anunciar(l); }
           else if (b.dataset.pz === 'abrir') { pararVideo(); d.abrir(l); }
+          else if (b.dataset.pz === 'mas' && typeof d.elegirEnPunto === 'function') { pararVideo(); d.elegirEnPunto(l, [id].concat(actual.compartidos || []), b); }
         });
         const mirar = () => { const actual = tarjetas.get(id); if (actual) ponerVideo(el.querySelector('.pz-media'), actual.nivel); };
         el.addEventListener('mouseenter', mirar);
@@ -340,14 +365,15 @@
         t = { marker, el, firma: '', loc, nivel: n };
         tarjetas.set(id, t);
       }
-      t.loc = loc; t.nivel = n;
+      t.loc = loc; t.nivel = n; t.compartidos = compartidos;
       t.el.classList.toggle('pz-sin-cta', !cta);
+      t.el.classList.toggle('pz-compartida', compartidos.length > 0);
       t.el.classList.toggle('pz-movil', movil());
       if (t.firma !== f) {
         if (videoActivo && t.el.contains(videoActivo)) pararVideo();
         t.firma = f;
         NIVELES.forEach(x => t.el.classList.toggle('pz-n-' + x, n.nivel === x));
-        t.el.innerHTML = tarjetaHtml(loc, n, { t: d.t, lang: lang(), cta, movil: movil() });
+        t.el.innerHTML = tarjetaHtml(loc, n, { t: d.t, lang: lang(), cta, movil: movil(), compartidos: typeof d.elegirEnPunto === 'function' ? compartidos.length : 0 });
         vigilar(t.el, () => refrescarTarjeta(id));
       }
       if (sitio) t.marker.setLngLat(loc.coords);
@@ -423,17 +449,21 @@
       // Los hashtags de lo que se ve (un puñado: hay ~20 en todo el catálogo) se piden una vez por sesión; al llegar,
       // se vuelve a elegir con lo que se sepa.
       tags.forEach(tag => circuito(tag));
+      // Puntos compartidos (FLT-102672): la tarjeta dice de quién es y ofrece «+N» para elegir entre los del mismo sitio.
+      const mp = typeof d.elegirEnPunto === 'function' ? MP() : null;
+      const evitar = [];
+      if (mp) { const v = mp.vecinos(puntos); for (const p of puntos) { const c = v.get(String(p.id)); if (c) { p.compartidos = c; p.extraAlto = PIE_ALTO; evitar.push({ id: p.id, x: p.x, y: p.y, r: 11 }); } } }
       const tapas = (d.tapas ? d.tapas() : []).map(t => ({ l: t.l - rect.left, r: t.r - rect.left, t: t.t - rect.top, b: t.b - rect.top }));
       const activa = d.activa ? d.activa() : null;
       const esMovil = movil();
       const elegidos = elegirTarjetas(puntos, { ancho: rect.width, alto: rect.height, max: esMovil ? MAX_MOVIL : MAX_ESCRITORIO,
-        tarjeta: esMovil ? TARJETA_MOVIL : TARJETA, margenes: d.margenes ? d.margenes() : null, tapas, excluir: activa });
+        tarjeta: esMovil ? TARJETA_MOVIL : TARJETA, margenes: d.margenes ? d.margenes() : null, tapas, excluir: activa, evitar });
       const quedan = new Set();
       for (const p of elegidos) {
         const loc = d.loc(p.id); const n = nivelDe(loc, true);
         if (n.nivel === 'ninguno' && !puedeAnunciar()) continue;   // sin Comercial, una tarjeta vacía no aporta
         quedan.add(p.id);
-        montarTarjeta(p.id, loc, n, true);
+        montarTarjeta(p.id, loc, n, true, p.compartidos || []);
       }
       [...tarjetas.keys()].forEach(id => { if (!quedan.has(id)) quitar(id); });
     }
@@ -487,11 +517,11 @@
     function estado() {
       return { tarjetas: [...tarjetas.entries()].map(([id, t]) => ({ id, nivel: t.nivel && t.nivel.nivel })), peticiones, circuitos: [...circuitos.entries()].map(([tag, c]) => ({ tag, estado: c.estado, poster: !!(c.datos && c.datos.poster) })), fallidas: fallidas.size, ficha: fichaEstado && fichaEstado.nivel ? fichaEstado.nivel.nivel : null, esperandoFuente: !!espera, esperas };
     }
-    return { programar, calcular, ocultar, vigilarZoom, actualizar, idioma, ficha, circuito, nivelDe, estado };
+    return { programar, calcular, ocultar, vigilarZoom, actualizar, idioma, ficha, circuito, nivelDe, nivelSiSeSabe, estado };
   }
 
   const api = { ZOOM_MIN, ESPERA_MS, ESPERA_MAX, MAX_ESCRITORIO, MAX_MOVIL, MOVIL_PX, EN_DIRECTO_MS, SEPARACION, TARJETA, TARJETA_MOVIL, MEDIA, MEDIA_MOVIL, ENDPOINT, STOCK_POSTER, NIVELES, TEXTOS,
-    etiquetaStock, orientacionDe, itemEnDirecto, piezaCircuito, nivelPrevio, elegirTarjetas, cajaTarjeta, encuadreDooh, mediaHtml, etiquetaHtml, tarjetaHtml, fichaHtml, firma, crear };
+    PIE_ALTO, etiquetaStock, orientacionDe, itemEnDirecto, piezaCircuito, nivelPrevio, elegirTarjetas, cajaTarjeta, encuadreDooh, mediaHtml, etiquetaHtml, tarjetaHtml, fichaHtml, firma, crear };
   root.AdmiraPreviosZoom = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window === 'undefined' ? globalThis : window);

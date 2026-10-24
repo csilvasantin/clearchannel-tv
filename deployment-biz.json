@@ -20,6 +20,7 @@
     ]
   },
   "novedades": [
+    "Si en un mismo punto del mapa hay varios Xpacios (como CanalKiosk Gràcia y el iPad de su quiosco), el clic ya no abre el primero: sale un selector con sus nombres y tipos para elegir, también con el teclado. Las tarjetas de previo de un punto compartido dicen de qué Xpacio son y ofrecen «+N» para elegir.",
     "Al volar a un Xpacio (buscador, enlace, clic en un punto o en una tarjeta), su punto late unos segundos con un anillo blanco y magenta y luego queda marcado mientras su ficha siga abierta: se ve al momento cuál es el destino aunque haya otros puntos al lado. En el móvil, el destino queda a la vista por encima de la ficha.",
     "Las tarjetas con el previo de cada Xpacio salen también al llegar de golpe al zoom de calle (buscador, enlace a un local, clic en un grupo de puntos), sin tener que mover el mapa.",
     "Al acercar el mapa a nivel de calle, cada Xpacio cercano enseña lo que emiten sus pantallas en una tarjeta con «Anunciarme aquí» encima: en directo, el Previo DooH sobre su fachada o la programación de su circuito, con la etiqueta que dice cuál es. En la ficha, bajo «Anunciarme aquí», el previo en grande. Al alejar, vuelven los puntos.",
