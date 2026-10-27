@@ -177,3 +177,7 @@ Al llegar el catálogo completo (`GET https://brain.digitalavatar.ai/locations`:
 
 - **Tabla de ubicaciones en el PDF (21-oct-2026):** foto de fachada (o «sin foto»), nombre con su id debajo y dirección (`addr` del catálogo, que viaja en el snapshot de `AdmiraCommercialContext` y en `proposal().locations`), además del mapa.
 - **Foto de fachada del Stock como respaldo (21-oct-2026):** si el local no tiene previo en el KV, la portada comprueba con HEAD `https://stock.admira.store/espacios/fachadas/<id>.webp` (o `.jpg`) al incorporar la selección (`AdmiraCommercialContext.prepararFotos`) y, si existe, el PDF la usa. Subir la foto a R2 `pixer-stock` con esa clave basta para que aparezca.
+
+## Mensaje sin selección (27-oct-2026)
+
+- «Preparar propuesta» sin haber incorporado ubicaciones decía «El catálogo todavía está cargando» aunque el catálogo ya estuviera cargado: `form.onsubmit` pasaba la selección nula al núcleo, y `proposal()` mira primero si el catálogo está listo. Ahora, sin selección, se le pasa `{ready: <estado real del catálogo>, items: []}`: con el catálogo listo pide «Selecciona ubicaciones en el mapa e incorpóralas a la propuesta»; sólo avisa de la carga si de verdad sigue cargando. Sello `?v=20261027-comercial-24` (comercial.mjs).
