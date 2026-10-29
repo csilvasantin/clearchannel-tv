@@ -20,6 +20,7 @@
     ]
   },
   "novedades": [
+    "El mapa público ya no enseña los equipos de pruebas de la flota (tablets, móviles y Mac dados de alta solos, con sus coordenadas): salen solo con la sesión de owner que verifica el servidor. Los quioscos de Gràcia, Jardinets y Lesseps siguen a la vista.",
     "Las direcciones de la ficha, las tarjetas, el buscador y la lista de cada circuito ya no enseñan etiquetas de OpenStreetMap como «post_office» o «parcel_locker». Queda la dirección útil, y «Dirección por confirmar» cuando el catálogo no la trae, como en las oficinas de Correos o en las de BBVA que solo decían «España».",
     "«Otros retail físicos» ya solo tiene locales: los 28 equipos de la flota dados de alta solos (tablets, móviles y Mac de pruebas) dejan de contar como retail en venta. Siguen en el mapa.",
     "Backoffice: «☁ Publicar al sitio» sube solo tus cambios sobre el catálogo de ese momento y respeta lo que otros cambiaron mientras editabas, como las altas de equipos o los buzones de Correos retirados. Si no ha podido leer el catálogo publicado, no publica.",
