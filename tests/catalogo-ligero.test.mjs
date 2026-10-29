@@ -196,7 +196,7 @@ test('D · walk.mjs y detail.html no bajan el catálogo entero; walk.html pide l
   assert.doesNotMatch(detail, /loadOmnipLocationsAsync/);
   assert.match(detail, /window\.loadOmnipLocationDetail\?\.\(locId, 4500\)/);
   assert.match(read('walk.html'), /walk\.mjs\?v=20261006-experto-tecla-1&amp;evidence=20261010-1&amp;catalogo=20261024-1/);
-  for (const p of ['index.html', 'detail.html', 'walk.html', 'backoffice.html', 'store-3d.html', 'parrilla/index.html']) assert.match(read(p), /locations\.js\?v=20261024-catalogo-ligero-1/, p);
+  for (const p of ['index.html', 'detail.html', 'walk.html', 'backoffice.html', 'store-3d.html', 'parrilla/index.html']) assert.match(read(p), /locations\.js\?v=20261029-estado-programado-1/, p);
   assert.match(read('index.html'), /<script defer src="app\.js\?v=20261024-catalogo-ligero-1"><\/script>/);
 });
 
