@@ -2,7 +2,7 @@ import { handleBugitoXpacios } from './server/bugito-xpacios.mjs';
 import { handleBugitoCommand } from './server/bugito-command.mjs';
 import {clearChannelNativePath,CC_NATIVE_PREFIX} from './server/native-clear-channel.mjs';
 import { handleOrders } from './server/orders.mjs';
-import { handleDemoSession } from './server/demo-session.mjs';
+import { handleDemoSession, handleRegistro } from './server/demo-session.mjs';
 import {handleGlobalDemo} from './server/global-demo.mjs';
 import {onRequest as avatarAsk} from './avatar-ask.js';
 import { bizAssetPath, BIZ_ASSET_PREFIX, suiteCanonicalURL } from './server/biz-assets.mjs';
@@ -260,6 +260,8 @@ export default {
     if (new URL(request.url).pathname === '/avatar-ask') return avatarAsk({request});
     if (new URL(request.url).pathname === '/api/demo-global') return handleGlobalDemo(request, env);
     if (new URL(request.url).pathname === '/api/demo-session') return handleDemoSession(request);
+    // Registro para ver Xpacios privados (29-oct-2026): cualquier cuenta de Google verificada, sin backoffice ni demos.
+    if (new URL(request.url).pathname === '/api/registro') return handleRegistro(request);
     if (new URL(request.url).pathname.startsWith('/api/orders')) return handleOrders(request, env);
     var url = new URL(request.url);
     // robots.txt y sitemaps propios de admira.biz (FLT-102678); clearchannel.tv sigue con los suyos.

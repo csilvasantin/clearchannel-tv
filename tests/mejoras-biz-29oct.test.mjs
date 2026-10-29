@@ -51,7 +51,7 @@ test('1 · el backoffice sólo publica con el catálogo del KV como base, y part
   assert.match(pub, /if \(!catalogoBase\) \{/, 'sin base no publica');
   assert.match(pub, /const ahora = await window\.loadOmnipLocationsAsync\(20000\);\s*if \(!ahora \|\| ahora\.source !== 'kv'\) throw/);
   assert.match(pub, /window\.rebaseOmnipLocations\(catalogoBase, locations,/);
-  assert.match(pub, /window\.publishOmnipLocations\(r\.locations, token\)/);
+  assert.match(pub, /window\.publishOmnipLocations\(r\.locations, token, quitar\)/);
   assert.doesNotMatch(pub, /publishOmnipLocations\(locations, token\)/, 'ya no sube su copia entera');
 });
 

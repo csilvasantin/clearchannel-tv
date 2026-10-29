@@ -89,8 +89,9 @@ test('B · loadOmnipLocationsInWorker junta los trozos, devuelve la firma y borr
   localStorage.mem.set('omnip-locations', '[]');
   const res = await win.loadOmnipLocationsInWorker({ chunk: 500, onChunk: n => avances.push(n) });
   assert.equal(creados.length, 1);
-  assert.equal(creados[0].url, '/catalogo-worker.js?v=20261024-catalogo-ligero-1');
-  assert.deepEqual({ ...creados[0].msg }, { api: API, locationsSrc: 'https://www.admira.biz/locations.js?v=x', timeoutMs: 20000, chunk: 500 });
+  assert.equal(creados[0].url, '/catalogo-worker.js?v=20261029-xpacios-privados-1');
+  // token: la sesión de Google para los Xpacios privados (29-oct-2026); sin sesión, vacío.
+  assert.deepEqual({ ...creados[0].msg }, { api: API, locationsSrc: 'https://www.admira.biz/locations.js?v=x', timeoutMs: 20000, chunk: 500, token: '' });
   assert.deepEqual(avances, [500, 1000, 1203], 'tres trozos');
   assert.equal(res.locations.length, 1203); assert.equal(res.locations[1202].id, 'p1202');
   assert.equal(res.signature, 'u2|1203|p0|p1202|999'); assert.equal(res.via, 'worker'); assert.equal(res.updatedAt, 'u2');
@@ -196,8 +197,8 @@ test('D · walk.mjs y detail.html no bajan el catálogo entero; walk.html pide l
   assert.doesNotMatch(detail, /loadOmnipLocationsAsync/);
   assert.match(detail, /window\.loadOmnipLocationDetail\?\.\(locId, 4500\)/);
   assert.match(read('walk.html'), /walk\.mjs\?v=20261006-experto-tecla-1&amp;evidence=20261010-1&amp;catalogo=20261024-1/);
-  for (const p of ['index.html', 'detail.html', 'walk.html', 'backoffice.html', 'store-3d.html', 'parrilla/index.html']) assert.match(read(p), /locations\.js\?v=20261029-mejoras-biz-1/, p);
-  assert.match(read('index.html'), /<script defer src="app\.js\?v=20261029-flota-owner-1"><\/script>/);
+  for (const p of ['index.html', 'detail.html', 'walk.html', 'backoffice.html', 'store-3d.html', 'parrilla/index.html']) assert.match(read(p), /locations\.js\?v=20261029-xpacios-privados-1/, p);
+  assert.match(read('index.html'), /<script defer src="app\.js\?v=20261029-xpacios-privados-1"><\/script>/);
 });
 
 // E · las reglas de circuito y los circuitos, con el código de app.js sobre el bundle.

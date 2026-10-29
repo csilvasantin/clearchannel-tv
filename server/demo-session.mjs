@@ -27,24 +27,37 @@ export const DEMOS = [
 // Alsea México y, como ella, Altadis España (DCL-a6cb621be0ce5932f50960de). Las demás siguen siendo solo de las
 // dos identidades de Carlos.
 const OPEN_DEMOS = new Set(['alsea-mexico', 'altadis-espana']);
+const googleClaimsOk = (claims, now) => !!claims && GOOGLE_CLIENT_IDS.has(claims.aud) && ['accounts.google.com', 'https://accounts.google.com'].includes(claims.iss) && !!claims.sub && Number.isFinite(Number(claims.exp)) && Number(claims.exp) * 1000 > now && [true, 'true'].includes(claims.email_verified);
 export function sessionFromClaims(claims, now = Date.now()) {
-  if (!claims || !GOOGLE_CLIENT_IDS.has(claims.aud) || !['accounts.google.com', 'https://accounts.google.com'].includes(claims.iss) || !claims.sub || !Number.isFinite(Number(claims.exp)) || Number(claims.exp) * 1000 <= now || ![true, 'true'].includes(claims.email_verified)) return null;
+  if (!googleClaimsOk(claims, now)) return null;
   const email = String(claims.email || '').toLowerCase();
   // Carlos explicitly authorized this verified identity for catalogue editing.
   const canManageCatalog = email.endsWith('@admira.com') || email === 'csilvasantin@gmail.com';
   if (!canManageCatalog && !DEMO_EMAILS.has(email)) return null;
   return { email, expiresAt: Number(claims.exp) * 1000, canManageCatalog, demos: DEMO_EMAILS.has(email) ? DEMOS : DEMOS.filter(d => OPEN_DEMOS.has(d.id)) };
 }
+// Registro (Xpacios privados, Carlos 29-oct-2026): cualquier cuenta de Google verificada entra en admira.biz como
+// registrada y ve los Xpacios privados a los que tiene acceso (eso lo decide la API del catálogo con el mismo token).
+// Es una puerta aparte a propósito: no abre el backoffice, ni las demos, ni el semáforo de incidencias, que siguen en
+// sessionFromClaims. Google se comprueba igual: audience, issuer, caducidad y email verificado.
+export function registroFromClaims(claims, now = Date.now()) {
+  if (!googleClaimsOk(claims, now)) return null;
+  const email = String(claims.email || '').toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return null;
+  return { email, expiresAt: Number(claims.exp) * 1000, registrado: true };
+}
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Vary': 'Authorization' } });
-export async function handleDemoSession(request, fetcher = fetch) {
+async function verify(request, fetcher, fromClaims) {
   if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
   const token = (request.headers.get('Authorization') || '').match(/^Bearer ([^\s]+)$/)?.[1];
   if (!token || token.length > 8192) return json({ error: 'unauthorized' }, 401);
   try {
     const response = await fetcher('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(token), { signal: AbortSignal.timeout(8000) });
     if (!response.ok) return json({ error: 'unauthorized' }, 401);
-    const session = sessionFromClaims(await response.json());
+    const session = fromClaims(await response.json());
     if (!session) return json({ error: 'unauthorized' }, 401);
     return json(session);
   } catch { return json({ error: 'verification_unavailable' }, 503); }
 }
+export const handleDemoSession = (request, fetcher = fetch) => verify(request, fetcher, sessionFromClaims);
+export const handleRegistro = (request, fetcher = fetch) => verify(request, fetcher, registroFromClaims);

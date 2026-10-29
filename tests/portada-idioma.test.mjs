@@ -59,7 +59,7 @@ test('con sesión, ⌘ vuelve a la portada y la pastilla de idioma se va (el idi
   assert.doesNotMatch(portada, /\n\s*#header-expert-toggle\{display:none!important\}/, 'ya no se oculta ⌘ siempre');
   assert.match(portada, /id="lang-switch"[^>]*>[\s\S]{0,200}id="lang-toggle"/, 'el idioma sigue en ☰ Opciones');
   assert.match(galaxia, /regla\.textContent = 'html\.admira-con-sesion #header-lang-toggle\{display:none!important\}'/, 'páginas interiores: la misma barra');
-  assert.match(portada, /login-google\.js\?v=20261024-incidencias-owner-1/);   // 24-oct: avisa con admira:session al entrar (semáforo de incidencias solo para owners)
+  assert.match(portada, /login-google\.js\?v=20261029-xpacios-privados-1/);   // 29-oct: entra como registrada cualquier cuenta de Google (Xpacios privados); sigue avisando con admira:session
 });
 
 test('la portada, login-google.js y la cabecera común deciden igual si hay sesión, antes de pintar', () => {

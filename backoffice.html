@@ -9,7 +9,7 @@
 <meta name="description" content="Backoffice para dar de alta gemelos digitales (Xpaces + surfaces) en el mapa de Clear Channel.">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script src="locations.js?v=20261029-mejoras-biz-1"></script>
+<script src="locations.js?v=20261029-xpacios-privados-1"></script>
 <script src="https://accounts.google.com/gsi/client" async></script>
 <style>
   :root{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--warn:#ff8866;--danger:#ff4f5e;--card:#0a1620;--card2:#0d1c28;--line:rgba(120,243,255,.18)}
@@ -186,7 +186,7 @@ window.ADMIRA_SHELL = {
   }],
 };
 </script>
-<script defer src="/galaxy-shell.js?v=20261020-sesion-1"></script>
+<script defer src="/galaxy-shell.js?v=20261029-xpacios-privados-1"></script>
 </head>
 <body>
 
@@ -327,6 +327,11 @@ window.ADMIRA_SHELL = {
       <fieldset>
         <legend data-i18n="legend_twin">Gemelo Digital</legend>
         <div class="row"><label for="f-xpace" data-i18n="label_xpace">Xpacio asociado</label><input id="f-xpace" type="url" placeholder="https://www.xpaceos.com/xpacios/…"></div>
+        <!-- Xpacios públicos y privados (29-oct-2026). Es de la ubicación, no del gemelo: un MUPI, una marquesina o un autobús
+             sin Xpacio asociado en admira.store también pueden ser privados. «Privado» sólo se ofrece si la API ya los filtra. -->
+        <div class="row"><label for="f-visibility" data-i18n="label_visibility">Visibilidad</label><select id="f-visibility"><option value="publico" data-i18n="vis_public">Público · lo ve todo el mundo y se comercializa</option><option value="privado" data-i18n="vis_private">Privado · solo con registro</option></select></div>
+        <div class="row" id="f-access-row" style="align-items:flex-start" hidden><label for="f-access" data-i18n="label_access">Acceso</label><textarea id="f-access" rows="3" data-i18n-ph="access_ph" placeholder="Vacío: cualquiera con registro. Si no, emails o dominios, uno por línea:&#10;ana@marca.com&#10;@marca.com" style="flex:1;min-width:0;font-family:inherit;font-size:13px;line-height:1.5;padding:8px 10px;border-radius:8px;background:rgba(2,8,13,.6);color:var(--ink);border:1px solid var(--line);resize:vertical"></textarea></div>
+        <div class="row" id="f-visibility-note" hidden><span style="font-size:12px;color:var(--muted,#8aa)" data-i18n="vis_unavailable">«Privado» saldrá cuando la API del catálogo separe públicos y privados.</span></div>
         <p class="mini-note" data-i18n="xpace_note">URL del Xpacio en XpaceOS. Déjala vacía para ocultar el botón de gemelo digital.</p>
         <div class="row"><label for="f-music" data-i18n="label_music">Hilo musical</label><input id="f-music" type="text" placeholder="lounge · techno · pop · flamenco · seoul · trap"></div>
         <div class="row"><label for="f-cameras" data-i18n="label_cameras">Cámaras</label><label style="display:flex;align-items:center;gap:8px;font-weight:normal;cursor:pointer"><input id="f-cameras" type="checkbox" style="width:auto"> <span data-i18n="cameras_note">El punto tiene cámaras (LiveCam)</span></label></div>
@@ -396,7 +401,7 @@ const I18N = {
     central_title:'Proyectos y locales · AdmiraNext', central_intro:'Consulta los proyectos autorizados y sus gemelos desde la gestión central de usuarios.',
     central_connect:'Conectar con AdmiraNext', central_refresh:'Actualizar', central_disconnect:'Desconectar',
     central_manage:'Gestionar proyectos, locales y permisos ↗', central_api:'Contrato API ES / EN ↗',
-    nav_demos:'Mis demos', demo_title:'Demos de clientes', demo_cafebreria:'Cafebrería · Proyecto independiente', demo_map:'Ver ficha', demo_tour:'Tour DooH', demo_overview:'Visión general', demo_twin:'Ver Gemelo Digital ↗', demo_note:'Escenarios de demostración. Abrir el gemelo no confirma emisión en dispositivos físicos.', label_xpace:'Xpacio asociado', xpace_note:'URL del Xpacio en XpaceOS. Déjala vacía para ocultar el botón de gemelo digital.',
+    nav_demos:'Mis demos', demo_title:'Demos de clientes', demo_cafebreria:'Cafebrería · Proyecto independiente', demo_map:'Ver ficha', demo_tour:'Tour DooH', demo_overview:'Visión general', demo_twin:'Ver Gemelo Digital ↗', demo_note:'Escenarios de demostración. Abrir el gemelo no confirma emisión en dispositivos físicos.', label_xpace:'Xpacio asociado', label_visibility:'Visibilidad', vis_public:'Público · lo ve todo el mundo y se comercializa', vis_private:'Privado · solo con registro', label_access:'Acceso', access_ph:'Vacío: cualquiera con registro. Si no, emails o dominios, uno por línea:\nana@marca.com\n@marca.com', vis_unavailable:'«Privado» saldrá cuando la API del catálogo separe públicos y privados.', access_bad:'En «Acceso» van emails o dominios (@marca.com), uno por línea.', xpace_note:'URL del Xpacio en XpaceOS. Déjala vacía para ocultar el botón de gemelo digital.',
     gate_title:'Backoffice',
     gate_sub:'Inicia sesión con Google: gestión para <b>@admira.com</b> y Mis demos para los usuarios registrados.',
     remember:'Recordar en este navegador', enter:'Entrar',
@@ -444,7 +449,7 @@ const I18N = {
     central_title:'Projects and venues · AdmiraNext', central_intro:'View authorized projects and their digital twins through central user management.',
     central_connect:'Connect with AdmiraNext', central_refresh:'Refresh', central_disconnect:'Disconnect',
     central_manage:'Manage projects, venues and permissions ↗', central_api:'API contract ES / EN ↗',
-    nav_demos:'My demos', demo_title:'Client demos', demo_cafebreria:'Cafebrería · Independent project', demo_map:'View location', demo_tour:'DooH Tour', demo_overview:'Overview', demo_twin:'View Digital Twin ↗', demo_note:'Demo scenarios. Opening the twin does not confirm playback on physical devices.', label_xpace:'Linked Xpace', xpace_note:'Xpace URL on XpaceOS. Leave empty to hide the digital twin button.',
+    nav_demos:'My demos', demo_title:'Client demos', demo_cafebreria:'Cafebrería · Independent project', demo_map:'View location', demo_tour:'DooH Tour', demo_overview:'Overview', demo_twin:'View Digital Twin ↗', demo_note:'Demo scenarios. Opening the twin does not confirm playback on physical devices.', label_xpace:'Linked Xpace', label_visibility:'Visibility', vis_public:'Public · everyone sees it and it is for sale', vis_private:'Private · sign-in only', label_access:'Access', access_ph:'Empty: anyone signed in. Otherwise emails or domains, one per line:\nana@brand.com\n@brand.com', vis_unavailable:'«Private» will be available once the catalogue API separates public and private.', access_bad:'«Access» takes emails or domains (@brand.com), one per line.', xpace_note:'Xpace URL on XpaceOS. Leave empty to hide the digital twin button.',
     gate_title:'Backoffice',
     gate_sub:'Sign in with Google: management for <b>@admira.com</b> and My demos for registered users.',
     remember:'Remember on this browser', enter:'Sign in',
@@ -651,10 +656,25 @@ let booted = false;
 // quien edita y «Publicar» sólo sube eso sobre el catálogo de ahora (rebaseOmnipLocations). Sin ella no se publica.
 let catalogoBase = null;
 const copiaCatalogo = arr => arr.map(l => JSON.parse(JSON.stringify(l)));
+// Xpacios públicos y privados (29-oct-2026): la API dice si ya los filtra (GET /locations → visibilidad: 1). Hasta
+// entonces «Privado» no se ofrece, porque un privado se seguiría viendo en el mapa público.
+let apiVisibilidad = false;
+const ACCESO_OK = /^(?:[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}|@[a-z0-9.-]+\.[a-z]{2,})$/;
+function accesoDelForm() {
+  return [...new Set($('f-access').value.split(/[\s,;]+/).map(v => v.trim().toLowerCase()).filter(Boolean))];
+}
+function syncVisibilityUI() {
+  const sel = $('f-visibility');
+  const yaPrivado = sel.value === 'privado';
+  sel.querySelector('option[value="privado"]').disabled = !apiVisibilidad && !yaPrivado;
+  $('f-visibility-note').hidden = apiVisibilidad;
+  $('f-access-row').hidden = sel.value !== 'privado';
+}
 
 async function bootBackoffice() {
   if (!isAuthed() || !verifiedSession.canManageCatalog || booted) return;
   booted = true;
+  $('f-visibility').addEventListener('change', syncVisibilityUI);
   // Arranque sincrónico para no esperar al worker.
   locations = window.loadOmnipLocations().map(l => JSON.parse(JSON.stringify(normalizeLocation(l))));
   renderSegmentationGroups();
@@ -675,6 +695,8 @@ async function bootBackoffice() {
         if (typeof renderMap === 'function') renderMap();
       }
       if (res.source === 'kv') catalogoBase = copiaCatalogo(locations);
+      apiVisibilidad = res.visibilidad === true;
+      if (!$('bo-editor').hidden) syncVisibilityUI();
       setBadge(res.source === 'kv' ? 'kv' : 'local', res.updatedAt);
     } else {
       setBadge('local', null);
@@ -761,8 +783,13 @@ async function publishToWorker() {
     const r = window.rebaseOmnipLocations(catalogoBase, locations, ahora.locations.map(l => JSON.parse(JSON.stringify(normalizeLocation(l)))));
     const { nuevos, editados, quitados } = r.cambios;
     const abierto = editingIdx >= 0 && locations[editingIdx] ? locations[editingIdx].id : null;
+    // Los privados que he borrado van por su id: la API conserva los que falten en el envío (una copia sin ellos no los
+    // borra) y sólo quita los que se le piden.
+    const actuales = new Set(locations.map(l => l && l.id));
+    const quitar = catalogoBase.filter(l => l && l.visibilidad === 'privado' && !actuales.has(l.id)).map(l => l.id);
+    apiVisibilidad = ahora.visibilidad === true;
     let res = null;
-    if (nuevos + editados + quitados) res = await window.publishOmnipLocations(r.locations, token);
+    if (nuevos + editados + quitados) res = await window.publishOmnipLocations(r.locations, token, quitar);
     // Quien edita se queda con el catálogo de ahora (sus cambios y los de los demás) como nueva base.
     locations = r.locations;
     catalogoBase = copiaCatalogo(locations);
@@ -957,7 +984,7 @@ function renderList() {
     return `<li data-idx="${i}" class="${i===editingIdx?'active':''}">
       <div class="nm">${escHtml(l.name||t('noname'))}</div>
       <div class="ad">${escHtml(l.addr||'—')}</div>
-      <div class="sf">${l.surfaces.length} surfaces · ${live} LIVE</div>
+      <div class="sf">${l.surfaces.length} surfaces · ${live} LIVE${l.visibilidad === 'privado' ? ' · 🔒 ' + escHtml(t('vis_private')) : ''}</div>
     </li>`;
   }).join('');
   ul.querySelectorAll('li').forEach(li => {
@@ -997,6 +1024,9 @@ function editLocation(idx) {
   $('f-lat').value = loc.coords ? loc.coords[1] : '';
   $('f-lng').value = loc.coords ? loc.coords[0] : '';
   $('f-xpace').value = Object.prototype.hasOwnProperty.call(loc, 'xpaceUrl') ? loc.xpaceUrl : (window.XpaceLinks?.associationUrl(loc) || '');
+  $('f-visibility').value = loc.visibilidad === 'privado' ? 'privado' : 'publico';
+  $('f-access').value = (Array.isArray(loc.acceso) ? loc.acceso : []).join('\n');
+  syncVisibilityUI();
   $('f-music').value = loc.music || '';
   $('f-cameras').checked = (loc.cameras !== false); // por defecto con cámaras
   $('f-employees').value = employeesToText(loc.employees);
@@ -1025,6 +1055,9 @@ function newLocation() {
   $('f-lat').value = loc.coords[1];
   $('f-lng').value = loc.coords[0];
   $('f-xpace').value = '';
+  $('f-visibility').value = 'publico';
+  $('f-access').value = '';
+  syncVisibilityUI();
   $('f-music').value = '';
   $('f-cameras').checked = true;
   $('f-employees').value = '';
@@ -1102,12 +1135,19 @@ function readForm() {
   if (emp.length) loc.employees = emp;
   else delete loc.employees;
   loc.xpaceUrl = $('f-xpace').value.trim();
+  // Pública por defecto (sin campo, como todo el catálogo); el acceso sólo cuenta en un privado.
+  if ($('f-visibility').value === 'privado') {
+    loc.visibilidad = 'privado';
+    const acceso = accesoDelForm();
+    if (acceso.length) loc.acceso = acceso; else delete loc.acceso;
+  } else { delete loc.visibilidad; delete loc.acceso; }
   // Preserva el twin propio si la tienda lo tenía.
   if (prev && prev.twin) loc.twin = prev.twin;
   return normalizeLocation(loc);
 }
 
 function validateLocation(loc, isNew) {
+  if (Array.isArray(loc.acceso) && loc.acceso.some(v => !ACCESO_OK.test(v))) return t('access_bad');
   if (loc.xpaceUrl && !window.XpaceLinks?.validXpaceUrl(loc.xpaceUrl)) return LANG === 'en' ? 'Use a specific HTTPS XpaceOS URL.' : 'Usa una URL HTTPS de un Xpacio concreto de XpaceOS.';
   if (!loc.id) return 'El id es obligatorio.';
   if (!/^[a-z0-9-]+$/.test(loc.id)) return 'El id solo admite minúsculas, números y guiones.';

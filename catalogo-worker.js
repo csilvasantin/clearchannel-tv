@@ -5,7 +5,7 @@
 // con ?v=, que sale de la caché HTTP). Al hilo principal vuelve el catálogo cosido en trozos de `chunk` Xpacios, cada
 // uno un mensaje corto, y al final una firma para saber si cambió sin volver a serializarlo.
 //
-// Mensajes:  entra {api, locationsSrc, timeoutMs, chunk}
+// Mensajes:  entra {api, locationsSrc, timeoutMs, chunk, token}   (token: la sesión de Google, si la hay)
 //            sale  {type:'chunk', items:[…], total} …  {type:'done', count, source, updatedAt, signature}
 //                  {type:'error', stage:'import'|'fetch'|'parse', error}
 'use strict';
@@ -33,7 +33,10 @@ self.onmessage = async function (e) {
     const timer = ctrl ? setTimeout(() => ctrl.abort(), o.timeoutMs || 20000) : null;
     try {
       // no-cache: con el no-store de hoy es lo mismo; con el ETag del encargo #7156, un 304 sin descargar nada.
-      const r = await fetch((o.api || self.OMNIP_API) + '/locations', { cache: 'no-cache', signal: ctrl ? ctrl.signal : undefined });
+      // Con sesión (o.token, que manda la página: aquí no hay localStorage) la API añade los Xpacios privados de esa cuenta.
+      const init = { cache: 'no-cache', signal: ctrl ? ctrl.signal : undefined };
+      if (typeof o.token === 'string' && o.token) init.headers = { Authorization: 'Bearer ' + o.token };
+      const r = await fetch((o.api || self.OMNIP_API) + '/locations', init);
       if (!r.ok) throw new Error('http ' + r.status);
       text = await r.text();
     } finally { if (timer) clearTimeout(timer); }
