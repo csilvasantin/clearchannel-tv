@@ -1514,23 +1514,47 @@ window.purgeOmnipLocationsCache = function() {
   try { localStorage.removeItem(window.OMNIP_STORE_KEY); return true; } catch (e) { return false; }
 };
 
+// ── Xpacios públicos y privados (Carlos, 29-oct-2026 · MorfeoMacMini) ──
+// Un Xpacio privado sólo sale para quien entra con registro y tiene acceso; lo decide la API (omnipublicity-api,
+// src/visibilidad.js), no esta página. Con una sesión de Google vigente (la del login de la cabecera o la del
+// backoffice, omnip-bo-gtoken) cada lectura del catálogo la envía y la API añade los privados de esa cuenta. Sin
+// sesión, o con ella a punto de caducar, se pide como siempre y llega el catálogo público.
+window.omnipCatalogToken = function(now = Date.now()) {
+  let raw = null;
+  try { raw = window.localStorage.getItem('omnip-bo-gtoken') || window.sessionStorage.getItem('omnip-bo-gtoken'); } catch (_) { return ''; }
+  try {
+    const o = JSON.parse(raw || 'null');
+    const token = o && typeof o.token === 'string' ? o.token : '';
+    const part = token.split('.')[1];
+    if (!part) return '';
+    const claims = JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/')));
+    return claims && Number(claims.exp) * 1000 > now + 30000 ? token : '';
+  } catch (_) { return ''; }
+};
+window.omnipCatalogInit = function(init, token = window.omnipCatalogToken()) {
+  if (!token) return init || {};
+  return Object.assign({}, init, { headers: Object.assign({}, init && init.headers, { Authorization: 'Bearer ' + token }) });
+};
+window.isOmnipPrivate = loc => !!loc && loc.visibilidad === 'privado';
+
 // Async: worker KV → fallback a sync. Devuelve también un flag `source` para que la UI pueda mostrar de dónde viene.
 // Lo usan el backoffice y la parrilla (necesitan el catálogo entero en el hilo principal); la portada usa
 // loadOmnipLocationsInWorker y las páginas de un solo local, loadOmnipLocationById.
 // cache:'no-cache' (antes 'no-store'): hoy el KV responde no-store y es lo mismo; cuando /locations dé ETag (encargo
 // #7156 de Neo), el navegador revalida con If-None-Match y un catálogo sin cambios llega como 304, sin los 494 KB.
+// `visibilidad`: 1 cuando la API ya separa públicos y privados (el backoffice sólo ofrece «Privado» entonces).
 window.loadOmnipLocationsAsync = async function(timeoutMs = 4000) {
   try {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), timeoutMs);
-    const r = await fetch(window.OMNIP_API + '/locations', {signal: ctrl.signal, cache: 'no-cache'});
+    const r = await fetch(window.OMNIP_API + '/locations', window.omnipCatalogInit({signal: ctrl.signal, cache: 'no-cache'}));
     clearTimeout(t);
     if (!r.ok) throw new Error('http ' + r.status);
     const d = await r.json();
     if (d && Array.isArray(d.locations) && d.locations.length) {
       const merged = window.mergeOmnipLocations(d.locations);
       window.purgeOmnipLocationsCache();
-      return { locations: merged, source: d.source || 'kv', updatedAt: d.updatedAt || null };
+      return { locations: merged, source: d.source || 'kv', updatedAt: d.updatedAt || null, visibilidad: d.visibilidad === 1 };
     }
   } catch (e) { /* offline / worker dormido / timeout */ }
   return { locations: window.loadOmnipLocations(), source: 'local', updatedAt: null };
@@ -1545,7 +1569,7 @@ window.loadOmnipLocationsAsync = async function(timeoutMs = 4000) {
 // saber si el catálogo cambió sin volver a serializar 10 MB. Sin Worker, o si el Worker no arranca, la carga de siempre
 // en el hilo principal. Devuelve null si el catálogo no llega (la portada se queda con lo que ya pinta: bundle + slim).
 window.OMNIP_LOCATIONS_SRC = (typeof document !== 'undefined' && document.currentScript && document.currentScript.src) || window.OMNIP_LOCATIONS_SRC || '/locations.js';
-window.OMNIP_CATALOG_WORKER = '/catalogo-worker.js?v=20261024-catalogo-ligero-1';
+window.OMNIP_CATALOG_WORKER = '/catalogo-worker.js?v=20261029-xpacios-privados-1';
 window.loadOmnipLocationsInWorker = function(opts) {
   const o = opts || {};
   const timeoutMs = o.timeoutMs || 20000;
@@ -1578,7 +1602,8 @@ window.loadOmnipLocationsInWorker = function(opts) {
       }
     };
     w.onerror = ev => { try { ev.preventDefault(); } catch (_) {} if (!items.length) respaldo(); else acabar(null); };
-    w.postMessage({ api: window.OMNIP_API, locationsSrc: window.OMNIP_LOCATIONS_SRC, timeoutMs, chunk });
+    // El Worker no tiene localStorage: la sesión (si la hay) va en el mensaje.
+    w.postMessage({ api: window.OMNIP_API, locationsSrc: window.OMNIP_LOCATIONS_SRC, timeoutMs, chunk, token: window.omnipCatalogToken() });
   });
 };
 
@@ -1592,7 +1617,7 @@ window.loadOmnipLocationsSlimAsync = async function(timeoutMs = 3000) {
   try {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), timeoutMs);
-    const r = await fetch(window.OMNIP_API + '/locations?slim=1', {signal: ctrl.signal});
+    const r = await fetch(window.OMNIP_API + '/locations?slim=1', window.omnipCatalogInit({signal: ctrl.signal}));
     clearTimeout(t);
     if (!r.ok) throw new Error('http ' + r.status);
     const d = await r.json();
@@ -1605,7 +1630,7 @@ window.loadOmnipLocationDetail = async function(id, timeoutMs = 3000) {
   try {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), timeoutMs);
-    const r = await fetch(window.OMNIP_API + '/locations/' + encodeURIComponent(String(id)), {signal: ctrl.signal});
+    const r = await fetch(window.OMNIP_API + '/locations/' + encodeURIComponent(String(id)), window.omnipCatalogInit({signal: ctrl.signal}));
     clearTimeout(t);
     if (!r.ok) return null;
     const d = await r.json();
@@ -1686,14 +1711,18 @@ window.rebaseOmnipLocations = function(base, mine, current) {
 };
 
 // Publica al worker (PUT /locations con Bearer token). Lanza si falla.
-window.publishOmnipLocations = async function(arr, token) {
+// quitar: ids de privados borrados a propósito. La API conserva los privados que falten en el envío (una copia que no
+// los veía no los borra), así que borrar uno hay que pedirlo por su id.
+window.publishOmnipLocations = async function(arr, token, quitar) {
   const normalized = window.normalizeOmnipLocations(arr);
   if (!Array.isArray(normalized) || !normalized.length) throw new Error('empty_array');
   if (!token) throw new Error('missing_token');
+  const body = { locations: normalized };
+  if (Array.isArray(quitar) && quitar.length) body.quitar = quitar.map(String);
   const r = await fetch(window.OMNIP_API + '/locations', {
     method: 'PUT',
     headers: { 'Content-Type':'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ locations: normalized }),
+    body: JSON.stringify(body),
   });
   let d = null; try { d = await r.json(); } catch {}
   if (!r.ok) throw new Error((d && d.error) || ('http ' + r.status));
@@ -1704,7 +1733,7 @@ window.publishOmnipLocations = async function(arr, token) {
 window.loadYokupLocationsAsync = async function(timeoutMs=5000) {
   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),timeoutMs);
   try {
-    const r=await fetch(window.OMNIP_API+'/locations?source=yokup',{signal:ctrl.signal,cache:'no-store'});
+    const r=await fetch(window.OMNIP_API+'/locations?source=yokup',window.omnipCatalogInit({signal:ctrl.signal,cache:'no-store'}));
     if(!r.ok)throw Error('catalog '+r.status);
     const d=await r.json();return window.normalizeOmnipLocations(Array.isArray(d.locations)?d.locations:[]);
   } finally {clearTimeout(timer);}

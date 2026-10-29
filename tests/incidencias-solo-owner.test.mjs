@@ -143,8 +143,10 @@ test('app.js pinta por modo, repinta en caliente y solo enseña la incidencia de
  const login=read('login-google.js');assert.match(login,/dispatchEvent\(new CustomEvent\('admira:session'/);
  const ui=read('bugito-xpacios-ui.mjs');assert.doesNotMatch(ui,/OWNERS|csilva/,'el navegador no decide quién es owner');
  const html=read('index.html');
- for(const f of ['bugito-xpacios-ui.mjs','login-google.js','incident-map-tooltip.js'])assert.match(html,new RegExp(f.replace('.','\\.')+'\\?v=20261024-incidencias-owner-1'),f);
- assert.match(html,/app\.js\?v=20261029-flota-owner-1/,'app.js: el sello del catálogo ligero (FLT-102675) ya lleva el modo de incidencias');
+ for(const f of ['bugito-xpacios-ui.mjs','incident-map-tooltip.js'])assert.match(html,new RegExp(f.replace('.','\\.')+'\\?v=20261024-incidencias-owner-1'),f);
+ // login-google.js subió de sello con los Xpacios privados (29-oct-2026): sigue avisando con admira:session.
+ assert.match(html,/login-google\.js\?v=20261029-xpacios-privados-1/);
+ assert.match(html,/app\.js\?v=20261029-xpacios-privados-1/,'app.js: el sello del catálogo ligero (FLT-102675) ya lleva el modo de incidencias');
  assert.ok(html.indexOf('bugito-super.js?v=')<html.indexOf('bugito-xpacios-ui.mjs?v='),'BugitoSuper existe antes que el módulo');
  assert.ok(html.indexOf('incident-map-tooltip.js?v=')<html.indexOf('app.js?v='),'paint() existe antes que app.js');
 });

@@ -25,7 +25,9 @@ test('sesión guardada: vale mientras el ID token no caduca y usa la misma clave
   assert.equal(L.KEY, 'omnip-bo-gtoken');
   const now = Date.UTC(2026, 9, 15, 20, 0);
   const token = jwt({email: 'csilva@admira.com', exp: Math.floor(now / 1000) + 600});
-  assert.deepEqual(L.stored(mem(JSON.stringify({token, email: 'csilva@admira.com'})), now), {token, email: 'csilva@admira.com'});
+  assert.deepEqual(L.stored(mem(JSON.stringify({token, email: 'csilva@admira.com'})), now), {token, email: 'csilva@admira.com', registrado: false});
+  // Registrado sin backoffice (Xpacios privados, 29-oct-2026): se recuerda para que el enlace no lleve al backoffice.
+  assert.equal(L.stored(mem(JSON.stringify({token, email: 'ana@gmail.com', registrado: true})), now).registrado, true);
   const expired = jwt({email: 'x@admira.com', exp: Math.floor(now / 1000) - 1});
   assert.equal(L.stored(mem(JSON.stringify({token: expired})), now), null);
   assert.equal(L.stored(mem('no-json'), now), null);
@@ -40,7 +42,9 @@ test('popup de Google en la portada y en las páginas de la piel común, publica
   const src = fs.readFileSync(path.join(root, 'login-google.js'), 'utf8');
   assert.match(src, /ux_mode: 'popup'/);
   assert.match(src, /renderButton\(host, \{type: 'standard'/);
-  assert.match(src, /fetch\('\/api\/demo-session', \{method: 'POST', headers: \{Authorization: 'Bearer ' \+ token\}/);
+  assert.match(src, /const init = \{method: 'POST', headers: \{Authorization: 'Bearer ' \+ token\}, cache: 'no-store'\};\n    let r = await fetch\('\/api\/demo-session', init\);/);
+  // Sin backoffice, la misma credencial entra como registrada (Xpacios privados, 29-oct-2026).
+  assert.match(src, /if \(r\.status === 401\) r = await fetch\('\/api\/registro', init\);/);
   assert.match(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), /<script defer src="login-google\.js\?v=/);
   assert.match(fs.readFileSync(path.join(root, 'galaxy-shell.js'), 'utf8'), /load\('login-google\.js'\)/);
   assert.match(fs.readFileSync(path.join(root, 'server/biz-assets.mjs'), 'utf8'), /'login-google\.js'/);

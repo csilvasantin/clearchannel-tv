@@ -31,7 +31,7 @@
       const o = JSON.parse((storage && storage.getItem(KEY)) || 'null');
       const claims = o && o.token ? parseJwt(o.token) : null;
       if (!claims || !claims.exp || claims.exp * 1000 <= now) return null;
-      return {token: o.token, email: String(o.email || claims.email || '')};
+      return {token: o.token, email: String(o.email || claims.email || ''), registrado: o.registrado === true};
     } catch (_) { return null; }
   }
 
@@ -100,6 +100,15 @@
   }
 
   let link = null, host = null, shownLocale = '', repaint = 0, verifiedSession = false;
+  // Registrado sin backoffice (Xpacios privados, 29-oct-2026): el enlace no lleva al backoffice, que le diría que no
+  // tiene acceso; dice «Registrado» y, al pulsarlo, ofrece cerrar la sesión.
+  function cerrarSesion(e) {
+    e.preventDefault();
+    if (!root.confirm(T('¿Cerrar la sesión? Dejarás de ver los Xpacios privados.', 'Sign out? You will no longer see private Xpacios.'))) return;
+    try { root.localStorage.removeItem(KEY); } catch (_) {}
+    try { root.google.accounts.id.disableAutoSelect(); } catch (_) {}
+    root.location.reload();
+  }
   function signedIn(session) {
     marcarSesion();
     verifiedSession = true;
@@ -109,9 +118,16 @@
     link.removeAttribute('data-i18n');   // el traductor de la portada no debe volver a poner «Login»
     // …ni el de la cabecera común (responsive-shell.js reescribe data-shell-text-es/en al arrancar y al cambiar de
     // idioma): en las páginas interiores el enlace volvía a decir «Login» con la sesión abierta (18-oct-2026).
-    link.dataset.shellTextEs = link.dataset.shellTextEn = 'Backoffice';
-    link.textContent = 'Backoffice';
-    link.title = (session.source === 'server' ? T('Sesión verificada: ', 'Verified session: ') : T('Sesión de Google: ', 'Google session: ')) + session.email;
+    if (session.registrado) {
+      link.dataset.shellTextEs = 'Registrado'; link.dataset.shellTextEn = 'Registered';
+      link.textContent = T('Registrado', 'Registered');
+      link.title = T('Sesión de Google: ', 'Google session: ') + session.email + T(' · ves los Xpacios privados a los que tienes acceso', ' · you see the private Xpacios you have access to');
+      link.addEventListener('click', cerrarSesion);
+    } else {
+      link.dataset.shellTextEs = link.dataset.shellTextEn = 'Backoffice';
+      link.textContent = 'Backoffice';
+      link.title = (session.source === 'server' ? T('Sesión verificada: ', 'Verified session: ') : T('Sesión de Google: ', 'Google session: ')) + session.email;
+    }
     link.classList.add('is-signed');
   }
   function renderButton() {
@@ -122,8 +138,12 @@
       shape: 'pill', text: 'signin', logo_alignment: 'left', locale: lang()});
     return true;
   }
+  // Primero la sesión de siempre (backoffice, demos). Si esa cuenta no la tiene, entra como registrada (/api/registro):
+  // cualquier cuenta de Google verificada, para ver los Xpacios privados a los que tenga acceso.
   async function verify(token) {
-    const r = await fetch('/api/demo-session', {method: 'POST', headers: {Authorization: 'Bearer ' + token}, cache: 'no-store'});
+    const init = {method: 'POST', headers: {Authorization: 'Bearer ' + token}, cache: 'no-store'};
+    let r = await fetch('/api/demo-session', init);
+    if (r.status === 401) r = await fetch('/api/registro', init);
     if (!r.ok) { const e = new Error('session_' + r.status); e.status = r.status; throw e; }
     return r.json();
   }
@@ -132,12 +152,16 @@
     if (!token) return;
     try {
       const session = await verify(token);
-      try { root.localStorage.setItem(KEY, JSON.stringify({token, email: session.email})); } catch (_) {}
-      signedIn({email: session.email});
-      // Aviso a quien dependa de la sesión (el semáforo de incidencias del mapa, FLT-102662). No lleva
-      // rol ni email: quien escuche vuelve a preguntar al servidor con el token guardado.
+      const registrado = session.registrado === true;
+      try { root.localStorage.setItem(KEY, JSON.stringify({token, email: session.email, registrado})); } catch (_) {}
+      signedIn({email: session.email, registrado});
+      // Aviso a quien dependa de la sesión (el semáforo de incidencias del mapa, FLT-102662; el catálogo, que vuelve a
+      // pedirse para traer los Xpacios privados). No lleva rol ni email: quien escuche vuelve a preguntar al servidor
+      // con el token guardado.
       try { root.dispatchEvent(new CustomEvent('admira:session', {detail: {source: 'google'}})); } catch (_) {}
-      toast(T('Sesión iniciada · ', 'Signed in · ') + session.email);
+      toast(registrado
+        ? T('Registrado · ', 'Registered · ') + session.email + T('. Ya ves los Xpacios privados a los que tienes acceso.', '. You now see the private Xpacios you have access to.')
+        : T('Sesión iniciada · ', 'Signed in · ') + session.email);
     } catch (e) {
       try { root.google.accounts.id.disableAutoSelect(); } catch (_) {}
       toast(e.status === 503

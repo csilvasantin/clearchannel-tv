@@ -549,7 +549,7 @@ Object.assign(I18N.es, {
   ed_on_air:'REGISTROS API · origen sin verificar',
   stores_bidding_1:'Xpace del catálogo', stores_bidding_n:'Xpaces del catálogo', connected_count:'conectadas', evidence_unknown:'Conexión sin verificar', evidence_offline:'Sin conexión verificada', evidence_demo:'DEMO',
   evidence_estimates:'Impresiones estimadas y CPM orientativo del catálogo; no son audiencia medida ni una oferta confirmada.', evidence_no_signal:'No hay una conexión acreditada por señal reciente para estos dispositivos.', evidence_signal:'Estado de conexión por señal reciente; no acredita audiencia medida.', evidence_demo_note:'Demostración: la actividad de prueba no acredita emisión física ni audiencia real.', evidence_source:'Fuente de conexión: /signage/screens · comprobada',
-  linked_scene:'Explorar escena vinculada ↗', evidence_help:'Cómo leer estos datos', waiting_bid:'// actividad global del motor · esperando eventos…',
+  linked_scene:'Explorar escena vinculada ↗', private_xpace:'🔒 Privado · solo con registro', evidence_help:'Cómo leer estos datos', waiting_bid:'// actividad global del motor · esperando eventos…',
 });
 Object.assign(I18N.en, {
   language_group:'Language', zoom_in:'Zoom in', zoom_out:'Zoom out', simulate_traffic:'▶ Test traffic', stop_traffic:'⏸ Stop traffic', one_impression:'🎲 1 RTB test',
@@ -560,7 +560,7 @@ Object.assign(I18N.en, {
   ed_on_air:'API RECORDS · origin unverified',
   stores_bidding_1:'catalogue Xpace', stores_bidding_n:'catalogue Xpaces', connected_count:'connected', evidence_unknown:'Connection unverified', evidence_offline:'Verified offline', evidence_demo:'DEMO',
   evidence_estimates:'Estimated catalogue impressions and indicative CPM; these are not measured audience or a confirmed offer.', evidence_no_signal:'These devices have no connection verified by a recent signal.', evidence_signal:'Connection state uses a recent signal; it does not verify measured audience.', evidence_demo_note:'Demonstration: test activity does not verify physical delivery or real audience.', evidence_source:'Connection source: /signage/screens · checked',
-  linked_scene:'Explore linked scene ↗', evidence_help:'How to read these data', waiting_bid:'// global engine activity · awaiting events…',
+  linked_scene:'Explore linked scene ↗', private_xpace:'🔒 Private · sign-in only', evidence_help:'How to read these data', waiting_bid:'// global engine activity · awaiting events…',
 });
 function locationKindLabel(kind) {
   if (LANG !== 'en') return kind;
@@ -4150,7 +4150,9 @@ function renderPanel(loc) {
   revisarDestino();
   document.getElementById('p-name').textContent = loc.name;
   document.getElementById('p-addr').textContent = direccionXpacio(loc);
-  document.getElementById('p-kind').textContent = inventoryKindLabel(loc);
+  // Un Xpacio privado sólo llega a quien tiene acceso (la API lo filtra); la ficha lo dice para que no se comparta como
+  // uno público (29-oct-2026).
+  document.getElementById('p-kind').textContent = inventoryKindLabel(loc) + (window.isOmnipPrivate && window.isOmnipPrivate(loc) ? ' · ' + t('private_xpace') : '');
   const evidenceStatus = document.getElementById('p-evidence-status');
   if (evidenceStatus) evidenceStatus.innerHTML = inventoryBadgeHTML(loc);
   const projectNote = document.getElementById('p-project-note');
@@ -5370,7 +5372,7 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
           if (m.kind && cur.kind !== m.kind) { cur.kind = m.kind; changed = true; }
         } else {
           // _n: superficies que dice el slim (la ficha entera llega por id al abrirla o con el catálogo completo).
-          const fresh = window.normalizeOmnipLocations([{ id: m.id, name: m.name || m.id, kind: m.kind || '', addr: '', coords: Array.isArray(m.coords) ? m.coords.slice(0, 2) : null, surfaces: [], _n: Number(m.n) || 0 }])[0];
+          const fresh = window.normalizeOmnipLocations([{ id: m.id, name: m.name || m.id, kind: m.kind || '', addr: '', coords: Array.isArray(m.coords) ? m.coords.slice(0, 2) : null, surfaces: [], _n: Number(m.n) || 0, ...(m.visibilidad === 'privado' ? { visibilidad: 'privado' } : {}) }])[0];
           if (fresh) { if (!Array.isArray(fresh.surfaces)) fresh.surfaces = []; fresh._slim = true; nuevos.push(fresh); byId.set(m.id, fresh); changed = true; }
         }
       }
@@ -5427,6 +5429,28 @@ setInterval(()=>{if(!document.hidden)mergeRetailerLocations();},60000);
   }
   });
 })();
+
+// ─── Xpacios privados (Carlos, 29-oct-2026) ──────────────────────
+// Sin sesión, la API sólo da los públicos. Al iniciar sesión (login-google.js avisa con admira:session) el catálogo se
+// vuelve a pedir con ella y entran, sin recargar la página, los privados a los que esa cuenta tiene acceso. Los públicos
+// ya estaban: sólo se añaden los que faltan. Al cerrar la sesión la página se recarga y vuelven a irse.
+async function traerXpaciosPrivados() {
+  try {
+    const res = typeof window.loadOmnipLocationsInWorker === 'function'
+      ? await window.loadOmnipLocationsInWorker({ timeoutMs: 20000 })
+      : await window.loadOmnipLocationsAsync(8000);
+    if (!res || res.source === 'local' || !Array.isArray(res.locations)) return;
+    const ya = new Set(LOCATIONS_ALL.map(l => l && l.id));
+    const nuevos = res.locations.filter(l => l && l.id != null && !ya.has(l.id));
+    if (!nuevos.length) return;
+    await precalcularXpacios(nuevos);
+    setLocations(LOCATIONS_ALL.concat(nuevos));
+    const repintes = fuenteMapaRepintes;
+    renderCircuitSelector();
+    if (fuenteMapaRepintes === repintes) updateLocationsSource();
+  } catch (_) {}
+}
+if (typeof window !== 'undefined') window.addEventListener('admira:session', () => { traerXpaciosPrivados(); });
 
 // ─── Equipos auto-registrados (admira.tv/alta) → merge ligero ──────
 // El catálogo completo pesa varios MB y su carga async puede caducar (timeout),

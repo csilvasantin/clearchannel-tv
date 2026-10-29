@@ -20,6 +20,7 @@
     ]
   },
   "novedades": [
+    "Xpacios públicos y privados. Cada Xpacio es público, como hasta ahora: lo ve todo el mundo y se comercializa. O privado: solo lo ve quien entra con registro y tiene acceso. Cualquier cuenta de Google se registra desde «Iniciar sesión» y ve los privados que le tocan. En el backoffice, cada ficha dice si es pública o privada y quién la ve (emails o @dominio). No depende del gemelo: un MUPI, una marquesina o un autobús sin gemelo en admira.store también pueden ser privados.",
     "El mapa público ya no enseña los equipos de pruebas de la flota (tablets, móviles y Mac dados de alta solos, con sus coordenadas): salen solo con la sesión de owner que verifica el servidor. Los quioscos de Gràcia, Jardinets y Lesseps siguen a la vista.",
     "Las direcciones de la ficha, las tarjetas, el buscador y la lista de cada circuito ya no enseñan etiquetas de OpenStreetMap como «post_office» o «parcel_locker». Queda la dirección útil, y «Dirección por confirmar» cuando el catálogo no la trae, como en las oficinas de Correos o en las de BBVA que solo decían «España».",
     "«Otros retail físicos» ya solo tiene locales: los 28 equipos de la flota dados de alta solos (tablets, móviles y Mac de pruebas) dejan de contar como retail en venta. Siguen en el mapa.",
