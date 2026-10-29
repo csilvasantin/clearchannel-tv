@@ -20,6 +20,7 @@
     ]
   },
   "novedades": [
+    "Las pantallas programadas de Correos, Banorte y Liverpool ya salen como programadas (en amarillo) y no como paradas: el catálogo las traía con otro nombre de estado y ahora se traduce al cargarlo, también en el ⌘ Experto y en el backoffice.",
     "En el móvil, la ficha de un Xpacio y la ayuda ya no se desplazan de lado: el inventario encoge con la pantalla y la etiqueta de conexión baja bajo cada superficie, y las órdenes de Bugito de la ayuda se leen enteras.",
     "Compartir un Xpacio por WhatsApp, LinkedIn o Slack ya enseña su tarjeta: nombre y ciudad, tipo, pantallas, impresiones y CPM orientativos, y la foto de su fachada (Previo DooH) o lo que emite su circuito. admira.biz tiene su propio robots.txt y su sitemap con las páginas y los Xpacios, la portada se declara en español y su imagen para compartir ya no lleva cifras inventadas; la ilustración de la ficha, tampoco.",
     "La portada va más fluida: los puntos del mapa salen con el catálogo ligero y el catálogo completo (unos 10 MB) se baja y se prepara en segundo plano, sin congelar el mapa: en un portátil, de 1,4 s de bloqueo a ninguno; en un móvil lento simulado, de 10,5 s a 0,4 s. Abrir la ficha de un punto pide solo ese Xpacio, y el recorrido de campaña ya no descarga el catálogo entero para un local.",

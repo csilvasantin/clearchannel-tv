@@ -86,12 +86,22 @@ function _omnipCleanMetadata(raw) {
   }).filter(Boolean);
 }
 
+// Estado de una superficie según el contrato: 'live' | 'sched' | 'idle'. El catálogo trae «scheduled» en Correos,
+// Banorte y Liverpool (5.532 superficies el 29-oct-2026): la web las pintaba grises, como paradas, el ⌘ Experto no
+// las contaba como programadas y el selector del backoffice no casaba ninguna opción. Se traduce al cargar.
+const OMNIP_SURFACE_STATUS_ALIAS = { scheduled: 'sched' };
+function _omnipCleanSurfaces(surfaces) {
+  if (!Array.isArray(surfaces) || !surfaces.some(s => s && OMNIP_SURFACE_STATUS_ALIAS[s.status])) return surfaces;
+  return surfaces.map(s => s && OMNIP_SURFACE_STATUS_ALIAS[s.status] ? Object.assign({}, s, { status: OMNIP_SURFACE_STATUS_ALIAS[s.status] }) : s);
+}
+
 window.normalizeOmnipSegmentation = function(loc) {
   const base = loc && typeof loc === 'object' ? loc : {};
   const seg = base.segmentation && typeof base.segmentation === 'object' ? base.segmentation : {};
   const options = window.OMNIP_SEGMENTATION_OPTIONS;
   const schedule = seg.schedule && typeof seg.schedule === 'object' ? seg.schedule : {};
-  const normalized = Object.assign({}, base, {
+  const surfaces = _omnipCleanSurfaces(base.surfaces);
+  const normalized = Object.assign({}, base, surfaces === base.surfaces ? {} : { surfaces }, {
     segmentation: {
       required: true,
       schedule: {
