@@ -1636,6 +1636,55 @@ window.saveOmnipLocations = function(arr) {
   } catch (e) { return false; }
 };
 
+// Dirección para enseñar (Morfeo, 29-oct-2026). Lo importado de OpenStreetMap deja etiquetas como dirección
+// («Oficina de Correos · Correos · post_office», «CityPaq · Correos · parcel_locker»): 1.312 Xpacios, y 1.094 de BBVA
+// sólo dicen «España». En esas se quitan las etiquetas y los trozos que ya dicen el nombre o la marca, como en el SEO
+// (direccionUtil de server/biz-seo.mjs); si no queda una dirección, «Dirección por confirmar». Las demás direcciones y la
+// del catálogo no se tocan; sin dirección (slim) sigue en blanco.
+const DIRECCION_ETIQUETA_OSM = /^[a-z0-9]+(?:_[a-z0-9]+)+$/;
+const DIRECCION_SOLO_PAIS = /^(España|Spain|México|Mexico|Portugal|France|Francia)$/i;
+window.direccionVisible = function(loc, lang) {
+  const addr = String((loc && loc.addr) || '').trim();
+  if (!addr) return '';
+  const porConfirmar = lang === 'en' ? 'Address to be confirmed' : 'Dirección por confirmar';
+  const partes = addr.split(' · ').map(t => t.trim()).filter(Boolean);
+  if (partes.every(t => DIRECCION_SOLO_PAIS.test(t))) return porConfirmar + ' · ' + partes.join(' · ');
+  if (!partes.some(t => DIRECCION_ETIQUETA_OSM.test(t))) return addr;
+  const n = String(loc.name || '').toLowerCase(), m = String((loc.external && loc.external.brand) || '').toLowerCase();
+  const utiles = partes.filter(t => !DIRECCION_ETIQUETA_OSM.test(t) && !n.includes(t.toLowerCase()) && t.toLowerCase() !== m);
+  return utiles.join(' · ') || porConfirmar;
+};
+
+// Publicar sin pisar a nadie (Morfeo, 29-oct-2026). El PUT reescribe el catálogo entero y el backoffice subía la copia
+// que cargó al abrirse: lo escrito después por otros (altas de equipos, posiciones, los 3.167 buzones de Correos que
+// se quitaron) se perdía o volvía. Ahora se parte del catálogo de ahora y sólo se aplican los cambios de quien edita
+// respecto a lo que cargó: lo que añadió, lo que cambió y lo que quitó. Si dos tocan el mismo Xpacio, manda el que
+// publica. base, mine y current comparten forma (los tres normalizados igual).
+window.rebaseOmnipLocations = function(base, mine, current) {
+  const firma = l => JSON.stringify(l);
+  const antes = new Map((base || []).filter(l => l && l.id != null).map(l => [l.id, firma(l)]));
+  const mios = new Map((mine || []).filter(l => l && l.id != null).map(l => [l.id, l]));
+  const cambios = { nuevos: 0, editados: 0, quitados: 0 };
+  const out = [], vistos = new Set();
+  for (const l of current || []) {
+    if (!l || l.id == null || vistos.has(l.id)) continue;
+    vistos.add(l.id);
+    const m = mios.get(l.id);
+    if (!m) { if (antes.has(l.id)) cambios.quitados++; else out.push(l); continue; }
+    if (!antes.has(l.id)) { out.push(m); cambios.nuevos++; }
+    else if (antes.get(l.id) === firma(m)) out.push(l);
+    else { out.push(m); cambios.editados++; }
+  }
+  for (const m of mios.values()) {
+    if (vistos.has(m.id)) continue;
+    // Otro lo quitó después de abrir el backoffice: si quien publica no lo tocó, sigue quitado.
+    if (antes.get(m.id) === firma(m)) continue;
+    out.push(m);
+    if (antes.has(m.id)) cambios.editados++; else cambios.nuevos++;
+  }
+  return { locations: out, cambios };
+};
+
 // Publica al worker (PUT /locations con Bearer token). Lanza si falla.
 window.publishOmnipLocations = async function(arr, token) {
   const normalized = window.normalizeOmnipLocations(arr);

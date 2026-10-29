@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/tokens.css">
   <link rel="stylesheet" href="https://csilvasantin.github.io/admira-design/contact-panel.css">
   <script defer src="https://csilvasantin.github.io/admira-design/contact-panel.js"></script>
-<script src="locations.js?v=20261029-estado-programado-1"></script>
+<script src="locations.js?v=20261029-mejoras-biz-1"></script>
 <script src="xpace-link.js?v=20261010-evidence-1"></script>
 <script src="inventory-evidence.js?v=20261010-evidence-1"></script>
 <style>
@@ -228,7 +228,7 @@ function renderDetail() {
 
   setText('kind', evidence.kindLabel(loc, detailLang));
   setText('name', loc.name);
-  setText('addr', loc.addr);
+  setText('addr', window.direccionVisible ? window.direccionVisible(loc, detailLang) : loc.addr);
 
   const surfaces = Array.isArray(loc.surfaces) ? loc.surfaces : [];
   const estimates = surfaces.map(s => s.impr === null || s.impr === undefined || s.impr === '' ? NaN : Number(s.impr)).filter(n => Number.isFinite(n) && n >= 0);

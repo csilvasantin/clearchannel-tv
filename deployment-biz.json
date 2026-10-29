@@ -20,6 +20,9 @@
     ]
   },
   "novedades": [
+    "Las direcciones de la ficha, las tarjetas, el buscador y la lista de cada circuito ya no enseñan etiquetas de OpenStreetMap como «post_office» o «parcel_locker». Queda la dirección útil, y «Dirección por confirmar» cuando el catálogo no la trae, como en las oficinas de Correos o en las de BBVA que solo decían «España».",
+    "«Otros retail físicos» ya solo tiene locales: los 28 equipos de la flota dados de alta solos (tablets, móviles y Mac de pruebas) dejan de contar como retail en venta. Siguen en el mapa.",
+    "Backoffice: «☁ Publicar al sitio» sube solo tus cambios sobre el catálogo de ese momento y respeta lo que otros cambiaron mientras editabas, como las altas de equipos o los buzones de Correos retirados. Si no ha podido leer el catálogo publicado, no publica.",
     "Las pantallas programadas de Correos, Banorte y Liverpool ya salen como programadas (en amarillo) y no como paradas: el catálogo las traía con otro nombre de estado y ahora se traduce al cargarlo, también en el ⌘ Experto y en el backoffice.",
     "En el móvil, la ficha de un Xpacio y la ayuda ya no se desplazan de lado: el inventario encoge con la pantalla y la etiqueta de conexión baja bajo cada superficie, y las órdenes de Bugito de la ayuda se leen enteras.",
     "Compartir un Xpacio por WhatsApp, LinkedIn o Slack ya enseña su tarjeta: nombre y ciudad, tipo, pantallas, impresiones y CPM orientativos, y la foto de su fachada (Previo DooH) o lo que emite su circuito. admira.biz tiene su propio robots.txt y su sitemap con las páginas y los Xpacios, la portada se declara en español y su imagen para compartir ya no lleva cifras inventadas; la ilustración de la ficha, tampoco.",

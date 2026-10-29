@@ -113,7 +113,8 @@ test('a timed-out screen request degrades to unknown and clears its timer', asyn
 test('actual search rendering never presents catalogue LIVE as a connection, and keeps demo alongside verified connection', () => {
   const context = vm.createContext({window:{InventoryEvidence:evidence,LIVE_SCREENS:telemetry({})},LANG:'es',
     t:key => ({evidence_unknown:'Conexión sin verificar',evidence_offline:'Sin conexión verificada',connected_count:'conectadas',evidence_demo:'DEMO'})[key] || key,
-    escHtml:value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))});
+    escHtml:value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
+    direccionXpacio:loc => String(loc.addr || '')});
   vm.runInContext(app.slice(app.indexOf('function inventorySurfaceState'), app.indexOf('// Pantallas targetables')), context);
   vm.runInContext(app.slice(app.indexOf('function storeItemsHTML'), app.indexOf('let suggIdx')), context);
   context.loc = {id:'xtanco-bcn',name:'Xtanco Barcelona',kind:'Estanco · Gemelo digital',addr:'Barcelona',surfaces:[{status:'live',screen:'screen-1'}]};
