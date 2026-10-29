@@ -875,9 +875,18 @@ function segmentLocations(list) {
   const S = typeof window !== 'undefined' && window.AdmiraSegmento;
   return S && typeof S.filtrarActual === 'function' ? S.filtrarActual(list) : list;
 }
+// Equipos de la flota fuera del mapa público (Morfeo, 29-oct-2026, a petición de Carlos). Los que se dan de alta solos
+// (selfReg: tablets, móviles, Mac y robots de pruebas, como «iPhone de Carlos · Jardinets») salían en el mapa de
+// cualquiera con sus coordenadas. Sin sesión de owner verificada por el servidor (la que enciende el semáforo de
+// incidencias) se ocultan los que no son de ningún circuito con nombre: los de uno (el iPad del quiosco de CanalKiosk,
+// las demos) siguen. Siguen también en la API del catálogo: esto sólo los quita de la web.
+function flotaVisible(l) {
+  if (!l || !l.selfReg || incidentModeOn()) return true;
+  try { return !isRetailCircuitLocation(Object.assign({}, l, { selfReg: false })); } catch (_) { return false; }
+}
 function setLocations(nextLocations) {
   LOCATIONS_ALL = Array.isArray(nextLocations) ? nextLocations : [];
-  LOCATIONS = segmentLocations(LOCATIONS_ALL);
+  LOCATIONS = segmentLocations(LOCATIONS_ALL.filter(flotaVisible));
   try { document.documentElement.dataset.segmentoPuntos = String(LOCATIONS.length); } catch (_) {}
   LOCATIONS.forEach(stampAltadisTwin);
   LOCATIONS.forEach(stampDemoTwin);
@@ -3131,6 +3140,11 @@ function applyIncidentMode() {
   } catch (_) {}
   try { updateLocationsSource(); } catch (_) {}
 }
+// Con la sesión de owner aparecen los equipos de la flota (flotaVisible), y sin ella se van. Va antes que el repintado
+// de abajo, que ya pinta la lista nueva.
+if (typeof window !== 'undefined') window.addEventListener('bugito:incident-mode', () => {
+  try { setLocations(LOCATIONS_ALL); renderCircuitSelector(); } catch (_) {}
+});
 if (typeof window !== 'undefined') window.addEventListener('bugito:incident-mode', () => applyIncidentMode());
 
 /*

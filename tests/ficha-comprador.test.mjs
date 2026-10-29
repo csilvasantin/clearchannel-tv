@@ -165,6 +165,6 @@ test('sellos: app.js, comercial.css y comercial.mjs piden la versión nueva',()=
  // El destino que parpadea (FLT-102668) vuelve a tocar app.js; comercial.mjs sigue con el de los previos.
  // El catálogo ligero (FLT-102675) vuelve a tocar app.js.
  // El mensaje sin selección (comercial-24, 27-oct-2026) vuelve a tocar comercial.mjs.
- assert.ok(html.includes('app.js?v=20261029-mejoras-biz-1'),'app.js');assert.ok(html.includes('/comercial.mjs?v=20261027-comercial-24'),'/comercial.mjs');
+ assert.ok(html.includes('app.js?v=20261029-flota-owner-1'),'app.js');assert.ok(html.includes('/comercial.mjs?v=20261027-comercial-24'),'/comercial.mjs');
  assert.ok(html.includes('/comercial.css?v=20261024-ficha-comprador-1'),'/comercial.css');
 });
