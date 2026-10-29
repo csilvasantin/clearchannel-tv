@@ -23,3 +23,11 @@ test('en la ayuda ningún bloque de código ensancha la página y las órdenes d
   assert.match(help,/\.loop pre\{[^}]*white-space:pre;/,'el diagrama del bucle conserva su dibujo y desplaza dentro de su caja');
   assert.match(help,/<section id="bugito">[\s\S]*?<pre>\/bugito error starbucks/);
 });
+
+// 29-oct-2026: /mcp/ medía 806 px a 390 px (tabla de la Galaxia de 784 px) y a 320 px no cabía la tabla de herramientas.
+// La sirve el Worker de tools/biz-player-mcp con esta copia; la fuente es yokup-site/mcp/index.html del repo tool.
+test('en /mcp/ la Galaxia desplaza dentro de su caja y los nombres de herramienta parten línea',()=>{
+  const hub=read('tools/biz-player-mcp/assets/hub.html');
+  assert.match(hub,/\n\.galaxia\{overflow-x:auto\}\.galaxia table\{font-size:12\.5px\}/);
+  assert.match(hub,/\ntd code\{font-size:12px;overflow-wrap:anywhere\}\n/);
+});
