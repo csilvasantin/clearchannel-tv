@@ -9,7 +9,7 @@
 <meta name="description" content="Backoffice para dar de alta gemelos digitales (Xpaces + surfaces) en el mapa de Clear Channel.">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script src="locations.js?v=20261029-estado-programado-1"></script>
+<script src="locations.js?v=20261029-mejoras-biz-1"></script>
 <script src="https://accounts.google.com/gsi/client" async></script>
 <style>
   :root{--bg:#02080d;--ink:#dff8ff;--mut:#75aab9;--brand:#78f3ff;--accent:#ffd866;--good:#88ffaa;--warn:#ff8866;--danger:#ff4f5e;--card:#0a1620;--card2:#0d1c28;--line:rgba(120,243,255,.18)}
@@ -647,6 +647,10 @@ let locations = [];
 let editingIdx = -1; // -1 = nada seleccionado; -2 = nueva (todavía sin guardar)
 let pendingPin = false;
 let booted = false;
+// Copia del catálogo publicado tal como llegó al abrir (o tras el último «Publicar»): con ella se sabe qué ha cambiado
+// quien edita y «Publicar» sólo sube eso sobre el catálogo de ahora (rebaseOmnipLocations). Sin ella no se publica.
+let catalogoBase = null;
+const copiaCatalogo = arr => arr.map(l => JSON.parse(JSON.stringify(l)));
 
 async function bootBackoffice() {
   if (!isAuthed() || !verifiedSession.canManageCatalog || booted) return;
@@ -662,7 +666,7 @@ async function bootBackoffice() {
   // Refresh asincrónico desde el worker. Si la KV trae algo más nuevo,
   // re-render. Si falla, nos quedamos con lo local.
   try {
-    const res = await window.loadOmnipLocationsAsync(4000);
+    const res = await window.loadOmnipLocationsAsync(20000);
     if (res && Array.isArray(res.locations) && res.locations.length) {
       const a = JSON.stringify(locations), b = JSON.stringify(res.locations);
       if (a !== b) {
@@ -670,6 +674,7 @@ async function bootBackoffice() {
         renderList();
         if (typeof renderMap === 'function') renderMap();
       }
+      if (res.source === 'kv') catalogoBase = copiaCatalogo(locations);
       setBadge(res.source === 'kv' ? 'kv' : 'local', res.updatedAt);
     } else {
       setBadge('local', null);
@@ -742,13 +747,33 @@ async function publishToWorker() {
     clearAuth(); setTimeout(()=>location.reload(), 1200);
     return;
   }
+  if (!catalogoBase) {
+    showToast(LANG==='en'?'The published catalogue could not be read: reload before publishing':'No se pudo leer el catálogo publicado: recarga antes de publicar','err');
+    return;
+  }
   const btn = document.getElementById('btn-publish');
   const orig = btn.textContent;
   btn.textContent = t('publishing'); btn.disabled = true;
   try {
-    const res = await window.publishOmnipLocations(locations, token);
-    setBadge('kv', res.updatedAt);
-    showToast('Publicadas ' + res.count + ' Xpaces al worker');
+    // El catálogo de ahora, no el que se cargó al abrir: otros han podido escribir entretanto.
+    const ahora = await window.loadOmnipLocationsAsync(20000);
+    if (!ahora || ahora.source !== 'kv') throw new Error(LANG==='en'?'catalogue unavailable, try again':'catálogo no disponible, vuelve a intentarlo');
+    const r = window.rebaseOmnipLocations(catalogoBase, locations, ahora.locations.map(l => JSON.parse(JSON.stringify(normalizeLocation(l)))));
+    const { nuevos, editados, quitados } = r.cambios;
+    const abierto = editingIdx >= 0 && locations[editingIdx] ? locations[editingIdx].id : null;
+    let res = null;
+    if (nuevos + editados + quitados) res = await window.publishOmnipLocations(r.locations, token);
+    // Quien edita se queda con el catálogo de ahora (sus cambios y los de los demás) como nueva base.
+    locations = r.locations;
+    catalogoBase = copiaCatalogo(locations);
+    if (abierto) { editingIdx = locations.findIndex(l => l.id === abierto); if (editingIdx < 0) closeEditor(); }
+    renderList();
+    if (typeof renderMap === 'function') renderMap();
+    setBadge('kv', res ? res.updatedAt : ahora.updatedAt);
+    if (!res) showToast(LANG==='en'?'No changes to publish: the catalogue is up to date':'No hay cambios que publicar: el catálogo ya está al día');
+    else showToast(LANG==='en'
+      ? `Published: ${nuevos} new, ${editados} edited, ${quitados} removed (${res.count} Xpaces). Changes by others are kept.`
+      : `Publicado: ${nuevos} nuevos, ${editados} editados y ${quitados} quitados (${res.count} Xpaces). Lo que otros cambiaron se respeta.`);
   } catch (e) {
     const msg = String(e.message || e);
     if (msg === 'invalid_token' || msg === 'google_auth_failed' || msg === 'missing_token') {

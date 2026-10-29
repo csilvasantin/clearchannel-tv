@@ -797,6 +797,11 @@ const TWIN_HD_BASE = '';
 // Botón "Red de tiendas" → abre la vista mapa/red de todos los puntos en el gemelo.
 try { const _navRed = document.getElementById('nav-red'); if (_navRed) _navRed.href = TWIN_BASE + '&view=red'; } catch (e) {}
 
+// Dirección que se enseña en la ficha, las tarjetas, el buscador y la lista del circuito: sin las etiquetas de
+// OpenStreetMap («post_office») y con «Dirección por confirmar» si no hay una (direccionVisible, en locations.js).
+function direccionXpacio(loc) {
+  return window.direccionVisible ? window.direccionVisible(loc, LANG) : String((loc && loc.addr) || '');
+}
 // ─── Selector de circuitos / compra de inventario ─────────────────
 function normText(s) {
   return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -1115,7 +1120,10 @@ function metroLineOptions(items) {
 }
 
 // Retail: lo que no es de ningún otro circuito (la misma condición de siempre, ahora con nombre para guardarla).
-function isRetailCircuitLocation(l) { return !isCafebreriaLocation(l) && !isJtiXtancoLocation(l) && !isAltadisBcnLocation(l) && !isAltadisEspanaLocation(l) && !isAlseaStarbucksLocation(l) && !isAlseaMexicoLocation(l) && !isAdmiraXperienceLocation(l) && !isAdmiraXperienceOffice(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l) && !isDemoCircuitLocation(l); }
+// Los equipos de la flota que se dan de alta solos (admira.tv/alta: tablets, MacMini, robots de pruebas) no son
+// retail en venta: salían en «Otros retail físicos» con direcciones como «(provisional · se actualiza con GPS)» o una
+// calle de San Francisco. Siguen en el mapa y en «Todos»; sólo dejan de contar como circuito comercial.
+function isRetailCircuitLocation(l) { return !(l && l.selfReg) && !isCafebreriaLocation(l) && !isJtiXtancoLocation(l) && !isAltadisBcnLocation(l) && !isAltadisEspanaLocation(l) && !isAlseaStarbucksLocation(l) && !isAlseaMexicoLocation(l) && !isAdmiraXperienceLocation(l) && !isAdmiraXperienceOffice(l) && !isKioskoLocation(l) && !isEstancoLocation(l) && !isMetroBarcelonaLocation(l) && !isDesigualLocation(l) && !isMangoLocation(l) && !isAlcampoLocation(l) && !isDecathlonLocation(l) && !isPalacioLocation(l) && !isLiverpoolLocation(l) && !isBBVALocation(l) && !isBanorteLocation(l) && !isCaixaBankLocation(l) && !isElCorteInglesLocation(l) && !isCorreosLocation(l) && !isMultiopticasLocation(l) && !isDemoCircuitLocation(l); }
 // Pertenencia de cada Xpacio a las reglas de circuito, calculada en un solo pase y guardada por Xpacio (FLT-102675):
 // antes eran ~25 filtros de los 9.000 Xpacios, uno por regla, cada vez que se calculaban los circuitos.
 // precalcularXpacios la calienta por tramos al llegar el catálogo; aquí sólo se reparte (el orden de LOCATIONS se
@@ -1130,12 +1138,12 @@ function reglasDeCircuito() {
 function reglasDelXpacio(loc) {
   const x = locTexto(loc);
   if (x.reglas !== undefined && x.rCircuit === loc.circuit && x.rNetwork === loc.network && x.rBrand === loc.brand
-    && x.rExperienceId === loc.experienceId && x.rCircuitLabel === loc.circuitLabel) return x.reglas;
+    && x.rExperienceId === loc.experienceId && x.rCircuitLabel === loc.circuitLabel && x.rSelfReg === !!loc.selfReg) return x.reglas;
   const lista = reglasDeCircuito();
   let bits = 0;
   for (let i = 0; i < lista.length; i++) if (lista[i](loc)) bits |= (1 << i);
   x.reglas = bits; x.rCircuit = loc.circuit; x.rNetwork = loc.network; x.rBrand = loc.brand;
-  x.rExperienceId = loc.experienceId; x.rCircuitLabel = loc.circuitLabel;
+  x.rExperienceId = loc.experienceId; x.rCircuitLabel = loc.circuitLabel; x.rSelfReg = !!loc.selfReg;
   return bits;
 }
 function repartirPorReglas(list) {
@@ -1676,7 +1684,7 @@ function renderCircuitSelector() {
       <input type="checkbox" value="${escHtml(loc.id)}"${checked}>
       <span>
         <span class="cp-name">${escHtml(loc.name)}</span>
-        <span class="cp-addr">${escHtml(loc.addr)}</span>
+        <span class="cp-addr">${escHtml(direccionXpacio(loc))}</span>
       </span>
       <span class="cp-meta">${live}/${surfaces.length}</span>
     </label>`;
@@ -3282,7 +3290,7 @@ function addLocationsLayer() {
     tipKey = key;
     const html = '<div class="xp-name">' + escHtml(p.name || 'Xpacio') + '</div>'
       + '<div class="xp-circuit">' + escHtml(p.circuit || 'Retail') + '</div>'
-      + (p.addr ? '<div class="xp-addr">' + escHtml(p.addr) + '</div>' : '')
+      + (p.addr ? '<div class="xp-addr">' + escHtml(direccionXpacio(p)) + '</div>' : '')
       + '<div class="xp-meta">' + estado + ' · ' + total + ' ' + (total === 1 ? 'superficie' : 'superficies') + '</div>'
       + (otrosAqui > 0 ? '<div class="xp-mas-aqui">' + escHtml(tf('mp_pista', {n: otrosAqui})) + '</div>' : '')
       + (incidentModeOn() ? window.IncidentMapTooltip.html(window.BugitoIncidentMap.states.get(String(p.id)), LANG) : '');
@@ -3671,7 +3679,7 @@ function openPrevio(loc, {fromTour = false, view = null} = {}) {
   const views = previoViews(loc);
   previoState = { loc, views, view:null, previo:null, open:true, fromTour, calib:null, draft:null, viewTimers:[] };
   pvEl('pv-name').textContent = loc.name || loc.id;
-  pvEl('pv-addr').textContent = loc.addr || '';
+  pvEl('pv-addr').textContent = direccionXpacio(loc);
   pvEl('pv-stop').hidden = !fromTour;
   pvEl('pv-progress').textContent = (fromTour && circuitDemo.running)
     ? tf('previo_progress', {current:circuitDemo.index + 1, total:circuitDemo.items.length, name:loc.name}) : '';
@@ -4127,7 +4135,7 @@ function renderPanel(loc) {
   // La ficha de otro Xpacio quita el destino marcado (FLT-102668); la del mismo lo deja.
   revisarDestino();
   document.getElementById('p-name').textContent = loc.name;
-  document.getElementById('p-addr').textContent = loc.addr;
+  document.getElementById('p-addr').textContent = direccionXpacio(loc);
   document.getElementById('p-kind').textContent = inventoryKindLabel(loc);
   const evidenceStatus = document.getElementById('p-evidence-status');
   if (evidenceStatus) evidenceStatus.innerHTML = inventoryBadgeHTML(loc);
@@ -5172,7 +5180,7 @@ function storeItemsHTML(list) {
     return `<div class="item" data-id="${escHtml(l.id)}">
       <div class="kind">${escHtml(inventoryKindLabel(l))}</div>
       <div class="name">${escHtml(l.name)}${inventoryBadgeHTML(l)}</div>
-      <div class="addr">${escHtml(l.addr)}</div>
+      <div class="addr">${escHtml(direccionXpacio(l))}</div>
     </div>`;
   }).join('');
 }
