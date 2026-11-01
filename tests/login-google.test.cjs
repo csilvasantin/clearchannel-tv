@@ -77,3 +77,80 @@ test('con sesión, el enlace dice «Backoffice» también después del traductor
     assert.ok(clases.has('admira-con-sesion'));
   }
 });
+
+// El catálogo (locations.js) acepta el token en localStorage o en sessionStorage. «Cerrar sesión»
+// tiene que borrar los dos; si no, un token que quedó en la pestaña sigue abriendo los privados.
+test('cerrar sesión borra omnip-bo-gtoken de localStorage y de sessionStorage', () => {
+  const vm = require('node:vm');
+  const src = fs.readFileSync(path.join(root, 'login-google.js'), 'utf8');
+  const token = jwt({email: 'ana@gmail.com', exp: Math.floor(Date.now() / 1000) + 3600});
+  const guardado = JSON.stringify({token, email: 'ana@gmail.com', registrado: true});
+  const caja = inicial => {
+    const data = Object.assign({}, inicial);
+    return {
+      getItem: k => (Object.prototype.hasOwnProperty.call(data, k) ? data[k] : null),
+      removeItem: k => { delete data[k]; },
+    };
+  };
+  function arrancar({confirmar, localRemove, sessionRemove, lang = 'es'}) {
+    const clicks = [];
+    const link = {
+      textContent: 'Login', title: '', hidden: false,
+      dataset: {shellTextEs: 'Login', shellTextEn: 'Login'},
+      classList: {add() {}}, removeAttribute() {}, after() {},
+      addEventListener(type, fn) { if (type === 'click') clicks.push(fn); },
+    };
+    const local = caja({'omnip-bo-gtoken': guardado});
+    const session = caja({'omnip-bo-gtoken': guardado});
+    if (localRemove) local.removeItem = localRemove;
+    if (sessionRemove) session.removeItem = sessionRemove;
+    let recargas = 0;
+    const preguntas = [];
+    const ctx = {
+      document: {
+        documentElement: {lang, classList: {add() {}}},
+        getElementById: id => (id === 'header-login' ? link : null),
+        head: {append() {}},
+      },
+      localStorage: local, sessionStorage: session,
+      location: {pathname: '/', hostname: 'www.admira.biz', reload() { recargas += 1; }},
+      confirm(msg) { preguntas.push(msg); return confirmar; },
+      atob: s => Buffer.from(s, 'base64').toString('binary'),
+      Buffer, JSON, Date,
+      MutationObserver: class { observe() {} disconnect() {} },
+      setTimeout: () => 0, clearTimeout() {},
+    };
+    ctx.window = ctx; ctx.globalThis = ctx;
+    vm.runInNewContext(src, ctx);
+    assert.equal(link.textContent, lang === 'en' ? 'Registered' : 'Registrado');
+    assert.equal(clicks.length, 1, 'el enlace de un registrado llama a cerrarSesion');
+    clicks[0]({preventDefault() {}});
+    return {local, session, recargas, preguntas};
+  }
+
+  const si = arrancar({confirmar: true});
+  assert.equal(si.local.getItem('omnip-bo-gtoken'), null);
+  assert.equal(si.session.getItem('omnip-bo-gtoken'), null);
+  assert.equal(si.recargas, 1);
+  assert.match(si.preguntas[0], /Cerrar la sesión/);
+
+  const en = arrancar({confirmar: true, lang: 'en'});
+  assert.equal(en.local.getItem('omnip-bo-gtoken'), null);
+  assert.equal(en.session.getItem('omnip-bo-gtoken'), null);
+  assert.match(en.preguntas[0], /Sign out/);
+
+  const no = arrancar({confirmar: false});
+  assert.equal(no.local.getItem('omnip-bo-gtoken'), guardado);
+  assert.equal(no.session.getItem('omnip-bo-gtoken'), guardado);
+  assert.equal(no.recargas, 0);
+
+  let localBorrado = false, sessionBorrado = false;
+  const roto = arrancar({
+    confirmar: true,
+    localRemove() { localBorrado = true; throw new Error('local bloqueado'); },
+    sessionRemove() { sessionBorrado = true; throw new Error('session bloqueado'); },
+  });
+  assert.equal(localBorrado, true);
+  assert.equal(sessionBorrado, true);
+  assert.equal(roto.recargas, 1);
+});
