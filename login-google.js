@@ -105,7 +105,10 @@
   function cerrarSesion(e) {
     e.preventDefault();
     if (!root.confirm(T('¿Cerrar la sesión? Dejarás de ver los Xpacios privados.', 'Sign out? You will no longer see private Xpacios.'))) return;
+    // El catálogo lee omnip-bo-gtoken de localStorage o de sessionStorage (locations.js). El backoffice
+    // ya borra los dos en clearAuth(); sin sessionStorage, «Cerrar sesión» dejaba el token y los privados.
     try { root.localStorage.removeItem(KEY); } catch (_) {}
+    try { root.sessionStorage.removeItem(KEY); } catch (_) {}
     try { root.google.accounts.id.disableAutoSelect(); } catch (_) {}
     root.location.reload();
   }
