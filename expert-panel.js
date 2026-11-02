@@ -224,6 +224,16 @@
       try { return typeof activeLocation !== 'undefined' && activeLocation ? {id: activeLocation.id, name: activeLocation.name} : null; } catch (_) { return null; }
     },
     open(url) { try { root.location.assign(url); return {ok: true}; } catch (_) { return {ok: false}; } },
+    // /demo terminator jardinets (2-nov-2026): vuela a un Xpacio del mapa y abre una demo externa en pestaña nueva.
+    focusLocation(id) {
+      try {
+        if (away || typeof LOCATIONS === 'undefined' || typeof flyToLocation !== 'function') return {ok: false};
+        const loc = LOCATIONS.find(l => String(l.id) === String(id));
+        if (!loc) return {ok: false};
+        flyToLocation(loc); return {ok: true};
+      } catch (_) { return {ok: false}; }
+    },
+    openTab(url) { try { return {ok: !!root.open(url, '_blank', 'noopener')}; } catch (_) { return {ok: false}; } },
     // Marca blanca (marca-blanca.js): se lee al ejecutar porque puede cargar después que este panel.
     get marca() { return root.AdmiraMarca || null; },
     // Cliente activo del globo (cliente-segmento.js): Altadis España se enseña siempre con marca=altadis.

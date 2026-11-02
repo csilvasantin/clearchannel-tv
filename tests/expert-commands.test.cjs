@@ -104,7 +104,7 @@ test('default routines combine each featured client with demo and circuito', () 
   assert.ok(routines.some(r => r.label === 'Demo CanalKiosk'));
   assert.ok(routines.some(r => r.label === 'Circuito Alcampo'));
   // /demo dooh se atiende antes del parser, como /demo global (FLT-102469).
-  for (const r of routines) assert.equal(C.parse(r.command).ok || /^\/(?:demo dooh|vision general) /.test(r.command), true, r.command);
+  for (const r of routines) assert.equal(C.parse(r.command).ok || /^\/(?:demo dooh|demo terminator|vision general) /.test(r.command), true, r.command);
 });
 
 test('own routines are validated, deduplicated, persisted and deletable', () => {
@@ -358,4 +358,25 @@ test('/tour DooH total dispatches the total circuit and removes a visual brand f
  assert.equal(C.execute('/tour DooH total',{segmento:()=> 'starbucks',open:url=>{opened.push(url);return{ok:true};}}).ok,true);
  assert.match(opened[0],/circuit=dooh_total&tour=1&marca=off/);
  assert.ok(C.defaultRoutines().some(r=>r.command==='/tour DooH total'));
+});
+
+// /demo terminator jardinets (Carlos, 2-nov-2026): Terminator Planeta 7 y después Jardinets ADcelerate.
+test('/demo terminator jardinets: sala Terminator en el mapa y Jardinets en pestaña nueva', () => {
+  const calls = [];
+  const ctx = {focusLocation: id => { calls.push(['focus', id]); return {ok: true}; }, openTab: url => { calls.push(['tab', url]); return {ok: true}; }, open: () => { throw new Error('no'); }};
+  for (const cmd of ['/demo terminator jardinets', '/DEMO Terminators  Jardinéts']) {
+    calls.length = 0;
+    const r = C.execute(cmd, ctx, 'es');
+    assert.equal(r.ok, true); assert.equal(r.command, '/demo terminator jardinets');
+    assert.deepEqual(calls.map(c => c[0]).sort(), ['focus', 'tab']);
+    assert.equal(calls.find(c => c[0] === 'focus')[1], 'admiraxperience-planeta');
+    assert.match(calls.find(c => c[0] === 'tab')[1], /admira\.tv\/adcelerate\/demo\/\?view=human&site=jardinets&travel=walk/);
+    assert.match(r.lines[0], /^1\/2 · Sala de reuniones Terminator/); assert.match(r.lines[1], /^2\/2 · Xpacio Jardinets/);
+  }
+  const opened = [];
+  const away = C.execute('/demo terminator jardinets', {open: u => { opened.push(u); return {ok: true}; }, openTab: () => ({ok: true})}, 'en');
+  assert.equal(away.ok, true); assert.match(opened[0], /locationId=admiraxperience-planeta&lang=en/);
+  assert.equal(C.linkedCommand('?ax_cmd=demo-terminator-jardinets'), '/demo terminator jardinets');
+  assert.ok(C.defaultRoutines('es').some(r => r.command === '/demo terminator jardinets' && r.label === 'Demo Terminator + Jardinets'));
+  assert.ok(C.execute('/demo global', {}, 'es').ok);
 });

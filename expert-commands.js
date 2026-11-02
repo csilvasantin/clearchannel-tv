@@ -201,9 +201,35 @@
     const text = raw.replace(/[-+_]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^\//, '').toLowerCase();
     if (/^tour(?: [a-z0-9]{1,24}){1,3}$/.test(text)) return '/' + text;
     if (/^demo dooh(?: [a-z0-9]{1,24}){0,3}$/.test(text)) return '/' + text;
+    if (/^demo terminators? jardinets$/.test(text)) return '/demo terminator jardinets';
     // /vision general [cliente] (FLT-102501) también se puede enlazar: ?ax_cmd=vision-general-alsea.
     const vision = text.match(/^vision(?: general)?((?: [a-z0-9]{1,24}){0,3})$/);
     return vision ? '/vision general' + vision[1] : null;
+  }
+  // /demo terminator jardinets (Carlos, 2-nov-2026): setup Planeta 7 en dos pasos.
+  // Paso 1: sala de reuniones Terminator (AdmiraXperience · Planeta 7) en el mapa; paso 2: Xpacio
+  // Jardinets, la demo walk de ADcelerate en admira.tv, en pestaña nueva. Biz no tiene aún un id de
+  // catálogo propio para Jardinets: el destino es la URL de ADcelerate que se usa en las demos.
+  const TERMINATOR_LOCATION = 'admiraxperience-planeta';
+  const JARDINETS_URL = 'https://admira.tv/adcelerate/demo/?view=human&site=jardinets&travel=walk';
+  function demoTerminatorJardinets(ctx, lang = 'es') {
+    const command = '/demo terminator jardinets';
+    ctx = ctx || {};
+    let step1 = {ok: false};
+    // Pestaña de Jardinets primero en el mismo gesto (evita el bloqueo de pop-ups si el paso 1 navega).
+    let step2 = {ok: false};
+    try {
+      if (typeof ctx.openTab === 'function') step2 = ctx.openTab(JARDINETS_URL) || {ok: true};
+      else if (typeof window !== 'undefined' && window.open) step2 = {ok: !!window.open(JARDINETS_URL, '_blank', 'noopener')};
+    } catch (_) {}
+    try {
+      if (typeof ctx.focusLocation === 'function') step1 = ctx.focusLocation(TERMINATOR_LOCATION) || {ok: false};
+      if (step1.ok === false && typeof ctx.open === 'function') step1 = ctx.open('/?locationId=' + TERMINATOR_LOCATION + '&lang=' + (lang === 'en' ? 'en' : 'es')) || {ok: true};
+    } catch (_) {}
+    return {ok: step1.ok !== false || step2.ok !== false, command, steps: {terminator: TERMINATOR_LOCATION, jardinets: JARDINETS_URL}, lines: [
+      L(lang, '1/2 · Sala de reuniones Terminator · AdmiraXperience Planeta 7', '1/2 · Terminator meeting room · AdmiraXperience Planeta 7') + (step1.ok === false ? L(lang, ' (no disponible)', ' (unavailable)') : ''),
+      L(lang, '2/2 · Xpacio Jardinets · demo walk ADcelerate (pestaña nueva)', '2/2 · Jardinets Xpace · ADcelerate walk demo (new tab)') + (step2.ok === false ? L(lang, ' (pop-up bloqueado: ', ' (pop-up blocked: ') + JARDINETS_URL + ')' : ''),
+    ]};
   }
   // /vision general [cliente] (Carlos, 15-oct-2026 · FLT-102501): el circuito desde arriba con un
   // semáforo por Xpacio (vision-general.js). «alsea» va a Alsea México como /demo dooh.
@@ -550,6 +576,8 @@
       if(typeof window!=='undefined')window.location.assign(url);
       return {ok:true,lines:[L(lang,'Abriendo demo global · Sneakers Store','Opening global demo · Sneakers Store')],command:'/demo global',parsed:{verb:{id:'demo',local:true}}};
     }
+    if (/^\/?demo\s+terminators?\s+jardinets\s*$/i.test(String(input || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '')))
+      return Object.assign({parsed: {verb: {id: 'demo', local: true}, raw: '/demo terminator jardinets'}}, demoTerminatorJardinets(ctx, lang));
     const dooh = String(input || '').trim().match(/^\/?demo\s+dooh(?:\s+([\s\S]*))?$/i);
     if (dooh) return Object.assign({parsed: {verb: {id: 'demo', local: true}, raw: String(input).trim()}}, demoDooh(dooh[1], ctx, lang));
     const vision = String(input || '').trim().match(/^\/?visi[oó]n(?:[\s-]+general)?(?:\s+([\s\S]*))?$/i);
@@ -637,6 +665,7 @@
       {id: 'vision:starbucks', label: L(lang, 'Visión general Starbucks México', 'Overview Starbucks Mexico'), command: '/vision general starbucks', builtin: true},
       {id: 'dooh:altadis', label: L(lang, 'Tour DooH Altadis España', 'DooH Tour Altadis Spain'), command: '/demo dooh altadis', builtin: true},
       {id: 'vision:altadis', label: L(lang, 'Visión general Altadis España', 'Overview Altadis Spain'), command: '/vision general altadis', builtin: true},
+      {id: 'demo:terminator-jardinets', label: L(lang, 'Demo Terminator + Jardinets', 'Terminator + Jardinets demo'), command: '/demo terminator jardinets', builtin: true},
       {id:'tour:total',label:L(lang,'Tour DooH total','Total DooH Tour'),command:'/tour DooH total',builtin:true},
       {id: 'dooh:starbucks-espana', label: L(lang, 'Tour DooH Starbucks España · 3 destinos', 'DooH Tour Starbucks Spain · 3 destinations'), command: '/demo dooh starbucks espana', builtin: true},
       ...Object.entries(tourCircuits).filter(([id])=>!['alsea_mexico','alsea_starbucks','altadis_espana','dooh_total'].includes(id)).map(([id,d])=>({id:'tour:'+id,label:L(lang,'Tour DooH ','DooH Tour ')+d.label,command:'/tour '+id,builtin:true})),
@@ -684,6 +713,7 @@
       `${L(lang, 'marca', 'brand')}: off (Admira), ${brandList(lang)} · ${L(lang, 'o una web para analizarla (starbucks.es)', 'or a website to analyse (starbucks.es)')}`,
       L(lang, 'Forma: /demo starbucks · /demo cliente=alcampo · mayúsculas y acentos dan igual.', 'Form: /demo starbucks · /demo client=alcampo · case and accents do not matter.'),
       L(lang, 'Tour DooH: /demo dooh starbucks (o alsea, sbux, starbucks mexico) va de México entero a la puerta de cada uno de los 10 Starbucks de Alsea México, con su formato y siempre con la marca Starbucks (?ax_cmd=demo-dooh-starbucks&marca=starbucks) · /demo dooh <cliente> recorre cualquier circuito.', 'DooH Tour: /demo dooh starbucks (or alsea, sbux, starbucks mexico) goes from the whole of Mexico to the door of each of the 10 Alsea Mexico Starbucks, with its format and always with the Starbucks brand (?ax_cmd=demo-dooh-starbucks&marca=starbucks) · /demo dooh <client> tours any circuit.'),
+      L(lang, 'Setup Planeta 7: /demo terminator jardinets abre primero la sala de reuniones Terminator (AdmiraXperience · Planeta 7) y después el Xpacio Jardinets (demo walk ADcelerate) en pestaña nueva (?ax_cmd=demo-terminator-jardinets).', 'Planeta 7 setup: /demo terminator jardinets first opens the Terminator meeting room (AdmiraXperience · Planeta 7) and then the Jardinets Xpace (ADcelerate walk demo) in a new tab (?ax_cmd=demo-terminator-jardinets).'),
       L(lang, 'Visión general: /vision general starbucks muestra Starbucks México desde arriba · verde OK, amarillo con incidencia, rojo apagado.', 'Overview: /vision general starbucks shows Starbucks Mexico from above · green OK, yellow with issues, red off.'),
       L(lang, 'Altadis España: /demo dooh altadis va de España entera a la puerta de cada uno de sus 10 Xtancos y /vision general altadis los muestra con su semáforo, siempre con la marca Altadis (?ax_cmd=demo-dooh-altadis&marca=altadis).', 'Altadis Spain: /demo dooh altadis goes from the whole of Spain to the door of each of its 10 Xtancos and /vision general altadis shows them with their status lights, always with the Altadis brand (?ax_cmd=demo-dooh-altadis&marca=altadis).'),
       L(lang, 'RUTINAS', 'ROUTINES'),
@@ -726,7 +756,7 @@
   }
 
   const api = Object.freeze({
-    CLIENTS, setCircuits, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, planoId, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, resolveDoohClient, demoDooh, linkedCommand, visionGeneral, parse, execute, isAvatarCommand, errorLines, usage,
+    CLIENTS, setCircuits, ATTRIBUTES, VERBS, PLANOS, resolvePlano, planoUrl, planoId, subirPlanoUrl, BRAND_SEED, setBrands, brands, parseBrand, brandUrl, ROUTINES_KEY, PENDING_KEY, PENDING_TTL, registerVerb, savePending, takePending, key, resolveClient, clientCandidates, resolveDoohClient, demoDooh, demoTerminatorJardinets, linkedCommand, visionGeneral, parse, execute, isAvatarCommand, errorLines, usage,
     complete, defaultRoutines, sanitizeRoutines, loadRoutines, saveRoutines, addRoutine, removeRoutine, helpLines,
     pickDemoXpacio, demoScreens, registeredSurfaces, liveSurfaces, demoSurfaces,
   });
