@@ -61,8 +61,11 @@ del verbo, así que `/brand netflix` la deja en inglés y `/marca netflix` en ca
 
 ## Publicación
 
-**Pendiente de autorización de Carlos.** Cada merge en `main` publica admira.biz solo (`docs/publicacion-biz.md`), así
-que la rama no se mergea hasta su OK. Para que `portaventuranext.com/intro` la enseñe hará falta además una ruta en el
-worker de PortAventuraNext (lo publica Oráculo con Sites de Codex) que lleve a `https://www.admira.biz/?marca=netflix`
-(redirección o marco a pantalla completa, por decidir). Ojo con la regla de Neo de ese sitio: todo lo de PortAventura,
-solo en la zona protegida (DMZ).
+**Publicado en admira.biz el 7-nov-2026 con el OK de Carlos.** Cada merge en `main` publica admira.biz solo
+(`docs/publicacion-biz.md`); por eso la rama esperó a su autorización. Enlace directo:
+`https://www.admira.biz/?marca=netflix` (y `?marca=off` para volver).
+
+Para que `portaventuranext.com/intro` la enseñe hace falta además una ruta en el worker de PortAventuraNext (lo publica
+Oráculo con Sites de Codex) que lleve a `https://www.admira.biz/?marca=netflix` (redirección o marco a pantalla
+completa). Se le pide a Oráculo por encargo MCP, como manda la Cúpula §21. Ojo con la regla de Neo de ese sitio: todo lo
+de PortAventura, solo en la zona protegida (DMZ).
