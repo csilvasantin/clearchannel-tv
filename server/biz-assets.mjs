@@ -15,6 +15,9 @@ export const BIZ_ASSET_FILES = Object.freeze([
   'vision-general.js',
   // Marca blanca con el alias «alsea» → Starbucks (Carlos, 15-oct-2026). Sólo cambia eso respecto a la base.
   'marca-blanca.js',
+  // Tema local «netflix»: intro de PortAventura NeXT (2026-11-07 · admira.biz · PortAventuraNext intro).
+  // marca-blanca.js lo descarga solo con /brand netflix o ?marca=netflix.
+  'marca-netflix.js', 'marca-netflix.css',
   // Portada sin WebGL (17-oct-2026): mapa mudo y aviso si maplibre no puede crear el mapa.
   'mapa-sin-webgl.js',
   // Previos de lo que emiten las pantallas al hacer zoom y en la ficha (FLT-102666).

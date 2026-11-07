@@ -90,15 +90,19 @@
   // cuando ya se habla con admiranext.com (hay marca activa o se ha usado /marca).
   const BRAND_ID = /^[a-z0-9][a-z0-9-]{0,40}$/;
   const BRAND_OFF = ['off', 'admira', 'ninguna', 'ninguno', 'none', 'default', 'apagar', 'quitar', 'reset'];
+  // Temas locales de esta web (marca-blanca.js · LOCALES): no están en el catálogo de admiranext.com, así que
+  // se mantienen aunque llegue el catálogo. netflix: intro de PortAventura NeXT (2026-11-07 · admira.biz · PortAventuraNext intro).
+  const LOCAL_BRANDS = [{id: 'netflix', nombre: 'Netflix · PortAventura NeXT', local: true}];
   const BRAND_SEED = [
     {id: 'admira', nombre: 'Admira'}, {id: 'lumbre', nombre: 'Lumbre Café', ejemplo: true},
     {id: 'brumelle', nombre: 'BRUMELLE', ejemplo: true}, {id: 'frescaria', nombre: 'Frescaria Supermercados', ejemplo: true},
+    ...LOCAL_BRANDS,
   ];
   let BRANDS = BRAND_SEED.slice();
   function setBrands(list) {
     const clean = (Array.isArray(list) ? list : []).filter(b => b && BRAND_ID.test(String(b.id || '')))
-      .map(b => ({id: String(b.id), nombre: String(b.nombre || b.id), ejemplo: !!b.ejemplo, propuesta: !!b.propuesta}));
-    if (clean.length) BRANDS = clean;
+      .map(b => ({id: String(b.id), nombre: String(b.nombre || b.id), ejemplo: !!b.ejemplo, propuesta: !!b.propuesta, ...(b.local ? {local: true} : {})}));
+    if (clean.length) BRANDS = [...clean, ...LOCAL_BRANDS.filter(l => !clean.some(b => b.id === l.id))];
     return BRANDS.slice();
   }
   const brands = () => BRANDS.slice();
@@ -125,7 +129,7 @@
     const id = raw.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[\s_]+/g, '-');
     return BRAND_ID.test(id) ? id : null;
   }
-  const brandList = lang => BRANDS.map(b => b.id + (b.propuesta ? L(lang, ' (propuesta)', ' (proposal)') : b.ejemplo ? L(lang, ' (ejemplo)', ' (sample)') : '')).join(', ');
+  const brandList = lang => BRANDS.map(b => b.id + (b.local ? L(lang, ' (tema)', ' (theme)') : b.propuesta ? L(lang, ' (propuesta)', ' (proposal)') : b.ejemplo ? L(lang, ' (ejemplo)', ' (sample)') : '')).join(', ');
 
   const ATTRIBUTES = {
     cliente: {id: 'cliente', aliases: ['client', 'customer', 'circuito', 'circuit'], es: 'cliente', en: 'client', values: CLIENTS},
@@ -322,8 +326,8 @@
     },
     {
       id: 'marca', command: '/marca', aliases: ['brand', 'marcablanca'], attributes: ['marca'], requires: [],
-      es: 'Marca blanca del catálogo de admiranext.com/marcablanca: /marca <id> viste la web con esa marca, /marca off vuelve a Admira, /marca sola dice cuál está activa y lista las disponibles, /marca <web> abre el analizador en otra pestaña.',
-      en: 'White label from the admiranext.com/marcablanca catalogue: /marca <id> dresses the site in that brand, /marca off returns to Admira, /marca alone shows the active one and lists them, /marca <website> opens the analyser in a new tab.',
+      es: 'Marca blanca del catálogo de admiranext.com/marcablanca: /marca <id> viste la web con esa marca, /marca off vuelve a Admira, /marca sola dice cuál está activa y lista las disponibles, /marca <web> abre el analizador en otra pestaña. /brand netflix pone la intro de PortAventura NeXT (look Netflix, solo destino PortAventura); /brand off la quita.',
+      en: 'White label from the admiranext.com/marcablanca catalogue: /marca <id> dresses the site in that brand, /marca off returns to Admira, /marca alone shows the active one and lists them, /marca <website> opens the analyser in a new tab. /brand netflix turns on the PortAventura NeXT intro (Netflix look, PortAventura as the only destination); /brand off removes it.',
       run(args, ctx, lang) {
         const M = ctx && ctx.marca;
         // Segmentación del globo (cliente-segmento.js): /marca <cliente> deja solo sus puntos, aunque
@@ -362,6 +366,9 @@
             L(lang, 'Allí se analiza la web y se guarda en el catálogo; después actívala aquí con /marca <id>.', 'There the site is analysed and saved to the catalogue; then turn it on here with /marca <id>.'));
         }
         const later = M.activar(value).then(r => {
+          if (r.ok && r.local) return r.inerte
+            ? done(L(lang, `Tema ${r.nombre} (${r.id}) recordado en esta pestaña: se ve en la portada (el mapa). /marca off lo quita.`, `${r.nombre} (${r.id}) theme remembered in this tab: it shows on the home page (the map). /marca off removes it.`))
+            : done(L(lang, `Tema ${r.nombre} (${r.id}) activo: intro con el logo y la vuelta al mundo con un solo destino, PortAventura. /brand off vuelve a la portada de serie.`, `${r.nombre} (${r.id}) theme on: logo intro and the trip around the world with a single destination, PortAventura. /brand off returns to the standard home page.`));
           if (r.ok) { if (!BRANDS.some(b => b.id === r.id)) BRANDS = [...BRANDS, {id: r.id, nombre: r.nombre, ejemplo: !!r.ejemplo, propuesta: !!r.propuesta}];
             return done(...(seg() ? [segLine()] : []), L(lang, `Marca ${r.nombre} (${r.id}) activa${tag(r)}. Se mantiene al navegar en esta pestaña; /marca off vuelve a Admira.`, `${r.nombre} (${r.id}) brand on${tag(r)}. It stays while you browse in this tab; /marca off returns to Admira.`)); }
           if (r.reason === 'unknown' && S && seg() && seg().cliente !== 'admira') return done(segLine(), L(lang, `(«${value}» no tiene marca blanca en el catálogo: se mantiene el aspecto, solo cambian los puntos.)`, `(“${value}” has no white label in the catalogue: the look stays, only the points change.)`));
