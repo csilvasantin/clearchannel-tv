@@ -11,7 +11,7 @@ const C = require('../expert-commands.js');
 
 const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
-const STAMP = '20261016-starbucks-mx-2';
+const STAMP = '20261107-netflix-1';
 const memory = (init = {}) => {
   const mem = new Map(Object.entries(init));
   return {mem, getItem: k => (mem.has(k) ? mem.get(k) : null), setItem: (k, v) => mem.set(k, String(v)), removeItem: k => mem.delete(k)};
@@ -320,10 +320,10 @@ test('/marca is in /help, completes catalogue ids with Tab and keeps the registr
   assert.match(help, /^marca: off \(Admira\), admira, lumbre \(ejemplo\)/m);
   assert.equal(C.complete('/mar').value, '/marca ');
   assert.equal(C.complete('/marca lu').value, '/marca lumbre');
-  assert.deepEqual(C.complete('/marca ').options, ['admira', 'lumbre', 'brumelle', 'frescaria', 'off']);
+  assert.deepEqual(C.complete('/marca ').options, ['admira', 'lumbre', 'brumelle', 'frescaria', 'netflix', 'off'], 'the local netflix theme completes too');
   C.setBrands([{id: 'admira', nombre: 'Admira'}, {id: 'starbucks', nombre: 'Starbucks', propuesta: true}]);
   assert.equal(C.complete('/marca star').value, '/marca starbucks');
-  assert.deepEqual(C.setBrands([{id: '../x'}]).map(b => b.id), ['admira', 'starbucks'], 'invalid lists are ignored');
+  assert.deepEqual(C.setBrands([{id: '../x'}]).map(b => b.id), ['admira', 'starbucks', 'netflix'], 'invalid lists are ignored (the local theme always stays)');
   C.setBrands(C.BRAND_SEED);
   // Generated routines never change the brand (no /marca among them); since FLT-102501 and the auto
   // tours of 16-oct-2026 they also include /vision and /tour. A /marca command can be saved as an own routine.

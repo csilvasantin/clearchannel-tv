@@ -37,6 +37,17 @@
   const canonica = value => { const v = fold(value); return ALIAS_MARCA[v] || v; };
   const isOff = value => OFF.includes(fold(value).replace(/[^a-z]/g, ''));
 
+  // ─── Marcas locales: temas propios de esta web que NO viven en el catálogo de admiranext.com ───
+  // Se activan igual que una marca blanca (?marca=<id>, /marca <id>, /brand <id>) y se quitan igual (/marca off),
+  // pero su código solo se descarga al activarlas: sin ellas la web no pide nada. Cada una expone en `global`
+  // un objeto {activar(opts) → Promise, desactivar()} que se monta y se desmonta en el sitio.
+  // netflix: intro de PortAventura NeXT con look Netflix (encargo «2026-11-07 · admira.biz · PortAventuraNext intro»).
+  const LOCALES = Object.freeze({
+    netflix: Object.freeze({id: 'netflix', nombre: 'Netflix · PortAventura NeXT', js: 'marca-netflix.js', css: 'marca-netflix.css', global: 'MarcaNetflix'}),
+  });
+  const esLocal = value => Object.prototype.hasOwnProperty.call(LOCALES, canonica(value));
+  const locales = () => Object.values(LOCALES).map(l => ({id: l.id, nombre: l.nombre, ejemplo: false, propuesta: false, local: true}));
+
   // ─── Qué marca toca en esta carga ───
   // ?marca=<id> manda y se recuerda en la pestaña (como el cargador común); ?marca=admira
   // (u off) la olvida; sin parámetro vale la recordada. Un id mal formado se ignora.
@@ -150,16 +161,18 @@
     };
   }
 
-  const api = {BASE, SESSION_KEY, MODE_KEY, SEED, OFF, ID_RE, fold, isOff, decide, decideMode, looksLikeUrl, normalizeUrl, analyzerUrl, parseColor, contrast, pick, shellTokens};
+  const api = {BASE, SESSION_KEY, MODE_KEY, SEED, OFF, ID_RE, LOCALES, fold, isOff, esLocal, decide, decideMode, looksLikeUrl, normalizeUrl, analyzerUrl, parseColor, contrast, pick, shellTokens};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof document === 'undefined' || root.AdmiraMarca) return;
 
   // ─── Navegador ───
   const doc = document, html = doc.documentElement;
   const script = doc.currentScript;
-  const LOCAL_CSS = (() => {
-    try { const u = new URL('marca-blanca.css', script.src); u.search = new URL(script.src).search; return u.href; } catch (_) { return '/marca-blanca.css'; }
-  })();
+  // Un fichero hermano de este script, con su mismo sello (?v=…).
+  const sibling = file => {
+    try { const u = new URL(file, script.src); u.search = new URL(script.src).search; return u.href; } catch (_) { return '/' + file; }
+  };
+  const LOCAL_CSS = sibling('marca-blanca.css');
   const session = (() => { try { return root.sessionStorage; } catch (_) { return null; } })();
   const store = {
     get: k => { try { return session && session.getItem(k); } catch (_) { return null; } },
@@ -170,7 +183,7 @@
   const T = (es, en) => (lang() === 'en' ? en : es);
 
   let current = null;          // {id, nombre, modo}
-  let known = SEED.slice();
+  let known = [...SEED, ...locales()];
   let loaderPromise = null, cssPromise = null, catalogPromise = null;
   let snapshot = null;         // favicon, theme-color y título originales
   let titleObserver = null, mapTimer = null, mapHandler = null, mapRef = null, mapOriginal = null;
@@ -233,11 +246,13 @@
             .filter(c => c && ID_RE.test(c.id || ''))
             .map(c => ({id: c.id, nombre: String(c.nombre || c.id), ejemplo: !!c.ejemplo || !!(c.catalogo && c.catalogo.tipo === 'ejemplo'), propuesta: !!(c.catalogo && c.catalogo.propuesta)}));
           if (!list.length) throw new Error('catálogo vacío');
-          known = list;
+          // Las marcas locales no están en el catálogo: se añaden para que /marca las liste y Tab las complete.
+          const todas = [...list, ...locales().filter(l => !list.some(c => c.id === l.id))];
+          known = todas;
           const C = root.AdmiraExpertCommands;
-          if (C && typeof C.setBrands === 'function') C.setBrands(list);
-          doc.dispatchEvent(new CustomEvent('admira:marcas', {detail: {marcas: list}}));
-          return list;
+          if (C && typeof C.setBrands === 'function') C.setBrands(todas);
+          doc.dispatchEvent(new CustomEvent('admira:marcas', {detail: {marcas: todas}}));
+          return todas;
         });
       catalogPromise.catch(() => { catalogPromise = null; });
     }
@@ -392,6 +407,9 @@
     id = canonica(id);
     if (isOff(id)) return Promise.resolve(Object.assign({ok: true, off: true}, desactivar()));
     if (!ID_RE.test(id)) return Promise.resolve({ok: false, reason: 'invalid', id});
+    if (esLocal(id)) return activarLocal(LOCALES[id], opts);
+    // Del tema local a una marca del catálogo: primero se desmonta el tema.
+    if (current && current.local) { apagarLocal(current.id); current = null; cleanup(); }
     const modo = opts.modo || decideMode(location.search, session);
     const previous = current;
     return Promise.all([loadLoader(modo), loadCss()])
@@ -453,9 +471,61 @@
     removeCss();
   }
 
+  // ─── Marcas locales (LOCALES): su hoja y su script, hermanos de este fichero, solo al activarlas ───
+  const localScripts = {};
+  function cssLocal(def) {
+    const ya = doc.querySelector(`link[data-mb-local="${def.id}"]`);
+    if (ya) return Promise.resolve(ya);
+    return timeout(addLink(sibling(def.css)), TIMEOUT, def.css).then(link => { link.setAttribute('data-mb-local', def.id); return link; });
+  }
+  function jsLocal(def) {
+    if (root[def.global]) return Promise.resolve(root[def.global]);
+    if (!localScripts[def.id]) {
+      localScripts[def.id] = timeout(new Promise((resolve, reject) => {
+        const s = doc.createElement('script');
+        s.src = sibling(def.js);
+        s.async = true;
+        s.setAttribute('data-mb-local', def.id);
+        s.onload = () => (root[def.global] ? resolve(root[def.global]) : reject(new Error(def.js + ' sin ' + def.global)));
+        s.onerror = () => { s.remove(); reject(new Error('no se pudo cargar ' + def.js)); };
+        doc.head.append(s);
+      }), TIMEOUT, def.js);
+      localScripts[def.id].catch(() => { delete localScripts[def.id]; });
+    }
+    return localScripts[def.id];
+  }
+  function apagarLocal(id) {
+    const def = LOCALES[id];
+    if (!def) return;
+    try { if (root[def.global]) root[def.global].desactivar(); } catch (_) {}
+    for (const link of doc.querySelectorAll(`link[data-mb-local="${def.id}"]`)) link.remove();
+  }
+  /** Activa un tema local. Como las del catálogo: si no carga, no se queda nada a medias. */
+  function activarLocal(def, opts = {}) {
+    if (current && current.id === def.id) return Promise.resolve(Object.assign({ok: true}, current));
+    // Lo que hubiera puesto (otra marca o tema) se quita antes de montar este.
+    if (current) { if (current.local) apagarLocal(current.id); current = null; cleanup(); }
+    return Promise.all([cssLocal(def), jsLocal(def)])
+      .then(([, impl]) => impl.activar({gesto: opts.gesto, intro: opts.intro}))
+      .then(r => {
+        current = {id: def.id, nombre: def.nombre, modo: 'oscuro', ejemplo: false, propuesta: false, aviso: '', local: true};
+        store.set(SESSION_KEY, def.id);
+        hideIntro(true);
+        if (!known.some(k => k.id === def.id)) known = [...known, ...locales().filter(l => l.id === def.id)];
+        doc.dispatchEvent(new CustomEvent('admira:marca', {detail: Object.assign({}, current)}));
+        return Object.assign({ok: true}, current, r && r.inerte ? {inerte: true} : {});
+      })
+      .catch(() => {
+        apagarLocal(def.id);
+        if (!current) cleanup();
+        return {ok: false, reason: 'network', id: def.id};
+      });
+  }
+
   /** Vuelve a Admira (o a la identidad del dominio) en el sitio, sin recargar. */
   function desactivar() {
     const was = current;
+    if (was && was.local) apagarLocal(was.id);
     store.del(SESSION_KEY);
     store.del(MODE_KEY);
     try {
@@ -506,7 +576,7 @@
     });
     intentar(0).then(r => {
       if (!r.ok && root.console) console.warn('marca blanca: no se aplicó «' + decision.id + '» (' + r.reason + ')');
-      if (r.ok) listar().catch(() => {});
+      if (r.ok && !r.local) listar().catch(() => {});   // un tema local no necesita el catálogo de admiranext.com
     });
   }
 })(typeof window === 'undefined' ? globalThis : window);

@@ -34,9 +34,12 @@
   // Un cliente puede incluir sub-proyectos: Starbucks (Alsea) ve también Starbucks México.
   var INCLUYE = { starbucks: ['starbucks', 'starbucks-mexico'] };
 
+  // Temas locales de marca-blanca.js (LOCALES): visten la web pero no son un cliente, así que no segmentan
+  // el globo ni mueven la cámara (netflix: intro de PortAventura NeXT, 2026-11-07 · admira.biz · PortAventuraNext intro).
+  var TEMAS = /^(netflix)$/;
   function resolver(texto) {
     var t = plano(String(texto || '').replace(/^\//, '').replace(/^proyecto/i, ''));
-    if (!t || TODOS.test(t)) return null;
+    if (!t || TODOS.test(t) || TEMAS.test(t)) return null;
     return ALIAS[t] || fold(texto).replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '') || null;
   }
 

@@ -25,7 +25,7 @@ test('scripts load registry before panel and version the updated catalogue handl
   assert.ok(order.every(i => i > 0) && order[0] < order[1] && order[1] < order[2]);
   // Cada fichero lleva el sello de su último cambio (desde 033e4c0, 13-oct-2026, ya no comparten uno solo).
   assert.ok(html.includes('expert-panel.js?v=20261018-supervisor-cara-1'));
-  assert.ok(html.includes('expert-commands.js?v=20261017-main-verde-1'));
+  assert.ok(html.includes('expert-commands.js?v=20261107-netflix-1'));
   assert.ok(html.includes('responsive-shell.css?v=20261006-experto-tecla-1'));
   assert.ok(html.includes('intro.js?v=20261016-altadis-es-1'));
   const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');

@@ -33,3 +33,9 @@
 
 /marca-blanca.css
   Cache-Control: public, max-age=0, must-revalidate
+
+/marca-netflix.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/marca-netflix.css
+  Cache-Control: public, max-age=0, must-revalidate
