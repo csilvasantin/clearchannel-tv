@@ -49,7 +49,7 @@
     cfg.options = list(cfg.options);
     cfg.advanced = list(cfg.advanced);
     cfg.verbs = Array.isArray(cfg.verbs) ? cfg.verbs : [];
-    cfg.login = cfg.login === false ? false : Object.assign({href: '/backoffice.html', es: 'Login', en: 'Login'}, typeof cfg.login === 'object' ? cfg.login : {});
+    cfg.login = cfg.login === false ? false : Object.assign({href: '/backoffice.html', es: 'Entrar', en: 'Sign in'}, typeof cfg.login === 'object' ? cfg.login : {});
     cfg.home = typeof cfg.home === 'string' && /^\/(?![\/\\])/.test(cfg.home) ? cfg.home : '/';
     return cfg;
   }
@@ -67,6 +67,8 @@
     const T = (es, en) => (lang === 'en' ? en : es);
     const section = cfg.section ? `<span class="sub galaxy-shell-section"${bilingual(lang, cfg.section)}</span>` : '';
     const login = cfg.login ? `<a id="header-login" class="mode-toggle header-login" href="${esc(safeHref(cfg.login.href))}"${bilingual(lang, cfg.login)}</a>` : '';
+    // Backoffice aparte del login/selector de proyecto (Carlos, 9-nov-2026 · t848u). login-google.js lo muestra tras autenticar con canManageCatalog.
+    const backoffice = cfg.login ? `<a id="header-backoffice" class="mode-toggle header-backoffice" href="/backoffice.html" hidden data-shell-text-es="Backoffice" data-shell-text-en="Backoffice">Backoffice</a>` : '';
     const header = `<header class="galaxy-shell">
   <div class="brand-heading">
     <button type="button" id="header-menu-toggle" class="mode-toggle" aria-expanded="false" aria-controls="header-navigation" data-mode="options" data-shell-es="Opciones" data-shell-en="Options" title="${T('Opciones', 'Options')}">☰</button>
@@ -75,6 +77,7 @@
   <div class="header-controls">
     <div class="mode-switches" role="group" aria-label="Modos / Modes">
       ${login}
+      ${backoffice}
       <button type="button" id="header-advanced-toggle" class="mode-toggle" aria-expanded="false" aria-controls="advanced-tools" data-mode="advanced" data-shell-es="Modo avanzado" data-shell-en="Advanced mode" title="${T('Modo avanzado', 'Advanced mode')}">▤</button>
       <button type="button" id="header-expert-toggle" class="mode-toggle" aria-expanded="false" aria-controls="expert-panel" data-mode="expert" data-shell-es="Modo experto" data-shell-en="Expert mode" title="${T('Modo experto', 'Expert mode')}">⌘</button>
       <button type="button" id="header-lang-toggle" class="mode-toggle header-lang" data-lang-target="${lang === 'en' ? 'es' : 'en'}" data-admira-compact-control aria-label="${T('Cambiar a inglés', 'Switch to Spanish')}" title="${T('Cambiar a inglés', 'Switch to Spanish')}">${lang === 'en' ? 'ESP' : 'ENG'}</button>

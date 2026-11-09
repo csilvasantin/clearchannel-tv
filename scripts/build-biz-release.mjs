@@ -44,6 +44,8 @@ copyFileSync(join(root, 'server/biz-assets.mjs'), join(out, 'server/biz-assets.m
 copyFileSync(join(root, 'server/native-clear-channel.mjs'), join(out, 'server/native-clear-channel.mjs'));
 // «Mis demos» del backoffice sale de la sesión de demo: va con el worker de HEAD, no con la base (FLT-102469).
 copyFileSync(join(root, 'server/demo-session.mjs'), join(out, 'server/demo-session.mjs'));
+// Proyectos activos tras login (cabecera, 9-nov-2026 · t848u): GET /api/proyectos.
+copyFileSync(join(root, 'server/proyectos.mjs'), join(out, 'server/proyectos.mjs'));
 // Detalle de proyecto (#120, 20-10-2026): el worker lo importa; sin esta copia, esbuild no lo resuelve y la publicación falla.
 copyFileSync(join(root, 'server/detalle-proyecto.mjs'), join(out, 'server/detalle-proyecto.mjs'));
 // Previo del circuito (FLT-102666): /api/previo/circuito, con la Cache API de Cloudflare.

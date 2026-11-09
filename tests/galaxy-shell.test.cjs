@@ -16,7 +16,7 @@ const backoffice = read('backoffice.html');
 // galaxy-shell.js y los verbos del Experto (expert-*) llevan el sello de su último cambio:
 // ya no comparten el del componente desde que galaxy-shell.js cambió solo (13-oct-2026).
 const STAMP = '20261006-experto-tecla-1';
-const SHELL_JS_STAMP = '20261101-cerrar-sesion-1';   // 1-nov: login-google.js borra omnip-bo-gtoken también de sessionStorage; las páginas interiores cargan ese script con este sello
+const SHELL_JS_STAMP = '20261109-proyecto-1';   // 1-nov: login-google.js borra omnip-bo-gtoken también de sessionStorage; las páginas interiores cargan ese script con este sello
 const COMMANDS_STAMP = '20261107-netflix-1';
 const PANEL_STAMP = '20261018-supervisor-cara-1';
 const PAGES_STAMP = '20261006-experto-tecla-1';
@@ -34,7 +34,7 @@ test('the shell markup has the ids, classes, modes and icons of the portada', ()
   assert.match(header, /<button type="button" id="header-advanced-toggle" class="mode-toggle"[^>]*aria-controls="advanced-tools" data-mode="advanced"[^>]*>▤<\/button>/);
   assert.match(header, /<button type="button" id="header-expert-toggle" class="mode-toggle"[^>]*aria-controls="expert-panel" data-mode="expert"[^>]*>⌘<\/button>/);
   assert.match(header, /class="brand-heading"[\s\S]*id="header-menu-toggle"[\s\S]*class="logo"[\s\S]*data-brand-wordmark[^>]*>CLEAR·CHANNEL<\/a><span class="sub galaxy-shell-section"[^>]*>\/ backoffice<\/span>/);
-  assert.match(header, /<div class="mode-switches" role="group"[\s\S]*id="header-login" class="mode-toggle header-login"[\s\S]*id="header-advanced-toggle"[\s\S]*id="header-expert-toggle"/);
+  assert.match(header, /<div class="mode-switches" role="group"[\s\S]*id="header-login" class="mode-toggle header-login"[\s\S]*id="header-backoffice"[\s\S]*id="header-advanced-toggle"[\s\S]*id="header-expert-toggle"/);
   assert.match(options, /^<nav id="header-navigation" class="mode-panel options-panel"[^>]*hidden>/);
   assert.match(options, /data-close-mode="options"/);
   assert.match(advanced, /^<details id="advanced-tools" class="mode-panel advanced-panel">/);
@@ -44,7 +44,7 @@ test('the shell markup has the ids, classes, modes and icons of the portada', ()
   // Every id of the portada shell exists once in the component, and the toggles match the portada byte for byte.
   for (const id of S.PANEL_IDS) assert.equal((index.match(new RegExp(`id="${id}"`, 'g')) || []).length, 1, 'index ' + id);
   const all = [header, options, advanced, expert].join('\n');
-  for (const id of [...S.PANEL_IDS, 'header-login', 'lang-switch', 'lang-toggle', 'expert-command-form', 'expert-command', 'expert-command-result', 'expert-verbs', 'expert-save-routine', 'expert-routines']) {
+  for (const id of [...S.PANEL_IDS, 'header-login', 'header-backoffice', 'lang-switch', 'lang-toggle', 'expert-command-form', 'expert-command', 'expert-command-result', 'expert-verbs', 'expert-save-routine', 'expert-routines']) {
     assert.equal((all.match(new RegExp(`id="${id}"`, 'g')) || []).length, 1, 'shell ' + id);
     assert.ok(index.includes(`id="${id}"`), 'portada ' + id);
   }
