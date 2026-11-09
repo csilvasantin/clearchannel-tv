@@ -68,7 +68,7 @@
     const section = cfg.section ? `<span class="sub galaxy-shell-section"${bilingual(lang, cfg.section)}</span>` : '';
     const login = cfg.login ? `<a id="header-login" class="mode-toggle header-login" href="${esc(safeHref(cfg.login.href))}"${bilingual(lang, cfg.login)}</a>` : '';
     // Backoffice aparte del login/selector de proyecto (Carlos, 9-nov-2026 · t848u). login-google.js lo muestra tras autenticar con canManageCatalog.
-    const backoffice = cfg.login ? `<a id="header-backoffice" class="mode-toggle header-backoffice" href="/backoffice.html" hidden data-shell-text-es="Backoffice" data-shell-text-en="Backoffice">Backoffice</a>` : '';
+    const backoffice = cfg.login ? `<a id="header-backoffice" class="mode-toggle header-backoffice" href="/backoffice.html" data-shell-text-es="Backoffice" data-shell-text-en="Backoffice">Backoffice</a>` : '';
     const header = `<header class="galaxy-shell">
   <div class="brand-heading">
     <button type="button" id="header-menu-toggle" class="mode-toggle" aria-expanded="false" aria-controls="header-navigation" data-mode="options" data-shell-es="Opciones" data-shell-en="Options" title="${T('Opciones', 'Options')}">☰</button>

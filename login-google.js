@@ -280,10 +280,8 @@
       link.dataset.shellTextEn = 'Sign in';
       link.textContent = T('Entrar', 'Sign in');
       link.title = T('Sesión verificada: ', 'Verified session: ') + session.email;
-      showBackoffice(false);
     } else {
       link.hidden = true;
-      showBackoffice(false);
     }
     // Sesión con token → selector de proyecto (sustituye el enlace provisional).
     if (session.token) bootProjects(session);
@@ -335,7 +333,8 @@
       link.dataset.shellTextEn = 'Sign in';
       link.textContent = T('Entrar', 'Sign in');
     }
-    showBackoffice(false);
+    // Backoffice permanece visible en la cabecera (entre él y el buscador va Entrar/proyecto).
+    // Solo se oculta para cuentas «registrado» sin gestión de catálogo.
     let session = null;
     try { session = stored(root.localStorage); } catch (_) {}
     if (session) { signedIn(session); return; }
