@@ -3,10 +3,12 @@ body > header{display:grid;grid-template-columns:auto minmax(160px,1fr) auto;gap
 body > header .header-controls{display:contents}
 .brand-heading{display:flex;align-items:center;gap:10px;min-width:0}
 body > header .logo{text-align:left;min-width:0}
-body > header .search-wrap{grid-column:2;min-width:0;width:min(100%,620px);max-width:none;justify-self:end;margin:0}
-.mode-switches{display:flex;gap:8px;grid-column:3}
+body > header .search-wrap{grid-column:2;min-width:0;width:min(100%,620px);max-width:none;justify-self:stretch;margin:0}
+.mode-switches{display:flex;align-items:center;flex-wrap:nowrap;gap:8px;grid-column:3;min-width:0}
+.mode-switches>*{flex-shrink:0}
 .mode-toggle{display:grid;place-items:center;width:40px;height:40px;font:700 20px/1 monospace;color:var(--brand);background:var(--card);border:1px solid var(--line);border-radius:10px;cursor:pointer}
-.mode-toggle.header-login{width:auto;padding:0 12px;font:600 13px/1 sans-serif;text-decoration:none}
+/* Login y Backoffice: pastillas de texto (mismo estilo); el buscador puede encogerse (Carlos, 9-nov-2026). */
+.mode-toggle.header-login,.mode-toggle.header-backoffice{width:auto;min-width:0;height:40px;padding:0 12px;font:600 13px/1 sans-serif;letter-spacing:normal;text-transform:none;text-decoration:none;white-space:nowrap}
 .mode-toggle[aria-expanded=true]{color:#001620;background:var(--brand);border-color:var(--brand)}
 .mode-toggle:focus-visible,.mode-panel :is(button,a,input,summary):focus-visible{outline:2px solid var(--brand);outline-offset:3px}
 .mode-panel{position:fixed;z-index:9000;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--text,#e8f6ff);box-shadow:0 12px 40px #0008;padding:14px;overflow-y:auto;overscroll-behavior:contain}
@@ -37,8 +39,9 @@ aside.panel .ph .kind{padding-right:26px;overflow-wrap:anywhere}
 body:not(.galaxy-shell-page) .demo-card{top:calc(var(--app-header-height) + 12px)}
 @media(max-width:720px){
  body > header{grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:8px 12px}
- .mode-switches{grid-column:2;grid-row:1;gap:6px}
+ .mode-switches{grid-column:2;grid-row:1;gap:6px;flex-wrap:nowrap}
  .mode-toggle{width:40px;height:40px}
+ .mode-toggle.header-login,.mode-toggle.header-backoffice{width:auto;height:40px}
  body > header .search-wrap{grid-column:1/-1;grid-row:2;width:100%}
  body > header .search input{font-size:16px}
  .options-panel,.advanced-panel{width:min(200px,calc(100% - 24px))}

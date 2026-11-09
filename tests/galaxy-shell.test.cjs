@@ -15,12 +15,12 @@ const backoffice = read('backoffice.html');
 // cambiaron con el shell (FLT-101311 c) y sello de responsive-shell.css/js en la portada.
 // galaxy-shell.js y los verbos del Experto (expert-*) llevan el sello de su último cambio:
 // ya no comparten el del componente desde que galaxy-shell.js cambió solo (13-oct-2026).
-const STAMP = '20261006-experto-tecla-1';
+const STAMP = '20261109-cabecera-bo-1';
 const SHELL_JS_STAMP = '20261109-proyecto-2';   // 1-nov: login-google.js borra omnip-bo-gtoken también de sessionStorage; las páginas interiores cargan ese script con este sello
 const COMMANDS_STAMP = '20261107-netflix-1';
 const PANEL_STAMP = '20261018-supervisor-cara-1';
 const PAGES_STAMP = '20261006-experto-tecla-1';
-const PORTADA_STAMP = '20261006-experto-tecla-1';
+const PORTADA_STAMP = '20261109-cabecera-bo-1';
 const squash = html => html.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
 const memory = () => {
   const mem = new Map();
@@ -347,5 +347,14 @@ test('the bar wears the portada colours on every page, per brand, and stays on t
   assert.match(css, /html\[data-shell=galaxy\]\{scroll-padding-top:/);
   assert.match(css, /\.galaxy-shell-page \.admira-contact-panel\{z-index:9310\}/);
   // Element selectors of a page (section, li, strong, input, button…) cannot reshape the shell.
-  for (const rule of ['#expert-panel .expert-module{padding:0;border-top:0', '#expert-panel li{', '#header-navigation > *{flex-shrink:0}', 'body > header.galaxy-shell .mode-toggle:not(.header-login){padding:0}', '#expert-panel #expert-command{min-height:0;margin:0']) assert.ok(css.includes(rule), rule);
+  for (const rule of ['#expert-panel .expert-module{padding:0;border-top:0', '#expert-panel li{', '#header-navigation > *{flex-shrink:0}', 'body > header.galaxy-shell .mode-toggle:not(.header-login):not(.header-backoffice){padding:0}', '#expert-panel #expert-command{min-height:0;margin:0']) assert.ok(css.includes(rule), rule);
+});
+
+test('Backoffice pastilla: mismo estilo que Login y sin caja 40×40', () => {
+  const css = read('responsive-shell.css');
+  assert.match(css, /\.mode-toggle\.header-login,\.mode-toggle\.header-backoffice\{[^}]*width:auto/);
+  assert.match(css, /\.mode-toggle\.header-login,\.mode-toggle\.header-backoffice\{[^}]*white-space:nowrap/);
+  assert.match(css, /\.mode-switches\{display:flex;align-items:center;flex-wrap:nowrap/);
+  assert.match(read('galaxy-shell.css'), /\.mode-toggle:not\(\.header-login\):not\(\.header-backoffice\)\{padding:0\}/);
+  assert.match(read('index.html'), /id="header-backoffice"[^>]*>Backoffice</);
 });

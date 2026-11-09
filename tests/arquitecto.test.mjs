@@ -249,7 +249,7 @@ test('planta y alzado en SVG: las clases de plano.css, nuevas en lima y los nomb
 
 test('la página: shell cuadrático, el Arquitecto a un lado y el plano al otro, y en el release de admira.biz', () => {
   const html = read('arquitecto.html'), js = read('arquitecto.mjs');
-  assert.match(html, /<link rel="stylesheet" href="\/galaxy-shell\.css\?v=20261006-experto-tecla-1">/);
+  assert.match(html, /<link rel="stylesheet" href="\/galaxy-shell\.css\?v=20261109-cabecera-bo-1">/);
   assert.match(html, /<script defer src="\/galaxy-shell\.js\?v=20261109-proyecto-2"><\/script>/);
   assert.ok(html.indexOf('window.ADMIRA_SHELL') < html.indexOf('/galaxy-shell.js?v='));
   const head = html.slice(html.indexOf('/galaxy-shell.css'), html.indexOf('</head>'));
