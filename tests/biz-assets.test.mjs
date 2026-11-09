@@ -174,3 +174,8 @@ test('every ./server module the worker imports is copied by the release build', 
   const enLaBase = new Set(['orders.mjs', 'global-demo.mjs']);
   for (const m of modulos) if (!enLaBase.has(m)) assert.ok(build.includes(`server/${m}`), `el empaquetado no copia server/${m}`);
 });
+
+test('admira.biz publica responsive-shell.css y galaxy-shell.css (cabecera Backoffice)', () => {
+  assert.ok(BIZ_ASSET_FILES.includes('responsive-shell.css'));
+  assert.ok(BIZ_ASSET_FILES.includes('galaxy-shell.css'));
+});
