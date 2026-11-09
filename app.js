@@ -261,7 +261,7 @@ const I18N = {
   es: {
     logo_home_title:'Volver al inicio',
     search_ph:'Buscar Xpace · "Xtanco", "Loterías", "BCN" o cualquier dirección',
-    login:'Login', contact:'Contacto',
+    login:'Entrar', contact:'Contacto',
     advanced_mode:'Modo avanzado',
     emission_room:'Sala de emisión',
     upload_plan:'Subir plano',
@@ -397,7 +397,7 @@ const I18N = {
   en: {
     logo_home_title:'Back to start',
     search_ph:'Search Xpace · "Xtanco", "Loterías", "BCN" or any address',
-    login:'Login', contact:'Contact',
+    login:'Sign in', contact:'Contact',
     advanced_mode:'Advanced mode',
     emission_room:'Broadcast room',
     upload_plan:'Upload floor plan',
@@ -5451,6 +5451,29 @@ async function traerXpaciosPrivados() {
   } catch (_) {}
 }
 if (typeof window !== 'undefined') window.addEventListener('admira:session', () => { traerXpaciosPrivados(); });
+// Proyecto activo de la cabecera (login-google.js · t848u): filtra el mapa con el circuito del proyecto.
+if (typeof window !== 'undefined') window.addEventListener('admira:proyecto', (ev) => {
+  const p = ev && ev.detail;
+  if (!p || !p.circuit) return;
+  try {
+    if (typeof circuitDefinitions !== 'function') return;
+    const def = circuitDefinitions()[p.circuit];
+    if (!def || !Array.isArray(def.items)) return;
+    selectedCircuitId = p.circuit;
+    selectedMetroLine = 'all';
+    circuitAutoSelect = true;
+    selectedLocationIds = new Set(def.items.map(l => l.id));
+    circuitMapFilterActive = true;
+    const panelEl = document.getElementById('circuit-panel');
+    const headerBtn = document.getElementById('header-circuit-btn');
+    if (panelEl) { panelEl.hidden = false; panelEl.classList.add('collapsed'); }
+    if (headerBtn) headerBtn.classList.add('active');
+    if (typeof renderCircuitSelector === 'function') renderCircuitSelector();
+    if (typeof zoomToSelectedCircuit === 'function' && def.items.length) {
+      try { zoomToSelectedCircuit(); } catch (_) {}
+    }
+  } catch (_) {}
+});
 
 // ─── Equipos auto-registrados (admira.tv/alta) → merge ligero ──────
 // El catálogo completo pesa varios MB y su carga async puede caducar (timeout),

@@ -50,34 +50,46 @@ test('popup de Google en la portada y en las páginas de la piel común, publica
   assert.match(fs.readFileSync(path.join(root, 'server/biz-assets.mjs'), 'utf8'), /'login-google\.js'/);
 });
 
-// 18-oct-2026: en las páginas interiores (cabecera de galaxy-shell.js) el enlace volvía a decir «Login» con la sesión
-// abierta, porque responsive-shell.js reescribe data-shell-text-es/en al arrancar y al cambiar de idioma.
-test('con sesión, el enlace dice «Backoffice» también después del traductor de la cabecera común', () => {
+// 9-nov-2026 · t848u: con sesión el login deja de convertirse en «Backoffice». Backoffice es #header-backoffice
+// (aparte). Sin /api/proyectos (este VM no tiene fetch), el fallback mantiene el enlace y la clase de sesión.
+test('con sesión, la cabecera marca admira-con-sesion y ya no convierte el login en Backoffice', () => {
   const vm = require('node:vm');
   const src = fs.readFileSync(path.join(root, 'login-google.js'), 'utf8');
-  const shell = fs.readFileSync(path.join(root, 'responsive-shell.js'), 'utf8');
-  assert.match(shell, /document\.querySelectorAll\('\[data-shell-text-es\]'\)\.forEach\(el=>\{el\.textContent=es\(\)\?el\.dataset\.shellTextEs:el\.dataset\.shellTextEn;\}\);/,
-    'el traductor común sigue leyendo data-shell-text-es/en');
+  assert.match(src, /PROJECT_KEY = 'admira-proyecto-activo'/);
+  assert.match(src, /\/api\/proyectos/);
+  assert.match(src, /admira:proyecto/);
+  assert.match(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), /id="header-backoffice"/);
+  assert.match(fs.readFileSync(path.join(root, 'galaxy-shell.js'), 'utf8'), /id="header-backoffice"/);
   for (const lang of ['es', 'en']) {
-    // El enlace tal como lo pinta galaxy-shell.js (bilingual): textos de Login en los dos idiomas.
-    const link = {textContent: 'Login', title: '', hidden: false, dataset: {shellTextEs: 'Login', shellTextEn: 'Login'}, classList: {add() {}},
-      removeAttribute() {}, after() {}};
+    const link = {textContent: 'Entrar', title: '', hidden: false, dataset: {shellTextEs: 'Entrar', shellTextEn: 'Sign in'}, classList: {add() {}},
+      removeAttribute() {}, after() {}, addEventListener() {}};
+    const bo = {hidden: true};
     const clases = new Set();
     const token = jwt({email: 'prueba@admira.biz', exp: Math.floor(Date.now() / 1000) + 3600});
-    const ctx = {document: {documentElement: {lang, classList: {add: c => clases.add(c)}}, getElementById: id => (id === 'header-login' ? link : null), head: {append() {}}},
-      localStorage: mem(JSON.stringify({token, email: 'prueba@admira.biz'})), location: {pathname: '/help/', hostname: 'www.admira.biz'},
-      atob: s => Buffer.from(s, 'base64').toString('binary'), Buffer, MutationObserver: class { observe() {} disconnect() {} }, setTimeout: () => 0, clearTimeout() {}, JSON, Date};
+    const calls = [];
+    const ctx = {
+      document: {
+        documentElement: {lang, classList: {add: c => clases.add(c)}},
+        getElementById: id => (id === 'header-login' ? link : id === 'header-backoffice' ? bo : null),
+        head: {append() {}},
+        createElement: tag => ({tagName: tag, style: {}, setAttribute() {}, append() {}, replaceChildren() {}, querySelector() { return null; }, addEventListener() {}, className: '', textContent: '', value: '', options: []}),
+      },
+      localStorage: mem(JSON.stringify({token, email: 'prueba@admira.biz'})),
+      location: {pathname: '/help/', hostname: 'www.admira.biz'},
+      fetch: async (url) => { calls.push(String(url)); return {ok: false, status: 503, json: async () => ({})}; },
+      atob: s => Buffer.from(s, 'base64').toString('binary'),
+      Buffer, MutationObserver: class { observe() {} disconnect() {} },
+      setTimeout: (fn) => { try { fn(); } catch (_) {} return 0; }, clearTimeout() {}, JSON, Date,
+      CustomEvent: class { constructor(type, init) { this.type = type; this.detail = init && init.detail; } },
+    };
     ctx.window = ctx; ctx.globalThis = ctx;
+    ctx.dispatchEvent = () => {};
     vm.runInNewContext(src, ctx);
-    assert.equal(link.textContent, 'Backoffice', lang + ': login-google.js lo pone');
-    // Lo que hace responsive-shell.js al arrancar o al cambiar de idioma.
-    link.textContent = lang === 'es' ? link.dataset.shellTextEs : link.dataset.shellTextEn;
-    assert.equal(link.textContent, 'Backoffice', lang + ': y el traductor común lo respeta');
-    assert.match(link.title, /prueba@admira\.biz/);
-    assert.ok(clases.has('admira-con-sesion'));
+    assert.ok(clases.has('admira-con-sesion'), lang);
+    assert.notEqual(link.textContent, 'Backoffice', lang + ': el login ya no se convierte en Backoffice');
+    assert.ok(calls.some(u => u.includes('/api/proyectos')), lang + ': pide la lista autenticada');
   }
 });
-
 // El catálogo (locations.js) acepta el token en localStorage o en sessionStorage. «Cerrar sesión»
 // tiene que borrar los dos; si no, un token que quedó en la pestaña sigue abriendo los privados.
 test('cerrar sesión borra omnip-bo-gtoken de localStorage y de sessionStorage', () => {
