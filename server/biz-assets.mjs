@@ -6,7 +6,8 @@ export const BIZ_ASSET_FILES = Object.freeze([
   // ⌘ Experto: el motor común de la suite (experto.js, su piel y sus demos) vive sólo en admiranext.com.
   // De /suite/ aquí queda el contexto propio de Biz; el resto va al canónico (suiteCanonicalURL).
   'suite/biz-native-context.js',
-  'galaxy-shell.js', 'expert-panel.js', 'responsive-shell.js',
+  'galaxy-shell.js', 'galaxy-shell.css', 'expert-panel.js',
+  'responsive-shell.js', 'responsive-shell.css',
   // Tour DooH global (FLT-102469): Alsea México, del país entero a la puerta de cada Starbucks.
   'tour-health.js', 'global-tour.js', 'global-tour.css', 'circuit-overview.js',
   // Login con el popup de Google en la cabecera (FLT-102490).

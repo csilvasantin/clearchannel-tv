@@ -15,12 +15,12 @@ const backoffice = read('backoffice.html');
 // cambiaron con el shell (FLT-101311 c) y sello de responsive-shell.css/js en la portada.
 // galaxy-shell.js y los verbos del Experto (expert-*) llevan el sello de su último cambio:
 // ya no comparten el del componente desde que galaxy-shell.js cambió solo (13-oct-2026).
-const STAMP = '20261109-cabecera-bo-1';
+const STAMP = '20261109-cabecera-bo-2';
 const SHELL_JS_STAMP = '20261109-proyecto-2';   // 1-nov: login-google.js borra omnip-bo-gtoken también de sessionStorage; las páginas interiores cargan ese script con este sello
 const COMMANDS_STAMP = '20261107-netflix-1';
 const PANEL_STAMP = '20261018-supervisor-cara-1';
 const PAGES_STAMP = '20261006-experto-tecla-1';
-const PORTADA_STAMP = '20261109-cabecera-bo-1';
+const PORTADA_STAMP = '20261109-cabecera-bo-2';
 const squash = html => html.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
 const memory = () => {
   const mem = new Map();
